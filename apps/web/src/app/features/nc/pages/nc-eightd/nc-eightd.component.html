@@ -209,7 +209,7 @@
                    rejoindre ses pareilles. -->
               <qos-capa-action-panel [capaCaseIds]="(idsDesDossiers$ | async) ?? []"
                                      [source]="source"
-                                     [ajoutAutorise]="editable"
+                                     [ajoutAutorise]="ajoutAutorise"
                                      [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>

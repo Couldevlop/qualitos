@@ -68,7 +68,7 @@ class EffectivenessInfrastructureTest {
     @Test
     void uneEvaluationSEnregistreEtSeRelitAChampsEgaux() {
         UUID tenant = UUID.randomUUID();
-        CapaCase c = cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-1"));
+        CapaCase c = cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-1"));
         EffectivenessReviewAdapter port = new EffectivenessReviewAdapter(reviewsJpa);
 
         port.save(EffectivenessReview.record(UUID.randomUUID(), tenant, c.getId(),
@@ -93,7 +93,7 @@ class EffectivenessInfrastructureTest {
         // puis efficace » raconte une boucle d'amélioration ; le seul dernier
         // verdict ne raconte rien.
         UUID tenant = UUID.randomUUID();
-        CapaCase c = cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-1"));
+        CapaCase c = cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-1"));
         EffectivenessReviewAdapter port = new EffectivenessReviewAdapter(reviewsJpa);
 
         port.save(evaluation(tenant, c.getId(), EffectivenessVerdict.INEFFECTIVE, "9 ‰", T0));
@@ -112,9 +112,9 @@ class EffectivenessInfrastructureTest {
     @Test
     void laDerniereEvaluationDeChaqueDossierTientEnUneRequete() {
         UUID tenant = UUID.randomUUID();
-        CapaCase un = cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-1"));
-        CapaCase deux = cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-2"));
-        CapaCase jamaisJuge = cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-3"));
+        CapaCase un = cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-1"));
+        CapaCase deux = cases.save(dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-2"));
+        CapaCase jamaisJuge = cases.save(dossierSurLePlan(tenant, CapaStatus.OPEN, "CAPA-3"));
         EffectivenessReviewAdapter port = new EffectivenessReviewAdapter(reviewsJpa);
         port.save(evaluation(tenant, un.getId(), EffectivenessVerdict.INEFFECTIVE, "9 ‰", T0));
         port.save(evaluation(tenant, un.getId(), EffectivenessVerdict.EFFECTIVE, "1 ‰",
@@ -136,7 +136,7 @@ class EffectivenessInfrastructureTest {
         // rendrait DEUX pour un seul dossier, et la carte en garderait une au
         // hasard — un tableau qui change d'avis d'un rafraîchissement à l'autre.
         UUID tenant = UUID.randomUUID();
-        CapaCase c = cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-1"));
+        CapaCase c = cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-1"));
         EffectivenessReviewAdapter port = new EffectivenessReviewAdapter(reviewsJpa);
         port.save(evaluation(tenant, c.getId(), EffectivenessVerdict.PARTIAL, "3 ‰", T0));
         port.save(evaluation(tenant, c.getId(), EffectivenessVerdict.EFFECTIVE, "1 ‰", T0));
@@ -148,9 +148,9 @@ class EffectivenessInfrastructureTest {
     void leNombreDEvaluationsSeCompteParDossierEtParClient() {
         UUID tenant = UUID.randomUUID();
         UUID autre = UUID.randomUUID();
-        CapaCase un = cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-1"));
-        CapaCase deux = cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-2"));
-        CapaCase ailleurs = cases.save(dossier(autre, CapaStatus.CLOSED, "CAPA-X"));
+        CapaCase un = cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-1"));
+        CapaCase deux = cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-2"));
+        CapaCase ailleurs = cases.save(dossierSurLePlan(autre, CapaStatus.CLOSED, "CAPA-X"));
         EffectivenessReviewAdapter port = new EffectivenessReviewAdapter(reviewsJpa);
         port.save(evaluation(tenant, un.getId(), EffectivenessVerdict.INEFFECTIVE, "9 ‰", T0));
         port.save(evaluation(tenant, un.getId(), EffectivenessVerdict.EFFECTIVE, "1 ‰",
@@ -168,7 +168,7 @@ class EffectivenessInfrastructureTest {
     void lesEvaluationsDUnAutreClientSontInvisibles() {
         UUID tenant = UUID.randomUUID();
         UUID autre = UUID.randomUUID();
-        CapaCase ailleurs = cases.save(dossier(autre, CapaStatus.CLOSED, "CAPA-X"));
+        CapaCase ailleurs = cases.save(dossierSurLePlan(autre, CapaStatus.CLOSED, "CAPA-X"));
         EffectivenessReviewAdapter port = new EffectivenessReviewAdapter(reviewsJpa);
         port.save(evaluation(autre, ailleurs.getId(), EffectivenessVerdict.EFFECTIVE, "1 ‰", T0));
 
@@ -212,39 +212,76 @@ class EffectivenessInfrastructureTest {
     @Test
     void unDossierSansEcheanceNArrivePasAvecUneDateInventee() {
         UUID tenant = UUID.randomUUID();
-        cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-1"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.OPEN, "CAPA-1"));
 
         assertThat(port().findInScope(tenant, Optional.empty()).get(0).dueAt()).isNull();
     }
 
     /**
-     * LE PLAN NE JUGE QUE CE DONT LA VÉRIFICATION A ÉTÉ DEMANDÉE (ADR 0073, 0088).
+     * LE PLAN NE JUGE QUE CE QU'UNE ACTION PROMET (ADR 0073, 0088, 0131).
      *
-     * <p>Il juge l'EFFET d'une action : sans cette décision, il n'y a rien à
-     * juger, et la ligne ne faisait qu'allonger une liste de travaux à ne pas
-     * faire. {@code null} n'est pas un oui : c'est la question laissée ouverte,
-     * et elle ne vaut pas décision.
+     * <p>Il juge l'EFFET d'une action : sans la décision de vérifier, il n'y a
+     * rien à juger, et la ligne ne faisait qu'allonger une liste de travaux à
+     * ne pas faire. {@code null} n'est pas un oui : c'est la question laissée
+     * ouverte, et elle ne vaut pas décision.
+     *
+     * <p>Le prédicat porte sur l'ACTION, parce que c'est elle que
+     * {@code verifyAction} interroge et qu'elle peut s'écarter de la décision
+     * prise à l'ouverture.
      */
     @Test
-    void seulsLesDossiersAVerifierEntrentDansLePlan() {
+    void seulesLesActionsAVerifierFontEntrerLeurDossier() {
         UUID tenant = UUID.randomUUID();
-        CapaCase demande = dossier(tenant, CapaStatus.RESOLVED, "CAPA-OUI");
-        action(demande, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
-        cases.save(demande);
+        CapaCase corrective = dossier(tenant, CapaStatus.RESOLVED, "CAPA-CORR");
+        action(corrective, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
 
-        CapaCase refuse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-NON");
-        refuse.setVerificationRequired(false);
-        action(refuse, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
-        cases.save(refuse);
+        CapaCase preventive = dossier(tenant, CapaStatus.RESOLVED, "CAPA-PREV");
+        action(preventive, CapaActionStatus.DONE, CapaActionType.PREVENTIVE);
+        preventive.getActions().get(0).setVerificationRequired(false);
 
-        CapaCase sansReponse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-VIDE");
-        sansReponse.setVerificationRequired(null);
+        CapaCase sansReponse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-NULL");
         action(sansReponse, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
-        cases.save(sansReponse);
+        sansReponse.getActions().get(0).setVerificationRequired(null);
+
+        cases.saveAll(List.of(corrective, preventive, sansReponse));
 
         assertThat(port().findInScope(tenant, Optional.empty()))
                 .extracting(EvaluationCasePort.EvaluationCase::reference)
-                .containsExactly("CAPA-OUI");
+                .containsExactly("CAPA-CORR");
+    }
+
+    /**
+     * L'ENDIGUEMENT SEUL N'ENTRE PAS, et on n'a pas eu à l'écrire : le domaine
+     * refuse toute vérification sur une action de confinement -- elle arrête
+     * l'effet sans supprimer la cause (ISO 9001 §10.2) et ne promet donc rien à
+     * mesurer. Aucune de ses actions ne porte le drapeau, le dossier reste
+     * dehors. Un dossier MÊLÉ, lui, entre par sa corrective.
+     *
+     * <p>Un dossier SANS AUCUNE action en reste dehors aussi : il n'y a rien à
+     * juger. Son obstacle à lui est le décompte des actions, que le registre
+     * dit déjà -- et le faire figurer ici l'aurait montré dans une file où
+     * aucun geste ne lui est possible.
+     */
+    @Test
+    void niLEndiguementSeulNiLeDossierSansActionNEntrentDansLePlan() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase endiguement = dossier(tenant, CapaStatus.RESOLVED, "CAPA-END");
+        action(endiguement, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+
+        CapaCase mixte = dossier(tenant, CapaStatus.RESOLVED, "CAPA-MIX");
+        action(mixte, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+        action(mixte, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+
+        cases.saveAll(List.of(endiguement, mixte,
+                dossier(tenant, CapaStatus.OPEN, "CAPA-SANS-ACTION")));
+
+        List<EvaluationCasePort.EvaluationCase> plan = port().findInScope(tenant, Optional.empty());
+
+        assertThat(plan).extracting(EvaluationCasePort.EvaluationCase::reference)
+                .containsExactly("CAPA-MIX");
+        // Le drapeau garde son sens pour celui qui entre : son endiguement ne
+        // le résume pas.
+        assertThat(plan.get(0).containmentOnly()).isFalse();
     }
 
     @Test
@@ -253,41 +290,20 @@ class EffectivenessInfrastructureTest {
         // l'efficacité, et l'afficher gonflerait le décompte des sujets ouverts
         // d'autant de dossiers qu'on a eu raison d'écarter.
         UUID tenant = UUID.randomUUID();
-        cases.save(dossier(tenant, CapaStatus.REJECTED, "CAPA-REJ"));
-        cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-OK"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.REJECTED, "CAPA-REJ"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.OPEN, "CAPA-OK"));
 
         assertThat(port().findInScope(tenant, Optional.empty()))
                 .extracting(EvaluationCasePort.EvaluationCase::reference)
                 .containsExactly("CAPA-OK");
     }
 
-    @Test
-    void lEndiguementSeulSeVoitEtUnDossierVideNEnEstPasUn() {
-        UUID tenant = UUID.randomUUID();
-        CapaCase endiguement = dossier(tenant, CapaStatus.RESOLVED, "CAPA-END");
-        action(endiguement, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
-        action(endiguement, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
-        CapaCase mixte = dossier(tenant, CapaStatus.RESOLVED, "CAPA-MIX");
-        action(mixte, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
-        action(mixte, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
-        CapaCase vide = dossier(tenant, CapaStatus.OPEN, "CAPA-VIDE");
-        cases.saveAll(List.of(endiguement, mixte, vide));
-
-        Map<String, EvaluationCasePort.EvaluationCase> parRef = parReference(tenant);
-
-        assertThat(parRef.get("CAPA-END").containmentOnly()).isTrue();
-        assertThat(parRef.get("CAPA-MIX").containmentOnly()).isFalse();
-        // Un allMatch sur une liste vide répondrait « oui » à une question qui
-        // ne se pose pas : le dossier sans action a son propre motif.
-        assertThat(parRef.get("CAPA-VIDE").containmentOnly()).isFalse();
-        assertThat(parRef.get("CAPA-VIDE").actionsTotal()).isZero();
-    }
 
     @Test
     void lesEcartsEncoreOuvertsSeComptentParDossierEtSansLesRegles() {
         UUID tenant = UUID.randomUUID();
-        CapaCase avecEcarts = cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-NC"));
-        CapaCase sansEcart = cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-OK"));
+        CapaCase avecEcarts = cases.save(dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-NC"));
+        CapaCase sansEcart = cases.save(dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-OK"));
         nonConformities.saveAll(List.of(
                 ecart(tenant, avecEcarts.getId(), NcStatus.OPEN),
                 ecart(tenant, avecEcarts.getId(), NcStatus.UNDER_ANALYSIS),
@@ -308,8 +324,8 @@ class EffectivenessInfrastructureTest {
     void unDossierDUnAutreClientNEntrePasDansLePerimetre() {
         UUID tenant = UUID.randomUUID();
         UUID autre = UUID.randomUUID();
-        cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-MOI"));
-        CapaCase ailleurs = cases.save(dossier(autre, CapaStatus.OPEN, "CAPA-AUTRE"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.OPEN, "CAPA-MOI"));
+        CapaCase ailleurs = cases.save(dossierSurLePlan(autre, CapaStatus.OPEN, "CAPA-AUTRE"));
         nonConformities.save(ecart(autre, ailleurs.getId(), NcStatus.OPEN));
 
         assertThat(port().findInScope(tenant, Optional.empty()))
@@ -342,11 +358,11 @@ class EffectivenessInfrastructureTest {
         UUID tenant = UUID.randomUUID();
         UUID moi = UUID.randomUUID();
 
-        CapaCase pilote = dossier(tenant, CapaStatus.RESOLVED, "CAPA-PILOTE");
+        CapaCase pilote = dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-PILOTE");
         pilote.setOwnerId(moi);
         cases.save(pilote);
 
-        CapaCase verificateur = dossier(tenant, CapaStatus.RESOLVED, "CAPA-VERIF");
+        CapaCase verificateur = dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-VERIF");
         verificateur.setVerificationAssigneeId(moi);
         cases.save(verificateur);
 
@@ -355,7 +371,7 @@ class EffectivenessInfrastructureTest {
         actionConfiee.getActions().get(0).setAssigneeId(moi);
         cases.save(actionConfiee);
 
-        cases.save(dossier(tenant, CapaStatus.OPEN, "CAPA-AUTRUI"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.OPEN, "CAPA-AUTRUI"));
 
         assertThat(port().findInScope(tenant, Optional.of(moi)))
                 .extracting(EvaluationCasePort.EvaluationCase::reference)
@@ -399,10 +415,10 @@ class EffectivenessInfrastructureTest {
     void unDossierHorsDePorteeNEstPasVu() {
         UUID tenant = UUID.randomUUID();
         UUID moi = UUID.randomUUID();
-        CapaCase mien = dossier(tenant, CapaStatus.RESOLVED, "CAPA-MIEN");
+        CapaCase mien = dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-MIEN");
         mien.setOwnerId(moi);
         cases.save(mien);
-        CapaCase autrui = cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-AUTRUI"));
+        CapaCase autrui = cases.save(dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-AUTRUI"));
 
         assertThat(port().sees(tenant, mien.getId(), Optional.of(moi))).isTrue();
         assertThat(port().sees(tenant, autrui.getId(), Optional.of(moi))).isFalse();
@@ -440,10 +456,10 @@ class EffectivenessInfrastructureTest {
     @Test
     void unDossierClosSansVerificationExigeeNEstPasDansLeRegistre() {
         UUID tenant = UUID.randomUUID();
-        CapaCase exige = dossier(tenant, CapaStatus.CLOSED, "CAPA-EXI");
+        CapaCase exige = dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-EXI");
         exige.setVerificationRequired(true);
         cases.save(exige);
-        CapaCase dispense = dossier(tenant, CapaStatus.CLOSED, "CAPA-DIS");
+        CapaCase dispense = dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-DIS");
         dispense.setVerificationRequired(false);
         cases.save(dispense);
 
@@ -461,7 +477,7 @@ class EffectivenessInfrastructureTest {
     @Test
     void unDossierClosDontLaQuestionNaPasEteTrancheeResteVisible() {
         UUID tenant = UUID.randomUUID();
-        CapaCase indecis = dossier(tenant, CapaStatus.CLOSED, "CAPA-NUL");
+        CapaCase indecis = dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-NUL");
         indecis.setVerificationRequired(null);
         cases.save(indecis);
 
@@ -474,9 +490,9 @@ class EffectivenessInfrastructureTest {
     @Test
     void seulsLesDossiersClosEntrentDansLeRegistre() {
         UUID tenant = UUID.randomUUID();
-        cases.save(dossier(tenant, CapaStatus.CLOSED, "CAPA-CLOS"));
-        cases.save(dossier(tenant, CapaStatus.RESOLVED, "CAPA-RES"));
-        cases.save(dossier(tenant, CapaStatus.REJECTED, "CAPA-REJ"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.CLOSED, "CAPA-CLOS"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-RES"));
+        cases.save(dossierSurLePlan(tenant, CapaStatus.REJECTED, "CAPA-REJ"));
 
         assertThat(closedPort().findClosed(tenant))
                 .extracting(ClosedCapaPort.ClosedCapa::title)
@@ -515,10 +531,19 @@ class EffectivenessInfrastructureTest {
         c.setSourceType(CapaSourceType.NON_CONFORMITY);
         c.setSourceRef(ref);
         c.setOwnerId(UUID.randomUUID());
-        // La vérification est DEMANDÉE : sans elle le dossier n'entre pas dans le
-        // plan de travail, et ces bancs-là portent sur autre chose. La règle a
-        // ses propres bancs, plus bas.
         c.setVerificationRequired(true);
+        return c;
+    }
+
+    /**
+     * Un dossier DÉJÀ SUR LE PLAN : il porte l'action corrective à vérifier qui
+     * l'y fait entrer. Les bancs qui portent sur autre chose -- le périmètre,
+     * les décomptes, l'échéance -- passent par ici, pour ne pas redire à chaque
+     * fois ce qu'ils ne mesurent pas.
+     */
+    private static CapaCase dossierSurLePlan(UUID tenant, CapaStatus statut, String ref) {
+        CapaCase c = dossier(tenant, statut, ref);
+        action(c, CapaActionStatus.PENDING, CapaActionType.CORRECTIVE);
         return c;
     }
 
@@ -528,6 +553,13 @@ class EffectivenessInfrastructureTest {
         a.setTitle("Action " + statut + " " + type);
         a.setStatus(statut);
         a.setActionType(type);
+        // Comme `openCase` : la décision de vérification descend sur l'action,
+        // sauf sous un endiguement -- le domaine la lui refuse, il ne promet
+        // aucun effet à mesurer. C'est ce drapeau qui fait entrer le dossier
+        // dans le plan de travail.
+        if (type != CapaActionType.CONTAINMENT) {
+            a.setVerificationRequired(true);
+        }
         c.getActions().add(a);
     }
 

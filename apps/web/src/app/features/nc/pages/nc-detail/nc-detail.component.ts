@@ -1656,6 +1656,21 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   canAddActions(nc: NcResponse): boolean {
     return nc.capaCaseId ? true : !this.isTerminal(nc.status);
   }
+
+  /**
+   * L'écart accepte-t-il encore qu'on ouvre une CAPA de plus ?
+   *
+   * <p>Et non {@link #canAddActions}, qui répond « oui » dès qu'un dossier
+   * existe : il sert les boutons d'invitation d'un écart qui n'en a pas encore,
+   * et ne dit rien d'un écart terminé qui en porte un. Tant qu'ajouter voulait
+   * dire « une action de plus dans ce dossier », le verrou de clôture du
+   * dossier servait de frein ; depuis que l'ajout ouvre une CAPA NOUVELLE
+   * (ADR 0135), il n'a plus rien à dire, et sans ceci on déciderait une action
+   * sur un écart clos -- dont la clôture l'attendrait ensuite.
+   */
+  accepteUneCapaDePlus(nc: NcResponse): boolean {
+    return !this.isTerminal(nc.status);
+  }
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
 
   /**

@@ -81,11 +81,22 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
      * parce que la jointure duplique le dossier autant de fois qu'il a
      * d'actions.
      *
-     * <p><b>Seuls les dossiers dont la VÉRIFICATION A ÉTÉ DEMANDÉE</b> à
-     * l'ouverture (ADR 0073, 0088) : ce plan juge l'EFFET d'une action, et sans
-     * cette décision il n'y a rien à juger -- la ligne ne faisait qu'allonger
-     * une liste de travaux à ne pas faire. {@code null} n'est pas un oui :
-     * c'est la question laissée ouverte.
+     * <p><b>Seuls les dossiers dont UNE ACTION attend sa vérification</b>
+     * d'efficacité (ADR 0073, 0088, 0131). Ce plan juge l'EFFET d'une action :
+     * sans cette décision il n'y a rien à juger, et la ligne ne faisait
+     * qu'allonger une liste de travaux à ne pas faire. {@code null} n'est pas
+     * un oui : c'est la question laissée ouverte.
+     *
+     * <p>Le prédicat porte sur l'ACTION et non sur le dossier, et c'est ce qui
+     * le rend juste. L'ADR 0131 pose que chaque action porte sa propre
+     * évaluation ; c'est elle que {@code verifyAction} interroge, et elle peut
+     * s'écarter de la décision prise à l'ouverture. Un dossier d'ENDIGUEMENT
+     * SEUL s'en trouve exclu sans qu'on ait à l'écrire : le domaine refuse
+     * toute vérification sur une action de confinement -- elle ne promet aucun
+     * effet à mesurer -- de sorte qu'aucune de ses actions ne peut porter le
+     * drapeau. Un dossier SANS AUCUNE action en est exclu de même : il n'y a
+     * rien à juger, et son obstacle à lui est le décompte des actions, que le
+     * registre dit déjà.
      *
      * <p>Non paginée à dessein, comme la mesure par récidive : les indicateurs
      * portent sur l'ensemble, et un taux calculé sur une page n'aurait aucun
@@ -96,7 +107,8 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
             left join fetch c.actions
             where c.tenantId = :tenantId
               and c.status not in :excludedStatuses
-              and c.verificationRequired = true
+              and exists (select a.id from CapaAction a
+                          where a.capa = c and a.verificationRequired = true)
             """)
     List<CapaCase> findForEffectivenessBoard(
             @Param("tenantId") UUID tenantId,
@@ -107,7 +119,7 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
      * (ADR 0081) : il les pilote, il en vérifie l'efficacité, ou une de leurs
      * actions lui est confiée.
      *
-     * <p>Même exclusion que la précédente : vérification demandée.
+     * <p>Même exclusion que la précédente : une action à vérifier.
      *
      * <p>Une seconde requête plutôt qu'un {@code :user is null} dans la
      * précédente : c'est le choix déjà fait pour le registre paginé, et il évite
@@ -123,7 +135,8 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
             left join fetch c.actions
             where c.tenantId = :tenantId
               and c.status not in :excludedStatuses
-              and c.verificationRequired = true
+              and exists (select a.id from CapaAction a
+                          where a.capa = c and a.verificationRequired = true)
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
                    or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))

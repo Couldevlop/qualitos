@@ -705,7 +705,7 @@
                    rassemble les actions de sa nature, d'où qu'elles viennent. -->
               <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
                                      [source]="sourceDeLEcart(n)"
-                                     [ajoutAutorise]="canAddActions(n)"
+                                     [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD3"
                                      (counted)="compter('D3', $event)"
                                      (changed)="reload()"></qos-capa-action-panel>
@@ -831,7 +831,7 @@
               </div>
               <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
                                      [source]="sourceDeLEcart(n)"
-                                     [ajoutAutorise]="canAddActions(n)"
+                                     [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD5"
                                      [colonnePreuve]="false"
                                      (counted)="compter('D5', $event)"
@@ -942,7 +942,7 @@
               <!-- Un seul tableau, pour la même raison qu'au D3. -->
               <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
                                      [source]="sourceDeLEcart(n)"
-                                     [ajoutAutorise]="canAddActions(n)"
+                                     [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD7"
                                      [colonnePreuve]="false"
                                      (counted)="compter('D7', $event)"
