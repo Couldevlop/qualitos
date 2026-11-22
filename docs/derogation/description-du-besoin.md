@@ -113,17 +113,22 @@ de traduire à la relecture.
 
 **Le courriel au client est un simple courriel avec pièce jointe.** Arbitré le
 22 novembre : « le mail qu'on envoie au client c'est juste un simple mail avec
-pièce-jointe ». Il n'y a donc **aucune architecture à inventer** entre les
-services. Le moteur qualité sait déjà envoyer — `SmtpAuditReminderMailer`,
-derrière `qualitos.mail.enabled`, sur `spring.mail.*` — et c'est ce chemin-là
-qui porte la dérogation, le PDF en pièce jointe. Ce que Q17 appelait un choix
-d'architecture n'en est plus un.
+pièce-jointe ». Cela porte sur le **message**, et sur lui seul : corps bref en
+texte brut, la dérogation en pièce jointe PDF, et rien d'autre — ni gabarit
+élaboré, ni sceau, ni QR de vérification, ni accusé de lecture.
 
-Conséquence à tenir, signalée : l'expéditeur est alors celui du **déploiement**,
-et non l'adresse par client de l'ADR 0127. À reprendre quoi qu'il arrive de
-`SmtpAuditReminderMailer` : le **corps en texte brut à dessein** (un titre saisi
-par un utilisateur n'a pas à être échappé en HTML) et `singleLine()` sur le sujet
-(injection d'en-tête, OWASP A03).
+**Cela ne révoque pas l'expéditeur par client**, qui est une consigne explicite
+du 21 novembre : « Dans l'interface de chaque admin tenant, on n'a la
+possibilité de paramétrer son adresse mail qui sortira le mail mais en copie
+caché le mail de l'initiateur. » L'adresse d'envoi reste donc celle que règle
+l'administrateur du client (ADR 0127, écran `admin/pages/mail-settings`), et
+l'initiateur reste en copie cachée. Ce que Q17 garde d'ouvert est donc le seul
+**chemin** par lequel le moteur atteint ces réglages — un détail de mise en
+œuvre, non une décision de produit.
+
+À reprendre quoi qu'il arrive de `SmtpAuditReminderMailer` : le **corps en texte
+brut à dessein** (un titre saisi par un utilisateur n'a pas à être échappé en
+HTML) et `singleLine()` sur le sujet (injection d'en-tête, OWASP A03).
 
 **Le statut interne s'appelle « Approuvé qualité ».** Le choix du libellé a été
 délégué — « si tu veux tu peux proposer autre statut pour la validation
@@ -907,13 +912,13 @@ l'admin tenant, et la complexité du moteur d'états.
 **Q17 — Par quel chemin le moteur qualité envoie-t-il un courriel au nom du
 client ?**
 
-> **Tranchée (22 novembre).** « Le mail qu'on envoie au client c'est juste un
-> simple mail avec pièce-jointe. » Il n'y a donc pas de chemin à choisir : le
-> moteur envoie avec le mailer qu'il a déjà (`SmtpAuditReminderMailer`,
-> `spring.mail.*`), la dérogation en pièce jointe. L'expéditeur est celui du
-> déploiement ; l'adresse par client de l'ADR 0127 n'est pas mobilisée. Les deux
-> blocs qui suivent gardent la trace de l'analyse qui avait conclu l'inverse,
-> et de ce qu'elle coûtait.
+> **Le PRODUIT est tranché ; le chemin reste un détail de mise en œuvre.** Le
+> message est simple — corps bref, PDF en pièce jointe (22 novembre) — et
+> l'expéditeur est l'adresse que règle l'administrateur du client, l'initiateur
+> en copie cachée (consigne explicite du 21 novembre). Reste donc à écrire
+> COMMENT le moteur lit ces réglages portés par `api-core` : appel entre
+> services, ou envoi déplacé. Le choix vaut aussi pour les rappels d'audit, qui
+> souffrent du même manque (§5.1), et mérite son ADR.
 
 > *(analyse antérieure, conservée pour mémoire)* L'expéditeur est l'adresse que
 > l'administrateur du client règle dans son écran de messagerie — qui existe déjà
