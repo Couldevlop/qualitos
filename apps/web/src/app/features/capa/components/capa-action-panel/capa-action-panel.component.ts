@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import {
@@ -11,7 +11,8 @@ import {
 import { actionTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
-  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaEvidence, CapaStatus
+  CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaEvidence,
+  CapaSourceType, CapaStatus
 } from '../../capa.types';
 import {
   CapaActionDialogComponent, CapaActionDialogData
@@ -19,6 +20,9 @@ import {
 import {
   CapaActionVerificationDialogComponent, CapaActionVerificationDialogData
 } from '../../pages/capa-action-verification-dialog/capa-action-verification-dialog.component';
+import {
+  CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
+} from '../../pages/capa-create-dialog/capa-create-dialog.component';
 
 /** Le pas suivant d'une action : il n'y en a jamais deux. */
 const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
@@ -36,11 +40,12 @@ const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
  * laisse la faire avancer sans quitter l'écart — c'est aussi ce que le D5 du
  * rapport 8D rassemble.
  *
- * <p><b>Un dossier porte plusieurs actions</b> (ADR 0115, qui révise l'ADR 0088
- * sur ce seul point) : on endigue, on corrige la cause, on prévient la récidive,
- * et le 8D nomme ces étapes séparément (D3, D5, D6). Le tableau les montre
- * toutes, chacune avec son porteur, son échéance et son avancement ; une ligne
- * s'ouvre d'un clic pour la corriger, et le bouton d'ajout en ajoute une.
+ * <p><b>Une CAPA porte UNE action</b>, et une seule : c'est le modèle de
+ * l'ADR 0088 §1, que l'ADR 0115 avait révisé à tort. Le tableau d'une discipline
+ * ne liste donc pas les actions d'un dossier : il rassemble les actions de SA
+ * nature portees par TOUS les dossiers de l'écart -- une ligne, une CAPA. Une
+ * ligne s'ouvre d'un clic pour se corriger, et le bouton d'ajout <b>ouvre une
+ * CAPA de plus</b> sur l'écart, de la nature de la discipline.
  *
  * <p><b>Il porte aussi la PREUVE de chaque action</b> (ADR 0052), en colonne du
  * tableau : la pièce qui atteste que ce geste-là a été fait. Elle vivait dans
@@ -115,6 +120,29 @@ export class CapaActionPanelComponent implements OnChanges {
    * a une la donne, les autres n'en donnent pas.
    */
   @Input() team: readonly { accountId: string }[] = [];
+
+  /**
+   * L'écart à citer quand ce tableau ouvre une CAPA de plus.
+   *
+   * <p>Sans lui, pas d'ajout : une CAPA porte une action et se rattache à
+   * l'écart qu'elle traite ; en ouvrir une sans savoir lequel donnerait un
+   * dossier orphelin, que ni la fiche de l'écart ni son rapport 8D ne
+   * verraient. Le bouton d'ajout se retire alors plutôt que d'échouer au clic.
+   *
+   * <p>L'hôte doit passer un objet STABLE, pour la raison de {@link #natures}.
+   */
+  @Input() source?: { type: CapaSourceType; reference: string };
+
+  /**
+   * L'écart accepte-t-il encore qu'on décide des actions ?
+   *
+   * <p>LE FREIN DE L'AJOUT, et il vient de l'écart. Tant qu'ajouter voulait dire
+   * « une action de plus dans ce dossier », le verrou de clôture du dossier
+   * faisait office de frein. Il n'en fait plus : la CAPA ouverte est NOUVELLE, et
+   * le dossier clos d'à côté ne la concerne pas. Sans cette entrée, on pourrait
+   * ouvrir une action sur un écart terminé.
+   */
+  @Input() ajoutAutorise = true;
 
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();
@@ -268,10 +296,16 @@ export class CapaActionPanelComponent implements OnChanges {
     return this.dossiers[0];
   }
 
-  /** Vrai quand aucun dossier ne peut recevoir d'action nouvelle. */
+  /**
+   * Vrai quand on ne peut pas ouvrir une CAPA de plus ici.
+   *
+   * <p>Deux cas : aucun écart à citer ({@link #source}), ou aucun dossier d'où
+   * hériter la criticité. Le verrou de clôture d'un dossier, lui, ne ferme plus
+   * l'ajout : la CAPA ouverte est NOUVELLE, et celle qui est close ne la
+   * concerne pas.
+   */
   get ajoutFerme(): boolean {
-    const cible = this.dossierDAjout;
-    return !cible || this.isTerminal(cible.status);
+    return !this.ajoutAutorise || !this.source || !this.dossierDAjout;
   }
 
   // ---------- lecture ----------
@@ -662,29 +696,51 @@ export class CapaActionPanelComponent implements OnChanges {
   }
 
   /**
-   * Ajoute une action au dossier.
+   * Ouvre une CAPA DE PLUS sur l'écart, de la nature de cette discipline.
    *
-   * <p>Le pilote et l'échéance du dossier sont proposés — c'est le cas le plus
-   * fréquent — et restent modifiables : une action préventive portée par
-   * quelqu'un d'autre, pour plus tard, est exactement ce que la liste permet
-   * désormais d'écrire.
+   * <p>Et non une action de plus dans le dossier voisin : une CAPA porte une
+   * action (ADR 0088 §1). Ajouter dans le dossier existant rendait l'action
+   * invisible dans la liste des CAPA -- le registre montrait son dossier, pas
+   * elle -- et l'aller-retour entre les deux écrans ne se faisait que dans un
+   * sens.
+   *
+   * <p>La nature est IMPOSÉE par la discipline d'où l'on part : choisie dans la
+   * fenêtre, une action de confinement écrite au D3 pouvait naître corrective et
+   * ce D3 restait vide. La criticité, elle, est héritée du dossier déjà là :
+   * c'est celle de l'écart, et la redécider dossier par dossier
+   * ferait diverger deux chiffres sur un seul fait.
    */
   addAction(): void {
     const cible = this.dossierDAjout;
-    if (!cible || this.isTerminal(cible.status)) {
+    const source = this.source;
+    if (!cible || !source || !this.ajoutAutorise) {
       return;
     }
-    this.openDialog({
-      caseId: cible.id,
-      ownerId: cible.ownerId,
-      ownerName: cible.ownerName,
-      dueDate: cible.dueDate,
-      team: this.team,
-      effectivenessCriterion: cible.effectivenessCriterion,
-      verificationRequired: cible.verificationRequired,
-      // Tableau restreint à une nature : l'action ajoutée là est de cette nature.
-      actionType: this.natures.length === 1 ? this.natures[0] : undefined
-    });
+    const nature: CapaActionType | undefined =
+      this.natures.length === 1 ? this.natures[0] : undefined;
+    const donnees: CapaCreateDialogData = {
+      source,
+      prefill: {
+        type: nature ?? 'CORRECTIVE',
+        criticity: cible.criticity
+      },
+      lockType: !!nature,
+      open: request => this.capaService.openCase(request).pipe(
+        map(ouvert => ({ capaId: ouvert.id })))
+    };
+    this.dialog
+      .open<CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened>(
+        CapaCreateDialogComponent, {
+          data: donnees, autoFocus: 'first-tabbable', restoreFocus: true,
+          panelClass: 'qos-dialog-panel'
+        })
+      .afterClosed()
+      .subscribe(ouvert => {
+        // Rien n'a été créé si la fenêtre a été refermée : on ne relit pas.
+        if (ouvert) {
+          this.changed.emit();
+        }
+      });
   }
 
   /**

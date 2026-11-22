@@ -208,6 +208,8 @@
                    son action -- paraissait dans un second tableau au lieu de
                    rejoindre ses pareilles. -->
               <qos-capa-action-panel [capaCaseIds]="(idsDesDossiers$ | async) ?? []"
+                                     [source]="source"
+                                     [ajoutAutorise]="editable"
                                      [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>

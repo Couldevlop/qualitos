@@ -934,7 +934,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     fixture.detectChanges();
     const panneau = fixture.debugElement
       .query(By.directive(CapaActionPanelStubComponent)).componentInstance as CapaActionPanelStubComponent;
-    expect(panneau.capaCaseId).toBe('99999999-9999-9999-9999-999999999999');
+    expect(panneau.capaCaseIds).toEqual(['99999999-9999-9999-9999-999999999999']);
   });
 
   // Faire avancer l'action depuis la fiche change son statut ET celui de l'écart

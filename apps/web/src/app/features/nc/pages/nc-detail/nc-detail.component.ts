@@ -18,7 +18,7 @@ import {
 import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
-import { CapaActionType, CapaCriticity } from '../../../capa/capa.types';
+import { CapaActionType, CapaCriticity, CapaSourceType } from '../../../capa/capa.types';
 import { CapaService } from '../../../capa/capa.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
@@ -1806,6 +1806,32 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private idsDeDossiers: string[] = [];
+
+  /**
+   * L'écart à citer quand une discipline ouvre une CAPA de plus.
+   *
+   * <p>Le TYPE suit l'origine de l'écart, comme le serveur la dérivera : un
+   * dossier né d'une réclamation client s'affichait « non-conformité interne »
+   * sur l'écran même qui sert à répondre à ce client.
+   *
+   * <p>Objet mis en cache, pour la raison de {@link #idsDesDossiers} : le
+   * panneau relit ses dossiers dès que son entrée change d'identité, et un
+   * objet neuf à chaque passe de détection le ferait requêter sans fin.
+   */
+  sourceDeLEcart(n: NcResponse): { type: CapaSourceType; reference: string } | undefined {
+    if (!n.reference) {
+      return undefined;
+    }
+    const type: CapaSourceType =
+      n.origin === 'EXTERNAL' ? 'EXTERNAL_NON_CONFORMITY' : 'NON_CONFORMITY';
+    if (this.sourceEnCache?.type !== type || this.sourceEnCache?.reference !== n.reference) {
+      this.sourceEnCache = { type, reference: n.reference };
+    }
+    return this.sourceEnCache;
+  }
+
+  private sourceEnCache?: { type: CapaSourceType; reference: string };
+
 
   /**
    * « 2 dossiers sur cet écart » — écrit SEULEMENT quand il y en a plusieurs.

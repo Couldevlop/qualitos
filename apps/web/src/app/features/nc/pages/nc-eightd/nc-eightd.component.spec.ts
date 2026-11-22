@@ -494,8 +494,8 @@ describe('NcEightDComponent', () => {
     const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
     expect(natures).toEqual([
       ['CONTAINMENT'], ['CORRECTIVE'], ['PREVENTIVE']]);
-    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
-    expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
+    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseIds);
+    expect(dossiers).toEqual([['capa-9'], ['capa-9'], ['capa-9']]);
   });
 
   /**
@@ -556,10 +556,44 @@ describe('NcEightDComponent', () => {
     ]);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
-    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
-    // Trois disciplines portent un tableau, chacune pour les deux dossiers.
+    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseIds);
+    // UN tableau par discipline, et il porte les deux dossiers.
     expect(dossiers).toEqual([
-      'capa-9', 'capa-12', 'capa-9', 'capa-12', 'capa-9', 'capa-12']);
+      ['capa-9', 'capa-12'], ['capa-9', 'capa-12'], ['capa-9', 'capa-12']]);
+  });
+
+  /**
+   * UNE DISCIPLINE, UN TABLEAU -- quel que soit le nombre de dossiers.
+   *
+   * <p>Un tableau par dossier, et l'action ecrite depuis la section CAPA (qui
+   * ouvre un dossier, puisqu'une CAPA porte une action) paraissait dans un
+   * SECOND tableau sous le premier : on l'a vue << comme si elle refusait de se
+   * mettre dans le tableau existant >> (ADR 0135).
+   */
+  it('ne rend qu\'UN tableau par discipline, meme avec plusieurs dossiers', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Premier dossier', status: 'IN_PROGRESS' },
+      { id: 'capa-12', title: 'Dossier ouvert depuis le registre', status: 'OPEN' }
+    ]);
+
+    expect(fixture.debugElement
+      .queryAll(By.directive(CapaActionPanelStubComponent)).length).toBe(3);
+  });
+
+  /**
+   * LE RAPPORT CITE SON ECART, pour qu'une discipline puisse y ouvrir une CAPA.
+   * Sans la reference, le panneau retire son bouton d'ajout plutot que d'ouvrir
+   * un dossier orphelin, que ni la fiche de l'ecart ni ce rapport ne verraient.
+   */
+  it('cite l\'ecart aux tableaux, pour qu\'une discipline ouvre une CAPA', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const sources = fixture.debugElement
+      .queryAll(By.directive(CapaActionPanelStubComponent))
+      .map(t => (t.componentInstance as CapaActionPanelStubComponent).source);
+    expect(sources.length).toBe(3);
+    expect(sources.every(s => !!s?.reference)).toBeTrue();
+    expect(sources[0]?.type).toBe('NON_CONFORMITY');
   });
 
   /**

@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
-import { CapaActionType } from '../../../capa/capa.types';
+import { CapaActionType, CapaSourceType } from '../../../capa/capa.types';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { IshikawaService } from '../../../ishikawa/ishikawa.service';
@@ -159,6 +159,16 @@ export class NcEightDComponent implements OnInit {
    * le gabarit rendrait un tableau neuf à chaque passe de détection. Ici, un
    * tableau neuf par ÉMISSION, ce qui est exactement la bonne fréquence.
    */
+  /**
+   * L'écart à citer quand une discipline ouvre une CAPA de plus.
+   *
+   * <p>Un CHAMP, posé une fois l'écart lu, et non un appel de méthode dans le
+   * gabarit : le panneau relit ses dossiers dès que son entrée change
+   * d'identité, et un objet neuf à chaque passe de détection le ferait
+   * requêter sans fin.
+   */
+  source?: { type: CapaSourceType; reference: string };
+
   readonly idsDesDossiers$: Observable<readonly string[]> =
     this.capaCaseIds$.pipe(map(dossiers => (dossiers ?? []).map(d => d.id)));
 
@@ -244,6 +254,12 @@ export class NcEightDComponent implements OnInit {
       next: nc => {
         this.capaCaseIds$.next(dossiersDe(nc));
         this.noteDAnalyse$.next(nc.causeAnalysisComment ?? null);
+        this.source = nc.reference
+          ? {
+              type: nc.origin === 'EXTERNAL' ? 'EXTERNAL_NON_CONFORMITY' : 'NON_CONFORMITY',
+              reference: nc.reference
+            }
+          : undefined;
       },
       // On laisse `undefined` : l'écart n'a pas répondu, donc on ne SAIT pas
       // s'il porte un dossier. Écrire une liste vide reviendrait à affirmer

@@ -26,6 +26,10 @@ export class CapaActionPanelStubComponent {
   /** L'equipe de l'ecart, proposee en tete du selecteur de responsable. */
   @Input() team: readonly { accountId: string }[] = [];
   @Input() colonnePreuve = true;
+  /** L'ecart cite quand une discipline ouvre une CAPA de plus. */
+  @Input() source?: { type: string; reference: string };
+  /** L'ecart accepte-t-il encore qu'on decide des actions ? */
+  @Input() ajoutAutorise = true;
   @Output() readonly changed = new EventEmitter<void>();
 }
 
