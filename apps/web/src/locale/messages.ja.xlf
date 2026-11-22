@@ -11198,6 +11198,634 @@ Portail clients</source>
         <source>Suppression refusée.</source>
         <target state="translated">削除が拒否されました。</target>
       </trans-unit>
+      <trans-unit id="nav.derogations" datatype="html">
+        <source>Dérogations client</source>
+        <target state="translated">顧客特別採用</target>
+      </trans-unit>
+      <trans-unit id="derogation.eyebrow" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="derogation.title" datatype="html">
+        <source>Dérogations client</source>
+        <target state="translated">顧客特別採用</target>
+      </trans-unit>
+      <trans-unit id="derogation.subtitle" datatype="html">
+        <source>Demandez à votre client l'autorisation d'expédier un lot qui s'écarte du plan. Chaque dossier est validé en interne par un manager qualité avant de partir.</source>
+        <target state="translated">図面から外れたロットの出荷許可を顧客に依頼します。各案件は送付前に品質マネージャーが社内で承認します。</target>
+      </trans-unit>
+      <trans-unit id="derogation.tabs" datatype="html">
+        <source>Vues du registre</source>
+        <target state="translated">登録簿の表示</target>
+      </trans-unit>
+      <trans-unit id="derogation.tab-register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登録簿</target>
+      </trans-unit>
+      <trans-unit id="derogation.tab-approvals" datatype="html">
+        <source>Mes validations</source>
+        <target state="translated">自分の承認</target>
+      </trans-unit>
+      <trans-unit id="derogation.new" datatype="html">
+        <source>Nouvelle dérogation</source>
+        <target state="translated">新規特別採用</target>
+      </trans-unit>
+      <trans-unit id="derogation.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">登録簿を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="derogation.empty-register" datatype="html">
+        <source>Aucune dérogation ne correspond à cette recherche.</source>
+        <target state="translated">この検索に一致する特別採用はありません。</target>
+      </trans-unit>
+      <trans-unit id="derogation.empty-approvals" datatype="html">
+        <source>Aucun dossier n'attend votre signature.</source>
+        <target state="translated">署名をお待ちしている案件はありません。</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-owner" datatype="html">
+        <source>Créateur</source>
+        <target state="translated">起票者</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-part" datatype="html">
+        <source>Produit</source>
+        <target state="translated">製品</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">絞り込む</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">クリア</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-created" datatype="html">
+        <source>Date de création</source>
+        <target state="translated">起票日</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">管理番号</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-part" datatype="html">
+        <source>Produit</source>
+        <target state="translated">製品</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-author" datatype="html">
+        <source>Créateur</source>
+        <target state="translated">起票者</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-deviation" datatype="html">
+        <source>Défaut</source>
+        <target state="translated">不具合</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-attachments" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">添付資料</target>
+      </trans-unit>
+      <trans-unit id="derogation.prev-page" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">前のページ</target>
+      </trans-unit>
+      <trans-unit id="derogation.next-page" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">次のページ</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.pending-internal" datatype="html">
+        <source>En attente du manager qualité</source>
+        <target state="translated">品質マネージャー承認待ち</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.to-amend" datatype="html">
+        <source>À modifier</source>
+        <target state="translated">修正要</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.quality-approved" datatype="html">
+        <source>Approuvée par la qualité</source>
+        <target state="translated">品質部門承認済み</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.pending-customer" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">顧客回答待ち</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">受諾</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.refused" datatype="html">
+        <source>Refusée</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">保留中</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">受諾</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.accepted-conditions" datatype="html">
+        <source>Acceptée sous conditions</source>
+        <target state="translated">条件付き受諾</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.refused" datatype="html">
+        <source>Refusée</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="derogation.shipment.to-ship" datatype="html">
+        <source>Pièces à expédier</source>
+        <target state="translated">出荷前の部品</target>
+      </trans-unit>
+      <trans-unit id="derogation.shipment.already-shipped" datatype="html">
+        <source>Pièces déjà expédiées</source>
+        <target state="translated">出荷済みの部品</target>
+      </trans-unit>
+      <trans-unit id="derogation.origin.product" datatype="html">
+        <source>Lié au produit</source>
+        <target state="translated">製品に起因</target>
+      </trans-unit>
+      <trans-unit id="derogation.origin.process" datatype="html">
+        <source>Lié au process</source>
+        <target state="translated">工程に起因</target>
+      </trans-unit>
+      <trans-unit id="derogation.occurrence.first" datatype="html">
+        <source>Première occurrence</source>
+        <target state="translated">初回発生</target>
+      </trans-unit>
+      <trans-unit id="derogation.occurrence.repeat" datatype="html">
+        <source>Répétition</source>
+        <target state="translated">再発</target>
+      </trans-unit>
+      <trans-unit id="derogation.duration.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">一時的</target>
+      </trans-unit>
+      <trans-unit id="derogation.duration.permanent" datatype="html">
+        <source>Permanente</source>
+        <target state="translated">恒久的</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.eyebrow" datatype="html">
+        <source>Dérogation client</source>
+        <target state="translated">顧客特別採用</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.new-title" datatype="html">
+        <source>Nouvelle dérogation</source>
+        <target state="translated">新規特別採用</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.subtitle" datatype="html">
+        <source>Demande d'autorisation d'expédier un lot qui s'écarte du plan. Le dossier est validé en interne par un manager qualité avant de partir au client.</source>
+        <target state="translated">図面から外れたロットの出荷許可申請です。顧客へ送付する前に、品質マネージャーが社内で承認します。</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.load-failed" datatype="html">
+        <source>Le dossier n'a pas pu être chargé.</source>
+        <target state="translated">案件を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.created-by" datatype="html">
+        <source>Ouvert par</source>
+        <target state="translated">起票者</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.on" datatype="html">
+        <source>le</source>
+        <target state="translated">／</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.open-pdf" datatype="html">
+        <source>Relire le document</source>
+        <target state="translated">文書を確認</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.to-amend-title" datatype="html">
+        <source>Renvoyé pour correction</source>
+        <target state="translated">修正のため差し戻し</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">登録簿に戻る</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">保存</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">識別情報</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.nature" datatype="html">
+        <source>Nature de la dérogation</source>
+        <target state="translated">特別採用の種別</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.deviation" datatype="html">
+        <source>Description de l'écart</source>
+        <target state="translated">逸脱の内容</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.analysis" datatype="html">
+        <source>Analyse et maîtrise</source>
+        <target state="translated">分析と管理</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.attachments" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">添付資料</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.contact" datatype="html">
+        <source>Contact qualité du client</source>
+        <target state="translated">顧客側品質担当者</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.order" datatype="html">
+        <source>N° de commande</source>
+        <target state="translated">注文番号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">部品番号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.index" datatype="html">
+        <source>Indice</source>
+        <target state="translated">改訂</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">ロット番号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.quantity" datatype="html">
+        <source>Quantité concernée</source>
+        <target state="translated">対象数量</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.quantity-positive" datatype="html">
+        <source>La quantité ne peut pas être négative.</source>
+        <target state="translated">数量に負の値は指定できません。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.request-date" datatype="html">
+        <source>Date de la demande</source>
+        <target state="translated">申請日</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.request-date-hint" datatype="html">
+        <source>Pré-remplie à l'ouverture du dossier.</source>
+        <target state="translated">案件の起票時に自動入力されます。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.open-calendar" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">カレンダーを開く</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.shipment" datatype="html">
+        <source>Stade d'expédition</source>
+        <target state="translated">出荷段階</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.origin" datatype="html">
+        <source>Origine de l'écart</source>
+        <target state="translated">逸脱の起因</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.occurrence" datatype="html">
+        <source>Occurrence</source>
+        <target state="translated">発生状況</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration" datatype="html">
+        <source>Durée</source>
+        <target state="translated">期間</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration-detail" datatype="html">
+        <source>Précision sur la durée</source>
+        <target state="translated">期間の詳細</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration-detail-hint" datatype="html">
+        <source>Par exemple : jusqu'au lot 2026-W48, ou pour les trois prochaines livraisons.</source>
+        <target state="translated">例：ロット 2026-W48 まで、または次の3回の納入まで。</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">規格値</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.actual" datatype="html">
+        <source>Valeur réelle</source>
+        <target state="translated">実測値</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.qty" datatype="html">
+        <source>Quantité non conforme</source>
+        <target state="translated">不適合数量</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.add" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">行を追加</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.remove" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">この行を削除</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.justification" datatype="html">
+        <source>Justification de la demande</source>
+        <target state="translated">申請の根拠</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.justification-hint" datatype="html">
+        <source>Pourquoi l'écart reste acceptable : aptitude à l'emploi, essais, avis technique.</source>
+        <target state="translated">逸脱が許容できる理由：使用適合性、試験結果、技術的見解。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.root-cause" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">根本原因</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.containment" datatype="html">
+        <source>Mesures d'endiguement</source>
+        <target state="translated">封じ込め措置</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.corrective" datatype="html">
+        <source>Action corrective engagée</source>
+        <target state="translated">実施中の是正処置</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.capa" datatype="html">
+        <source>Référence CAPA</source>
+        <target state="translated">CAPA 管理番号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.capa-hint" datatype="html">
+        <source>Le dossier CAPA qui traite la cause, s'il en existe un.</source>
+        <target state="translated">原因に対処する CAPA 案件があれば、その番号。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.attachments" datatype="html">
+        <source>Pièces jointes au dossier</source>
+        <target state="translated">案件の添付資料</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.attachments-hint" datatype="html">
+        <source>Ce que le dossier comporte : rapport d'essai, relevé dimensionnel, photo.</source>
+        <target state="translated">案件に含まれるもの：試験報告書、寸法記録、写真。</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">品質マネージャー</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.manager-hint" datatype="html">
+        <source>Il recevra un courriel avec le lien vers ce dossier.</source>
+        <target state="translated">この案件へのリンクを記載したメールが届きます。</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.request" datatype="html">
+        <source>Validation manager</source>
+        <target state="translated">マネージャー承認を依頼</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.waiting" datatype="html">
+        <source>En attente de la signature de</source>
+        <target state="translated">署名待ち：</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.withdraw" datatype="html">
+        <source>Retirer la demande</source>
+        <target state="translated">依頼を取り下げる</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.approve" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">承認して署名</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.send-back" datatype="html">
+        <source>Renvoyer pour correction</source>
+        <target state="translated">修正のため差し戻す</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.send" datatype="html">
+        <source>Validation client</source>
+        <target state="translated">顧客へ送付</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signed-by" datatype="html">
+        <source>Signé par</source>
+        <target state="translated">署名者</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signed-on" datatype="html">
+        <source>le</source>
+        <target state="translated">／</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signature-alt" datatype="html">
+        <source>Signature du manager qualité</source>
+        <target state="translated">品質マネージャーの署名</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.title" datatype="html">
+        <source>Réponse du client</source>
+        <target state="translated">顧客の回答</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.hint" datatype="html">
+        <source>Envoyé le <x id="sentAt"/> à <x id="email"/>.</source>
+        <target state="translated"><x id="sentAt"/> に <x id="email"/> へ送付しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">決定</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.date" datatype="html">
+        <source>Date de la réponse</source>
+        <target state="translated">回答日</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.record" datatype="html">
+        <source>Enregistrer la réponse</source>
+        <target state="translated">回答を記録</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.answered" datatype="html">
+        <source>Le client a répondu</source>
+        <target state="translated">顧客の回答：</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.answered-on" datatype="html">
+        <source>le</source>
+        <target state="translated">／</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.title" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">承認して署名</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.intro" datatype="html">
+        <source>Vous engagez votre responsabilité sur le dossier</source>
+        <target state="translated">次の案件について責任を負います：</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.name" datatype="html">
+        <source>Nom du signataire</source>
+        <target state="translated">署名者名</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.name-required" datatype="html">
+        <source>Le nom du signataire est requis.</source>
+        <target state="translated">署名者名は必須です。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.hint" datatype="html">
+        <source>Signez dans le cadre, à la souris, au doigt ou au stylet.</source>
+        <target state="translated">枠内に、マウス・指・スタイラスで署名してください。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.canvas" datatype="html">
+        <source>Cadre de signature</source>
+        <target state="translated">署名欄</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">消去</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.empty" datatype="html">
+        <source>Aucun tracé pour l'instant.</source>
+        <target state="translated">まだ描かれていません。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">キャンセル</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.submit" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">承認して署名</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.title" datatype="html">
+        <source>Validation client</source>
+        <target state="translated">顧客へ送付</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.warning" datatype="html">
+        <source>Le dossier part au client avec son document signé en pièce jointe. Une fois envoyé, il ne peut plus être rouvert ni modifié.</source>
+        <target state="translated">署名済み文書を添付して顧客へ送付します。送付後は再開も修正もできません。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email" datatype="html">
+        <source>Adresse du client</source>
+        <target state="translated">顧客のメールアドレス</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email-required" datatype="html">
+        <source>L'adresse du client est requise.</source>
+        <target state="translated">顧客のメールアドレスは必須です。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email-invalid" datatype="html">
+        <source>Cette adresse n'est pas valide.</source>
+        <target state="translated">このアドレスは正しくありません。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language" datatype="html">
+        <source>Langue du document</source>
+        <target state="translated">文書の言語</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-hint" datatype="html">
+        <source>Figée sur le dossier à l'envoi : le client doit pouvoir relire ce qu'il a reçu.</source>
+        <target state="translated">送付時に案件へ固定されます。顧客が受け取ったものを読み返せるようにするためです。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-fr" datatype="html">
+        <source>Français</source>
+        <target state="translated">フランス語</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-en" datatype="html">
+        <source>Anglais</source>
+        <target state="translated">英語</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">コメント（任意）</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">キャンセル</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.submit" datatype="html">
+        <source>Envoyer au client</source>
+        <target state="translated">顧客へ送付</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.title" datatype="html">
+        <source>Renvoyer pour correction</source>
+        <target state="translated">修正のため差し戻す</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.explain" datatype="html">
+        <source>Vous ne refusez pas la dérogation : seul le client peut l'accorder ou la refuser. Vous renvoyez le dossier à son auteur pour qu'il le corrige.</source>
+        <target state="translated">特別採用を却下しているのではありません。可否を決めるのは顧客だけです。修正のため起票者に差し戻します。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason" datatype="html">
+        <source>Ce qui doit être corrigé</source>
+        <target state="translated">修正が必要な点</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason-hint" datatype="html">
+        <source>C'est le seul texte que l'auteur du dossier verra.</source>
+        <target state="translated">起票者が目にするのは、この文章だけです。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason-required" datatype="html">
+        <source>Le motif du renvoi est requis.</source>
+        <target state="translated">差し戻しの理由は必須です。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.confirm" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">差し戻す</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.title" datatype="html">
+        <source>Rouvrir le dossier</source>
+        <target state="translated">案件を再開する</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.message" datatype="html">
+        <source>La signature sera annulée et le dossier repassera en brouillon. Ce n'est possible que parce qu'il n'est pas encore parti au client.</source>
+        <target state="translated">署名は取り消され、案件は下書きに戻ります。まだ顧客へ送付していないからこそ可能です。</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.confirm" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">再開する</target>
+      </trans-unit>
+      <trans-unit id="derogation.saved" datatype="html">
+        <source>Dossier enregistré.</source>
+        <target state="translated">案件を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.approval-requested" datatype="html">
+        <source>Demande envoyée au manager qualité.</source>
+        <target state="translated">品質マネージャーに依頼を送信しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.withdrawn" datatype="html">
+        <source>Demande retirée, le dossier repasse en brouillon.</source>
+        <target state="translated">依頼を取り下げました。案件は下書きに戻りました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sent-back" datatype="html">
+        <source>Dossier renvoyé pour correction.</source>
+        <target state="translated">案件を修正のため差し戻しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.approved" datatype="html">
+        <source>Dossier approuvé et signé.</source>
+        <target state="translated">案件を承認し署名しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopened" datatype="html">
+        <source>Dossier rouvert, signature annulée.</source>
+        <target state="translated">案件を再開し、署名を取り消しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sent" datatype="html">
+        <source>Dossier envoyé au client.</source>
+        <target state="translated">案件を顧客へ送付しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision-recorded" datatype="html">
+        <source>Réponse du client enregistrée.</source>
+        <target state="translated">顧客の回答を記録しました。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.list" datatype="html">
+        <source>Le registre des dérogations n'a pas pu être lu.</source>
+        <target state="translated">特別採用の登録簿を読み取れませんでした。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.load" datatype="html">
+        <source>Ce dossier de dérogation n'a pas pu être lu.</source>
+        <target state="translated">この特別採用案件を読み取れませんでした。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.pdf" datatype="html">
+        <source>Le document n'a pas pu être produit.</source>
+        <target state="translated">文書を生成できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.action" datatype="html">
+        <source>L'opération n'a pas abouti. Le dossier est inchangé.</source>
+        <target state="translated">操作は完了しませんでした。案件は変更されていません。</target>
+      </trans-unit>
       <trans-unit id="shell.search.open-aria" datatype="html">
         <source>Rechercher un écran</source>
         <target state="translated">画面を検索</target>

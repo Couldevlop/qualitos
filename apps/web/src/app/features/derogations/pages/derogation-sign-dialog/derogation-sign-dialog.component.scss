@@ -1,0 +1,53 @@
+// La fenêtre de signature. Le cadre de tracé est la seule surface « physique »
+// de l'application : il doit se voir comme tel, bordé et au fond clair, parce
+// qu'un fond qui suivrait le thème sombre rendrait le trait noir invisible —
+// et le PNG part dans un PDF, où il n'y a pas de thème.
+
+:host {
+  display: block;
+}
+
+.rappel {
+  margin: 0 0 var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+}
+
+.nom {
+  width: 100%;
+}
+
+.consigne {
+  margin: var(--qos-space-2) 0;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-sm);
+}
+
+.trace {
+  display: block;
+  width: 100%;
+  max-width: 32.5rem;
+  // Le rapport de la zone de tracé (520 × 180), tenu par la hauteur plutôt que
+  // par un rapport d'aspect : la toile a ses propres dimensions internes, et
+  // les deux doivent rester proportionnelles sous peine d'un tracé déformé.
+  aspect-ratio: 520 / 180;
+  // Blanc en dur, et c'est voulu : le fond de la toile l'est aussi, et le
+  // bordereau part dans un PDF qui ne connaît pas les thèmes.
+  background: #ffffff;
+  border: 1px solid var(--qos-border-strong);
+  border-radius: var(--qos-radius-sm);
+  cursor: crosshair;
+  // Sans cela, le geste du doigt fait défiler la page au lieu de tracer.
+  touch-action: none;
+}
+
+.sous-trace {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-top: var(--qos-space-2);
+
+  &__etat {
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-sm);
+  }
+}

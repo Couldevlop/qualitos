@@ -11198,6 +11198,634 @@ Portail clients</source>
         <source>Suppression refusée.</source>
         <target state="translated">删除被拒绝。</target>
       </trans-unit>
+      <trans-unit id="nav.derogations" datatype="html">
+        <source>Dérogations client</source>
+        <target state="translated">客户让步许可</target>
+      </trans-unit>
+      <trans-unit id="derogation.eyebrow" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不符合</target>
+      </trans-unit>
+      <trans-unit id="derogation.title" datatype="html">
+        <source>Dérogations client</source>
+        <target state="translated">客户让步许可</target>
+      </trans-unit>
+      <trans-unit id="derogation.subtitle" datatype="html">
+        <source>Demandez à votre client l'autorisation d'expédier un lot qui s'écarte du plan. Chaque dossier est validé en interne par un manager qualité avant de partir.</source>
+        <target state="translated">就偏离图纸的批次向客户申请发货许可。每份案卷在对外发出前均由质量经理在内部审批。</target>
+      </trans-unit>
+      <trans-unit id="derogation.tabs" datatype="html">
+        <source>Vues du registre</source>
+        <target state="translated">登记簿视图</target>
+      </trans-unit>
+      <trans-unit id="derogation.tab-register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登记簿</target>
+      </trans-unit>
+      <trans-unit id="derogation.tab-approvals" datatype="html">
+        <source>Mes validations</source>
+        <target state="translated">我的审批</target>
+      </trans-unit>
+      <trans-unit id="derogation.new" datatype="html">
+        <source>Nouvelle dérogation</source>
+        <target state="translated">新建让步许可</target>
+      </trans-unit>
+      <trans-unit id="derogation.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">无法加载登记簿。</target>
+      </trans-unit>
+      <trans-unit id="derogation.empty-register" datatype="html">
+        <source>Aucune dérogation ne correspond à cette recherche.</source>
+        <target state="translated">没有符合此搜索条件的让步许可。</target>
+      </trans-unit>
+      <trans-unit id="derogation.empty-approvals" datatype="html">
+        <source>Aucun dossier n'attend votre signature.</source>
+        <target state="translated">没有案卷等待您的签署。</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-owner" datatype="html">
+        <source>Créateur</source>
+        <target state="translated">创建人</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-part" datatype="html">
+        <source>Produit</source>
+        <target state="translated">产品</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">客户</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">状态</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">全部</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">筛选</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">清除</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-created" datatype="html">
+        <source>Date de création</source>
+        <target state="translated">创建日期</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">编号</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-part" datatype="html">
+        <source>Produit</source>
+        <target state="translated">产品</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">客户</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-author" datatype="html">
+        <source>Créateur</source>
+        <target state="translated">创建人</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-deviation" datatype="html">
+        <source>Défaut</source>
+        <target state="translated">缺陷</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">状态</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-attachments" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">附件</target>
+      </trans-unit>
+      <trans-unit id="derogation.prev-page" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">上一页</target>
+      </trans-unit>
+      <trans-unit id="derogation.next-page" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">下一页</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">草稿</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.pending-internal" datatype="html">
+        <source>En attente du manager qualité</source>
+        <target state="translated">等待质量经理</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.to-amend" datatype="html">
+        <source>À modifier</source>
+        <target state="translated">待修改</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.quality-approved" datatype="html">
+        <source>Approuvée par la qualité</source>
+        <target state="translated">质量部门已批准</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.pending-customer" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">等待客户</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">已接受</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.refused" datatype="html">
+        <source>Refusée</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待定</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">已接受</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.accepted-conditions" datatype="html">
+        <source>Acceptée sous conditions</source>
+        <target state="translated">有条件接受</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.refused" datatype="html">
+        <source>Refusée</source>
+        <target state="translated">已拒绝</target>
+      </trans-unit>
+      <trans-unit id="derogation.shipment.to-ship" datatype="html">
+        <source>Pièces à expédier</source>
+        <target state="translated">待发运零件</target>
+      </trans-unit>
+      <trans-unit id="derogation.shipment.already-shipped" datatype="html">
+        <source>Pièces déjà expédiées</source>
+        <target state="translated">已发运零件</target>
+      </trans-unit>
+      <trans-unit id="derogation.origin.product" datatype="html">
+        <source>Lié au produit</source>
+        <target state="translated">与产品相关</target>
+      </trans-unit>
+      <trans-unit id="derogation.origin.process" datatype="html">
+        <source>Lié au process</source>
+        <target state="translated">与过程相关</target>
+      </trans-unit>
+      <trans-unit id="derogation.occurrence.first" datatype="html">
+        <source>Première occurrence</source>
+        <target state="translated">首次发生</target>
+      </trans-unit>
+      <trans-unit id="derogation.occurrence.repeat" datatype="html">
+        <source>Répétition</source>
+        <target state="translated">重复发生</target>
+      </trans-unit>
+      <trans-unit id="derogation.duration.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">临时</target>
+      </trans-unit>
+      <trans-unit id="derogation.duration.permanent" datatype="html">
+        <source>Permanente</source>
+        <target state="translated">永久</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.eyebrow" datatype="html">
+        <source>Dérogation client</source>
+        <target state="translated">客户让步许可</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.new-title" datatype="html">
+        <source>Nouvelle dérogation</source>
+        <target state="translated">新建让步许可</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.subtitle" datatype="html">
+        <source>Demande d'autorisation d'expédier un lot qui s'écarte du plan. Le dossier est validé en interne par un manager qualité avant de partir au client.</source>
+        <target state="translated">申请发运偏离图纸的批次。案卷在发送客户前由质量经理在内部审批。</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.load-failed" datatype="html">
+        <source>Le dossier n'a pas pu être chargé.</source>
+        <target state="translated">无法加载案卷。</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.created-by" datatype="html">
+        <source>Ouvert par</source>
+        <target state="translated">创建人</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.on" datatype="html">
+        <source>le</source>
+        <target state="translated">于</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.open-pdf" datatype="html">
+        <source>Relire le document</source>
+        <target state="translated">查阅文件</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.to-amend-title" datatype="html">
+        <source>Renvoyé pour correction</source>
+        <target state="translated">已退回修改</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">返回登记簿</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">保存</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">标识</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.nature" datatype="html">
+        <source>Nature de la dérogation</source>
+        <target state="translated">让步许可的性质</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.deviation" datatype="html">
+        <source>Description de l'écart</source>
+        <target state="translated">偏差说明</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.analysis" datatype="html">
+        <source>Analyse et maîtrise</source>
+        <target state="translated">分析与控制</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.attachments" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">附件</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">审批</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">客户</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.contact" datatype="html">
+        <source>Contact qualité du client</source>
+        <target state="translated">客户质量联系人</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.order" datatype="html">
+        <source>N° de commande</source>
+        <target state="translated">订单号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">零件号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.index" datatype="html">
+        <source>Indice</source>
+        <target state="translated">版本</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">批号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.quantity" datatype="html">
+        <source>Quantité concernée</source>
+        <target state="translated">涉及数量</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.quantity-positive" datatype="html">
+        <source>La quantité ne peut pas être négative.</source>
+        <target state="translated">数量不能为负数。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.request-date" datatype="html">
+        <source>Date de la demande</source>
+        <target state="translated">申请日期</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.request-date-hint" datatype="html">
+        <source>Pré-remplie à l'ouverture du dossier.</source>
+        <target state="translated">创建案卷时自动填入。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.open-calendar" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.shipment" datatype="html">
+        <source>Stade d'expédition</source>
+        <target state="translated">发运阶段</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.origin" datatype="html">
+        <source>Origine de l'écart</source>
+        <target state="translated">偏差来源</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.occurrence" datatype="html">
+        <source>Occurrence</source>
+        <target state="translated">发生情况</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration" datatype="html">
+        <source>Durée</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration-detail" datatype="html">
+        <source>Précision sur la durée</source>
+        <target state="translated">期限详情</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration-detail-hint" datatype="html">
+        <source>Par exemple : jusqu'au lot 2026-W48, ou pour les trois prochaines livraisons.</source>
+        <target state="translated">例如：至批次 2026-W48，或接下来三次交付。</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">规范值</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.actual" datatype="html">
+        <source>Valeur réelle</source>
+        <target state="translated">实测值</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.qty" datatype="html">
+        <source>Quantité non conforme</source>
+        <target state="translated">不合格数量</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.add" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">添加一行</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.remove" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">删除此行</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.justification" datatype="html">
+        <source>Justification de la demande</source>
+        <target state="translated">申请理由</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.justification-hint" datatype="html">
+        <source>Pourquoi l'écart reste acceptable : aptitude à l'emploi, essais, avis technique.</source>
+        <target state="translated">偏差为何仍可接受：使用适用性、试验、技术意见。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.root-cause" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">根本原因</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.containment" datatype="html">
+        <source>Mesures d'endiguement</source>
+        <target state="translated">围堵措施</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.corrective" datatype="html">
+        <source>Action corrective engagée</source>
+        <target state="translated">已启动的纠正措施</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.capa" datatype="html">
+        <source>Référence CAPA</source>
+        <target state="translated">CAPA 编号</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.capa-hint" datatype="html">
+        <source>Le dossier CAPA qui traite la cause, s'il en existe un.</source>
+        <target state="translated">处理该原因的 CAPA 案卷（如有）。</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.attachments" datatype="html">
+        <source>Pièces jointes au dossier</source>
+        <target state="translated">案卷附件</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.attachments-hint" datatype="html">
+        <source>Ce que le dossier comporte : rapport d'essai, relevé dimensionnel, photo.</source>
+        <target state="translated">案卷包含的内容：试验报告、尺寸记录、照片。</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">质量经理</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.manager-hint" datatype="html">
+        <source>Il recevra un courriel avec le lien vers ce dossier.</source>
+        <target state="translated">将收到一封带有此案卷链接的邮件。</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.request" datatype="html">
+        <source>Validation manager</source>
+        <target state="translated">请求经理审批</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.waiting" datatype="html">
+        <source>En attente de la signature de</source>
+        <target state="translated">等待签署人：</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.withdraw" datatype="html">
+        <source>Retirer la demande</source>
+        <target state="translated">撤回请求</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.approve" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">批准并签署</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.send-back" datatype="html">
+        <source>Renvoyer pour correction</source>
+        <target state="translated">退回修改</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">重新打开</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.send" datatype="html">
+        <source>Validation client</source>
+        <target state="translated">发送客户审批</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signed-by" datatype="html">
+        <source>Signé par</source>
+        <target state="translated">签署人</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signed-on" datatype="html">
+        <source>le</source>
+        <target state="translated">于</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signature-alt" datatype="html">
+        <source>Signature du manager qualité</source>
+        <target state="translated">质量经理签名</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.title" datatype="html">
+        <source>Réponse du client</source>
+        <target state="translated">客户答复</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.hint" datatype="html">
+        <source>Envoyé le <x id="sentAt"/> à <x id="email"/>.</source>
+        <target state="translated">已于 <x id="sentAt"/> 发送至 <x id="email"/>。</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">决定</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.date" datatype="html">
+        <source>Date de la réponse</source>
+        <target state="translated">答复日期</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.record" datatype="html">
+        <source>Enregistrer la réponse</source>
+        <target state="translated">记录答复</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.answered" datatype="html">
+        <source>Le client a répondu</source>
+        <target state="translated">客户答复：</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.answered-on" datatype="html">
+        <source>le</source>
+        <target state="translated">于</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.title" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">批准并签署</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.intro" datatype="html">
+        <source>Vous engagez votre responsabilité sur le dossier</source>
+        <target state="translated">您将对以下案卷承担责任：</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.name" datatype="html">
+        <source>Nom du signataire</source>
+        <target state="translated">签署人姓名</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.name-required" datatype="html">
+        <source>Le nom du signataire est requis.</source>
+        <target state="translated">必须填写签署人姓名。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.hint" datatype="html">
+        <source>Signez dans le cadre, à la souris, au doigt ou au stylet.</source>
+        <target state="translated">请在框内用鼠标、手指或触控笔签名。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.canvas" datatype="html">
+        <source>Cadre de signature</source>
+        <target state="translated">签名框</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">清除</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.empty" datatype="html">
+        <source>Aucun tracé pour l'instant.</source>
+        <target state="translated">尚未签写。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">取消</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.submit" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">批准并签署</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.title" datatype="html">
+        <source>Validation client</source>
+        <target state="translated">发送客户审批</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.warning" datatype="html">
+        <source>Le dossier part au client avec son document signé en pièce jointe. Une fois envoyé, il ne peut plus être rouvert ni modifié.</source>
+        <target state="translated">案卷将连同已签署文件作为附件发送给客户。一经发送，便无法重新打开或修改。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email" datatype="html">
+        <source>Adresse du client</source>
+        <target state="translated">客户邮箱地址</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email-required" datatype="html">
+        <source>L'adresse du client est requise.</source>
+        <target state="translated">必须填写客户邮箱地址。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email-invalid" datatype="html">
+        <source>Cette adresse n'est pas valide.</source>
+        <target state="translated">该地址无效。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language" datatype="html">
+        <source>Langue du document</source>
+        <target state="translated">文件语言</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-hint" datatype="html">
+        <source>Figée sur le dossier à l'envoi : le client doit pouvoir relire ce qu'il a reçu.</source>
+        <target state="translated">发送时固定在案卷上：客户须能重新阅读其所收到的内容。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-fr" datatype="html">
+        <source>Français</source>
+        <target state="translated">法语</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-en" datatype="html">
+        <source>Anglais</source>
+        <target state="translated">英语</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">备注（可选）</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">取消</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.submit" datatype="html">
+        <source>Envoyer au client</source>
+        <target state="translated">发送给客户</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.title" datatype="html">
+        <source>Renvoyer pour correction</source>
+        <target state="translated">退回修改</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.explain" datatype="html">
+        <source>Vous ne refusez pas la dérogation : seul le client peut l'accorder ou la refuser. Vous renvoyez le dossier à son auteur pour qu'il le corrige.</source>
+        <target state="translated">您并非拒绝该让步许可：只有客户才能准予或拒绝。您是将案卷退回给起草人修改。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason" datatype="html">
+        <source>Ce qui doit être corrigé</source>
+        <target state="translated">需要修改之处</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason-hint" datatype="html">
+        <source>C'est le seul texte que l'auteur du dossier verra.</source>
+        <target state="translated">这是案卷起草人唯一会看到的文字。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason-required" datatype="html">
+        <source>Le motif du renvoi est requis.</source>
+        <target state="translated">必须填写退回理由。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.confirm" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">退回</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.title" datatype="html">
+        <source>Rouvrir le dossier</source>
+        <target state="translated">重新打开案卷</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.message" datatype="html">
+        <source>La signature sera annulée et le dossier repassera en brouillon. Ce n'est possible que parce qu'il n'est pas encore parti au client.</source>
+        <target state="translated">签名将被撤销，案卷将回到草稿状态。这仅因其尚未发送给客户。</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.confirm" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">重新打开</target>
+      </trans-unit>
+      <trans-unit id="derogation.saved" datatype="html">
+        <source>Dossier enregistré.</source>
+        <target state="translated">案卷已保存。</target>
+      </trans-unit>
+      <trans-unit id="derogation.approval-requested" datatype="html">
+        <source>Demande envoyée au manager qualité.</source>
+        <target state="translated">已向质量经理发送请求。</target>
+      </trans-unit>
+      <trans-unit id="derogation.withdrawn" datatype="html">
+        <source>Demande retirée, le dossier repasse en brouillon.</source>
+        <target state="translated">已撤回请求，案卷回到草稿状态。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sent-back" datatype="html">
+        <source>Dossier renvoyé pour correction.</source>
+        <target state="translated">案卷已退回修改。</target>
+      </trans-unit>
+      <trans-unit id="derogation.approved" datatype="html">
+        <source>Dossier approuvé et signé.</source>
+        <target state="translated">案卷已批准并签署。</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopened" datatype="html">
+        <source>Dossier rouvert, signature annulée.</source>
+        <target state="translated">案卷已重新打开，签名已撤销。</target>
+      </trans-unit>
+      <trans-unit id="derogation.sent" datatype="html">
+        <source>Dossier envoyé au client.</source>
+        <target state="translated">案卷已发送给客户。</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision-recorded" datatype="html">
+        <source>Réponse du client enregistrée.</source>
+        <target state="translated">已记录客户答复。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.list" datatype="html">
+        <source>Le registre des dérogations n'a pas pu être lu.</source>
+        <target state="translated">无法读取让步许可登记簿。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.load" datatype="html">
+        <source>Ce dossier de dérogation n'a pas pu être lu.</source>
+        <target state="translated">无法读取此让步许可案卷。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.pdf" datatype="html">
+        <source>Le document n'a pas pu être produit.</source>
+        <target state="translated">无法生成该文件。</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.action" datatype="html">
+        <source>L'opération n'a pas abouti. Le dossier est inchangé.</source>
+        <target state="translated">操作未完成。案卷未发生变化。</target>
+      </trans-unit>
       <trans-unit id="shell.search.open-aria" datatype="html">
         <source>Rechercher un écran</source>
         <target state="translated">搜索界面</target>

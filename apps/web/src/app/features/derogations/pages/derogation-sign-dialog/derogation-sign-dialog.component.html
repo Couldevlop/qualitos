@@ -1,0 +1,53 @@
+<h2 mat-dialog-title i18n="@@derogation.sign.title">Approuver et signer</h2>
+
+<mat-dialog-content>
+  <p class="rappel">
+    <ng-container i18n="@@derogation.sign.intro">Vous engagez votre responsabilité sur le dossier</ng-container>
+    <strong>{{ data.reference }}</strong>.
+  </p>
+
+  <!-- Le NOM et le TRACÉ, tous les deux. Le nom seul ne distingue pas une
+       signature d'une saisie par un tiers ; le tracé seul ne dit pas qui a
+       signé. C'est le couple que le document reproduit. -->
+  <mat-form-field appearance="outline" class="nom">
+    <mat-label i18n="@@derogation.sign.name">Nom du signataire</mat-label>
+    <input matInput [formControl]="nom" maxlength="200" data-test="nom-signataire">
+    <mat-error *ngIf="nom.hasError('required')" i18n="@@derogation.sign.name-required">
+      Le nom du signataire est requis.
+    </mat-error>
+  </mat-form-field>
+
+  <p class="consigne" id="consigne-trace" i18n="@@derogation.sign.hint">
+    Signez dans le cadre, à la souris, au doigt ou au stylet.
+  </p>
+
+  <canvas #zone class="trace" aria-describedby="consigne-trace"
+          role="img" aria-label="Cadre de signature"
+          i18n-aria-label="@@derogation.sign.canvas"
+          data-test="zone-signature"
+          (pointerdown)="commencer($event)"
+          (pointermove)="continuer($event)"
+          (pointerup)="terminer()"
+          (pointerleave)="terminer()"></canvas>
+
+  <div class="sous-trace">
+    <button mat-button type="button" (click)="effacer()" [disabled]="!tracee"
+            data-test="effacer-signature">
+      <mat-icon>restart_alt</mat-icon>
+      <span i18n="@@derogation.sign.clear">Effacer</span>
+    </button>
+    <span class="sous-trace__etat" *ngIf="!tracee" i18n="@@derogation.sign.empty">
+      Aucun tracé pour l'instant.
+    </span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="annuler()" data-test="annuler-signature"
+          i18n="@@derogation.sign.cancel">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="signer()"
+          [disabled]="nom.invalid || !tracee" data-test="confirmer-signature">
+    <mat-icon>draw</mat-icon>
+    <span i18n="@@derogation.sign.submit">Approuver et signer</span>
+  </button>
+</mat-dialog-actions>
