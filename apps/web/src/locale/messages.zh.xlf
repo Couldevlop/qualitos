@@ -21686,6 +21686,10 @@ historique 12 mois</source>
         <source>Détectée le</source>
         <target state="translated">检测日期</target>
       </trans-unit>
+      <trans-unit id="nc.list.search-no-match" datatype="html">
+        <source>Aucun écart ne correspond à cette recherche.</source>
+        <target state="translated">没有与此搜索匹配的不合格项。</target>
+      </trans-unit>
       <trans-unit id="nc.list.empty" datatype="html">
         <source>Aucune non-conformité pour ce filtre.</source>
         <target state="translated">此筛选条件下没有不合格项。</target>

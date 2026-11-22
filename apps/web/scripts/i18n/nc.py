@@ -38,6 +38,7 @@ TRANSLATIONS = {
     'nc.list.col-category': ('Catégorie', 'Category', 'Categoría', 'الفئة', 'カテゴリ', '类别'),
     'nc.list.col-severity': ('Sévérité', 'Severity', 'Severidad', 'الخطورة', '重大度', '严重程度'),
     'nc.list.col-detected': ('Détectée le', 'Detected on', 'Detectada el', 'تاريخ الاكتشاف', '検出日', '检测日期'),
+    'nc.list.search-no-match': ('Aucun écart ne correspond à cette recherche.', 'No non-conformance matches this search.', 'Ninguna no conformidad coincide con esta búsqueda.', 'لا توجد حالة عدم مطابقة تطابق هذا البحث.', 'この検索に該当する不適合はありません。', '没有与此搜索匹配的不合格项。'),
     'nc.list.empty': ('Aucune non-conformité pour ce filtre.', 'No non-conformance for this filter.', 'Ninguna no conformidad para este filtro.', 'لا توجد حالات عدم مطابقة لهذا المرشّح.', 'このフィルターに該当する不適合はありません。', '此筛选条件下没有不合格项。'),
     'nc.list.pending-sync': ('En attente', 'Pending', 'Pendiente', 'قيد الانتظار', '保留中', '待处理'),
     'nc.list.pending-sync-tooltip': ('Sera synchronisée au retour du réseau', 'Will be synchronized once the network returns', 'Se sincronizará al volver la red', 'ستُزامَن عند عودة الشبكة', 'ネットワーク回復時に同期されます', '网络恢复后将同步'),

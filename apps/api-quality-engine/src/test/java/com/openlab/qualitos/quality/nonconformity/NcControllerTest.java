@@ -53,7 +53,7 @@ class NcControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
-        when(service.findAll(any(), any(), any(), any(), any(), any(), any(Pageable.class)))
+        when(service.findAll(any(), any(), any(), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc"))
                 .andExpect(status().isOk())
@@ -62,12 +62,29 @@ class NcControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilters() throws Exception {
-        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(), any(Pageable.class)))
+        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc")
                         .param("status", "OPEN").param("severity", "MAJOR").param("category", "PRODUCT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].status").value("OPEN"));
+    }
+
+    /**
+     * LA RECHERCHE VA JUSQU'AU SERVEUR. L'ecran tamisait la page deja recue :
+     * chercher une reference absente de la page affichee ne rendait rien, alors
+     * que l'ecart existait. Une recherche qui depend de la page ou l'on se
+     * trouve n'est pas une recherche.
+     */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_searchesOnTheServer() throws Exception {
+        when(service.findAll(any(), any(), any(), any(), any(), any(), eq("NC-2026-004"),
+                any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
+
+        mockMvc.perform(get("/api/v1/nc").param("q", "NC-2026-004"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(NC.toString()));
     }
 
     /** L'equipe nommee a l'ouverture : D1 du 8D, obligatoire a la creation. */

@@ -21685,6 +21685,10 @@ historique 12 mois</source>
         <source>Détectée le</source>
         <target state="translated">検出日</target>
       </trans-unit>
+      <trans-unit id="nc.list.search-no-match" datatype="html">
+        <source>Aucun écart ne correspond à cette recherche.</source>
+        <target state="translated">この検索に該当する不適合はありません。</target>
+      </trans-unit>
       <trans-unit id="nc.list.empty" datatype="html">
         <source>Aucune non-conformité pour ce filtre.</source>
         <target state="translated">このフィルターに該当する不適合はありません。</target>

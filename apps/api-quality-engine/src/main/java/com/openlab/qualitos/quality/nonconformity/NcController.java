@@ -33,8 +33,17 @@ public class NcController {
             @RequestParam(required = false) NcOrigin origin,
             /** Les NC d'un produit : l'onglet « NC liées » de sa fiche s'en sert. */
             @RequestParam(required = false) UUID productId,
+            /**
+             * La recherche par référence ou par intitulé, menée EN BASE.
+             *
+             * <p>L'écran filtrait la page déjà reçue : chercher une référence qui
+             * n'était pas sur la page affichée ne rendait rien, et l'écart
+             * existait pourtant. Une recherche qui dépend de la page où l'on se
+             * trouve n'est pas une recherche.
+             */
+            @RequestParam(required = false) String q,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, severity, category, subcategoryCode, origin, productId, pageable);
+        return service.findAll(status, severity, category, subcategoryCode, origin, productId, q, pageable);
     }
 
     @PostMapping

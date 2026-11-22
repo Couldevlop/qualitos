@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -116,7 +117,7 @@ public class NcService {
     @Transactional(readOnly = true)
     public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
                                         String subcategoryCode, NcOrigin origin, UUID productId,
-                                        Pageable pageable) {
+                                        String recherche, Pageable pageable) {
         UUID tenantId = requireTenantId();
         Optional<UUID> seulement = NcScope.restriction(scope);
         Specification<NonConformity> spec = (root, query, cb) -> {
@@ -134,6 +135,16 @@ public class NcService {
             // page déjà découpée donnerait des pages incomplètes.
             if (productId != null) predicates.add(cb.equal(root.get("productId"), productId));
             seulement.ifPresent(moi -> predicates.add(cb.equal(root.get("reporterId"), moi)));
+            // La recherche porte sur la référence ET sur l'intitulé : on cherche un
+            // écart soit par le numéro qu'on a sous les yeux, soit par ce dont il
+            // parle. En base, et non sur la page reçue : filtrer après coup ne
+            // trouvait que ce qui était déjà affiché.
+            if (recherche != null && !recherche.isBlank()) {
+                String motif = "%" + recherche.strip().toLowerCase(Locale.ROOT) + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("reference")), motif),
+                        cb.like(cb.lower(root.get("title")), motif)));
+            }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         Page<NonConformity> page = repository.findAll(spec, pageable);
