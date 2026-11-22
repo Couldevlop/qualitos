@@ -115,19 +115,38 @@ public class DerogationService {
      *                 « interdit » révélerait son existence (ADR 0081)
      */
     public DerogationDto.View get(UUID id, boolean voitTout) {
-        Derogation d = charger(id);
-        if (!voitTout) {
-            UUID moi = actors.requireAccountId();
-            if (!d.isInitiator(moi) && !d.isDesignatedManager(moi)) {
-                throw new DerogationNotFoundException(id);
-            }
-        }
-        return DerogationDto.View.of(d);
+        return DerogationDto.View.of(exigerVisible(charger(id), id, voitTout));
     }
 
-    /** Le PDF du dossier, dans la langue retenue à l'envoi, ou en français. */
-    public byte[] renderPdf(UUID id) {
-        Derogation d = charger(id);
+    /**
+     * La garde de visibilité, posée en un seul endroit.
+     *
+     * <p>Elle répond « introuvable » et non « interdit » : dire « interdit »
+     * révélerait l'existence du dossier, et donc qu'un client donné a demandé une
+     * dérogation — ce que l'ADR 0081 refuse pour les mêmes raisons sur le
+     * registre des écarts.
+     */
+    private Derogation exigerVisible(Derogation d, UUID id, boolean voitTout) {
+        if (voitTout) {
+            return d;
+        }
+        UUID moi = actors.requireAccountId();
+        if (!d.isInitiator(moi) && !d.isDesignatedManager(moi)) {
+            throw new DerogationNotFoundException(id);
+        }
+        return d;
+    }
+
+    /**
+     * Le PDF du dossier, dans la langue retenue à l'envoi, ou en français.
+     *
+     * <p>Il porte la <b>même</b> garde de visibilité que la fiche, et ce n'est pas
+     * une précaution de forme : un document qui s'obtient sans le droit de lire
+     * la fiche rend la garde de la fiche décorative, et celui-ci contient tout
+     * son contenu — client, pièce, cotes, cause racine.
+     */
+    public byte[] renderPdf(UUID id, boolean voitTout) {
+        Derogation d = exigerVisible(charger(id), id, voitTout);
         DerogationLanguage langue = d.getDispatch().language() == null
                 ? DerogationLanguage.FR : d.getDispatch().language();
         return pdf.render(d, langue);

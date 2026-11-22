@@ -44,6 +44,42 @@ public enum Permission {
     CAPA_ACTION_MANAGE("capa.action.manage", "capa", pilotage()),
     CAPA_ACTION_UPDATE("capa.action.update", "capa", plus(pilotage(), USER)),
 
+    // ---------- dérogations (concessions client) ----------
+    /**
+     * Sans elle, on ne voit que ses propres dossiers et ceux qu’on doit signer
+     * (ADR 0081). Une dérogation nomme un client et une tolérance qu’on a
+     * manquée : c’est une information plus sensible qu’un écart interne.
+     */
+    DEROGATION_VIEW_ALL("derogation.view.all", "derogation", tous()),
+    DEROGATION_CREATE("derogation.create", "derogation", plus(pilotage(), USER)),
+    DEROGATION_EDIT("derogation.edit", "derogation", plus(pilotage(), USER)),
+    /**
+     * Demander la validation du manager, et la retirer.
+     *
+     * <p>Le même droit pour les deux gestes : celui qui demande est celui qui
+     * retire, et le domaine vérifie en plus qu’il est bien l’initiateur de CE
+     * dossier.
+     */
+    DEROGATION_REQUEST_APPROVAL("derogation.request-approval", "derogation",
+            plus(pilotage(), USER)),
+    /**
+     * Signer, et renvoyer pour correction.
+     *
+     * <p><b>Volontairement large</b> : {@code tous()}. Le dossier désigne son
+     * manager, et c’est l’agrégat qui vérifie que le signataire est bien celui-là.
+     * Restreindre ce droit à {@code pilotage()} laisserait un dossier confié à un
+     * compte hors de ces rôles sans personne pour le signer — ni l’initiateur, qui
+     * n’est pas le manager, ni un autre manager, que le dossier refuse. Le
+     * dossier serait bloqué sans issue.
+     */
+    DEROGATION_APPROVE("derogation.approve", "derogation", tous()),
+    /** Rouvrir un dossier signé, ce qui annule la signature. */
+    DEROGATION_REOPEN("derogation.reopen", "derogation", plus(pilotage(), USER)),
+    /** Envoyer la demande au client : le seul geste qui sort de l’organisation. */
+    DEROGATION_SEND("derogation.send", "derogation", plus(pilotage(), USER)),
+    /** Porter la décision du client au dossier. */
+    DEROGATION_DECIDE("derogation.decide", "derogation", plus(pilotage(), USER)),
+
     // ---------- non-conformités ----------
     /** Sans elle, on ne voit que les non-conformités qu'on a déclarées (ADR 0081). */
     NC_VIEW_ALL("nc.view.all", "nc", tous()),
