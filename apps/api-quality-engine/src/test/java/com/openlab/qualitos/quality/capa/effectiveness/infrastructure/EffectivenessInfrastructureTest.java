@@ -239,15 +239,83 @@ class EffectivenessInfrastructureTest {
         action(preventive, CapaActionStatus.DONE, CapaActionType.PREVENTIVE);
         preventive.getActions().get(0).setVerificationRequired(false);
 
-        CapaCase sansReponse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-NULL");
-        action(sansReponse, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
-        sansReponse.getActions().get(0).setVerificationRequired(null);
+        // LE CAS « NULL » A CHANGÉ DE CAMP, et il a son propre banc désormais :
+        // voir unOuiDuDossierFaitEntrerSesActionsNonTranchees. Il était ici,
+        // attendu DEHORS, et c'est ce qui faisait disparaître du plan tout
+        // dossier dont le « oui » n'est écrit que sur la fiche -- l'état que
+        // laissent `updateCase` et toute ligne antérieure a V177. L'ADR 0131
+        // dit que `NULL` veut dire « question non tranchée », pas « non » : le
+        // oui du dossier gouverne alors, et ce banc ne garde que ce qui lui
+        // appartient en propre -- une réponse POSÉE sur l'action fait foi.
 
-        cases.saveAll(List.of(corrective, preventive, sansReponse));
+        cases.saveAll(List.of(corrective, preventive));
 
         assertThat(port().findInScope(tenant, Optional.empty()))
                 .extracting(EvaluationCasePort.EvaluationCase::reference)
                 .containsExactly("CAPA-CORR");
+    }
+
+    /**
+     * LE OUI DU DOSSIER GOUVERNE LES ACTIONS QUI N'ONT RIEN TRANCHE.
+     *
+     * <p>C'est le defaut rapporte depuis la production : on repond « oui » a la
+     * verification d'efficacite, et le dossier n'apparait pas au plan. La
+     * decision de verifier vit a DEUX niveaux -- sur le dossier (ADR 0073/0108)
+     * et sur l'action (ADR 0131) -- et deux chemins d'ecriture courants ne
+     * renseignent QUE celui du dossier : la fiche CAPA ({@code updateCase}, qui
+     * n'appelle {@code appliquerVerification} que sur le dossier et ne touche
+     * aucune action) et toute ligne anterieure a la migration V177, qui a cree
+     * les colonnes de l'action SANS reprise.
+     *
+     * <p>Pour ces dossiers, {@code NULL} sur l'action veut dire « la question
+     * n'a pas ete tranchee pour cette action » -- l'ADR 0131 l'ecrit noir sur
+     * blanc -- et non « non ». Ne regarder que l'action faisait donc
+     * disparaitre du plan un dossier dont la fiche dit « oui », tout en le
+     * laissant au registre : exactement le symptome rapporte.
+     */
+    @Test
+    void unOuiDuDossierFaitEntrerSesActionsNonTranchees() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase parLaFiche = dossier(tenant, CapaStatus.RESOLVED, "CAPA-FICHE");
+        action(parLaFiche, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        // Ce que laisse `updateCase`, et ce que V177 a laisse partout : le
+        // dossier dit oui, l'action n'a rien tranche.
+        parLaFiche.getActions().get(0).setVerificationRequired(null);
+
+        cases.save(parLaFiche);
+
+        assertThat(port().findInScope(tenant, Optional.empty()))
+                .extracting(EvaluationCasePort.EvaluationCase::reference)
+                .containsExactly("CAPA-FICHE");
+    }
+
+    /**
+     * UN « NON » EXPLICITE SUR L'ACTION PRIME sur le oui du dossier.
+     *
+     * <p>Le repli ne vaut que pour une question NON TRANCHEE. Des qu'une action
+     * porte une reponse -- meme « non » -- c'est elle qui vaut : quelqu'un a
+     * juge, pour cette action, qu'il n'y avait rien a mesurer. Faire remonter
+     * le dossier malgre ce « non » rendrait la reponse de l'action sans effet,
+     * et on ne saurait plus a quoi sert de la poser.
+     *
+     * <p>Et le repli ne reanime pas un dossier qui ne demande AUCUNE
+     * verification : sans oui nulle part, il n'y a rien a juger.
+     */
+    @Test
+    void unNonSurLActionPrimeSurLeOuiDuDossier() {
+        UUID tenant = UUID.randomUUID();
+        CapaCase refuse = dossier(tenant, CapaStatus.RESOLVED, "CAPA-NON");
+        action(refuse, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        refuse.getActions().get(0).setVerificationRequired(false);
+
+        CapaCase sansDemande = dossier(tenant, CapaStatus.RESOLVED, "CAPA-SANS");
+        action(sansDemande, CapaActionStatus.DONE, CapaActionType.CORRECTIVE);
+        sansDemande.getActions().get(0).setVerificationRequired(null);
+        sansDemande.setVerificationRequired(null);
+
+        cases.saveAll(List.of(refuse, sansDemande));
+
+        assertThat(port().findInScope(tenant, Optional.empty())).isEmpty();
     }
 
     /**
