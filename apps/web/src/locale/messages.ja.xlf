@@ -7330,17 +7330,21 @@ Portail clients</source>
         <source>Étape</source>
         <target state="translated">段階</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.col-actions" datatype="html">
-        <source>Actions</source>
-        <target state="translated">処置</target>
-      </trans-unit>
       <trans-unit id="capa.evaluation.col-verdict" datatype="html">
         <source>Dernier verdict</source>
         <target state="translated">直近の判定</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.actions-done" datatype="html">
-        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
-        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> 完了</target>
+      <trans-unit id="capa.evaluation.filter-nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.filter-nc-all" datatype="html">
+        <source>Tous les écarts</source>
+        <target state="translated">すべての不適合</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none-for-nc" datatype="html">
+        <source>Aucun dossier à évaluer sur cet écart. Choisissez « Tous les écarts » pour retrouver le plan de travail complet.</source>
+        <target state="translated">この不適合に評価対象の案件はありません。「すべての不適合」を選ぶと全体の作業リストに戻ります。</target>
       </trans-unit>
       <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
         <source>Critère à poser</source>
@@ -13361,8 +13365,12 @@ Coordonnées professionnelles</source>
         <target state="translated">特定した根本原因</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">3つ未満で結論づけるのは症状に名前を付けるだけです。連鎖を続けてください。</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">2つ未満で結論づけるのは症状に名前を付けるだけです。連鎖を続けてください。</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">根本原因を取り消す</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>
@@ -21677,6 +21685,10 @@ historique 12 mois</source>
         <source>Détectée le</source>
         <target state="translated">検出日</target>
       </trans-unit>
+      <trans-unit id="nc.list.search-no-match" datatype="html">
+        <source>Aucun écart ne correspond à cette recherche.</source>
+        <target state="translated">この検索に該当する不適合はありません。</target>
+      </trans-unit>
       <trans-unit id="nc.list.empty" datatype="html">
         <source>Aucune non-conformité pour ce filtre.</source>
         <target state="translated">このフィルターに該当する不適合はありません。</target>
@@ -22466,12 +22478,12 @@ historique 12 mois</source>
         <target state="translated">この不適合はまだ閉じられません</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-one" datatype="html">
-        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">CAPA 案件が 1 件、未実施の処置を残しています。その処置を完了すると、この不適合を解決できます。</target>
+        <source>1 action est encore ouverte : terminez-la avant de résoudre cet écart.</source>
+        <target state="translated">処置が 1 件未完了です。この不適合を解決する前に完了してください。</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-many" datatype="html">
-        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">CAPA 案件が <x id="count"/> 件、未実施の処置を残しています。それらの処置を完了すると、この不適合を解決できます。</target>
+        <source><x id="count"/> actions sont encore ouvertes : terminez-les avant de résoudre cet écart.</source>
+        <target state="translated">処置が <x id="count"/> 件未完了です。この不適合を解決する前に完了してください。</target>
       </trans-unit>
       <trans-unit id="nc.blocker.cases-one" datatype="html">
         <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>

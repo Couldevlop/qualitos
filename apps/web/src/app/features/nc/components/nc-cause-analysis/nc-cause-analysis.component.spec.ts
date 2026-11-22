@@ -57,7 +57,7 @@ describe('NcCauseAnalysisComponent — conclure la cause racine', () => {
   }
 
   beforeEach(async () => {
-    analyses = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['setRootCause']);
+    analyses = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['setRootCause', 'clearRootCause']);
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [NcCauseAnalysisComponent],
       imports: [SharedModule, UiModule, FiveWhysSharedModule, IshikawaSharedModule,
@@ -71,25 +71,25 @@ describe('NcCauseAnalysisComponent — conclure la cause racine', () => {
     }).compileComponents();
   });
 
-  // ---------- le verrou des trois pourquoi ----------
+  // ---------- le verrou des deux pourquoi ----------
 
   /**
-   * Conclure au premier ou au deuxieme pourquoi, c'est nommer un SYMPTOME :
-   * la methode ne tient que si la descente est allee assez loin. Meme regle
-   * que l'ecran dedie et que le serveur -- une seule constante.
+   * Conclure sur la premiere explication, c'est nommer le SYMPTOME qu'on vient
+   * d'enoncer. Meme regle que l'ecran dedie et que le serveur -- une seule
+   * constante.
    */
-  it('se tait avant le troisième pourquoi, et dit pourquoi', () => {
-    monter([chaine(2)]);
+  it('se tait avant le deuxième pourquoi, et dit pourquoi', () => {
+    monter([chaine(1)]);
 
-    expect(component.peutConclure(chaine(2))).toBeFalse();
+    expect(component.peutConclure(chaine(1))).toBeFalse();
     expect(un('cause-racine-verrouillee')).not.toBeNull();
     expect(un('cause-racine-champ')).toBeNull();
   });
 
-  it('ouvre la conclusion dès le troisième pourquoi', () => {
-    monter([chaine(3)]);
+  it('ouvre la conclusion dès le deuxième pourquoi', () => {
+    monter([chaine(2)]);
 
-    expect(component.peutConclure(chaine(3))).toBeTrue();
+    expect(component.peutConclure(chaine(2))).toBeTrue();
     expect(un('cause-racine-verrouillee')).toBeNull();
     expect(un('cause-racine-champ')).not.toBeNull();
   });
@@ -126,16 +126,42 @@ describe('NcCauseAnalysisComponent — conclure la cause racine', () => {
     expect(analyses.setRootCause).not.toHaveBeenCalled();
   });
 
-  // Et pas davantage avant trois pourquoi, meme en appelant la methode
+  // Et pas davantage avant deux pourquoi, meme en appelant la methode
   // directement : la regle est dans le composant, pas seulement dans le gabarit.
-  it('ne conclut rien avant le troisième pourquoi', () => {
-    const c = chaine(2);
+  it('ne conclut rien avant le deuxième pourquoi', () => {
+    const c = chaine(1);
     monter([c]);
     component.saisir(c, 'Pas de plan préventif');
 
     component.conclure(c);
 
     expect(analyses.setRootCause).not.toHaveBeenCalled();
+  });
+
+  /**
+   * LA CONCLUSION SE RETIRE, ET LA CHAINE RESTE. Conclue trop tot, l'analyse
+   * n'avait aucun moyen de se deconclure : il fallait la supprimer et la
+   * ressaisir, ce qui emportait les pourquoi deja ecrits.
+   */
+  it('retire la conclusion sans toucher aux pourquoi', () => {
+    const c = chaine(2);
+    c.rootCause = 'Conclu trop tôt';
+    analyses.clearRootCause.and.returnValue(of({ ...c, rootCause: null }));
+    monter([c]);
+
+    expect(un('cause-racine-retirer')).not.toBeNull();
+    component.retirerConclusion(c);
+
+    expect(analyses.clearRootCause).toHaveBeenCalledWith(c.id);
+    expect(c.rootCause).toBeNull();
+    expect(c.steps?.length).toBe(2);
+  });
+
+  /** Rien a retirer tant que rien n'est conclu : le bouton ne s'affiche pas. */
+  it('ne propose pas de retirer une conclusion absente', () => {
+    monter([chaine(2)]);
+
+    expect(un('cause-racine-retirer')).toBeNull();
   });
 
   /**

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -116,7 +117,7 @@ public class NcService {
     @Transactional(readOnly = true)
     public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
                                         String subcategoryCode, NcOrigin origin, UUID productId,
-                                        Pageable pageable) {
+                                        String recherche, Pageable pageable) {
         UUID tenantId = requireTenantId();
         Optional<UUID> seulement = NcScope.restriction(scope);
         Specification<NonConformity> spec = (root, query, cb) -> {
@@ -134,6 +135,16 @@ public class NcService {
             // page déjà découpée donnerait des pages incomplètes.
             if (productId != null) predicates.add(cb.equal(root.get("productId"), productId));
             seulement.ifPresent(moi -> predicates.add(cb.equal(root.get("reporterId"), moi)));
+            // La recherche porte sur la référence ET sur l'intitulé : on cherche un
+            // écart soit par le numéro qu'on a sous les yeux, soit par ce dont il
+            // parle. En base, et non sur la page reçue : filtrer après coup ne
+            // trouvait que ce qui était déjà affiché.
+            if (recherche != null && !recherche.isBlank()) {
+                String motif = "%" + echapperJoker(recherche.strip().toLowerCase(Locale.ROOT)) + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("reference")), motif, '\\'),
+                        cb.like(cb.lower(root.get("title")), motif, '\\')));
+            }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         Page<NonConformity> page = repository.findAll(spec, pageable);
@@ -142,6 +153,18 @@ public class NcService {
         Map<UUID, List<NcDto.TeamMemberRef>> equipes = equipesDe(tenantId,
                 page.getContent().stream().map(NonConformity::getId).toList());
         return page.map(nc -> toResponse(nc, equipes.getOrDefault(nc.getId(), List.of())));
+    }
+
+    /**
+     * Un « % » ou un « _ » tapé par l'utilisateur se cherche tel quel.
+     *
+     * <p>Sans cela ils jouent le joker de {@code like} : un « % » seul rendrait
+     * TOUS les écarts sous couvert d'une recherche, et une suite de jokers ferait
+     * travailler la base bien au-delà de ce que le texte laisse croire. Même
+     * convention que la GED ({@code DocumentSpecifications.escapeLike}).
+     */
+    private static String echapperJoker(String s) {
+        return s.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     @Transactional(readOnly = true)
@@ -366,11 +389,25 @@ public class NcService {
         List<String> aFaire = capaService.unexecutedCasesFor(
                 nc.getCapaCaseId(), nc.getReference());
         if (!aFaire.isEmpty()) {
-            throw new NcStateException(
-                    "Non-conformity cannot be resolved while " + aFaire.size()
-                    + " CAPA case(s) still have actions to carry out"
-                    + nommes(capaService.unexecutedCaseNamesInScopeFor(
-                            nc.getCapaCaseId(), nc.getReference())));
+            // LE REFUS COMPTE LES ACTIONS, et non les dossiers. « 2 dossiers CAPA
+            // ont des actions à mener » disait où chercher sans dire combien de
+            // gestes restaient : il fallait ouvrir chaque dossier pour le savoir,
+            // alors que le serveur tient le compte. Le décompte porte sur TOUS
+            // les dossiers, hors portée compris (ADR 0081) — la résolution ne
+            // peut pas dépendre de qui la demande — et c'est pourquoi il ne nomme
+            // rien.
+            int ouvertes = capaService.unexecutedActionCountFor(
+                    nc.getCapaCaseId(), nc.getReference());
+            // ZÉRO ACTION et pourtant un dossier qui résiste : le dossier n'en
+            // porte aucune. Le cas vient des dossiers ouverts avant que
+            // l'ouverture n'en crée une d'office ; le compter « 0 actions
+            // ouvertes » dirait le contraire de ce qui bloque.
+            throw new NcStateException(ouvertes > 0
+                    ? ouvertes + " actions are still open, please close them before resolving the NC"
+                    : "Non-conformity cannot be resolved while " + aFaire.size()
+                      + " CAPA case(s) still have actions to carry out"
+                      + nommes(capaService.unexecutedCaseNamesInScopeFor(
+                              nc.getCapaCaseId(), nc.getReference())));
         }
         nc.setStatus(NcStatus.RESOLVED);
         nc.setResolutionNote(request.resolutionNote());
@@ -905,10 +942,20 @@ public class NcService {
             if (sansDossier(nc)) {
                 return List.of(new NcDto.Blocker(NcBlockerCode.NO_CAPA_CASE, 0));
             }
-            long aFaire = capaService.unexecutedCasesFor(
-                    nc.getCapaCaseId(), nc.getReference()).size();
-            return aFaire == 0 ? List.of()
-                    : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_ACTIONS_TO_CARRY_OUT, aFaire));
+            // LE MOTIF COMPTE LES ACTIONS, et non les dossiers qui les portent.
+            // « 2 dossiers CAPA portent encore des actions à mener » disait où
+            // chercher sans dire combien de gestes restaient, et le code du motif
+            // annonçait pourtant des actions. Le décompte porte sur TOUS les
+            // dossiers, hors portée compris (ADR 0081).
+            //
+            // Le refus de {@code resolve}, lui, garde sa condition sur l'ÉTAT des
+            // dossiers : un dossier hérité sans aucune action resterait bloquant
+            // sans qu'aucune action ne soit à nommer, et le bandeau se taira sur
+            // ce seul cas plutôt que d'annoncer « 0 action ».
+            long ouvertes = capaService.unexecutedActionCountFor(
+                    nc.getCapaCaseId(), nc.getReference());
+            return ouvertes == 0 ? List.of()
+                    : List.of(new NcDto.Blocker(NcBlockerCode.CAPA_ACTIONS_TO_CARRY_OUT, ouvertes));
         }
         if (nc.getStatus() == NcStatus.RESOLVED) {
             List<NcDto.Blocker> motifs = new ArrayList<>();

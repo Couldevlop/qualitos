@@ -128,18 +128,22 @@ TRANSLATIONS = {
         '阶段与措施计数均为自动计算：案件须经判定为有效的评价后方可关闭。'),
     'capa.evaluation.col-case': ('Dossier', 'Case', 'Caso', 'الملف', '案件', '案件'),
     'capa.evaluation.col-stage': ('Étape', 'Stage', 'Etapa', 'المرحلة', '段階', '阶段'),
-    'capa.evaluation.col-actions': (
-        'Actions', 'Actions', 'Acciones', 'الإجراءات', '処置', '措施'),
     'capa.evaluation.col-verdict': (
         'Dernier verdict', 'Last verdict', 'Último veredicto',
         'آخر حكم', '直近の判定', '最近判定'),
-    'capa.evaluation.actions-done': (
-        '{$INTERPOLATION}/{$INTERPOLATION_1} faites',
-        '{$INTERPOLATION}/{$INTERPOLATION_1} done',
-        '{$INTERPOLATION}/{$INTERPOLATION_1} hechas',
-        '{$INTERPOLATION}/{$INTERPOLATION_1} منجزة',
-        '{$INTERPOLATION}/{$INTERPOLATION_1} 完了',
-        '{$INTERPOLATION}/{$INTERPOLATION_1} 已完成'),
+    'capa.evaluation.filter-nc': (
+        'Écart', 'Non-conformity', 'No conformidad',
+        'عدم المطابقة', '不適合', '不合格项'),
+    'capa.evaluation.filter-nc-all': (
+        'Tous les écarts', 'All non-conformities', 'Todas las no conformidades',
+        'كل حالات عدم المطابقة', 'すべての不適合', '所有不合格项'),
+    'capa.evaluation.none-for-nc': (
+        "Aucun dossier à évaluer sur cet écart. Choisissez « Tous les écarts » pour retrouver le plan de travail complet.",
+        'No case to evaluate for this non-conformity. Choose “All non-conformities” to see the full work list.',
+        'Ningún expediente que evaluar para esta no conformidad. Elija «Todas las no conformidades» para ver la lista completa.',
+        'لا يوجد ملف للتقييم لحالة عدم المطابقة هذه. اختر «كل حالات عدم المطابقة» لعرض القائمة الكاملة.',
+        'この不適合に評価対象の案件はありません。「すべての不適合」を選ぶと全体の作業リストに戻ります。',
+        '该不合格项没有待评价的档案。选择“所有不合格项”可返回完整工作清单。'),
     'capa.evaluation.no-criterion-cell': (
         'Critère à poser', 'Criterion to be set', 'Criterio por definir',
         'معيار يجب تحديده', '基準を設定', '待设定标准'),

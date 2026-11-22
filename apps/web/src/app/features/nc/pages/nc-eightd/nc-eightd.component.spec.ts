@@ -106,12 +106,13 @@ describe('NcEightDComponent', () => {
   }
 
   async function monter(roles: string[], capaCaseId: string | null = 'capa-9',
-                        capaCases?: { id: string; title: string; status: string }[]): Promise<void> {
+                        capaCases?: { id: string; title: string; status: string }[],
+                        statut: NcResponse['status'] = 'ACTION_DEFINED'): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
       ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
     const ecart: NcResponse = {
       id: NC_ID, reference: 'NC-2026-0007', title: 'Fuite au presse-étoupe',
-      category: 'PROCESS', severity: 'MAJOR', status: 'ACTION_DEFINED', origin: 'INTERNAL',
+      category: 'PROCESS', severity: 'MAJOR', status: statut, origin: 'INTERNAL',
       detectedAt: '', createdAt: '', updatedAt: ''
     };
     if (capaCaseId) { ecart.capaCaseId = capaCaseId; }
@@ -494,8 +495,8 @@ describe('NcEightDComponent', () => {
     const natures = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).natures);
     expect(natures).toEqual([
       ['CONTAINMENT'], ['CORRECTIVE'], ['PREVENTIVE']]);
-    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
-    expect(dossiers).toEqual(['capa-9', 'capa-9', 'capa-9']);
+    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseIds);
+    expect(dossiers).toEqual([['capa-9'], ['capa-9'], ['capa-9']]);
   });
 
   /**
@@ -549,6 +550,33 @@ describe('NcEightDComponent', () => {
    * l'ecran ne lisait que `capaCaseId`, le premier : ses actions
    * n'apparaissaient nulle part dans le 8D.
    */
+  /**
+   * Un ecart termine n'attend plus d'action : le rapport laisse relire ses
+   * disciplines, mais aucune n'ouvre plus de CAPA. Le droit d'ecrire ne
+   * suffisait pas a le dire -- il porte sur le ROLE, pas sur l'etat de
+   * l'ecart -- et une action decidee apres la cloture l'aurait ensuite
+   * bloquee. Meme critere que la fiche de l'ecart.
+   */
+  it('ferme l’ajout d’une CAPA quand l’écart est terminé', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'CLOSED');
+
+    expect(component.ajoutAutorise).toBeFalse();
+    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    expect(tableaux.length).toBeGreaterThan(0);
+    tableaux.forEach(t =>
+      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeFalse());
+  });
+
+  /** Sur un ecart vivant, la discipline ouvre une CAPA de plus. */
+  it('laisse une discipline ouvrir une CAPA sur un écart vivant', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'ACTION_DEFINED');
+
+    expect(component.ajoutAutorise).toBeTrue();
+    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    tableaux.forEach(t =>
+      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeTrue());
+  });
+
   it('montre les actions de TOUS les dossiers rattaches, pas seulement du premier', async () => {
     await monter(['QUALITY_MANAGER'], 'capa-9', [
       { id: 'capa-9', title: 'Dossier de l\u2019escalade', status: 'IN_PROGRESS' },
@@ -556,10 +584,44 @@ describe('NcEightDComponent', () => {
     ]);
 
     const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
-    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseId);
-    // Trois disciplines portent un tableau, chacune pour les deux dossiers.
+    const dossiers = tableaux.map(t => (t.componentInstance as CapaActionPanelStubComponent).capaCaseIds);
+    // UN tableau par discipline, et il porte les deux dossiers.
     expect(dossiers).toEqual([
-      'capa-9', 'capa-12', 'capa-9', 'capa-12', 'capa-9', 'capa-12']);
+      ['capa-9', 'capa-12'], ['capa-9', 'capa-12'], ['capa-9', 'capa-12']]);
+  });
+
+  /**
+   * UNE DISCIPLINE, UN TABLEAU -- quel que soit le nombre de dossiers.
+   *
+   * <p>Un tableau par dossier, et l'action ecrite depuis la section CAPA (qui
+   * ouvre un dossier, puisqu'une CAPA porte une action) paraissait dans un
+   * SECOND tableau sous le premier : on l'a vue << comme si elle refusait de se
+   * mettre dans le tableau existant >> (ADR 0135).
+   */
+  it('ne rend qu\'UN tableau par discipline, meme avec plusieurs dossiers', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Premier dossier', status: 'IN_PROGRESS' },
+      { id: 'capa-12', title: 'Dossier ouvert depuis le registre', status: 'OPEN' }
+    ]);
+
+    expect(fixture.debugElement
+      .queryAll(By.directive(CapaActionPanelStubComponent)).length).toBe(3);
+  });
+
+  /**
+   * LE RAPPORT CITE SON ECART, pour qu'une discipline puisse y ouvrir une CAPA.
+   * Sans la reference, le panneau retire son bouton d'ajout plutot que d'ouvrir
+   * un dossier orphelin, que ni la fiche de l'ecart ni ce rapport ne verraient.
+   */
+  it('cite l\'ecart aux tableaux, pour qu\'une discipline ouvre une CAPA', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const sources = fixture.debugElement
+      .queryAll(By.directive(CapaActionPanelStubComponent))
+      .map(t => (t.componentInstance as CapaActionPanelStubComponent).source);
+    expect(sources.length).toBe(3);
+    expect(sources.every(s => !!s?.reference)).toBeTrue();
+    expect(sources[0]?.type).toBe('NON_CONFORMITY');
   });
 
   /**

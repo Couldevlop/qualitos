@@ -78,7 +78,7 @@ export class NcCauseAnalysisComponent {
   /**
    * La chaîne est-elle assez longue pour qu'on en conclue la cause racine ?
    *
-   * <p>Même règle que l'écran dédié et que le serveur : trois pourquoi. En deçà,
+   * <p>Même règle que l'écran dédié et que le serveur : deux pourquoi. En deçà,
    * le bloc dit pourquoi il se tait, au lieu de laisser chercher le champ.
    */
   peutConclure(chaine: FiveWhysAnalysis): boolean {
@@ -105,6 +105,35 @@ export class NcCauseAnalysisComponent {
    * <p>Le refus du serveur est AFFICHÉ : c'est lui qui porte la règle, et
    * l'avaler laisserait croire que la conclusion est enregistrée.
    */
+  /**
+   * Retire la cause racine de cette chaîne, pour reprendre la remontée.
+   *
+   * <p>Les pourquoi restent : c'est la conclusion qu'on rouvre, pas l'analyse
+   * qu'on refait. Le refus du serveur est AFFICHÉ, comme pour la conclusion :
+   * l'avaler laisserait croire que la conclusion est retirée.
+   */
+  retirerConclusion(chaine: FiveWhysAnalysis): void {
+    if (!chaine.rootCause || this.envoiEnCours !== null) {
+      return;
+    }
+    this.envoiEnCours = chaine.id;
+    this.echec = null;
+    this.analyses.clearRootCause(chaine.id).subscribe({
+      next: maj => {
+        chaine.rootCause = maj.rootCause;
+        this.brouillons.delete(chaine.id);
+        this.envoiEnCours = null;
+        this.rootCauseConcluded.emit(maj);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.envoiEnCours = null;
+        this.echec = chaine.id;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   conclure(chaine: FiveWhysAnalysis): void {
     const texte = this.brouillon(chaine).trim();
     if (!texte || !this.peutConclure(chaine) || this.envoiEnCours !== null) {

@@ -42,6 +42,14 @@ export interface NcListFilters {
   origin?: NcOrigin;
   /** NC d'un produit donné : sert l'onglet « NC liées » de sa fiche. */
   productId?: string;
+  /**
+   * La recherche par référence ou par intitulé, menée EN BASE.
+   *
+   * <p>L'écran filtrait la page déjà reçue : chercher une référence absente de la
+   * page affichée ne rendait rien, alors que l'écart existait. Une recherche
+   * qui dépend de la page où l'on se trouve n'est pas une recherche.
+   */
+  q?: string;
 }
 
 /**
@@ -87,6 +95,7 @@ export class NcService {
     if (filters.subcategoryCode) params = params.set('subcategoryCode', filters.subcategoryCode);
     if (filters.origin) params = params.set('origin', filters.origin);
     if (filters.productId) params = params.set('productId', filters.productId);
+    if (filters.q?.trim()) params = params.set('q', filters.q.trim());
     return this.http.get<NcPage>(this.endpoint, { params });
   }
 

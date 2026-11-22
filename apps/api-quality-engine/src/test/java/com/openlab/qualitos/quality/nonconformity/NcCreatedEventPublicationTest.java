@@ -133,7 +133,7 @@ class NcCreatedEventPublicationTest {
         // rendrait des pages trouées et un total faux.
         when(repo.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(Page.empty());
 
-        service.findAll(null, null, null, null, null, PRODUCT, PageRequest.of(0, 10));
+        service.findAll(null, null, null, null, null, PRODUCT, null, PageRequest.of(0, 10));
 
         ArgumentCaptor<Specification<NonConformity>> captor = ArgumentCaptor.forClass(Specification.class);
         verify(repo).findAll(captor.capture(), any(PageRequest.class));

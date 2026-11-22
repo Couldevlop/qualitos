@@ -81,6 +81,17 @@ public class FiveWhysController {
         return service.setRootCause(id, request);
     }
 
+    /**
+     * Retire la conclusion sans toucher à la chaine, pour reprendre la remontée.
+     *
+     * <p>Renvoie l'analyse, et non 204 : l'écran qui vient de déconclure doit
+     * réafficher l'état exact, et un corps vide l'obligerait à relire derrière.
+     */
+    @DeleteMapping("/{id}/root-cause")
+    public FiveWhysDto.AnalysisResponse clearRootCause(@PathVariable UUID id) {
+        return service.clearRootCause(id);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {

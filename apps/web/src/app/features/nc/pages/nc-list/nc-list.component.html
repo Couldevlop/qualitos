@@ -152,8 +152,9 @@
           tabindex="0" role="button"
           [attr.aria-label]="row.reference | openLabel"></tr>
     </table>
-    <p class="empty" *ngIf="search.value && (ncs$ | async)?.length && (visibleNcs$ | async)?.length === 0"
-       i18n="@@list-search.no-match">Aucune ligne de cette page ne correspond à la recherche.</p>
+    <p class="empty" *ngIf="search.value && (visibleNcs$ | async)?.length === 0"
+       data-test="nc-recherche-vide"
+       i18n="@@nc.list.search-no-match">Aucun écart ne correspond à cette recherche.</p>
 
     <p class="empty" *ngIf="(ncs$ | async)?.length === 0" i18n="@@nc.list.empty">Aucune non-conformité pour ce filtre.</p>
 

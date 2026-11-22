@@ -18,7 +18,7 @@ import {
 import {
   CapaCreateDialogComponent, CapaCreateDialogData, CapaOpened
 } from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
-import { CapaActionType, CapaCriticity } from '../../../capa/capa.types';
+import { CapaActionType, CapaCriticity, CapaSourceType } from '../../../capa/capa.types';
 import { CapaService } from '../../../capa/capa.service';
 import { DirectoryUser } from '../../../../core/directory/directory.types';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
@@ -1656,6 +1656,21 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   canAddActions(nc: NcResponse): boolean {
     return nc.capaCaseId ? true : !this.isTerminal(nc.status);
   }
+
+  /**
+   * L'écart accepte-t-il encore qu'on ouvre une CAPA de plus ?
+   *
+   * <p>Et non {@link #canAddActions}, qui répond « oui » dès qu'un dossier
+   * existe : il sert les boutons d'invitation d'un écart qui n'en a pas encore,
+   * et ne dit rien d'un écart terminé qui en porte un. Tant qu'ajouter voulait
+   * dire « une action de plus dans ce dossier », le verrou de clôture du
+   * dossier servait de frein ; depuis que l'ajout ouvre une CAPA NOUVELLE
+   * (ADR 0135), il n'a plus rien à dire, et sans ceci on déciderait une action
+   * sur un écart clos -- dont la clôture l'attendrait ensuite.
+   */
+  accepteUneCapaDePlus(nc: NcResponse): boolean {
+    return !this.isTerminal(nc.status);
+  }
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
 
   /**
@@ -1698,8 +1713,8 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (b.code) {
       case 'CAPA_ACTIONS_TO_CARRY_OUT':
         return b.count === 1
-          ? $localize`:@@nc.blocker.actions-one:1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.`
-          : $localize`:@@nc.blocker.actions-many:${b.count}:count: dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.`;
+          ? $localize`:@@nc.blocker.actions-one:1 action est encore ouverte : terminez-la avant de résoudre cet écart.`
+          : $localize`:@@nc.blocker.actions-many:${b.count}:count: actions sont encore ouvertes : terminez-les avant de résoudre cet écart.`;
       case 'CAPA_CASES_UNSETTLED':
         return b.count === 1
           ? $localize`:@@nc.blocker.cases-one:1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.`
@@ -1786,6 +1801,52 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return n.capaCaseId ? [{ id: n.capaCaseId }] : [];
   }
+
+  /**
+   * Les identifiants des dossiers de l'écart, en tableau STABLE.
+   *
+   * <p>Le panneau d'actions relit ses dossiers par le réseau dès que son entrée
+   * change d'IDENTITÉ (`ngOnChanges`), et non de contenu. Un getter qui
+   * recomposerait le tableau à chaque passe de détection le ferait donc requêter
+   * en boucle : on rend le même objet tant que la liste ne bouge pas vraiment.
+   */
+  idsDesDossiers(n: NcResponse): readonly string[] {
+    const ids = this.dossiers(n).map(d => d.id);
+    const change = ids.length !== this.idsDeDossiers.length
+      || ids.some((id, i) => id !== this.idsDeDossiers[i]);
+    if (change) {
+      this.idsDeDossiers = ids;
+    }
+    return this.idsDeDossiers;
+  }
+
+  private idsDeDossiers: string[] = [];
+
+  /**
+   * L'écart à citer quand une discipline ouvre une CAPA de plus.
+   *
+   * <p>Le TYPE suit l'origine de l'écart, comme le serveur la dérivera : un
+   * dossier né d'une réclamation client s'affichait « non-conformité interne »
+   * sur l'écran même qui sert à répondre à ce client.
+   *
+   * <p>Objet mis en cache, pour la raison de {@link #idsDesDossiers} : le
+   * panneau relit ses dossiers dès que son entrée change d'identité, et un
+   * objet neuf à chaque passe de détection le ferait requêter sans fin.
+   */
+  sourceDeLEcart(n: NcResponse): { type: CapaSourceType; reference: string } | undefined {
+    if (!n.reference) {
+      return undefined;
+    }
+    const type: CapaSourceType =
+      n.origin === 'EXTERNAL' ? 'EXTERNAL_NON_CONFORMITY' : 'NON_CONFORMITY';
+    if (this.sourceEnCache?.type !== type || this.sourceEnCache?.reference !== n.reference) {
+      this.sourceEnCache = { type, reference: n.reference };
+    }
+    return this.sourceEnCache;
+  }
+
+  private sourceEnCache?: { type: CapaSourceType; reference: string };
+
 
   /**
    * « 2 dossiers sur cet écart » — écrit SEULEMENT quand il y en a plusieurs.

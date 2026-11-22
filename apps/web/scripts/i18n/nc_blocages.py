@@ -29,19 +29,19 @@ TRANSLATIONS = {
 
     # --- resoudre : des actions restent a mener -----------------------------
     'nc.blocker.actions-one': (
-        "1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.",
-        '1 CAPA case still has actions to carry out. Complete its actions to resolve this non-conformity.',
-        '1 expediente CAPA todavía tiene acciones por realizar. Complete sus acciones para resolver esta no conformidad.',
-        'لا يزال ملف CAPA واحد يحتوي على إجراءات لم تُنفَّذ. أكمل إجراءاته لتتمكن من حل عدم المطابقة هذا.',
-        'CAPA 案件が 1 件、未実施の処置を残しています。その処置を完了すると、この不適合を解決できます。',
-        '仍有 1 份 CAPA 档案存在未完成的措施。完成其措施后方可解决该不合格项。'),
+        "1 action est encore ouverte : terminez-la avant de résoudre cet écart.",
+        '1 action is still open, please close it before resolving the NC.',
+        '1 acción sigue abierta: ciérrela antes de resolver esta no conformidad.',
+        'لا يزال إجراء واحد مفتوحًا: أغلقه قبل حل عدم المطابقة هذا.',
+        '処置が 1 件未完了です。この不適合を解決する前に完了してください。',
+        '仍有 1 项措施未完成：解决该不合格项前请先完成它。'),
     'nc.blocker.actions-many': (
-        "{$count} dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.",
-        '{$count} CAPA cases still have actions to carry out. Complete their actions to resolve this non-conformity.',
-        '{$count} expedientes CAPA todavía tienen acciones por realizar. Complete sus acciones para resolver esta no conformidad.',
-        'لا تزال {$count} من ملفات CAPA تحتوي على إجراءات لم تُنفَّذ. أكمل إجراءاتها لتتمكن من حل عدم المطابقة هذا.',
-        'CAPA 案件が {$count} 件、未実施の処置を残しています。それらの処置を完了すると、この不適合を解決できます。',
-        '仍有 {$count} 份 CAPA 档案存在未完成的措施。完成其措施后方可解决该不合格项。'),
+        "{$count} actions sont encore ouvertes : terminez-les avant de résoudre cet écart.",
+        '{$count} actions are still open, please close them before resolving the NC.',
+        '{$count} acciones siguen abiertas: ciérrelas antes de resolver esta no conformidad.',
+        'لا تزال {$count} من الإجراءات مفتوحة: أغلقها قبل حل عدم المطابقة هذا.',
+        '処置が {$count} 件未完了です。この不適合を解決する前に完了してください。',
+        '仍有 {$count} 项措施未完成：解决该不合格项前请先完成它们。'),
 
     # --- clore : le verdict d'efficacite n'est pas rendu --------------------
     'nc.blocker.cases-one': (

@@ -830,6 +830,23 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(component.canAddActions(buildNc({ status: 'CANCELLED', capaCaseId: undefined }))).toBeFalse();
   });
 
+  /**
+   * Ouvrir une CAPA de plus est un autre geste que lire celles qui existent :
+   * un ecart termine n'attend plus d'action, et en decider une la laisserait
+   * bloquer une cloture deja prononcee. L'ecran 8D tient le meme critere.
+   */
+  it('refuse une CAPA de plus sur un ecart termine, dossier ou pas', () => {
+    setup();
+
+    expect(component.accepteUneCapaDePlus(buildNc({ status: 'OPEN' }))).toBeTrue();
+    expect(component.accepteUneCapaDePlus(buildNc({ status: 'UNDER_ANALYSIS' }))).toBeTrue();
+    expect(component.accepteUneCapaDePlus(buildNc({ status: 'ACTION_DEFINED' }))).toBeTrue();
+    // Le dossier existant ne rouvre pas le droit d'en ouvrir un nouveau.
+    expect(component.accepteUneCapaDePlus(buildNc({ status: 'CLOSED', capaCaseId: 'capa-7' }))).toBeFalse();
+    expect(component.accepteUneCapaDePlus(buildNc({ status: 'CANCELLED' }))).toBeFalse();
+    expect(component.accepteUneCapaDePlus(buildNc({ status: 'REJECTED' }))).toBeFalse();
+  });
+
   it('propose la criticité selon la gravité de l\'écart', () => {
     expect(NcDetailComponent.criticityOf('MINOR')).toBe('LOW');
     expect(NcDetailComponent.criticityOf('MAJOR')).toBe('HIGH');
@@ -925,7 +942,12 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="capa-action-dossier"]')).not.toBeNull();
+    // Le chemin du dossier porte desormais SON identifiant comme repere
+    // (`capa-dossier-<id>`) : depuis qu'une discipline n'a qu'un tableau pour
+    // tous les dossiers, le lien ne peut plus etre nomme par la discipline.
+    expect(el.querySelector(
+      '[data-test="capa-dossier-99999999-9999-9999-9999-999999999999"]')).not.toBeNull();
+    // L'identifiant reste un repere de banc : il ne se LIT nulle part.
     expect(el.textContent).not.toContain('99999999-9999');
   });
 
@@ -934,7 +956,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     fixture.detectChanges();
     const panneau = fixture.debugElement
       .query(By.directive(CapaActionPanelStubComponent)).componentInstance as CapaActionPanelStubComponent;
-    expect(panneau.capaCaseId).toBe('99999999-9999-9999-9999-999999999999');
+    expect(panneau.capaCaseIds).toEqual(['99999999-9999-9999-9999-999999999999']);
   });
 
   // Faire avancer l'action depuis la fiche change son statut ET celui de l'écart

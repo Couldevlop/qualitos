@@ -120,6 +120,19 @@ describe('FiveWhysService', () => {
     req.flush({} as FiveWhysAnalysis);
   });
 
+  /**
+   * Le retrait de la conclusion a SA route, et n'est pas un texte vide envoye a
+   * la precedente : le serveur exige un texte, et accepter le vide ferait
+   * effacer la conclusion par une requete mal remplie.
+   */
+  it('retire la cause racine par une route a elle, qui renvoie l’analyse', () => {
+    service.clearRootCause('a-1').subscribe();
+
+    const req = http.expectOne(`${BASE}/a-1/root-cause`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush({} as FiveWhysAnalysis);
+  });
+
   it('ne transmet jamais de tenant : il vient du jeton (§18.2 #2)', () => {
     service.list().subscribe();
     const list = http.expectOne(r => r.url === BASE);

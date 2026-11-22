@@ -217,6 +217,29 @@ public class CapaService {
     }
 
     /**
+     * COMBIEN d'actions retiennent encore cet ecart, tous dossiers confondus.
+     *
+     * <p>Un DECOMPTE, et aucun nom : l'invariant porte sur tous les dossiers, y
+     * compris ceux que le lecteur ne voit pas (ADR 0081) -- sinon la resolution
+     * dependrait de qui la demande -- et nommer ici divulguerait un dossier
+     * hors de portee par un message d'erreur.
+     *
+     * <p>Les MEMES regles que {@link #closureBlockers}, lues action par action :
+     * pas {@code DONE}, ou faite sans que son effet soit verifie (ADR 0132). Un
+     * dossier regle ne retient rien, {@link #actionsQuiBloquent} s'en charge.
+     *
+     * <p>Pourquoi des actions et plus des dossiers : « 2 dossiers CAPA ont des
+     * actions a mener » obligeait a les ouvrir un a un pour savoir combien de
+     * gestes restaient, alors que le serveur tient le compte.
+     */
+    @Transactional(readOnly = true)
+    public int unexecutedActionCountFor(UUID escaladeId, String ncReference) {
+        return dossiersDe(escaladeId, ncReference).stream()
+                .mapToInt(c -> actionsQuiBloquent(c).size())
+                .sum();
+    }
+
+    /**
      * Parmi les dossiers qui retiennent la RESOLUTION de l'ecart, les seuls que
      * ce lecteur a le droit de nommer.
      *

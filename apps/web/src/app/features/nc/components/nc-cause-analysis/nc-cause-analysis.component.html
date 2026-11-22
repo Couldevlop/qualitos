@@ -51,7 +51,7 @@
     <p class="cause-empty" *ngIf="!peutConclure(chaine)"
        data-test="cause-racine-verrouillee"
        i18n="@@fivewhys.root-cause-locked">
-      Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.
+      Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.
     </p>
 
     <ng-container *ngIf="peutConclure(chaine)">
@@ -66,6 +66,13 @@
               [disabled]="!conclusionPrete(chaine)" (click)="conclure(chaine)">
         <mat-icon aria-hidden="true">check</mat-icon>
         <span i18n="@@fivewhys.conclude">Conclure</span>
+      </button>
+      <!-- Rouvrir la conclusion, sans toucher a la chaine des pourquoi. -->
+      <button mat-stroked-button type="button" *ngIf="chaine.rootCause"
+              data-test="cause-racine-retirer"
+              [disabled]="envoiEnCours !== null" (click)="retirerConclusion(chaine)">
+        <mat-icon aria-hidden="true">undo</mat-icon>
+        <span i18n="@@fivewhys.root-cause-clear">Retirer la cause racine</span>
       </button>
       <p class="cause-empty" *ngIf="echec === chaine.id" data-test="cause-racine-echec"
          i18n="@@nc.cause.root-cause-failed">

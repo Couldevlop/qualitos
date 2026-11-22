@@ -103,7 +103,7 @@
       <mat-card-content>
         <p class="root-cause__locked" *ngIf="!canConcludeRootCause"
            i18n="@@fivewhys.root-cause-locked">
-          Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.
+          Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.
         </p>
 
         <ng-container *ngIf="canConcludeRootCause">
@@ -116,6 +116,13 @@
                   [disabled]="!rootCauseDraft.trim() || saving" (click)="concludeRootCause()">
             <mat-icon aria-hidden="true">check</mat-icon>
             <span i18n="@@fivewhys.conclude">Conclure</span>
+          </button>
+          <!-- Rouvrir la conclusion, sans toucher a la chaine des pourquoi. -->
+          <button mat-stroked-button type="button" *ngIf="analysis?.rootCause"
+                  data-test="cause-racine-retirer"
+                  [disabled]="saving" (click)="retirerCauseRacine()">
+            <mat-icon aria-hidden="true">undo</mat-icon>
+            <span i18n="@@fivewhys.root-cause-clear">Retirer la cause racine</span>
           </button>
         </ng-container>
       </mat-card-content>

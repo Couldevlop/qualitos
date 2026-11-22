@@ -7330,17 +7330,21 @@ Portal de clientes</target>
         <source>Étape</source>
         <target state="translated">Etapa</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.col-actions" datatype="html">
-        <source>Actions</source>
-        <target state="translated">Acciones</target>
-      </trans-unit>
       <trans-unit id="capa.evaluation.col-verdict" datatype="html">
         <source>Dernier verdict</source>
         <target state="translated">Último veredicto</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.actions-done" datatype="html">
-        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
-        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> hechas</target>
+      <trans-unit id="capa.evaluation.filter-nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">No conformidad</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.filter-nc-all" datatype="html">
+        <source>Tous les écarts</source>
+        <target state="translated">Todas las no conformidades</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none-for-nc" datatype="html">
+        <source>Aucun dossier à évaluer sur cet écart. Choisissez « Tous les écarts » pour retrouver le plan de travail complet.</source>
+        <target state="translated">Ningún expediente que evaluar para esta no conformidad. Elija «Todas las no conformidades» para ver la lista completa.</target>
       </trans-unit>
       <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
         <source>Critère à poser</source>
@@ -13361,8 +13365,12 @@ Datos de contacto profesionales</target>
         <target state="translated">Causa raíz identificada</target>
       </trans-unit>
       <trans-unit id="fivewhys.root-cause-locked" datatype="html">
-        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
-        <target state="translated">Concluir antes de tres porqués es nombrar un síntoma. Continúe la cadena.</target>
+        <source>Conclure avant deux pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">Concluir antes de dos porqués es nombrar un síntoma. Continúe la cadena.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-clear" datatype="html">
+        <source>Retirer la cause racine</source>
+        <target state="translated">Quitar la causa raíz</target>
       </trans-unit>
       <trans-unit id="fivewhys.conclude" datatype="html">
         <source>Conclure</source>
@@ -21678,6 +21686,10 @@ historial de 12 meses</target>
         <source>Détectée le</source>
         <target state="translated">Detectada el</target>
       </trans-unit>
+      <trans-unit id="nc.list.search-no-match" datatype="html">
+        <source>Aucun écart ne correspond à cette recherche.</source>
+        <target state="translated">Ninguna no conformidad coincide con esta búsqueda.</target>
+      </trans-unit>
       <trans-unit id="nc.list.empty" datatype="html">
         <source>Aucune non-conformité pour ce filtre.</source>
         <target state="translated">Ninguna no conformidad para este filtro.</target>
@@ -22467,12 +22479,12 @@ historial de 12 meses</target>
         <target state="translated">Esta no conformidad aún no puede cerrarse</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-one" datatype="html">
-        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">1 expediente CAPA todavía tiene acciones por realizar. Complete sus acciones para resolver esta no conformidad.</target>
+        <source>1 action est encore ouverte : terminez-la avant de résoudre cet écart.</source>
+        <target state="translated">1 acción sigue abierta: ciérrela antes de resolver esta no conformidad.</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-many" datatype="html">
-        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated"><x id="count"/> expedientes CAPA todavía tienen acciones por realizar. Complete sus acciones para resolver esta no conformidad.</target>
+        <source><x id="count"/> actions sont encore ouvertes : terminez-les avant de résoudre cet écart.</source>
+        <target state="translated"><x id="count"/> acciones siguen abiertas: ciérrelas antes de resolver esta no conformidad.</target>
       </trans-unit>
       <trans-unit id="nc.blocker.cases-one" datatype="html">
         <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>

@@ -4,16 +4,19 @@ import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import com.openlab.qualitos.quality.capa.CapaDto;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/nc")
+@Validated
 public class NcController {
 
     private final NcService service;
@@ -33,8 +36,19 @@ public class NcController {
             @RequestParam(required = false) NcOrigin origin,
             /** Les NC d'un produit : l'onglet « NC liées » de sa fiche s'en sert. */
             @RequestParam(required = false) UUID productId,
+            /**
+             * La recherche par référence ou par intitulé, menée EN BASE.
+             *
+             * <p>L'écran filtrait la page déjà reçue : chercher une référence qui
+             * n'était pas sur la page affichée ne rendait rien, et l'écart
+             * existait pourtant. Une recherche qui dépend de la page où l'on se
+             * trouve n'est pas une recherche.
+             * <p>Bornée : au-delà, ce n'est plus une référence ni un intitulé qu'on
+             * cherche, et un motif très long ferait travailler la base pour rien.
+             */
+            @RequestParam(required = false) @Size(max = 100) String q,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, severity, category, subcategoryCode, origin, productId, pageable);
+        return service.findAll(status, severity, category, subcategoryCode, origin, productId, q, pageable);
     }
 
     @PostMapping

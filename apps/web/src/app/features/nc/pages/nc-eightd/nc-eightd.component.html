@@ -202,8 +202,15 @@
                    document emis porte desormais le meme tableau, fige a
                    l'emission (ADR 0124). -->
               <p class="vivant-note" i18n="@@nc.8d.live-note-table">État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</p>
-              <qos-capa-action-panel *ngFor="let dossier of (capaCaseIds$ | async)"
-                                     [capaCaseId]="dossier.id" [natures]="naturesDe(discipline.code)"
+              <!-- UN SEUL TABLEAU par discipline : un panneau par dossier en
+                   donnait autant, empiles, et l'action ecrite depuis la section
+                   CAPA -- qui ouvre un nouveau dossier, une CAPA naissant avec
+                   son action -- paraissait dans un second tableau au lieu de
+                   rejoindre ses pareilles. -->
+              <qos-capa-action-panel [capaCaseIds]="(idsDesDossiers$ | async) ?? []"
+                                     [source]="source"
+                                     [ajoutAutorise]="ajoutAutorise"
+                                     [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>
             <!-- SANS dossier, la discipline restait muette sous son texte

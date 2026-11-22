@@ -142,6 +142,31 @@ export class FiveWhysDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Retire la cause racine, pour reprendre la remontée des pourquoi.
+   *
+   * <p>Conclue trop tôt, l'analyse n'avait aucun moyen de se déconclure : il
+   * fallait la supprimer et la ressaisir, ce qui emportait la chaîne déjà
+   * écrite. Les pourquoi, eux, restent : c'est la conclusion qu'on rouvre, pas
+   * l'analyse qu'on refait.
+   */
+  retirerCauseRacine(): void {
+    if (!this.analysis || !this.analysis.rootCause || this.saving) {
+      return;
+    }
+    this.saving = true;
+    this.service.clearRootCause(this.analysis.id).subscribe({
+      next: updated => {
+        this.analysis = updated;
+        this.rootCauseDraft = updated.rootCause ?? '';
+        this.saving = false;
+      },
+      error: () => {
+        this.saving = false;
+      }
+    });
+  }
+
   concludeRootCause(): void {
     const rootCause = this.rootCauseDraft.trim();
     if (!rootCause || !this.analysis || !this.canConcludeRootCause) {

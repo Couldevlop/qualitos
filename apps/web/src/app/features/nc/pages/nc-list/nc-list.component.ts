@@ -4,7 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError, debounceTime, distinctUntilChanged, finalize, map, shareReplay, startWith, switchMap, tap
+} from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -21,7 +23,6 @@ import {
   NcSubcategoryGroup
 } from '../../nc.types';
 import { NcCreateDialogComponent } from '../nc-create-dialog/nc-create-dialog.component';
-import { searchRows } from '../../../../shared/ui/list-search/list-filter';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -41,6 +42,14 @@ export interface NcTile {
   /** Statut filtré au clic ; `''` remet la liste à plat (tuile « Total »). */
   status: NcStatus | '';
 }
+/**
+ * Le temps de frappe avant qu'une recherche parte au serveur.
+ *
+ * <p>Sans ce délai, chaque lettre tapée serait une requête : saisir une
+ * référence en amènerait une dizaine, dont une seule compte.
+ */
+const RECHERCHE_DELAI_MS = 300;
+
 @Component({
   selector: 'qos-nc-list',
   templateUrl: './nc-list.component.html',
@@ -225,16 +234,26 @@ export class NcListComponent implements OnInit {
       this.severityFilter.valueChanges.pipe(startWith(this.severityFilter.value)),
       this.categoryFilter.valueChanges.pipe(startWith(this.categoryFilter.value)),
       this.subcategoryFilter.valueChanges.pipe(startWith(this.subcategoryFilter.value)),
+      // La recherche compte comme un filtre, et part donc au serveur.
+      // `debounceTime` : sans lui, chaque frappe serait une requête.
+      // `distinctUntilChanged` : revenir au même texte ne redemande rien.
+      this.search.valueChanges.pipe(
+        debounceTime(RECHERCHE_DELAI_MS),
+        map(v => (v ?? '').trim()),
+        distinctUntilChanged(),
+        startWith((this.search.value ?? '').trim()),
+        tap(() => { this.pageIndex = 0; })),
       this.page$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
-      switchMap(([status, severity, category, subcategoryCode, p]) =>
-        this.svc.listNcs(p.index, p.size, {
+      switchMap(([status, severity, category, subcategoryCode, recherche, p]) =>
+        this.svc.listNcs(recherche ? 0 : p.index, p.size, {
           status: status || undefined,
           severity: severity || undefined,
           category: category || undefined,
           subcategoryCode: subcategoryCode || undefined,
-          origin: this.origin ?? undefined
+          origin: this.origin ?? undefined,
+          q: recherche || undefined
         }).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
@@ -254,7 +273,9 @@ export class NcListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
-    this.visibleNcs$ = searchRows(this.ncs$, this.search, n => [n.reference, n.title, n.zone, n.reporterName]);
+    // La liste reçue est déjà celle qu'on cherche : plus de second tamis en
+    // Java­Script par-dessus, qui ne voyait que la page affichée.
+    this.visibleNcs$ = this.ncs$;
   }
 
   onPage(e: PageEvent): void {

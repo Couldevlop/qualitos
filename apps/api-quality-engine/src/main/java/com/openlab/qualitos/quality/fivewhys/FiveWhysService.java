@@ -33,8 +33,20 @@ public class FiveWhysService {
     /** Borne haute de la chaîne. Cinq est un ordre de grandeur, sept une limite. */
     static final int MAX_WHYS = 7;
 
-    /** En deçà, la « cause racine » est encore un symptôme. */
-    static final int MIN_WHYS_BEFORE_ROOT_CAUSE = 3;
+    /**
+     * En deçà, la « cause racine » est encore un symptôme.
+     *
+     * <p>DEUX, et non trois : le seuil n'a pas à forcer un maillon que l'analyse
+     * n'a pas. Une chaine qui remonte en deux pas à une cause qu'on sait traiter
+     * est une analyse finie ; exiger un troisième pourquoi la faisait paraphraser
+     * le deuxième pour débloquer le bouton. Le garde-fou reste : conclure dès le
+     * premier pourquoi, c'est nommer le symptôme qu'on vient d'énoncer.
+     *
+     * <p>La chaine n'est pas figée par la conclusion : on peut toujours ajouter
+     * un pourquoi après avoir conclu, et {@link #clearRootCause} retire la
+     * conclusion pour reprendre la remontée.
+     */
+    static final int MIN_WHYS_BEFORE_ROOT_CAUSE = 2;
 
     private final FiveWhysAnalysisRepository analysisRepository;
     private final FiveWhysStepRepository stepRepository;
@@ -179,6 +191,27 @@ public class FiveWhysService {
                             + " pourquoi, c'est nommer un symptôme");
         }
         analysis.setRootCause(requireText(request.rootCause(), "La cause racine est obligatoire"));
+        return toResponse(analysisRepository.save(analysis),
+                stepRepository.findByAnalysisIdAndTenantIdOrderByPositionAsc(id, tenantId));
+    }
+
+    /**
+     * Retire la cause racine, pour reprendre la remontée.
+     *
+     * <p>Une analyse conclue trop tôt n'avait aucun moyen de se déconclure :
+     * {@link #setRootCause} exige un texte, et aucune route ne vidait le champ.
+     * La seule issue était de supprimer l'analyse et de la ressaisir, ce qui
+     * emportait la chaine des pourquoi déjà écrite.
+     *
+     * <p>Une route à part, et non un texte vide accepté par
+     * {@link #setRootCause} : une requête mal remplie effacerait alors la
+     * conclusion sans que personne l'ait demandé.
+     */
+    @Transactional
+    public FiveWhysDto.AnalysisResponse clearRootCause(UUID id) {
+        UUID tenantId = requireTenantId();
+        FiveWhysAnalysis analysis = requireAnalysis(id, tenantId);
+        analysis.setRootCause(null);
         return toResponse(analysisRepository.save(analysis),
                 stepRepository.findByAnalysisIdAndTenantIdOrderByPositionAsc(id, tenantId));
     }

@@ -13,7 +13,7 @@
     </button>
   </div>
 
-  <ng-container *ngIf="capa as c">
+  <ng-container *ngIf="pret">
     <!-- Un dossier sans action ne pourra pas etre cloture : on le dit, et on
          offre d'en ajouter une. -->
     <div class="action-panel__vide" *ngIf="actions.length === 0" data-test="capa-action-vide">
@@ -24,7 +24,7 @@
       <p *ngIf="natures.length > 0" data-test="capa-action-vide-nature"
          i18n="@@capa.actions.none-of-nature">Aucune action de cette nature n'a encore été écrite pour cet écart.</p>
       <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
-              (click)="addAction()" [disabled]="isTerminal(c.status)"
+              (click)="addAction()" [disabled]="ajoutFerme"
               data-test="capa-action-definir">
         <mat-icon aria-hidden="true">add</mat-icon>
         <span>{{ libelleAjout }}</span>
@@ -104,7 +104,7 @@
                 </span>
               </ng-template>
               <button mat-icon-button color="warn" type="button" class="actions__piece-retrait"
-                      *ngIf="!isTerminal(c.status)"
+                      *ngIf="!verrouillee(a)"
                       [disabled]="preuveEnCours === a.id"
                       (click)="retirerPreuve(a, piece)"
                       i18n-matTooltip="@@capa.action-evidence.remove-tooltip"
@@ -115,7 +115,7 @@
             </ng-container>
             <ng-template #sansPreuve>
               <button mat-stroked-button type="button" class="actions__joindre"
-                      *ngIf="peutJoindre(a.id, c.status); else pasDePreuve"
+                      *ngIf="peutJoindre(a); else pasDePreuve"
                       (click)="choisirFichier(selecteurPreuve, a.id)"
                       [attr.aria-label]="joindreAria(a.title)">
                 <mat-icon aria-hidden="true">attach_file</mat-icon>
@@ -141,7 +141,7 @@
                  pensait, et le dossier attendrait indefiniment (ADR 0132). -->
             <ng-container *qosCan="'capa.verify'">
               <button mat-stroked-button color="primary" type="button"
-                      *ngIf="attendVerification(a) && !isTerminal(c.status)"
+                      *ngIf="attendVerification(a) && !verrouillee(a)"
                       [disabled]="(acting$ | async) ?? false"
                       (click)="verifier(a); $event.stopPropagation()"
                       data-test="capa-action-verifier">
@@ -168,12 +168,12 @@
 
     <div class="action-panel__pied" *ngIf="actions.length">
       <button mat-stroked-button color="primary" type="button" *qosCan="'capa.action.manage'"
-              (click)="addAction()" [disabled]="isTerminal(c.status)"
+              (click)="addAction()" [disabled]="ajoutFerme"
               data-test="capa-action-ajouter">
         <mat-icon aria-hidden="true">add</mat-icon>
         <span>{{ libelleAjout }}</span>
       </button>
-      <p class="action-panel__aide" *ngIf="!isTerminal(c.status)" i18n="@@capa.actions.row-hint">
+      <p class="action-panel__aide" *ngIf="!ajoutFerme" i18n="@@capa.actions.row-hint">
         Cliquez une ligne pour corriger l'action, son responsable ou son échéance.
       </p>
     </div>

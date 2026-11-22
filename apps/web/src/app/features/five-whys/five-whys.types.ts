@@ -6,8 +6,14 @@
  * d'écart comme du D4 du rapport 8D. Deux copies auraient divergé au premier
  * ajustement, et l'une des deux aurait fait découvrir la règle par un refus du
  * serveur, qui applique la même ({@code MIN_WHYS_BEFORE_ROOT_CAUSE}).
+ *
+ * <p>DEUX, et non trois : le seuil n'a pas à forcer un maillon que l'analyse
+ * n'a pas. Une chaîne qui remonte en deux pas à une cause qu'on sait traiter est
+ * une analyse finie ; exiger un troisième pourquoi la faisait paraphraser le
+ * deuxième pour débloquer le bouton. Le garde-fou reste : conclure dès le premier
+ * pourquoi, c'est nommer le symptôme qu'on vient d'énoncer.
  */
-export const MIN_WHYS_BEFORE_ROOT_CAUSE = 3;
+export const MIN_WHYS_BEFORE_ROOT_CAUSE = 2;
 
 /**
  * Analyse des 5 Pourquoi rattachée à une non-conformité (§3.5).

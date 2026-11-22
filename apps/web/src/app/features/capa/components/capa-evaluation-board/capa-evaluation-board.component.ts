@@ -36,7 +36,53 @@ import {
 })
 export class CapaEvaluationBoardComponent implements OnInit {
 
-  readonly columns = ['reference', 'stage', 'actions', 'verdict'];
+  // La colonne « Actions » -- « 3/5 faites » -- n'est plus : elle disait
+  // l'avancement, que l'étape dit déjà à côté d'elle, et cet écran JUGE l'effet
+  // des actions au lieu de suivre leur exécution.
+  readonly columns = ['reference', 'stage', 'verdict'];
+
+  /** L'écart sur lequel le plan de travail est restreint ; vide = tous. */
+  filtreNc = '';
+
+  /**
+   * Les références d'écart présentes dans le plan de travail, triées.
+   *
+   * <p>Un champ et non un getter : le sélecteur et le tableau les relisent à
+   * chaque passe de détection, et recomposer la liste à chaque fois ferait
+   * reconstruire les options sans fin.
+   */
+  referencesDisponibles: string[] = [];
+
+  /** Les lignes montrées : le plan de travail, restreint par {@link #filtreNc}. */
+  lignes: EvaluationRow[] = [];
+
+  /**
+   * Restreint le plan de travail à un écart, ou le rouvre en entier.
+   *
+   * <p>Côté navigateur : les lignes sont déjà là, et un aller-retour au serveur
+   * pour masquer des lignes chargées coûterait une requête sans rien apprendre.
+   * La limite de lecture du serveur s'applique donc AVANT le filtre, et le
+   * bandeau qui l'annonce reste exact.
+   */
+  filtrerParNc(reference: string): void {
+    this.filtreNc = reference ?? '';
+    this.recomposer();
+  }
+
+  /** Refait la liste des écarts offerts et les lignes visibles. */
+  private recomposer(): void {
+    const rows = this.board?.rows ?? [];
+    this.referencesDisponibles = Array.from(
+      new Set(rows.map(r => r.reference).filter((r): r is string => !!r))).sort();
+    // Un filtre qui désigne un écart disparu du plan de travail ne doit pas
+    // laisser l'écran vide sans recours : il se lève de lui-même.
+    if (this.filtreNc && !this.referencesDisponibles.includes(this.filtreNc)) {
+      this.filtreNc = '';
+    }
+    this.lignes = this.filtreNc
+      ? rows.filter(r => r.reference === this.filtreNc)
+      : rows;
+  }
 
   /** L'ordre des trois choix va du meilleur au pire, comme on les lit. */
   readonly verdicts: EffectivenessVerdict[] = ['EFFECTIVE', 'PARTIAL', 'INEFFECTIVE'];
@@ -96,6 +142,7 @@ export class CapaEvaluationBoardComponent implements OnInit {
     this.service.evaluationBoard().subscribe({
       next: board => {
         this.board = board;
+        this.recomposer();
         this.loading = false;
         this.resync();
         this.openFocus();
