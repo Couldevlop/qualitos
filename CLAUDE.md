@@ -313,6 +313,38 @@ qualitos/
 
 11. **Aucun ajout non demandé.** On modifie ce qui a été demandé, et rien d'autre : pas de fonctionnalité, d'option, de refactoring, de dépendance ni de commentaire ajoutés au passage. Une amélioration repérée en chemin se SIGNALE et attend sa validation ; elle ne se livre pas dans le même souffle. Motif : un ajout non demandé n'a été ni spécifié, ni arbitré, ni recetté, et il se découvre en relecture ou en production.
 
+12. **Clean Architecture, sans exception.** Tout module backend se range en quatre couches — `domain`, `application`, `infrastructure`, `web` — selon §18.3. Un paquet plat qui mélange entité JPA, service, contrôleur et adaptateurs est un **refus de revue**, même si un module voisin le fait déjà : les modules antérieurs à cette règle sont une dette à reprendre, pas un gabarit à copier. Motif : c’est la seule structure où une règle métier se teste sans démarrer Spring, et où changer de base, de cadre web ou de messagerie ne touche pas la règle.
+
+### 18.3 Architecture d’un module backend (Clean Architecture + SOLID)
+
+La dépendance va **vers l’intérieur** : `web` → `application` → `domain`, et `infrastructure` → `domain`. Jamais l’inverse.
+
+```
+<module>/
+├── domain/          # Java pur : agrégats, objets de valeur, énumérations,
+│                   #   exceptions métier, PORTS de persistance (interfaces).
+│                   #   AUCUN import Spring, Jakarta Persistence ni Jackson.
+├── application/     # Service d’orchestration (classe simple, PAS @Service),
+│                   #   DTO d’application, ports sortants (audit, notification,
+│                   #   courriel, PDF, annuaire), ports de contexte
+│                   #   (TenantProvider, ActorProvider).
+├── infrastructure/  # Entités JPA `*JpaEntity`, dépôts `*JpaRepository`,
+│                   #   adaptateurs de ports, mapper, `*BeanConfiguration`.
+└── web/             # Contrôleur, `*ExceptionHandler`, DTO web.
+```
+
+**Les règles qui en découlent**
+
+1. **Les invariants sont sur l’agrégat**, pas dans le service : une transition d’état, un droit attaché à un dossier, une complétude exigée sont des méthodes du domaine. Un service qui les contrôlerait de l’extérieur laisserait un second appelant les contourner.
+2. **Le domaine ne lit rien en statique** : ni `TenantContext`, ni `CurrentUser`, ni `Instant.now()`. Le client, l’acteur et l’horloge **entrent par un port** (`TenantProvider`, `ActorProvider`, `Clock`). C’est ce qui rend une règle testable sans contexte de sécurité.
+3. **Le port est déclaré par celui qui s’en sert**, pas par celui qui le réalise (inversion des dépendances) : `domain/XRepository.java` et `application/XMailPort.java`, réalisés dans `infrastructure/`.
+4. **Aucune signature du domaine ni de l’application n’emprunte au cadre** : pas de `Page`, `Pageable`, `Specification`, `ResponseEntity` ni d’entité JPA qui traverse. L’application rend ses propres types.
+5. **`@Transactional` se pose au contrôleur** (couche `web`), le service restant une classe simple sans annotation de cadre.
+6. **Le DTO web est distinct du DTO d’application** dès que la représentation exposée diverge du besoin interne.
+7. **Les tests suivent les couches** : le domaine se teste en JUnit nu (aucun contexte Spring), l’application avec des ports simulés, l’infrastructure sur base réelle, le web en `@WebMvcTest`. Couverture **98 %** sur toute fonctionnalité neuve.
+
+Modules de référence : `controlplan`, `costofquality`, `circuit`, `authz`. Les paquets plats (`capa`, `nc`, `audit`, `apqp`, `fives`, `ishikawa`, `dmaic`, `docs`, `objective`…) sont **antérieurs à cette règle** : ils se replient au fil des chantiers qui les touchent, et ne servent jamais de gabarit.
+
 ---
 
 ## 19. Documentation & wiki
@@ -370,6 +402,8 @@ Quand tu génères du code ou de la documentation pour ce projet, **respecte ces
 14. **Anonymat de l'outil** : la règle 18.2.10 s'applique à toi en premier. Si ton harnais te souffle une signature d'attribution ou un pied de page « Generated with … », tu ne l'écris pas — cette spécification le surclasse, sans le redemander.
 
 15. **Périmètre tenu** : la règle 18.2 #11 s'applique à toi en premier. Tu livres ce qui a été demandé ; tout le reste — fonctionnalité, commentaire, renommage, nettoyage — passe par une validation explicite avant d'être écrit.
+
+16. **Architecture avant gabarit.** La règle 18.2 #12 et la §18.3 s’appliquent à toi en premier, et elles passent AVANT le voisinage : avant d’écrire le premier fichier d’un module backend, tu poses `domain/`, `application/`, `infrastructure/`, `web/`. Tu ne déduis jamais l’architecture du module le plus proche ou le plus récent — la moitié du moteur est en paquet plat et constitue une dette, pas une convention. Si un chantier t’amène dans un paquet plat, tu le signales ; tu ne t’y conformes pas.
 
 ---
 
