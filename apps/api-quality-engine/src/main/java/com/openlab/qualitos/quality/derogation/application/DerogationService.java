@@ -235,8 +235,17 @@ public class DerogationService {
         return DerogationDto.View.of(enregistre);
     }
 
-    public DerogationDto.View reopen(UUID id) {
-        Derogation d = charger(id);
+    /**
+     * « Rouvrir (annule la signature) ».
+     *
+     * <p>Aucune garde d'acteur : le bouton est visible de tous dans la maquette
+     * et aucun droit ne lui est attribué. La garde de <b>visibilité</b>, elle,
+     * s'applique — on ne rouvre pas un dossier qu'on ne peut même pas lire, et
+     * sans elle un identifiant deviné suffirait à effacer la signature d'un
+     * dossier d'une autre équipe.
+     */
+    public DerogationDto.View reopen(UUID id, boolean voitTout) {
+        Derogation d = exigerVisible(charger(id), id, voitTout);
         d.reopen(clock.instant());
         Derogation enregistre = repository.save(d);
         audit.record(enregistre, DerogationAuditPort.Action.REOPENED);

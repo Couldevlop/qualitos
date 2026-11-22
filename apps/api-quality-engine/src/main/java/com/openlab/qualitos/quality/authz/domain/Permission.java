@@ -75,8 +75,17 @@ public enum Permission {
     DEROGATION_APPROVE("derogation.approve", "derogation", tous()),
     /** Rouvrir un dossier signé, ce qui annule la signature. */
     DEROGATION_REOPEN("derogation.reopen", "derogation", plus(pilotage(), USER)),
-    /** Envoyer la demande au client : le seul geste qui sort de l’organisation. */
-    DEROGATION_SEND("derogation.send", "derogation", plus(pilotage(), USER)),
+    /**
+     * Envoyer la demande au client : le seul geste qui sort de l’organisation.
+     *
+     * <p>Au <b>pilotage seul</b>, et non à tout utilisateur. Ce geste fait partir
+     * un courriel depuis l’adresse de l’organisation, pièce jointe comprise :
+     * c’est de la correspondance client, que les pièces attribuent au
+     * « Responsable qualité fournisseur ». {@code api-core} pose la même garde au
+     * point d’envoi — les deux côtés doivent dire la même chose, sinon le plus
+     * permissif ne sert qu’à produire des refus incompréhensibles.
+     */
+    DEROGATION_SEND("derogation.send", "derogation", pilotage()),
     /** Porter la décision du client au dossier. */
     DEROGATION_DECIDE("derogation.decide", "derogation", plus(pilotage(), USER)),
 

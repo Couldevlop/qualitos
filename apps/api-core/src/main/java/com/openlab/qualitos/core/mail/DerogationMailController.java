@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
@@ -105,8 +106,28 @@ public class DerogationMailController {
             @NotBlank @Size(max = 12_000_000) String attachmentBase64
     ) {}
 
+    /**
+     * Les rôles qui ont le droit d'écrire à un client au nom de l'organisation.
+     *
+     * <p><b>Le contrôle est ici, au point d'envoi, et non dans l'omission du
+     * chemin dans l'ingress.</b> Un appel interne reste joignable depuis la
+     * grappe, et surtout : le jeton propagé est celui d'un <i>utilisateur</i>.
+     * Avec {@code isAuthenticated()}, n'importe quel membre du client pouvait
+     * faire partir un courriel depuis l'adresse de son organisation, avec le
+     * sujet, le corps et la pièce jointe de son choix — un hameçonnage depuis un
+     * domaine de confiance, et {@code api-core} n'a aucun moyen de vérifier qu'un
+     * dossier de dérogation signé existe derrière, puisque ce dossier vit dans
+     * une autre base.
+     *
+     * <p>Les rôles retenus sont ceux qui pilotent la qualité, et c'est ce que les
+     * pièces décrivent : la demande part du « Responsable qualité fournisseur ».
+     */
+    private static final String ROLES_CORRESPONDANCE_CLIENT =
+            "hasAnyRole('ADMIN','ADMIN_TENANT','QUALITY_DIRECTOR','DIRECTOR_QUALITY',"
+                    + "'QUALITY_MANAGER','SUPER_ADMIN')";
+
     @PostMapping("/derogation")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize(ROLES_CORRESPONDANCE_CLIENT)
     @Operation(summary = "Sends a concession request to a customer from the tenant's mailbox")
     public ResponseEntity<Void> send(@Valid @RequestBody SendRequest requete) {
         UUID tenantId = clientDuJeton();
@@ -226,11 +247,12 @@ public class DerogationMailController {
             throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE,
                     "La pièce jointe dépasse " + (PIECE_MAX_OCTETS / 1024 / 1024) + " Mo.");
         }
-        for (int i = 0; i < PDF_MAGIC.length; i++) {
-            if (octets[i] != PDF_MAGIC[i]) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "La pièce jointe doit être un PDF.");
-            }
+        // La LONGUEUR se verifie avant les octets : trois octets suffisaient a
+        // sortir du tableau dans la boucle de comparaison.
+        if (octets.length < PDF_MAGIC.length
+                || !Arrays.equals(Arrays.copyOf(octets, PDF_MAGIC.length), PDF_MAGIC)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La pièce jointe doit être un PDF.");
         }
         return octets;
     }

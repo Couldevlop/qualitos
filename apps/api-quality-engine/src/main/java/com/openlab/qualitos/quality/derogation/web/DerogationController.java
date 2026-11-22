@@ -179,7 +179,7 @@ public class DerogationController {
     @RequiresPermission(Permission.DEROGATION_REOPEN)
     @Operation(summary = "Reopens a signed dossier, which clears the signature")
     public DerogationDto.View reopen(@PathVariable UUID id) {
-        return service.reopen(id);
+        return service.reopen(id, voitTout());
     }
 
     /** « Validation client » : le seul geste qui sort de l'organisation. */
