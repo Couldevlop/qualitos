@@ -11631,8 +11631,8 @@ Portal de clientes</target>
         <target state="translated">Respuesta del cliente</target>
       </trans-unit>
       <trans-unit id="derogation.customer.hint" datatype="html">
-        <source>Envoyé le <x id="sentAt"/> à <x id="email"/>.</source>
-        <target state="translated">Enviado el <x id="sentAt"/> a <x id="email"/>.</target>
+        <source>Envoyé le <x id="SENTAT"/> à <x id="EMAIL"/>.</source>
+        <target state="translated">Enviado el <x id="SENTAT"/> a <x id="EMAIL"/>.</target>
       </trans-unit>
       <trans-unit id="derogation.customer.decision" datatype="html">
         <source>Décision</source>
@@ -11701,6 +11701,10 @@ Portal de clientes</target>
       <trans-unit id="derogation.send.warning" datatype="html">
         <source>Le dossier part au client avec son document signé en pièce jointe. Une fois envoyé, il ne peut plus être rouvert ni modifié.</source>
         <target state="translated">El expediente se envía al cliente con su documento firmado adjunto. Una vez enviado, ya no puede reabrirse ni modificarse.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.which" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">Expediente</target>
       </trans-unit>
       <trans-unit id="derogation.send.email" datatype="html">
         <source>Adresse du client</source>

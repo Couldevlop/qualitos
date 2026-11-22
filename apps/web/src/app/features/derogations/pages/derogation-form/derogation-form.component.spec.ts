@@ -337,7 +337,8 @@ describe('DerogationFormComponent', () => {
     expect(service.recordCustomerDecision).not.toHaveBeenCalled();
 
     service.recordCustomerDecision.and.returnValue(of(dossier('ACCEPTED')));
-    composant.reponseClient.setValue({ decision: 'ACCEPTED', decidedOn: '2026-11-25' });
+    composant.reponseClient.setValue(
+      { decision: 'ACCEPTED', decidedOn: new Date(2026, 10, 25) });
     composant.enregistrerLaReponseDuClient();
 
     // La date est celle où LE CLIENT a répondu, pas celle de la saisie : c'est
@@ -485,6 +486,80 @@ describe('DerogationFormComponent', () => {
     // Garder l'adresse fuirait une référence par consultation.
     expect(liberer).toHaveBeenCalledWith('blob:faux');
     jasmine.clock().uninstall();
+  });
+
+  // ---------- le format du fil ----------
+
+  it('LE CALENDRIER ECRIT UN Date, et le serveur recoit aaaa-mm-jj',
+    async () => {
+      await monter('nouvelle');
+      service.create.and.returnValue(of(dossier('DRAFT')));
+
+      // C'est bien un objet que `mat-datepicker` depose dans le controle.
+      // Envoye tel quel, il partait en instant ISO UTC : le serveur attend une
+      // date civile et aurait rendu 400, ou recule d'un jour a l'est de
+      // Greenwich -- une demande du 25 datee du 24 sur le document du client.
+      composant.formulaire.patchValue({ requestDate: new Date(2026, 10, 25) });
+      composant.enregistrer();
+
+      expect(service.create.calls.mostRecent().args[0].requestDate)
+        .toBe('2026-11-25');
+    });
+
+  it('une date de 23 h ne recule PAS d un jour', async () => {
+    await monter('nouvelle');
+    service.create.and.returnValue(of(dossier('DRAFT')));
+
+    // 23 h 30 locale le 25 : `toISOString()` donnerait le 26 a l'ouest de
+    // Greenwich. Les composantes locales, elles, ne bougent pas.
+    composant.formulaire.patchValue({
+      requestDate: new Date(2026, 10, 25, 23, 30)
+    });
+    composant.enregistrer();
+
+    expect(service.create.calls.mostRecent().args[0].requestDate)
+      .toBe('2026-11-25');
+  });
+
+  it('la fiche chargee remplit le calendrier avec un vrai Date local',
+    async () => {
+      await monter('d-1', dossier('DRAFT', { requestDate: '2026-11-20' }));
+
+      const valeur = composant.formulaire.controls.requestDate.value;
+      // Passer la chaine a `new Date(...)` la lirait en UTC, et le calendrier
+      // pourrait afficher le 19.
+      expect(valeur instanceof Date).toBeTrue();
+      expect((valeur as Date).getFullYear()).toBe(2026);
+      expect((valeur as Date).getMonth()).toBe(10);
+      expect((valeur as Date).getDate()).toBe(20);
+    });
+
+  it('la reponse du client part aussi en date civile', async () => {
+    await monter('d-1', dossier('PENDING_CUSTOMER'));
+    service.recordCustomerDecision.and.returnValue(of(dossier('ACCEPTED')));
+
+    composant.reponseClient.setValue(
+      { decision: 'REFUSED', decidedOn: new Date(2026, 11, 3) });
+    composant.enregistrerLaReponseDuClient();
+
+    expect(service.recordCustomerDecision).toHaveBeenCalledWith('d-1', {
+      decision: 'REFUSED', decidedOn: '2026-12-03'
+    });
+  });
+
+  it('rouvrir demande confirmation, et ne part que sur un oui', async () => {
+    await monter('d-1', dossier('QUALITY_APPROVED'));
+    service.reopen.and.returnValue(of(dossier('DRAFT')));
+
+    fenetreRendant(false);
+    composant.rouvrir();
+    // Annuler la signature d'un manager n'est pas une modification de plus.
+    expect(service.reopen).not.toHaveBeenCalled();
+
+    fenetreRendant(true);
+    composant.rouvrir();
+    expect(service.reopen).toHaveBeenCalledWith('d-1');
+    expect(composant.dossier?.status).toBe('DRAFT');
   });
 
   it('la signature acquise s\'affiche avec son tracé et son auteur', async () => {

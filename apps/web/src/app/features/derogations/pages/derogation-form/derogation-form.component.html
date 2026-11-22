@@ -343,7 +343,7 @@
       <div class="reponse" *ngIf="peutRepondrePourLeClient" [formGroup]="reponseClient">
         <p class="reponse__titre" i18n="@@derogation.customer.title">Réponse du client</p>
         <p class="reponse__aide" i18n="@@derogation.customer.hint">
-          Envoyé le {{ d.sentAt | date: 'dd/MM/yyyy' }} à {{ d.customerEmail }}.
+          Envoyé le {{ d.sentAt | date: 'dd/MM/yyyy' // i18n(ph="sentAt") }} à {{ d.customerEmail // i18n(ph="email") }}.
         </p>
         <div class="reponse__champs">
           <mat-form-field appearance="outline">

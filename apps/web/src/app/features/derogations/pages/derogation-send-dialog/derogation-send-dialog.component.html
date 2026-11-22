@@ -11,6 +11,11 @@
     </span>
   </p>
 
+  <p class="dossier">
+    <span i18n="@@derogation.send.which">Dossier</span>
+    <strong>{{ data.reference }}</strong>
+  </p>
+
   <form [formGroup]="formulaire" (ngSubmit)="envoyer()">
     <mat-form-field appearance="outline" class="plein">
       <mat-label i18n="@@derogation.send.email">Adresse du client</mat-label>

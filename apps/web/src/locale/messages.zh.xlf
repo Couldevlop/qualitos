@@ -11631,8 +11631,8 @@ Portail clients</source>
         <target state="translated">客户答复</target>
       </trans-unit>
       <trans-unit id="derogation.customer.hint" datatype="html">
-        <source>Envoyé le <x id="sentAt"/> à <x id="email"/>.</source>
-        <target state="translated">已于 <x id="sentAt"/> 发送至 <x id="email"/>。</target>
+        <source>Envoyé le <x id="SENTAT"/> à <x id="EMAIL"/>.</source>
+        <target state="translated">已于 <x id="SENTAT"/> 发送至 <x id="EMAIL"/>。</target>
       </trans-unit>
       <trans-unit id="derogation.customer.decision" datatype="html">
         <source>Décision</source>
@@ -11701,6 +11701,10 @@ Portail clients</source>
       <trans-unit id="derogation.send.warning" datatype="html">
         <source>Le dossier part au client avec son document signé en pièce jointe. Une fois envoyé, il ne peut plus être rouvert ni modifié.</source>
         <target state="translated">案卷将连同已签署文件作为附件发送给客户。一经发送，便无法重新打开或修改。</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.which" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">案卷</target>
       </trans-unit>
       <trans-unit id="derogation.send.email" datatype="html">
         <source>Adresse du client</source>

@@ -90,7 +90,7 @@ export class DerogationFormComponent implements OnInit {
     batchNumber: new FormControl<string>('',
       { nonNullable: true, validators: [Validators.maxLength(100)] }),
     quantity: new FormControl<number | null>(null, { validators: [Validators.min(0)] }),
-    requestDate: new FormControl<string | null>(null),
+    requestDate: new FormControl<Date | null>(null),
 
     shipmentStage: new FormControl<'TO_SHIP' | 'ALREADY_SHIPPED'>('TO_SHIP', { nonNullable: true }),
     deviationOrigin: new FormControl<'PRODUCT' | 'PROCESS'>('PRODUCT', { nonNullable: true }),
@@ -124,7 +124,7 @@ export class DerogationFormComponent implements OnInit {
   /** La réponse du client, saisie par l'initiateur à sa réception. */
   readonly reponseClient = new FormGroup({
     decision: new FormControl<CustomerDecision | null>(null, { validators: [Validators.required] }),
-    decidedOn: new FormControl<string | null>(null, { validators: [Validators.required] })
+    decidedOn: new FormControl<Date | null>(null, { validators: [Validators.required] })
   });
 
   dossier?: Derogation;
@@ -191,7 +191,7 @@ export class DerogationFormComponent implements OnInit {
       partIndex: d.partIndex ?? '',
       batchNumber: d.batchNumber ?? '',
       quantity: d.quantity,
-      requestDate: d.requestDate,
+      requestDate: enDateLocale(d.requestDate),
       shipmentStage: d.shipmentStage,
       deviationOrigin: d.deviationOrigin,
       occurrence: d.occurrence,
@@ -402,7 +402,7 @@ export class DerogationFormComponent implements OnInit {
     const v = this.reponseClient.getRawValue();
     this.agir(this.service.recordCustomerDecision(d.id, {
       decision: v.decision as CustomerDecision,
-      decidedOn: v.decidedOn as string
+      decidedOn: enDateIso(v.decidedOn) ?? ''
     }), $localize`:@@derogation.decision-recorded:Réponse du client enregistrée.`);
   }
 
@@ -489,7 +489,7 @@ export class DerogationFormComponent implements OnInit {
       partIndex: texte(v.partIndex),
       batchNumber: texte(v.batchNumber),
       quantity: v.quantity,
-      requestDate: v.requestDate,
+      requestDate: enDateIso(v.requestDate),
       shipmentStage: v.shipmentStage,
       deviationOrigin: v.deviationOrigin,
       occurrence: v.occurrence,
@@ -515,4 +515,32 @@ export class DerogationFormComponent implements OnInit {
       attachmentsNote: texte(v.attachmentsNote)
     };
   }
+}
+
+/**
+ * Un `Date` du calendrier devient « aaaa-mm-jj » sur ses composantes LOCALES.
+ *
+ * Surtout pas `toISOString()`, qui repasse par UTC et recule d'un jour a l'est
+ * de Greenwich : une demande du 25 serait datee du 24 sur le document du
+ * client. Meme piege, meme parade que dans le dialogue de cout de la qualite.
+ */
+export function enDateIso(valeur: Date | string | null | undefined): string | null {
+  if (typeof valeur === 'string') {
+    return valeur.slice(0, 10) || null;
+  }
+  if (!(valeur instanceof Date) || Number.isNaN(valeur.getTime())) {
+    return null;
+  }
+  const mois = String(valeur.getMonth() + 1).padStart(2, '0');
+  const jour = String(valeur.getDate()).padStart(2, '0');
+  return `${valeur.getFullYear()}-${mois}-${jour}`;
+}
+
+/** L'inverse, composante par composante : `new Date('2026-09-18')` serait lu en UTC. */
+export function enDateLocale(valeur: string | null | undefined): Date | null {
+  if (!valeur) {
+    return null;
+  }
+  const p = /^(\d{4})-(\d{2})-(\d{2})/.exec(valeur);
+  return p ? new Date(Number(p[1]), Number(p[2]) - 1, Number(p[3])) : null;
 }

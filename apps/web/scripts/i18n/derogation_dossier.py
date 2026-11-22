@@ -520,12 +520,12 @@ TRANSLATIONS = {
         '客户答复',
     ),
     'derogation.customer.hint': (
-        'Envoyé le {$sentAt} à {$email}.',
-        'Sent on {$sentAt} to {$email}.',
-        'Enviado el {$sentAt} a {$email}.',
-        'أُرسلت في {$sentAt} إلى {$email}.',
-        '{$sentAt} に {$email} へ送付しました。',
-        '已于 {$sentAt} 发送至 {$email}。',
+        'Envoyé le {$SENTAT} à {$EMAIL}.',
+        'Sent on {$SENTAT} to {$EMAIL}.',
+        'Enviado el {$SENTAT} a {$EMAIL}.',
+        'أُرسلت في {$SENTAT} إلى {$EMAIL}.',
+        '{$SENTAT} に {$EMAIL} へ送付しました。',
+        '已于 {$SENTAT} 发送至 {$EMAIL}。',
     ),
     'derogation.customer.decision': (
         'Décision',
@@ -666,6 +666,14 @@ TRANSLATIONS = {
         'تُرسل الحالة إلى العميل مع مستندها الموقّع كمرفق. بعد الإرسال، لا يمكن إعادة فتحها أو تعديلها.',
         '署名済み文書を添付して顧客へ送付します。送付後は再開も修正もできません。',
         '案卷将连同已签署文件作为附件发送给客户。一经发送，便无法重新打开或修改。',
+    ),
+    'derogation.send.which': (
+        'Dossier',
+        'Case',
+        'Expediente',
+        'الحالة',
+        '案件',
+        '案卷',
     ),
     'derogation.send.email': (
         'Adresse du client',
