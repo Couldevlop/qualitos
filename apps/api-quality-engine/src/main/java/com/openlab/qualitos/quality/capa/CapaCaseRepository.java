@@ -98,6 +98,23 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
      * rien à juger, et son obstacle à lui est le décompte des actions, que le
      * registre dit déjà.
      *
+     * <p><b>Le oui du dossier gouverne les actions qui n'ont rien tranché.</b>
+     * La décision de vérifier vit à deux niveaux : sur le dossier (ADR
+     * 0073/0108) et sur l'action (ADR 0131). N'admettre un dossier que par ses
+     * actions l'a fait disparaître de ce plan dès que le oui n'était écrit que
+     * sur lui — ce qui est le cas de deux chemins courants : la fiche CAPA
+     * ({@code updateCase} ne touche aucune action) et toute ligne antérieure à
+     * V177, qui a créé les colonnes de l'action SANS reprise. Le dossier
+     * restait au registre et sortait du plan : l'écart était invisible.
+     *
+     * <p>Le repli lit {@code NULL} pour ce que l'ADR 0131 dit qu'il est — « la
+     * question n'a pas été tranchée pour cette action » — et non pour un
+     * « non ». Trois bornes l'empêchent de trop ramener : un « non » explicite
+     * sur une action PRIME (sinon répondre ne servirait à rien) ; il faut une
+     * action qui ne soit pas un endiguement (le confinement arrête l'effet sans
+     * supprimer la cause, il ne promet rien à mesurer) ; et le dossier doit
+     * lui-même dire oui.
+     *
      * <p>Non paginée à dessein, comme la mesure par récidive : les indicateurs
      * portent sur l'ensemble, et un taux calculé sur une page n'aurait aucun
      * sens. C'est le service qui borne ce qu'il AFFICHE, et qui le dit.
@@ -107,8 +124,15 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
             left join fetch c.actions
             where c.tenantId = :tenantId
               and c.status not in :excludedStatuses
-              and exists (select a.id from CapaAction a
-                          where a.capa = c and a.verificationRequired = true)
+              and (exists (select a.id from CapaAction a
+                           where a.capa = c and a.verificationRequired = true)
+                   or (c.verificationRequired = true
+                       and not exists (select a.id from CapaAction a
+                                       where a.capa = c
+                                         and a.verificationRequired is not null)
+                       and exists (select a.id from CapaAction a
+                                   where a.capa = c
+                                     and a.actionType <> com.openlab.qualitos.quality.capa.CapaActionType.CONTAINMENT)))
             """)
     List<CapaCase> findForEffectivenessBoard(
             @Param("tenantId") UUID tenantId,
@@ -135,8 +159,15 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
             left join fetch c.actions
             where c.tenantId = :tenantId
               and c.status not in :excludedStatuses
-              and exists (select a.id from CapaAction a
-                          where a.capa = c and a.verificationRequired = true)
+              and (exists (select a.id from CapaAction a
+                           where a.capa = c and a.verificationRequired = true)
+                   or (c.verificationRequired = true
+                       and not exists (select a.id from CapaAction a
+                                       where a.capa = c
+                                         and a.verificationRequired is not null)
+                       and exists (select a.id from CapaAction a
+                                   where a.capa = c
+                                     and a.actionType <> com.openlab.qualitos.quality.capa.CapaActionType.CONTAINMENT)))
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
                    or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
