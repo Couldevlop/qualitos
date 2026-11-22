@@ -285,3 +285,6 @@ tr.pick {
   gap: var(--qos-space-3);
   align-items: center;
 }
+
+// Le filtre par ecart : etroit, il ne concurrence pas le titre qu il suit.
+.filtre-nc { width: 220px; margin-bottom: 8px; }

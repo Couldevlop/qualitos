@@ -7330,17 +7330,21 @@ Portail clients</source>
         <source>Étape</source>
         <target state="translated">المرحلة</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.col-actions" datatype="html">
-        <source>Actions</source>
-        <target state="translated">الإجراءات</target>
-      </trans-unit>
       <trans-unit id="capa.evaluation.col-verdict" datatype="html">
         <source>Dernier verdict</source>
         <target state="translated">آخر حكم</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.actions-done" datatype="html">
-        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
-        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> منجزة</target>
+      <trans-unit id="capa.evaluation.filter-nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.filter-nc-all" datatype="html">
+        <source>Tous les écarts</source>
+        <target state="translated">كل حالات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none-for-nc" datatype="html">
+        <source>Aucun dossier à évaluer sur cet écart. Choisissez « Tous les écarts » pour retrouver le plan de travail complet.</source>
+        <target state="translated">لا يوجد ملف للتقييم لحالة عدم المطابقة هذه. اختر «كل حالات عدم المطابقة» لعرض القائمة الكاملة.</target>
       </trans-unit>
       <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
         <source>Critère à poser</source>
@@ -22467,12 +22471,12 @@ historique 12 mois</source>
         <target state="translated">لا يمكن إغلاق عدم المطابقة هذا بعد</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-one" datatype="html">
-        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">لا يزال ملف CAPA واحد يحتوي على إجراءات لم تُنفَّذ. أكمل إجراءاته لتتمكن من حل عدم المطابقة هذا.</target>
+        <source>1 action est encore ouverte : terminez-la avant de résoudre cet écart.</source>
+        <target state="translated">لا يزال إجراء واحد مفتوحًا: أغلقه قبل حل عدم المطابقة هذا.</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-many" datatype="html">
-        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">لا تزال <x id="count"/> من ملفات CAPA تحتوي على إجراءات لم تُنفَّذ. أكمل إجراءاتها لتتمكن من حل عدم المطابقة هذا.</target>
+        <source><x id="count"/> actions sont encore ouvertes : terminez-les avant de résoudre cet écart.</source>
+        <target state="translated">لا تزال <x id="count"/> من الإجراءات مفتوحة: أغلقها قبل حل عدم المطابقة هذا.</target>
       </trans-unit>
       <trans-unit id="nc.blocker.cases-one" datatype="html">
         <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>

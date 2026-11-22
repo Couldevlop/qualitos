@@ -697,11 +697,16 @@
             </p>
 
             <ng-container *ngIf="dossiers(n).length; else sansDossierD3">
-              <div class="capa-dossier" *ngFor="let d of dossiers(n)">
-                <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD3"
-                                       (counted)="compter('D3', $event)"
-                                       (changed)="reload()"></qos-capa-action-panel>
-              </div>
+              <!-- UN SEUL TABLEAU, quel que soit le nombre de dossiers. Une CAPA
+                   naît avec son action : écrire une action depuis la section CAPA
+                   ouvre donc un nouveau dossier sur le même écart, et un panneau
+                   par dossier donnait un second tableau sous le premier -- comme
+                   si l'action refusait de rejoindre ses pareilles. La discipline
+                   rassemble les actions de sa nature, d'où qu'elles viennent. -->
+              <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
+                                     [natures]="naturesD3"
+                                     (counted)="compter('D3', $event)"
+                                     (changed)="reload()"></qos-capa-action-panel>
             </ng-container>
             <ng-template #sansDossierD3>
               <!-- SON PROPRE BOUTON, et la nature qu'il écrit dans son nom.
@@ -809,26 +814,24 @@
               <p class="dim" *ngIf="dossiers(n).length > 1" data-test="capa-action-compte">
                 {{ compteDesDossiers(n) }}
               </p>
-              <div class="capa-dossier" *ngFor="let d of dossiers(n)"
+              <!-- LES LIENS SEULS, et au-dessus du tableau unique. L'intitule du
+                   dossier s'ecrivait ici : le nom de sa premiere action -- « Action
+                   containment 1 » -- se lisait comme un titre de section, juste
+                   au-dessus d'un tableau qui le reprend sur sa premiere ligne.
+                   Chaque dossier garde son chemin ; le tableau, lui, ne se
+                   dedouble plus pour autant. -->
+              <div class="capa-dossier-head">
+                <a mat-stroked-button *ngFor="let d of dossiers(n)" [routerLink]="['/capa', d.id]"
                    [attr.data-test]="'capa-dossier-' + d.id">
-                <!-- LE LIEN SEUL. L'intitule du dossier s'ecrivait ici, au-dessus
-                     de chacun des trois tableaux : le nom de la premiere action
-                     -- « Action containment 1 » -- se lisait donc comme un titre
-                     de section, juste au-dessus d'un tableau qui le reprend sur
-                     sa premiere ligne. Deux fois la meme chose, dont une qui
-                     ressemblait a l'intitule de la discipline. -->
-                <div class="capa-dossier-head">
-                  <a mat-stroked-button [routerLink]="['/capa', d.id]"
-                     data-test="capa-action-dossier">
-                    <mat-icon>open_in_new</mat-icon>
-                    <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
-                  </a>
-                </div>
-                <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD5"
-                                       [colonnePreuve]="false"
-                                       (counted)="compter('D5', $event)"
-                                       (changed)="reload()"></qos-capa-action-panel>
+                  <mat-icon>open_in_new</mat-icon>
+                  <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
+                </a>
               </div>
+              <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
+                                     [natures]="naturesD5"
+                                     [colonnePreuve]="false"
+                                     (counted)="compter('D5', $event)"
+                                     (changed)="reload()"></qos-capa-action-panel>
             </ng-container>
             <ng-template #sansDossierD5>
               <!-- L'INVITE, et une seule fois pour les trois disciplines
@@ -932,12 +935,12 @@
             </p>
 
             <ng-container *ngIf="dossiers(n).length; else sansDossierD7">
-              <div class="capa-dossier" *ngFor="let d of dossiers(n)">
-                <qos-capa-action-panel [capaCaseId]="d.id" [team]="n.teamMembers ?? []" [natures]="naturesD7"
-                                       [colonnePreuve]="false"
-                                       (counted)="compter('D7', $event)"
-                                       (changed)="reload()"></qos-capa-action-panel>
-              </div>
+              <!-- Un seul tableau, pour la même raison qu'au D3. -->
+              <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
+                                     [natures]="naturesD7"
+                                     [colonnePreuve]="false"
+                                     (counted)="compter('D7', $event)"
+                                     (changed)="reload()"></qos-capa-action-panel>
             </ng-container>
             <ng-template #sansDossierD7>
               <!-- Son propre bouton, pour la même raison qu'au D3 : la nature

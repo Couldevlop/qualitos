@@ -7330,17 +7330,21 @@ Portail clients</source>
         <source>Étape</source>
         <target state="translated">阶段</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.col-actions" datatype="html">
-        <source>Actions</source>
-        <target state="translated">措施</target>
-      </trans-unit>
       <trans-unit id="capa.evaluation.col-verdict" datatype="html">
         <source>Dernier verdict</source>
         <target state="translated">最近判定</target>
       </trans-unit>
-      <trans-unit id="capa.evaluation.actions-done" datatype="html">
-        <source><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> faites</source>
-        <target state="translated"><x id="INTERPOLATION"/>/<x id="INTERPOLATION_1"/> 已完成</target>
+      <trans-unit id="capa.evaluation.filter-nc" datatype="html">
+        <source>Écart</source>
+        <target state="translated">不合格项</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.filter-nc-all" datatype="html">
+        <source>Tous les écarts</source>
+        <target state="translated">所有不合格项</target>
+      </trans-unit>
+      <trans-unit id="capa.evaluation.none-for-nc" datatype="html">
+        <source>Aucun dossier à évaluer sur cet écart. Choisissez « Tous les écarts » pour retrouver le plan de travail complet.</source>
+        <target state="translated">该不合格项没有待评价的档案。选择“所有不合格项”可返回完整工作清单。</target>
       </trans-unit>
       <trans-unit id="capa.evaluation.no-criterion-cell" datatype="html">
         <source>Critère à poser</source>
@@ -22467,12 +22471,12 @@ historique 12 mois</source>
         <target state="translated">该不合格项尚不能关闭</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-one" datatype="html">
-        <source>1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">仍有 1 份 CAPA 档案存在未完成的措施。完成其措施后方可解决该不合格项。</target>
+        <source>1 action est encore ouverte : terminez-la avant de résoudre cet écart.</source>
+        <target state="translated">仍有 1 项措施未完成：解决该不合格项前请先完成它。</target>
       </trans-unit>
       <trans-unit id="nc.blocker.actions-many" datatype="html">
-        <source><x id="count"/> dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.</source>
-        <target state="translated">仍有 <x id="count"/> 份 CAPA 档案存在未完成的措施。完成其措施后方可解决该不合格项。</target>
+        <source><x id="count"/> actions sont encore ouvertes : terminez-les avant de résoudre cet écart.</source>
+        <target state="translated">仍有 <x id="count"/> 项措施未完成：解决该不合格项前请先完成它们。</target>
       </trans-unit>
       <trans-unit id="nc.blocker.cases-one" datatype="html">
         <source>1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.</source>

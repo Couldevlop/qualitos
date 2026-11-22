@@ -1698,8 +1698,8 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (b.code) {
       case 'CAPA_ACTIONS_TO_CARRY_OUT':
         return b.count === 1
-          ? $localize`:@@nc.blocker.actions-one:1 dossier CAPA porte encore des actions à mener. Terminez ses actions pour pouvoir résoudre cet écart.`
-          : $localize`:@@nc.blocker.actions-many:${b.count}:count: dossiers CAPA portent encore des actions à mener. Terminez leurs actions pour pouvoir résoudre cet écart.`;
+          ? $localize`:@@nc.blocker.actions-one:1 action est encore ouverte : terminez-la avant de résoudre cet écart.`
+          : $localize`:@@nc.blocker.actions-many:${b.count}:count: actions sont encore ouvertes : terminez-les avant de résoudre cet écart.`;
       case 'CAPA_CASES_UNSETTLED':
         return b.count === 1
           ? $localize`:@@nc.blocker.cases-one:1 dossier CAPA n'est pas clôturé. Clôturez-le — après vérification de son efficacité — pour pouvoir clôturer cet écart.`
@@ -1786,6 +1786,26 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return n.capaCaseId ? [{ id: n.capaCaseId }] : [];
   }
+
+  /**
+   * Les identifiants des dossiers de l'écart, en tableau STABLE.
+   *
+   * <p>Le panneau d'actions relit ses dossiers par le réseau dès que son entrée
+   * change d'IDENTITÉ (`ngOnChanges`), et non de contenu. Un getter qui
+   * recomposerait le tableau à chaque passe de détection le ferait donc requêter
+   * en boucle : on rend le même objet tant que la liste ne bouge pas vraiment.
+   */
+  idsDesDossiers(n: NcResponse): readonly string[] {
+    const ids = this.dossiers(n).map(d => d.id);
+    const change = ids.length !== this.idsDeDossiers.length
+      || ids.some((id, i) => id !== this.idsDeDossiers[i]);
+    if (change) {
+      this.idsDeDossiers = ids;
+    }
+    return this.idsDeDossiers;
+  }
+
+  private idsDeDossiers: string[] = [];
 
   /**
    * « 2 dossiers sur cet écart » — écrit SEULEMENT quand il y en a plusieurs.

@@ -72,8 +72,32 @@
     <section class="panel">
       <h2 i18n="@@capa.evaluation.table-title">Dossiers et actions correctives</h2>
 
+      <!-- LE FILTRE PAR ECART. Le plan de travail mele les dossiers de tous les
+           ecarts : instruire l'efficacite d'un ecart en particulier obligeait a
+           les retrouver a l'oeil, ligne par ligne. Il ne change pas l'ORDRE --
+           le tri par urgence reste -- il restreint, et c'est tout.
+
+           Les references proposees sont celles qui sont PRESENTES dans le plan
+           de travail, et non le registre des ecarts : offrir un ecart qui n'a
+           aucun dossier a juger ne menerait qu'a un tableau vide. -->
+      <mat-form-field appearance="outline" class="filtre-nc" subscriptSizing="dynamic"
+                      *ngIf="referencesDisponibles.length > 1">
+        <mat-label i18n="@@capa.evaluation.filter-nc">Écart</mat-label>
+        <mat-select [value]="filtreNc" (selectionChange)="filtrerParNc($event.value)"
+                    data-test="eval-filtre-nc">
+          <mat-option value="" i18n="@@capa.evaluation.filter-nc-all">Tous les écarts</mat-option>
+          <mat-option *ngFor="let ref of referencesDisponibles" [value]="ref">{{ ref }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
       <div class="qos-scroll-x">
-        <table mat-table [dataSource]="b.rows" class="eval-table">
+        <p class="empty" *ngIf="lignes.length === 0" data-test="eval-filtre-vide"
+           i18n="@@capa.evaluation.none-for-nc">
+          Aucun dossier à évaluer sur cet écart. Choisissez « Tous les écarts » pour
+          retrouver le plan de travail complet.
+        </p>
+
+        <table mat-table [dataSource]="lignes" class="eval-table" *ngIf="lignes.length > 0">
 
           <ng-container matColumnDef="reference">
             <th mat-header-cell *matHeaderCellDef i18n="@@capa.evaluation.col-case">Dossier</th>
@@ -83,6 +107,13 @@
               </a>
               <div class="dim">{{ row.title }}</div>
               <div class="dim" *ngIf="row.ownerName">{{ row.ownerName }}</div>
+              <!-- SANS CRITERE, rien ne pourra etre juge : l'avertissement
+                   vivait dans la colonne « Actions », qui a disparu, et il ne
+                   devait pas disparaitre avec elle. -->
+              <div class="dim" *ngIf="!row.criterion" data-test="eval-sans-critere"
+                   i18n="@@capa.evaluation.no-criterion-cell">
+                Critère à poser
+              </div>
             </td>
           </ng-container>
 
@@ -98,16 +129,6 @@
                   <span *ngSwitchDefault i18n="@@capa.evaluation.stage-in-progress">Actions en cours</span>
                 </ng-container>
               </span>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef i18n="@@capa.evaluation.col-actions">Actions</th>
-            <td mat-cell *matCellDef="let row">
-              <span i18n="@@capa.evaluation.actions-done">{{ row.actionsDone }}/{{ row.actionsTotal }} faites</span>
-              <div class="dim" *ngIf="!row.criterion" i18n="@@capa.evaluation.no-criterion-cell">
-                Critère à poser
-              </div>
             </td>
           </ng-container>
 

@@ -19,7 +19,8 @@ import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core'
   standalone: false
 })
 export class CapaActionPanelStubComponent {
-  @Input() capaCaseId = '';
+  /** LES dossiers de l'ecart : une discipline n'a qu'un tableau pour tous. */
+  @Input() capaCaseIds: readonly string[] = [];
   /** Les natures montrees : vide = toutes (ADR 0115, D5 et D6 du rapport 8D). */
   @Input() natures: string[] = [];
   /** L'equipe de l'ecart, proposee en tete du selecteur de responsable. */

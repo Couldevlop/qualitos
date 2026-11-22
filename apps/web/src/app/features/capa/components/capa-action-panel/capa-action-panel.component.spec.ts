@@ -71,12 +71,12 @@ function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
 }
 
 @Component({
-  template: `<qos-capa-action-panel [capaCaseId]="id" [natures]="natures" [team]="equipe"
+  template: `<qos-capa-action-panel [capaCaseIds]="ids" [natures]="natures" [team]="equipe"
                                     (changed)="changements = changements + 1"></qos-capa-action-panel>`,
   standalone: false
 })
 class HoteComponent {
-  id = 'capa-1';
+  ids: string[] = ['capa-1'];
   /** Vide : toutes les actions. Le rapport 8D, lui, restreint par discipline. */
   natures: CapaActionType[] = [];
   /** L'équipe du D1 de l'écart, quand l'écran appelant en a une. */
@@ -269,12 +269,62 @@ describe('CapaActionPanelComponent', () => {
     await setup();
     capa.getCase.calls.reset();
 
-    hote.id = '';
+    hote.ids = [];
     fixture.detectChanges();
 
     expect(capa.getCase).not.toHaveBeenCalled();
     expect(tous('capa-action-ligne').length).toBe(0);
   });
+
+  /**
+   * LE DEFAUT REMONTE DE LA PRODUCTION. Une CAPA nait avec son action : en
+   * ecrire une depuis la section CAPA ouvre donc un NOUVEAU dossier sur le meme
+   * ecart. Le panneau etant rendu une fois par dossier, cette action paraissait
+   * dans un second tableau sous le premier -- « comme si elle refusait de se
+   * mettre dans le tableau existant ». Une discipline n'a qu'un tableau.
+   */
+  it('rassemble en UN seul tableau les actions de plusieurs dossiers', async () => {
+    await setup();
+    capa.getCase.and.callFake(((id: string) => of(dossier({
+      id,
+      actions: [action({
+        id: 'act-' + id,
+        title: id === 'capa-1' ? 'Trier le lot suspect' : 'Bloquer la ligne 3'
+      })]
+    }))) as never);
+
+    hote.ids = ['capa-1', 'capa-2'];
+    fixture.detectChanges();
+
+    expect(tous('capa-actions-table').length).toBe(1);
+    expect(tous('capa-action-ligne').length).toBe(2);
+    expect(racine().textContent).toContain('Trier le lot suspect');
+    expect(racine().textContent).toContain('Bloquer la ligne 3');
+  });
+
+  /**
+   * Le verrou de cloture s'applique LIGNE PAR LIGNE, puisque le tableau mele
+   * des dossiers : les actions d'un dossier clos ne bougent plus, celles de son
+   * voisin ouvert continuent. Un verrou applique au tableau entier ferait
+   * dependre l'un de l'autre.
+   */
+  it('verrouille la ligne d\'un dossier clos sans geler celle du dossier ouvert',
+    async () => {
+      await setup();
+      capa.getCase.and.callFake(((id: string) => of(dossier({
+        id,
+        status: id === 'capa-clos' ? 'CLOSED' : 'IN_PROGRESS',
+        actions: [action({ id: 'act-' + id, status: 'PENDING' })]
+      }))) as never);
+
+      hote.ids = ['capa-clos', 'capa-ouvert'];
+      fixture.detectChanges();
+
+      const avancer = tous('capa-action-avancer') as HTMLButtonElement[];
+      expect(avancer.length).toBe(2);
+      expect(avancer[0].disabled).toBeTrue();
+      expect(avancer[1].disabled).toBeFalse();
+    });
 
   it('nomme la nature de l’action en clair, jamais son code', async () => {
     await setup();

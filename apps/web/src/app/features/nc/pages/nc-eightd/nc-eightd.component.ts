@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CapaActionType } from '../../../capa/capa.types';
@@ -150,6 +150,17 @@ export class NcEightDComponent implements OnInit {
    * restait à l'écran pour de bon. On ne dit plus rien tant qu'on ne sait pas.
    */
   readonly capaCaseIds$ = new BehaviorSubject<readonly NcCapaCaseRef[] | undefined>(undefined);
+
+  /**
+   * Les identifiants seuls, pour le tableau d'actions.
+   *
+   * <p>Dérivé et non calculé dans le gabarit : le panneau relit ses dossiers par
+   * le réseau dès que son entrée change d'IDENTITÉ, et un appel de méthode dans
+   * le gabarit rendrait un tableau neuf à chaque passe de détection. Ici, un
+   * tableau neuf par ÉMISSION, ce qui est exactement la bonne fréquence.
+   */
+  readonly idsDesDossiers$: Observable<readonly string[]> =
+    this.capaCaseIds$.pipe(map(dossiers => (dossiers ?? []).map(d => d.id)));
 
   /** Lu par le gabarit : la discipline sans dossier CAPA renvoie vers l'ecart. */
   ncId = '';
