@@ -1,3 +1,17 @@
+// Le composant porte un bloc : son hôte doit en être un. Sans cette règle, un
+// élément inconnu du navigateur reste `display: inline` — aucune marge ne
+// s'applique à lui, et ce qui le suit vient se coller à son dernier bouton.
+// Au D6 du 8D, le champ « Commentaire sur l'efficacité » commençait exactement
+// là où finissait « Joindre une preuve » : son étiquette flottante, qui se
+// pose SUR la bordure haute, passait sous le bouton et devenait illisible.
+:host { display: block; }
+
+// Les preuves ne sont pas collées à ce qui les suit. La respiration est portée
+// par le composant, et non par chaque page, parce qu'il est posé à deux
+// endroits — la fiche de l'écart et le rapport 8D — et que les deux en ont
+// besoin : au rapport, ce sont les panneaux successifs qui se touchaient.
+:host(:not(:last-child)) { margin-bottom: 16px; }
+
 .preuves-dossier {
   display: flex;
   flex-direction: column;
