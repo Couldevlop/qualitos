@@ -223,6 +223,115 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
       { id: 'capa-9', title: 'Celui du serveur', status: 'OPEN' }
     ], 'capa-1')).map(d => d.id)).toEqual(['capa-9']);
   });
+  // ---------- plusieurs dossiers : les preuves s additionnent --------------
+
+  /**
+   * Le D6 pose un panneau par dossier. Tous ecrivaient leur compte sous la meme
+   * cle : le dernier arrive effacait celui des precedents. Un ecart dont le
+   * premier dossier porte des preuves et le dernier aucune se declarait vide.
+   */
+  it('additionne les preuves des dossiers au lieu de les ecraser', () => {
+    const n = ecart([
+      { id: 'capa-a', title: 'Premier', status: 'OPEN' },
+      { id: 'capa-b', title: 'Second', status: 'OPEN' }
+    ], 'capa-a');
+    setup(n);
+
+    component.compterPreuves('capa-a', 3);
+    component.compterPreuves('capa-b', 0);
+
+    expect(component.etapeFaite('D6', n))
+      .withContext('trois preuves sur le premier dossier : le D6 porte quelque chose')
+      .toBeTrue();
+  });
+
+  it('met a jour le compte d un dossier sans toucher aux autres', () => {
+    const n = ecart([
+      { id: 'capa-a', title: 'Premier', status: 'OPEN' },
+      { id: 'capa-b', title: 'Second', status: 'OPEN' }
+    ], 'capa-a');
+    setup(n);
+
+    component.compterPreuves('capa-a', 2);
+    component.compterPreuves('capa-b', 1);
+    // Le premier dossier perd ses pieces : le second garde la sienne.
+    component.compterPreuves('capa-a', 0);
+
+    expect(component.etapeFaite('D6', n))
+      .withContext('une preuve subsiste sur le second dossier')
+      .toBeTrue();
+
+    component.compterPreuves('capa-b', 0);
+    expect(component.etapeFaite('D6', n))
+      .withContext('plus aucune preuve nulle part, et rien d autre au D6')
+      .toBeFalse();
+  });
+
+  it('repart de zero quand la fiche est relue', () => {
+    const n = ecart([{ id: 'capa-a', title: 'Premier', status: 'OPEN' }], 'capa-a');
+    setup(n);
+
+    component.compterPreuves('capa-a', 4);
+    expect(component.etapeFaite('D6', n)).toBeTrue();
+
+    // Un dossier retire laisserait sinon son compte dans le total.
+    component.reload();
+    expect(component.etapeFaite('D6', n))
+      .withContext('les panneaux encore a l ecran reannoncent leur compte')
+      .toBeFalse();
+  });
+
+  // ---------- l endiguement prouve au D3, pas au D6 ------------------------
+
+  /**
+   * La preuve d un geste d endiguement se depose sur sa ligne du D3, qui porte
+   * une colonne pour cela. Le D6 demontre que le PROBLEME a cesse : un dossier
+   * d endiguement seul y reclamait la preuve d une efficacite qu il n a jamais
+   * pretendu produire, et la meme piece se serait demandee a deux endroits.
+   */
+  it('ecarte du D6 les dossiers d endiguement seul', () => {
+    const n = ecart([
+      { id: 'capa-end', title: 'Bloquer le lot', status: 'OPEN', containmentOnly: true },
+      { id: 'capa-cor', title: 'Verrouiller le gabarit', status: 'OPEN', containmentOnly: false }
+    ], 'capa-end');
+    setup(n);
+
+    expect(component.dossiers(n).map(d => d.id))
+      .withContext('le D3 et le D5 continuent de voir tous les dossiers')
+      .toEqual(['capa-end', 'capa-cor']);
+    expect(component.dossiersAPreuve(n).map(d => d.id))
+      .withContext("le D6 ne garde que ce qui peut demontrer que le probleme a cesse")
+      .toEqual(['capa-cor']);
+  });
+
+  /**
+   * Absent veut dire que le serveur n a pas repondu a la question. On ne cache
+   * pas un dossier sur une supposition : un `undefined` pris pour un
+   * endiguement ferait disparaitre les preuves d un dossier correctif.
+   */
+  it('garde au D6 un dossier dont le serveur n a rien dit', () => {
+    const n = ecart([{ id: 'capa-muet', title: 'Sans nature', status: 'OPEN' }], 'capa-muet');
+    setup(n);
+
+    expect(component.dossiersAPreuve(n).map(d => d.id)).toEqual(['capa-muet']);
+  });
+
+  it('distingue « aucun dossier » de « que de l endiguement »', () => {
+    const sansDossier = ecart([], undefined);
+    setup(sansDossier);
+    expect(component.queDesEndiguements(sansDossier))
+      .withContext('sans dossier, le renvoi doit inviter a en ouvrir un')
+      .toBeFalse();
+
+    const queEndiguement = ecart([
+      { id: 'capa-end', title: 'Bloquer le lot', status: 'OPEN', containmentOnly: true }
+    ], 'capa-end');
+    setup(queEndiguement);
+    expect(component.queDesEndiguements(queEndiguement))
+      .withContext('le renvoi doit pointer le D3, et non faire ouvrir un dossier qui existe')
+      .toBeTrue();
+  });
+
   // ---------- la note d'efficacite, au D6, a cote des preuves du dossier ----
 
   it('enregistre la note du D6 en quittant le champ, et sur le bon dossier', () => {

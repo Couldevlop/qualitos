@@ -23045,6 +23045,10 @@ historique 12 mois</source>
         <source>Aucun dossier n'est encore ouvert sur cet écart : les preuves s'attachent au dossier, il faut donc commencer par en ouvrir un.</source>
         <target state="translated">この不適合にはまだ案件がありません。証拠は案件に添付するため、まず案件を一つ開いてください。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.d6-containment-only" datatype="html">
+        <source>Cet écart n'a que des actions d'endiguement. Leur preuve se joint sur leur ligne, au D3 : elle atteste que le geste a été fait. Le D6 démontre que le problème a cessé, ce qu'une action corrective ou préventive peut seule établir.</source>
+        <target state="translated">この不適合には応急処置のみがあります。その証拠は D3 のその行に添付します――処置が実施されたことを示すためです。D6 は問題が止んだことを示すものであり、それを立証できるのは是正処置または予防処置だけです。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.d6-comment" datatype="html">
         <source>Commentaire sur l'efficacité</source>
         <target state="translated">有効性に関するコメント</target>

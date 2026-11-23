@@ -223,6 +223,20 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly comptesParEtape = new Map<EtapeCode, number>();
 
   /**
+   * Les preuves du D6, comptees PAR DOSSIER puis additionnees.
+   *
+   * <p>Le D6 pose un panneau par dossier, et chacun annonce ce qu il porte.
+   * Tous ecrivaient sous la meme cle : le dernier arrive effacait le compte des
+   * precedents. Un ecart dont le premier dossier portait trois preuves et le
+   * dernier aucune se declarait donc vide, et le sommaire affirmait qu il
+   * restait a faire ce qui venait d etre fait.
+   *
+   * <p>Les autres disciplines n ont qu un panneau, qui agrege lui-meme les
+   * actions de tous les dossiers : elles n ont pas ce besoin.
+   */
+  private readonly preuvesParDossier = new Map<string, number>();
+
+  /**
    * Le commentaire d'efficacité en cours de frappe, par dossier.
    *
    * <p>Il n'existe que tant qu'il diffère de l'enregistré : une entrée restée
@@ -265,6 +279,20 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.comptesParEtape.set(code, combien);
   }
 
+  /**
+   * Un panneau de preuves a fini de lire : son compte s AJOUTE a celui des
+   * autres dossiers, il ne les remplace pas.
+   *
+   * <p>La cle est le dossier, et non l ordre d arrivee : un panneau qui relit
+   * apres un depot met a jour SON compte, sans toucher aux autres.
+   */
+  compterPreuves(dossierId: string, combien: number): void {
+    this.preuvesParDossier.set(dossierId, combien);
+    let total = 0;
+    this.preuvesParDossier.forEach(n => { total += n; });
+    this.comptesParEtape.set('D6', total);
+  }
+
   /** Amene l etape sous les yeux. Le sommaire est une aide, pas un filtre. */
   allerA(code: EtapeCode): void {
     const cible = this.sections?.find(s => s.nativeElement.id === code);
@@ -298,7 +326,7 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       // résolution quand elle existe. Les photos du CONSTAT, elles, restent au
       // D2 : elles décrivent le problème et ne démontrent rien de l'efficacité.
       case 'D6': return (this.comptesParEtape.get('D6') ?? 0) > 0
-        || this.dossiers(n).some(d => !!this.commentaireEfficacite(d).trim())
+        || this.dossiersAPreuve(n).some(d => !!this.commentaireEfficacite(d).trim())
         || !!n.resolutionNote;
       case 'D7': return (this.comptesParEtape.get('D7') ?? 0) > 0;
       case 'D8': return !!this.remerciementEnregistre;
@@ -715,6 +743,13 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * dépendre.
    */
   reload(): void {
+    // Les comptes de preuves repartent de zero : un dossier retire laisserait
+    // sinon son compte dans le total, et le D6 se dirait fait sans rien porter.
+    // Les panneaux encore a l ecran reannoncent le leur en se rechargeant.
+    this.preuvesParDossier.clear();
+    // Le TOTAL aussi : vider la carte par dossier sans le recalculer laissait
+    // l ancien total en place, et le D6 restait coche sur des preuves parties.
+    this.comptesParEtape.set('D6', 0);
     this.reload$.next();
   }
 
@@ -1800,6 +1835,38 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       return n.capaCases;
     }
     return n.capaCaseId ? [{ id: n.capaCaseId }] : [];
+  }
+
+  /**
+   * Les dossiers dont les preuves se déposent au D6.
+   *
+   * <p>Un dossier d'ENDIGUEMENT SEUL en est exclu. Sa preuve est celle d'un
+   * geste de protection — le lot bloqué, les cartons repris — et elle se
+   * dépose sur sa ligne du tableau du D3, qui porte une colonne « Preuve »
+   * pour cela. Le D6 démontre autre chose : que le problème a CESSÉ. Y faire
+   * figurer un dossier d'endiguement demandait de prouver l'efficacité d'une
+   * action qui n'a jamais prétendu traiter la cause, et la même pièce se
+   * serait réclamée à deux endroits.
+   *
+   * <p>`containmentOnly !== true` et non `=== false` : absent veut dire que le
+   * serveur n'a pas répondu à la question, et on ne cache pas un dossier sur
+   * une supposition.
+   *
+   * <p>Le rapport 8D appliquait déjà cette règle ({@code nc-eightd}) ; la fiche
+   * de l'écart, non. Les deux écrans montraient donc le même D6 autrement.
+   */
+  dossiersAPreuve(n: NcResponse): NcCapaCaseRef[] {
+    return this.dossiers(n).filter(d => d.containmentOnly !== true);
+  }
+
+  /**
+   * L'écart n'a que des dossiers d'endiguement : le D6 le dit, et renvoie au D3.
+   *
+   * <p>Distinct de « aucun dossier ouvert » : les deux situations appellent un
+   * geste différent, et les confondre enverrait ouvrir un dossier qui existe.
+   */
+  queDesEndiguements(n: NcResponse): boolean {
+    return this.dossiers(n).length > 0 && this.dossiersAPreuve(n).length === 0;
   }
 
   /**
