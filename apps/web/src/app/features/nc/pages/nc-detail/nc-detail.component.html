@@ -872,9 +872,9 @@
                  demontre que le PROBLEME a cesse -- releve, photo, procedure
                  signee (ISO 9001 §10.2). Le D5 et le D7 n'ont plus de colonne
                  de pieces : ce qu'ils avaient a prouver se prouve ici. -->
-            <ng-container *ngIf="dossiers(n).length; else sansDossierD6">
-              <div class="capa-dossier" *ngFor="let d of dossiers(n)">
-                <div class="capa-dossier-head" *ngIf="dossiers(n).length > 1">
+            <ng-container *ngIf="dossiersAPreuve(n).length; else sansDossierD6">
+              <div class="capa-dossier" *ngFor="let d of dossiersAPreuve(n)">
+                <div class="capa-dossier-head" *ngIf="dossiersAPreuve(n).length > 1">
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
                 <qos-capa-evidence-panel [capaCaseId]="d.id" [statut]="$any(d.status)"
@@ -902,10 +902,23 @@
               </div>
             </ng-container>
             <ng-template #sansDossierD6>
-              <p class="renvoi" i18n="@@nc.8d.d6-no-case">
-                Aucun dossier n'est encore ouvert sur cet écart : les preuves
-                s'attachent au dossier, il faut donc commencer par en ouvrir un.
+              <!-- DEUX SITUATIONS, DEUX PHRASES. « Aucun dossier » envoie en
+                   ouvrir un ; « que de l'endiguement » enverrait en ouvrir un
+                   qui existe déjà. La preuve d'un geste d'endiguement se
+                   dépose sur sa ligne du D3, et le renvoi le dit. -->
+              <p class="renvoi" *ngIf="queDesEndiguements(n); else aucunDossierD6"
+                 data-test="d6-que-endiguement" i18n="@@nc.8d.d6-containment-only">
+                Cet écart n'a que des actions d'endiguement. Leur preuve se joint
+                sur leur ligne, au D3 : elle atteste que le geste a été fait.
+                Le D6 démontre que le problème a cessé, ce qu'une action
+                corrective ou préventive peut seule établir.
               </p>
+              <ng-template #aucunDossierD6>
+                <p class="renvoi" i18n="@@nc.8d.d6-no-case">
+                  Aucun dossier n'est encore ouvert sur cet écart : les preuves
+                  s'attachent au dossier, il faut donc commencer par en ouvrir un.
+                </p>
+              </ng-template>
             </ng-template>
 
             <div class="block" *ngIf="n.resolutionNote">

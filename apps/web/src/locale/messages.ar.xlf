@@ -23046,6 +23046,10 @@ historique 12 mois</source>
         <source>Aucun dossier n'est encore ouvert sur cet écart : les preuves s'attachent au dossier, il faut donc commencer par en ouvrir un.</source>
         <target state="translated">لا يوجد أي ملف مفتوح على عدم المطابقة هذا بعد. تُرفَق الأدلة بالملف، فابدأ بفتح ملف.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.d6-containment-only" datatype="html">
+        <source>Cet écart n'a que des actions d'endiguement. Leur preuve se joint sur leur ligne, au D3 : elle atteste que le geste a été fait. Le D6 démontre que le problème a cessé, ce qu'une action corrective ou préventive peut seule établir.</source>
+        <target state="translated">لا يتضمّن عدم المطابقة هذا سوى إجراءات احتواء. تُرفَق أدلّتها في سطرها ضمن D3: فهي تثبت أن الإجراء قد نُفّذ. أمّا D6 فيثبت أن المشكلة قد توقّفت، وهو ما لا يمكن أن يثبته إلا إجراء تصحيحي أو وقائي.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.d6-comment" datatype="html">
         <source>Commentaire sur l'efficacité</source>
         <target state="translated">تعليق على الفعالية</target>

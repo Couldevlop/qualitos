@@ -23046,6 +23046,10 @@ historial de 12 meses</target>
         <source>Aucun dossier n'est encore ouvert sur cet écart : les preuves s'attachent au dossier, il faut donc commencer par en ouvrir un.</source>
         <target state="translated">Aún no hay ningún expediente abierto en esta no conformidad. Las pruebas se adjuntan al expediente, así que empiece por abrir uno.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.d6-containment-only" datatype="html">
+        <source>Cet écart n'a que des actions d'endiguement. Leur preuve se joint sur leur ligne, au D3 : elle atteste que le geste a été fait. Le D6 démontre que le problème a cessé, ce qu'une action corrective ou préventive peut seule établir.</source>
+        <target state="translated">Esta no conformidad solo tiene acciones de contención. Sus pruebas se adjuntan en su fila, en D3: acreditan que la acción se realizó. D6 demuestra que el problema ha cesado, algo que solo puede establecer una acción correctiva o preventiva.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.d6-comment" datatype="html">
         <source>Commentaire sur l'efficacité</source>
         <target state="translated">Comentario sobre la eficacia</target>

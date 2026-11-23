@@ -23,6 +23,18 @@ TRANSLATIONS = {
         'この不適合にはまだ案件がありません。証拠は案件に添付するため、まず案件を一つ開いてください。',
         '该不合格项尚无任何案件。证据附在案件上，请先开立一个案件。'),
 
+    # --- le D6 avec des dossiers d'ENDIGUEMENT SEUL -------------------------
+    # La preuve d'un geste d'endiguement se depose sur sa ligne du D3, qui
+    # porte une colonne pour cela. Le D6 demontre que le probleme a CESSE :
+    # un endiguement n'a jamais pretendu traiter la cause.
+    'nc.8d.d6-containment-only': (
+        "Cet écart n'a que des actions d'endiguement. Leur preuve se joint sur leur ligne, au D3 : elle atteste que le geste a été fait. Le D6 démontre que le problème a cessé, ce qu'une action corrective ou préventive peut seule établir.",
+        'This non-conformity has containment actions only. Their evidence is attached on their row, under D3: it shows the action was carried out. D6 shows that the problem has stopped, which only a corrective or preventive action can establish.',
+        'Esta no conformidad solo tiene acciones de contención. Sus pruebas se adjuntan en su fila, en D3: acreditan que la acción se realizó. D6 demuestra que el problema ha cesado, algo que solo puede establecer una acción correctiva o preventiva.',
+        'لا يتضمّن عدم المطابقة هذا سوى إجراءات احتواء. تُرفَق أدلّتها في سطرها ضمن D3: فهي تثبت أن الإجراء قد نُفّذ. أمّا D6 فيثبت أن المشكلة قد توقّفت، وهو ما لا يمكن أن يثبته إلا إجراء تصحيحي أو وقائي.',
+        'この不適合には応急処置のみがあります。その証拠は D3 のその行に添付します――処置が実施されたことを示すためです。D6 は問題が止んだことを示すものであり、それを立証できるのは是正処置または予防処置だけです。',
+        '该不合格项仅有围堵措施。其证据附在 D3 对应行上：用以证明该措施已执行。D6 证明问题已停止，而这只有纠正或预防措施才能确立。'),
+
     # --- la note libre, a cote des pieces -----------------------------------
     'nc.8d.d6-comment': (
         "Commentaire sur l'efficacité", 'Comment on effectiveness',

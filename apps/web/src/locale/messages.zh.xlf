@@ -23046,6 +23046,10 @@ historique 12 mois</source>
         <source>Aucun dossier n'est encore ouvert sur cet écart : les preuves s'attachent au dossier, il faut donc commencer par en ouvrir un.</source>
         <target state="translated">该不合格项尚无任何案件。证据附在案件上，请先开立一个案件。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.d6-containment-only" datatype="html">
+        <source>Cet écart n'a que des actions d'endiguement. Leur preuve se joint sur leur ligne, au D3 : elle atteste que le geste a été fait. Le D6 démontre que le problème a cessé, ce qu'une action corrective ou préventive peut seule établir.</source>
+        <target state="translated">该不合格项仅有围堵措施。其证据附在 D3 对应行上：用以证明该措施已执行。D6 证明问题已停止，而这只有纠正或预防措施才能确立。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.d6-comment" datatype="html">
         <source>Commentaire sur l'efficacité</source>
         <target state="translated">有效性说明</target>

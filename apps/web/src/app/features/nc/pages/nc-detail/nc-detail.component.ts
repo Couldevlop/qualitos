@@ -298,7 +298,7 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       // résolution quand elle existe. Les photos du CONSTAT, elles, restent au
       // D2 : elles décrivent le problème et ne démontrent rien de l'efficacité.
       case 'D6': return (this.comptesParEtape.get('D6') ?? 0) > 0
-        || this.dossiers(n).some(d => !!this.commentaireEfficacite(d).trim())
+        || this.dossiersAPreuve(n).some(d => !!this.commentaireEfficacite(d).trim())
         || !!n.resolutionNote;
       case 'D7': return (this.comptesParEtape.get('D7') ?? 0) > 0;
       case 'D8': return !!this.remerciementEnregistre;
@@ -1800,6 +1800,38 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       return n.capaCases;
     }
     return n.capaCaseId ? [{ id: n.capaCaseId }] : [];
+  }
+
+  /**
+   * Les dossiers dont les preuves se déposent au D6.
+   *
+   * <p>Un dossier d'ENDIGUEMENT SEUL en est exclu. Sa preuve est celle d'un
+   * geste de protection — le lot bloqué, les cartons repris — et elle se
+   * dépose sur sa ligne du tableau du D3, qui porte une colonne « Preuve »
+   * pour cela. Le D6 démontre autre chose : que le problème a CESSÉ. Y faire
+   * figurer un dossier d'endiguement demandait de prouver l'efficacité d'une
+   * action qui n'a jamais prétendu traiter la cause, et la même pièce se
+   * serait réclamée à deux endroits.
+   *
+   * <p>`containmentOnly !== true` et non `=== false` : absent veut dire que le
+   * serveur n'a pas répondu à la question, et on ne cache pas un dossier sur
+   * une supposition.
+   *
+   * <p>Le rapport 8D appliquait déjà cette règle ({@code nc-eightd}) ; la fiche
+   * de l'écart, non. Les deux écrans montraient donc le même D6 autrement.
+   */
+  dossiersAPreuve(n: NcResponse): NcCapaCaseRef[] {
+    return this.dossiers(n).filter(d => d.containmentOnly !== true);
+  }
+
+  /**
+   * L'écart n'a que des dossiers d'endiguement : le D6 le dit, et renvoie au D3.
+   *
+   * <p>Distinct de « aucun dossier ouvert » : les deux situations appellent un
+   * geste différent, et les confondre enverrait ouvrir un dossier qui existe.
+   */
+  queDesEndiguements(n: NcResponse): boolean {
+    return this.dossiers(n).length > 0 && this.dossiersAPreuve(n).length === 0;
   }
 
   /**
