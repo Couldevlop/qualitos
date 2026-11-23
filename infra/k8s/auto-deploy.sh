@@ -98,6 +98,11 @@ images_du_chart() {
   local surcouche="$WORKDIR/infra/k8s/qualitos/values-$ENVIRONMENT.yaml"
   [ -f "$surcouche" ] || surcouche="$base"
   awk '
+    # Un commentaire en colonne zéro n est pas une clé : il ne referme rien.
+    # Sans cette ligne, il fermerait le bloc et TOUS les services suivants
+    # sortiraient du contrôle — l oubli silencieux que ce garde-fou existe
+    # justement pour empêcher.
+    /^#/ { next }
     # Fin du bloc services: une clé de premier niveau le referme.
     /^[^[:space:]]/ { dans = ($0 ~ /^services:/) ; next }
     !dans { next }
