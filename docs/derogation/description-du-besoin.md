@@ -188,8 +188,13 @@ Ce paramétrage **existe déjà**, et il n'y a rien à créer :
 - le modèle porte exactement ce qu'il faut — `fromAddress`, `fromName`,
   `replyTo`, le serveur sortant et sa sécurité, un interrupteur `enabled`, et un
   **envoi d'essai** daté par `verifiedAt` ;
-- `configured: false` signifie que l'organisation **emprunte la messagerie de la
-  plateforme** : le repli est déjà pensé.
+- `configured: false` **interdit l'envoi au client**, et ne déclenche aucun
+  repli. Arbitré le 23 novembre : « chaque tenant va renseigner les paramètres
+  de sa messagerie donc il n'y a pas de repli qui tienne. » C'est cohérent avec
+  l'expéditeur par client (ADR 0127) : un courriel qui engage l'organisation
+  vis-à-vis de son client ne peut pas partir d'une adresse générique de
+  plateforme, que le destinataire ne reconnaîtrait pas. Le dossier reste donc
+  « Approuvée par la qualité », renvoyable, et l'écran dit quoi régler.
 
 La copie cachée, elle, se pose **au message** et non au paramétrage : rien à
 ajouter à l'écran.

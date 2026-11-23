@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.derogation.infrastructure;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.quality.audit.AuditReminderMailer;
 import com.openlab.qualitos.quality.derogation.application.DerogationMailException;
 import com.openlab.qualitos.quality.derogation.application.DerogationMailPort;
@@ -13,6 +15,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.Base64;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -106,13 +109,59 @@ public class CoreMailAdapter implements DerogationMailPort {
                     .toBodilessEntity();
         } catch (HttpStatusCodeException refus) {
             // Le message d'api-core est destine a l'utilisateur : messagerie non
-            // configuree, hote refuse, adresse rejetee. On le laisse passer.
-            throw new DerogationMailException(
-                    "Le courriel n'est pas parti : " + refus.getResponseBodyAsString(), refus);
+            // configuree, hote refuse, adresse rejetee. On le laisse passer --
+            // la PHRASE, et elle seule. Recopier le corps entier revenait a ne
+            // rien laisser passer du tout : l'ecran refuse par principe
+            // d'afficher un detail de serveur (OWASP A09), et la raison partait
+            // avec le bruit. L'utilisateur lisait « Erreur serveur, reessayez »
+            // pour un reglage qu'il etait le seul a pouvoir faire.
+            throw new DerogationMailException(raisonDeclaree(refus), refus);
         } catch (RestClientException panne) {
             throw new DerogationMailException(
                     "Le service de messagerie est injoignable : la demande n'est pas"
                             + " partie, et reste renvoyable.", panne);
+        }
+    }
+
+    /** Ce qui trahit une trace technique plutot qu'une phrase ecrite pour un humain. */
+    private static final Pattern RETRACE = Pattern.compile("[\\r\\n]|\\bat [\\w.$]+\\(");
+
+    /** La longueur au-dela de laquelle l'ecran ecarte un message : meme borne des deux cotes. */
+    private static final int LONGUEUR_MAX = 300;
+
+    private static final ObjectMapper JSON = new ObjectMapper();
+
+    /**
+     * La raison du refus, telle qu'api-core l'a DECLAREE.
+     *
+     * <p>Seul {@code detail} est lu, parce que c'est le champ ou api-core ecrit
+     * la phrase destinee a un humain -- « la messagerie de votre organisation
+     * n'est pas configuree ». Les memes garde-fous que l'ecran s'appliquent ici,
+     * et non la-bas : une seule ligne, longueur bornee, rien qui ressemble a une
+     * trace. Un amont qui deborderait ce cadre retombe sur la phrase generique
+     * plutot que de projeter ses entrailles jusqu'au navigateur.
+     *
+     * <p>Le corps brut n'est jamais relaye : il porte {@code instance}, le
+     * chemin interne appele, et ce que l'amont aurait mis dans ses propres
+     * champs.
+     */
+    private static String raisonDeclaree(HttpStatusCodeException refus) {
+        String generique = "Le courriel n'est pas parti : le service de messagerie a refuse"
+                + " l'envoi. Le dossier reste renvoyable.";
+        try {
+            JsonNode corps = JSON.readTree(refus.getResponseBodyAsString());
+            JsonNode detail = corps.get("detail");
+            if (detail == null || !detail.isTextual()) {
+                return generique;
+            }
+            String phrase = detail.asText().trim();
+            if (phrase.isEmpty() || phrase.length() > LONGUEUR_MAX
+                    || RETRACE.matcher(phrase).find()) {
+                return generique;
+            }
+            return phrase;
+        } catch (com.fasterxml.jackson.core.JacksonException illisible) {
+            return generique;
         }
     }
 
