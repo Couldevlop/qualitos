@@ -137,7 +137,7 @@ services:
     env:
       DB_URL: jdbc:postgresql://postgres.qualitos.svc.cluster.local:5432/qualitos_quality
       AI_SERVICE_URL: http://ai-service.qualitos.svc.cluster.local:8085
-      CORE_BASE_URL: http://api-core.qualitos.svc.cluster.local:8080
+      CORE_BASE_URL: http://api-core.qualitos.svc.cluster.local:8081
       WEB_BASE_URL: https://qualitos.example.com
       QUALITOS_KAFKA_ENABLED: "false"
     resources:

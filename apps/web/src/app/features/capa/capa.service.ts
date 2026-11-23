@@ -360,13 +360,6 @@ export class CapaService {
   }
 
   /**
-   * Efface une action de son dossier.
-   *
-   * <p>Le serveur exige `capa.action.manage` et refuse sur un dossier clos :
-   * l'écran n'offre donc le geste qu'à qui l'a et tant qu'il tient, mais c'est
-   * le serveur qui tranche.
-   */
-  /**
    * Clôt un dossier qui n'a promis aucune vérification, sans écrire de verdict.
    *
    * <p>Le serveur refuse si une vérification a été promise : elle se solde par
@@ -388,6 +381,13 @@ export class CapaService {
     return this.http.post<CapaCaseResponse>(`${this.endpoint}/${caseId}/close`, {});
   }
 
+  /**
+   * Efface une action de son dossier.
+   *
+   * <p>Le serveur exige `capa.action.manage` et refuse sur un dossier clos :
+   * l'écran n'offre donc le geste qu'à qui l'a et tant qu'il tient, mais c'est
+   * le serveur qui tranche.
+   */
   deleteAction(caseId: string, actionId: string): Observable<void> {
     if (environment.useMockApi) {
       return of(void 0).pipe(delay(200));

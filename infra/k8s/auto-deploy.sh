@@ -27,9 +27,6 @@ BRANCH="${QOS_BRANCH:-main}"
 ENVIRONMENT="${QOS_ENVIRONMENT:-preprod}"
 WORKDIR="${QOS_WORKDIR:-/var/lib/qualitos/deploy}"
 REGISTRY="${QOS_REGISTRY:-ghcr.io/couldevlop/qualitos}"
-# Service témoin : si SON image existe pour ce commit, c'est que le pipeline a
-# terminé. On évite ainsi de déployer un jeu d'images à moitié publié.
-WITNESS="${QOS_WITNESS_IMAGE:-web}"
 
 log() { printf '%s  %s\n' "$(date -Is)" "$*"; }
 
@@ -71,11 +68,85 @@ if [ -f "$STATE" ] && [ "$(cat "$STATE")" = "$TAG" ]; then
   exit 0
 fi
 
-# On ne déploie que si les images existent RÉELLEMENT. Sans cette vérification,
-# le minuteur se déclencherait pendant la construction et échouerait en
-# ImagePullBackOff, laissant l'environnement dégradé jusqu'au passage suivant.
-if ! skopeo inspect "docker://$REGISTRY/$WITNESS:$TAG" >/dev/null 2>&1; then
-  log "images $TAG pas encore publiées — nouvelle tentative au prochain passage"
+# On ne déploie que si TOUTES les images existent RÉELLEMENT.
+#
+# POURQUOI TOUTES, ET NON UN SERVICE TÉMOIN. La version précédente n'interrogeait
+# qu'une seule image — `web` — en supposant que sa présence attestait la fin du
+# pipeline. Cette supposition est fausse : la matrice de construction est en
+# `fail-fast: false`, chaque service est bâti indépendamment, et l'un peut
+# échouer quand les autres aboutissent. C'est arrivé le 23/11/2026 : Maven
+# Central a répondu 429 à la construction d'`api-quality-engine` seul. L'image
+# témoin était là, le minuteur a déployé, et le moteur de qualité est resté
+# cinquante minutes en `ImagePullBackOff` — l'ingress rendant 503 sur toute
+# l'API pendant une recette.
+#
+# La stratégie de remplacement aggrave la faute : sur un nœud unique
+# (`maxSurge: 0`, cf. values-preprod.yaml), l'ancien pod s'arrête AVANT que le
+# nouveau soit créé. Déployer une étiquette dont une image manque n'est donc pas
+# une dégradation partielle, c'est une extinction : on échange un service qui
+# fonctionne contre une image qui n'existe pas.
+#
+# Le correctif n'est pas la stratégie de remplacement — elle est un arbitrage
+# assumé — mais le refus de déployer une étiquette incomplète.
+
+# Les services que le chart déploiera réellement : ceux du `values.yaml` de base,
+# avec les activations du fichier d'environnement par-dessus. Lire les valeurs
+# plutôt qu'une liste écrite ici évite qu'un service ajouté au chart échappe au
+# contrôle — l'oubli même qui a coûté la préproduction.
+images_du_chart() {
+  local base="$WORKDIR/infra/k8s/qualitos/values.yaml"
+  local surcouche="$WORKDIR/infra/k8s/qualitos/values-$ENVIRONMENT.yaml"
+  [ -f "$surcouche" ] || surcouche="$base"
+  awk '
+    # Un commentaire en colonne zéro n est pas une clé : il ne referme rien.
+    # Sans cette ligne, il fermerait le bloc et TOUS les services suivants
+    # sortiraient du contrôle — l oubli silencieux que ce garde-fou existe
+    # justement pour empêcher.
+    /^#/ { next }
+    # Fin du bloc services: une clé de premier niveau le referme.
+    /^[^[:space:]]/ { dans = ($0 ~ /^services:/) ; next }
+    !dans { next }
+    # `  <nom>:` ouvre un service.
+    /^  [a-zA-Z0-9_-]+:[[:space:]]*$/ {
+      nom = $1; sub(/:$/, "", nom); courant = nom
+      if (!(courant in actif)) { actif[courant] = "true" }
+      if (!(courant in image)) { image[courant] = courant }
+      next
+    }
+    courant == "" { next }
+    /^    enabled:[[:space:]]*/ { actif[courant] = ($2 == "false" ? "false" : "true"); next }
+    /^    image:[[:space:]]*/   { image[courant] = $2; next }
+    END {
+      for (s in actif) { if (actif[s] == "true") { print image[s] } }
+    }
+  ' "$base" "$surcouche" | sort -u
+}
+
+ATTENDUES="$(images_du_chart)"
+if [ -z "$ATTENDUES" ]; then
+  # Aucune image déduite : le chart a changé de forme, ou le clone est incomplet.
+  # On REFUSE de déployer. Prendre une liste vide pour « tout est là » rendrait
+  # le garde-fou silencieusement inopérant, ce qui est pire que son absence.
+  log "ÉCHEC : aucune image déduite des valeurs du chart pour $ENVIRONMENT — déploiement refusé"
+  exit 1
+fi
+
+MANQUANTES=""
+for img in $ATTENDUES; do
+  # `skopeo` dans un `if` : avec `set -e`, un appel nu ferait sortir le script
+  # sur la première image absente, sans nommer laquelle ni laisser le passage
+  # suivant réessayer.
+  if ! skopeo inspect "docker://$REGISTRY/$img:$TAG" >/dev/null 2>&1; then
+    MANQUANTES="$MANQUANTES $img"
+  fi
+done
+
+if [ -n "$MANQUANTES" ]; then
+  # Attendre, et non échouer : au plus près d'un commit, les images sont en
+  # cours de construction. Le passage suivant reprendra. Les images manquantes
+  # sont NOMMÉES — « pas encore publiées » sans dire laquelle a fait perdre une
+  # demi-journée de recherche.
+  log "images $TAG incomplètes (manquent :$MANQUANTES) — nouvelle tentative au prochain passage"
   exit 0
 fi
 

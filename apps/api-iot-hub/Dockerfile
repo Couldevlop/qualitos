@@ -10,6 +10,11 @@
 FROM maven:3.9-eclipse-temurin-21 AS builder
 WORKDIR /workspace
 
+# Reglages Maven du depot (.mvn/maven.config) : patience du resolveur sur un
+# registre qui bride (429). COPIE AVANT toute invocation de mvn, sinon la
+# construction d'image reste au defaut de trente secondes alors que le poste
+# et la CI, eux, lisent bien ce fichier.
+COPY .mvn/ .mvn/
 COPY pom.xml ./
 # Maven valide TOUS les <modules> du pom parent au chargement du réacteur :
 # placeholder pom requis pour chaque module référencé, même non construit.
