@@ -181,6 +181,23 @@ export class NcEightDComponent implements OnInit {
   readonly idsDesDossiers$: Observable<readonly string[]> =
     this.capaCaseIds$.pipe(map(dossiers => (dossiers ?? []).map(d => d.id)));
 
+  /**
+   * Les dossiers dont le D6 atteste l'effet : tous SAUF ceux qui n'endiguent.
+   *
+   * <p>La discipline s'appelle « Preuves des actions correctives ». Le dossier
+   * d'endiguement y paraissait avec les autres, et on lui demandait une preuve
+   * d'efficacité qu'il ne peut pas donner : bloquer un lot arrête l'effet et
+   * laisse la cause entière (ISO 9001 §10.2). Son geste se lit au D3, qui est
+   * sa place.
+   *
+   * <p>`containmentOnly !== true` et non `=== false` : absent veut dire que le
+   * serveur n'a pas répondu à la question, et on ne cache pas un dossier sur
+   * une supposition.
+   */
+  readonly dossiersAPreuve$: Observable<readonly NcCapaCaseRef[]> =
+    this.capaCaseIds$.pipe(
+      map(dossiers => (dossiers ?? []).filter(d => d.containmentOnly !== true)));
+
   /** Lu par le gabarit : la discipline sans dossier CAPA renvoie vers l'ecart. */
   ncId = '';
   /** `BehaviorSubject` et non `Subject` : la vue s'abonne après le premier tir. */

@@ -6730,6 +6730,26 @@ Portal de clientes</target>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">Esta acción ya no existe: recarga la ficha.</target>
       </trans-unit>
+      <trans-unit id="capa.action.remove-aria" datatype="html">
+        <source>Supprimer l'action : <x id="title"/></source>
+        <target state="translated">Eliminar la acción: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-title" datatype="html">
+        <source>Supprimer cette action ?</source>
+        <target state="translated">¿Eliminar esta acción?</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-message" datatype="html">
+        <source>L'action et ses preuves seront retirées du dossier. La suppression est tracée au journal, mais l'action ne se restaure pas.</source>
+        <target state="translated">La acción y sus pruebas se retirarán del expediente. La eliminación queda registrada, pero la acción no se puede restaurar.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.removed" datatype="html">
+        <source>Action supprimée.</source>
+        <target state="translated">Acción eliminada.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-failed" datatype="html">
+        <source>L'action n'a pas pu être supprimée.</source>
+        <target state="translated">No se ha podido eliminar la acción.</target>
+      </trans-unit>
       <trans-unit id="capa.detail.actions-title" datatype="html">
         <source>Actions</source>
         <target state="translated">Acciones</target>

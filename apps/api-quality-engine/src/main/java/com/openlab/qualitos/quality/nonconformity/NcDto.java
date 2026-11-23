@@ -391,9 +391,15 @@ public final class NcDto {
      * déposent au D6 : il s'écrit juste sous elles, et aller le chercher par un
      * second appel ferait clignoter un champ déjà affiché.
      */
+    /**
+     * @param containmentOnly le dossier ne porte QUE de l'endiguement. Le D6
+     *        du rapport 8D l'écarte : il atteste les actions CORRECTIVES, et
+     *        une mesure d'endiguement arrête l'effet sans toucher à la cause.
+     */
     public record CapaCaseRef(UUID id, String title, String status,
                               String effectivenessComment,
-                              List<BlockingAction> blockingActions) {}
+                              List<BlockingAction> blockingActions,
+                              boolean containmentOnly) {}
 
     /**
      * Une action de ce dossier qui retient la cloture de l'ecart.

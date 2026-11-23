@@ -225,6 +225,16 @@ export interface NcCapaCaseRef {
    * attendait. Vide dès que le dossier est réglé.
    */
   blockingActions?: NcBlockingAction[];
+  /**
+   * Le dossier ne porte QUE de l'endiguement.
+   *
+   * <p>Le D6 atteste les actions CORRECTIVES : une mesure d'endiguement
+   * arrête l'effet et laisse la cause intacte, et sa preuve ne démontre rien
+   * de ce que la discipline vient établir. Absent sur une réponse antérieure
+   * à ce champ, ce qui se lit comme « on ne sait pas » : on montre alors le
+   * dossier plutôt que de le cacher sur une supposition.
+   */
+  containmentOnly?: boolean;
 }
 
 /**

@@ -152,9 +152,18 @@ public final class CapaDto {
      * Un dossier réduit à ce qui le NOMME : de quoi l'afficher sans aller le
      * relire. Sert aux écrans qui listent les dossiers d'un écart.
      */
+    /**
+     * @param containmentOnly le dossier ne porte QUE de l'endiguement. Les
+     *        écrans qui parlent de correction s'en servent pour l'écarter :
+     *        une mesure d'endiguement arrête l'effet et laisse la cause
+     *        intacte (ISO 9001 §10.2), et sa preuve ne démontre donc rien de
+     *        ce qu'ils viennent attester. {@code false} sur un dossier sans
+     *        action : il n'endigue pas, il ne fait rien encore.
+     */
     public record CaseRef(UUID id, String title, CapaStatus status,
                           String effectivenessComment,
-                          List<BlockingAction> blockingActions) {}
+                          List<BlockingAction> blockingActions,
+                          boolean containmentOnly) {}
 
     /**
      * Une action qui RETIENT la cloture de son dossier, et ce qu'elle attend.

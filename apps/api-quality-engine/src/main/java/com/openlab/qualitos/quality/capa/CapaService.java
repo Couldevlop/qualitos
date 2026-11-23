@@ -325,7 +325,8 @@ public class CapaService {
         return dossiersDe(escaladeId, ncReference).stream()
                 .filter(c -> CapaScope.sees(seulement, c))
                 .map(c -> new CapaDto.CaseRef(c.getId(), c.getTitle(), c.getStatus(),
-                        c.getEffectivenessComment(), actionsQuiBloquent(c)))
+                        c.getEffectivenessComment(), actionsQuiBloquent(c),
+                        isContainmentOnly(c.getActions())))
                 .toList();
     }
 

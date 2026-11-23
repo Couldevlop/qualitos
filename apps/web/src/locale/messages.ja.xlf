@@ -6730,6 +6730,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">この対策はもう存在しません。ページを再読み込みしてください。</target>
       </trans-unit>
+      <trans-unit id="capa.action.remove-aria" datatype="html">
+        <source>Supprimer l'action : <x id="title"/></source>
+        <target state="translated">対策を削除：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-title" datatype="html">
+        <source>Supprimer cette action ?</source>
+        <target state="translated">この対策を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-message" datatype="html">
+        <source>L'action et ses preuves seront retirées du dossier. La suppression est tracée au journal, mais l'action ne se restaure pas.</source>
+        <target state="translated">対策とその証拠がケースから削除されます。削除は記録されますが、対策は復元できません。</target>
+      </trans-unit>
+      <trans-unit id="capa.action.removed" datatype="html">
+        <source>Action supprimée.</source>
+        <target state="translated">対策を削除しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-failed" datatype="html">
+        <source>L'action n'a pas pu être supprimée.</source>
+        <target state="translated">対策を削除できませんでした。</target>
+      </trans-unit>
       <trans-unit id="capa.detail.actions-title" datatype="html">
         <source>Actions</source>
         <target state="translated">対策</target>

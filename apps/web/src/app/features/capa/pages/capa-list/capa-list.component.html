@@ -4,10 +4,12 @@
       <h1 i18n="@@capa.list.title">CAPA</h1>
       <p i18n="@@capa.list.subtitle">Actions correctives & préventives — workflow et vérification d'efficacité.</p>
     </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()" *qosCan="'capa.create'">
-      <mat-icon>add</mat-icon>
-      <span i18n="@@capa.list.new-capa">Nouveau CAPA</span>
-    </button>
+    <!-- PAS DE BOUTON DE CREATION ICI. Une CAPA naît d'une action portée par
+         un écart, et d'elle seule (ADR 0135) : ouverte depuis ce catalogue,
+         elle n'avait aucune source, n'apparaissait sur la fiche d'aucune NC,
+         et le registre gardait des dossiers que rien ne rattachait au constat
+         qui les justifiait. `openCreate` reste : le lien profond `?create=`,
+         suivi depuis la fiche d'un écart, passe par lui AVEC sa source. -->
   </header>
 
   <qos-scope-note permission="capa.view.all" i18n="@@capa.list.scope">Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</qos-scope-note>

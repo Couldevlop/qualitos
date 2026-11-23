@@ -492,6 +492,72 @@ export class CapaActionPanelComponent implements OnChanges {
     });
   }
 
+  /**
+   * Vrai quand cette action peut encore être effacée.
+   *
+   * <p>Un dossier clos ou rejeté est un écrit arrêté : en retirer une action
+   * réécrirait ce qui a été déclaré fait. Le serveur refuse de même ; l'écran
+   * ne fait que ne pas proposer ce qu'il refusera.
+   */
+  peutSupprimer(action: CapaActionResponse): boolean {
+    return !this.verrouillee(action);
+  }
+
+  /** L'étiquette NOMME l'action : huit poubelles sans nom sont indiscernables. */
+  ariaSupprimer(action: CapaActionResponse): string {
+    const titre = action.title;
+    return $localize`:@@capa.action.remove-aria:Supprimer l'action : ${titre}:title:`;
+  }
+
+  /**
+   * Efface une action, après confirmation.
+   *
+   * <p>Une action saisie par erreur — mauvaise nature, doublon, mauvais
+   * dossier — restait inscrite au registre faute de geste pour la retirer,
+   * et retenait la clôture du dossier tant qu'on ne l'avait pas menée. La
+   * corriger n'est pas toujours possible : une action qui n'avait pas lieu
+   * d'être ne devient pas juste en changeant d'intitulé.
+   */
+  supprimerAction(action: CapaActionResponse): void {
+    const porteur = this.dossierDe(action);
+    if (!porteur || !this.peutSupprimer(action)) {
+      return;
+    }
+    const dossier = porteur.id;
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+      data: {
+        title: $localize`:@@capa.action.remove-title:Supprimer cette action ?`,
+        message: $localize`:@@capa.action.remove-message:L'action et ses preuves seront retirées du dossier. La suppression est tracée au journal, mais l'action ne se restaure pas.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirme => {
+      if (!confirme) {
+        return;
+      }
+      this.acting$.next(true);
+      this.capaService.deleteAction(dossier, action.id).pipe(
+        finalize(() => { this.acting$.next(false); this.cdr.markForCheck(); })
+      ).subscribe({
+        next: () => {
+          this.snack.open(
+            $localize`:@@capa.action.removed:Action supprimée.`,
+            $localize`:@@common.ok:OK`, { duration: 2500 });
+          this.changed.emit();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-action-panel] deleteAction failed', err?.status, err?.error?.type);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@capa.action.remove-failed:L'action n'a pas pu être supprimée.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+    });
+  }
+
   retirerPreuve(action: CapaActionResponse, piece: CapaEvidence): void {
     const porteur = this.dossierDe(action);
     if (this.preuveEnCours || !porteur) {

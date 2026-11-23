@@ -6730,6 +6730,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">该措施已不存在 — 请重新加载档案。</target>
       </trans-unit>
+      <trans-unit id="capa.action.remove-aria" datatype="html">
+        <source>Supprimer l'action : <x id="title"/></source>
+        <target state="translated">删除措施：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-title" datatype="html">
+        <source>Supprimer cette action ?</source>
+        <target state="translated">删除该措施？</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-message" datatype="html">
+        <source>L'action et ses preuves seront retirées du dossier. La suppression est tracée au journal, mais l'action ne se restaure pas.</source>
+        <target state="translated">该措施及其证据将从档案中移除。删除会记入日志，但措施无法恢复。</target>
+      </trans-unit>
+      <trans-unit id="capa.action.removed" datatype="html">
+        <source>Action supprimée.</source>
+        <target state="translated">已删除措施。</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-failed" datatype="html">
+        <source>L'action n'a pas pu être supprimée.</source>
+        <target state="translated">无法删除该措施。</target>
+      </trans-unit>
       <trans-unit id="capa.detail.actions-title" datatype="html">
         <source>Actions</source>
         <target state="translated">措施</target>

@@ -921,7 +921,8 @@ public class NcService {
                         c.blockingActions().stream()
                                 .map(a -> new NcDto.BlockingAction(
                                         a.id(), a.title(), a.reason().name()))
-                                .toList()))
+                                .toList(),
+                        c.containmentOnly()))
                 .toList();
     }
 

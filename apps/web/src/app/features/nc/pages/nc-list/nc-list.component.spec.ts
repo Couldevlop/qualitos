@@ -41,21 +41,29 @@ describe('NcListComponent', () => {
     expect(el.querySelector('h1')?.textContent).toContain('Non-conformités');
   });
 
-  it('exposes the canonical NC statuses', () => {
-    expect(component.statuses).toEqual(
-      ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED', 'REJECTED']);
+  it('ne propose au filtre que les quatre issues d\'un ecart', () => {
+    expect(component.statuses).toEqual(['OPEN', 'CLOSED', 'CANCELLED', 'REJECTED']);
   });
 
-  it('ne propose pas RESOLVED au filtre : c\'est un etat de passage', () => {
-    // Une NC resolue est cloturee dans la foulee ; proposer ce statut renvoyait
-    // presque toujours une liste vide. Les NC resolues se lisent sous CLOSED.
+  it('ne propose aucun etat de passage au filtre', () => {
+    // RESOLVED, UNDER_ANALYSIS et ACTION_DEFINED sont traverses le temps
+    // d'instruire l'ecart : filtrer dessus demande qui travaille a l'instant,
+    // et non ou en sont les ecarts. Un ecart en cours se lit sous OPEN.
     expect(component.statuses).not.toContain('RESOLVED');
+    expect(component.statuses).not.toContain('UNDER_ANALYSIS');
+    expect(component.statuses).not.toContain('ACTION_DEFINED');
   });
 
-  it('affiche la colonne Detecte par apres le statut', () => {
+  it('affiche la colonne Detecte par apres le statut, puis la date de creation', () => {
     expect(component.displayedColumns).toEqual([
-      'reference', 'title', 'category', 'severity', 'status', 'reporter', 'detectedAt'
+      'reference', 'title', 'category', 'severity', 'status', 'reporter', 'createdAt'
     ]);
+  });
+
+  it('date la derniere colonne a la CREATION, pas a la detection', () => {
+    // La date de detection est saisie a la main et se corrige ; celle de
+    // creation est celle du registre, et c'est elle qui ordonne la liste.
+    expect(component.displayedColumns).not.toContain('detectedAt');
   });
 
   it('exposes the canonical NC severities and categories', () => {

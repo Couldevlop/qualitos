@@ -359,6 +359,20 @@ export class CapaService {
       `${this.endpoint}/${caseId}/actions/${actionId}/evidences`, form);
   }
 
+  /**
+   * Efface une action de son dossier.
+   *
+   * <p>Le serveur exige `capa.action.manage` et refuse sur un dossier clos :
+   * l'écran n'offre donc le geste qu'à qui l'a et tant qu'il tient, mais c'est
+   * le serveur qui tranche.
+   */
+  deleteAction(caseId: string, actionId: string): Observable<void> {
+    if (environment.useMockApi) {
+      return of(void 0).pipe(delay(200));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${caseId}/actions/${actionId}`);
+  }
+
   deleteActionEvidence(caseId: string, actionId: string, evidenceId: string): Observable<void> {
     if (environment.useMockApi) {
       const store = this.mockActionEvidenceStore(caseId);
