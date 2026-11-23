@@ -47,7 +47,7 @@ public class RevisionRequestEventListeners {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onCapaTransition(CapaTransitionEvent event) {
-        if (event.transition() != CapaTransition.CLOSED) return;
+        if (!event.transition().closesCase()) return;
         safely("CAPA " + event.payload().get("id"), () -> service.record(capaTrigger.propose(event)));
     }
 

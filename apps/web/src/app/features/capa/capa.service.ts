@@ -366,6 +366,28 @@ export class CapaService {
    * l'écran n'offre donc le geste qu'à qui l'a et tant qu'il tient, mais c'est
    * le serveur qui tranche.
    */
+  /**
+   * Clôt un dossier qui n'a promis aucune vérification, sans écrire de verdict.
+   *
+   * <p>Le serveur refuse si une vérification a été promise : elle se solde par
+   * un verdict, elle ne se contourne pas.
+   */
+  closeWithoutVerification(caseId: string): Observable<CapaCaseResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === caseId);
+      const now = new Date().toISOString();
+      if (c) {
+        // `effectivenessVerified` reste INTOUCHÉ : personne n'a jugé.
+        c.status = 'CLOSED';
+        c.closedAt = now;
+        c.updatedAt = now;
+        return of(c).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.post<CapaCaseResponse>(`${this.endpoint}/${caseId}/close`, {});
+  }
+
   deleteAction(caseId: string, actionId: string): Observable<void> {
     if (environment.useMockApi) {
       return of(void 0).pipe(delay(200));

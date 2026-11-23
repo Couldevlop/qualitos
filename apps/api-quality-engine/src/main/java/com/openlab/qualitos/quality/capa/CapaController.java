@@ -104,6 +104,19 @@ public class CapaController {
         return service.verifyActionEffectiveness(id, actionId, request);
     }
 
+    /**
+     * Clôt un dossier qui n'a promis aucune vérification, sans écrire de verdict.
+     *
+     * <p>Même permission que le jugement d'efficacité : c'est la même décision
+     * — fermer le dossier — prise là où il n'y a rien à juger. Un droit distinct
+     * laisserait fermer sans vérifier à qui on refuse de vérifier.
+     */
+    @PostMapping("/cases/{id}/close")
+    @RequiresPermission(Permission.CAPA_VERIFY)
+    public CapaDto.CaseResponse close(@PathVariable UUID id) {
+        return service.closeWithoutVerification(id);
+    }
+
     @PatchMapping("/cases/{id}/reject")
     @RequiresPermission(Permission.CAPA_REJECT)
     public CapaDto.CaseResponse reject(@PathVariable UUID id) { return service.rejectCase(id); }

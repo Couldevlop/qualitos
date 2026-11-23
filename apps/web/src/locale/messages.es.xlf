@@ -28186,6 +28186,34 @@ historial de 12 meses</target>
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
         <target state="translated">Confirmas que las acciones tuvieron el efecto esperado. El caso se cerrará (CLOSED).</target>
       </trans-unit>
+      <trans-unit id="capa.detail.no-verification-prompt" datatype="html">
+        <source>Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée.</source>
+        <target state="translated">No se ha solicitado ninguna verificación de eficacia en este expediente: se cierra constatando que la acción se ha llevado a cabo.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.close-case" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.confirm-close-title" datatype="html">
+        <source>Clôturer ce dossier ?</source>
+        <target state="translated">¿Cerrar este expediente?</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.confirm-close-message" datatype="html">
+        <source>Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée. Le journal dira « clos sans vérification », et non « efficace ».</source>
+        <target state="translated">No se ha solicitado ninguna verificación de eficacia en este expediente: se cierra constatando que la acción se ha llevado a cabo. El registro dirá «cerrado sin verificación», no «eficaz».</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.yes-close" datatype="html">
+        <source>Oui, clôturer</source>
+        <target state="translated">Sí, cerrar</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.closed-unverified" datatype="html">
+        <source>Dossier clôturé.</source>
+        <target state="translated">Expediente cerrado.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.close-error" datatype="html">
+        <source>Le dossier n'a pas pu être clôturé.</source>
+        <target state="translated">No se ha podido cerrar el expediente.</target>
+      </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-title" datatype="html">
         <source>Confirmer efficacité ?</source>
         <target state="translated">¿Confirmar eficacia?</target>

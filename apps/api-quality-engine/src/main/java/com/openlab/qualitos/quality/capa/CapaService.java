@@ -923,6 +923,107 @@ public class CapaService {
     }
 
     /**
+     * Vrai quand ce dossier a PROMIS de verifier son effet.
+     *
+     * <p>Lu par la cloture directe ET par la liste d'obstacles : les deux
+     * doivent dire la meme chose, sans quoi l'ecran eteindrait un bouton que le
+     * serveur aurait accepte -- ou l'allumerait pour un refus.
+     *
+     * <p>Trois formes de promesse : la reponse du dossier, celle d'une seule de
+     * ses actions (ADR 0131), et un critere annonce, qui dit ce qu'on mesurera.
+     */
+    static boolean verificationPromise(CapaCase c) {
+        if (Boolean.TRUE.equals(c.getVerificationRequired())) {
+            return true;
+        }
+        if (c.getEffectivenessCriterion() != null && !c.getEffectivenessCriterion().isBlank()) {
+            return true;
+        }
+        return c.getActions().stream()
+                .anyMatch(a -> Boolean.TRUE.equals(a.getVerificationRequired()));
+    }
+
+    /**
+     * CLÔTURE DIRECTE : le dossier se ferme sans qu'aucun verdict ne soit écrit.
+     *
+     * <p>La question « vérifiera-t-on l'effet ? » se tranche à l'ouverture. Répondue
+     * « non » — ou jamais posée, ce qui est le cas d'un endiguement — elle
+     * engage : il n'y aura pas d'évaluation, et la clôture ne doit donc pas en
+     * réclamer une. L'écran offrait pourtant « Efficace — clôturer » comme seul
+     * chemin : on fermait le dossier en inscrivant au registre une efficacité
+     * que personne n'avait constatée, sur un critère que personne n'avait mesuré.
+     *
+     * <p><b>L'endiguement se clot par ici, et seulement par ici.</b> Depuis
+     * l'ADR 0135 chaque action porte son propre dossier : le dossier
+     * d'endiguement ne contient que de l'endiguement, et le refus opposé par
+     * {@link #verifyEffectiveness} à un dossier qui n'endigue que le rendait
+     * définitivement infermable — il restait ouvert pour toujours, à encombrer
+     * le registre. Ce refus garde tout son sens là où il est :
+     * on ne déclare pas une efficacité démontrée sur une mesure qui n'a fait
+     * qu'arrêter l'effet. Ici, on ne déclare rien — on constate que le geste a
+     * été fait.
+     *
+     * <p>Tous les autres obstacles de la clôture restent opposés : un dossier
+     * dont une action traîne, dont l'écart reste ouvert, ou dont l'objectif
+     * n'est pas revenu à la cible ne se ferme pas davantage par ce chemin.
+     *
+     * @throws CapaStateException si le dossier n'est pas résolu, si une
+     *         vérification a été promise — elle se solde par un verdict, pas en
+     *         la contournant — ou si un autre obstacle demeure.
+     */
+    public CapaDto.CaseResponse closeWithoutVerification(UUID id) {
+        CapaCase c = loadCase(id);
+        if (c.getStatus() != CapaStatus.RESOLVED) {
+            throw new CapaStateException("A direct closure requires status RESOLVED");
+        }
+        // UNE PROMESSE DE VÉRIFICATION NE SE CONTOURNE PAS : elle se solde par
+        // un verdict. Qu'elle vienne du dossier, d'une seule de ses actions ou
+        // d'un critère annoncé — qui dit ce qu'on mesurera —, c'est le MÊME
+        // prédicat que lit la liste d'obstacles : un écran qui annonce autre
+        // chose que ce que le serveur fera ne vaut rien.
+        if (verificationPromise(c)) {
+            throw new CapaStateException("This CAPA promised an effectiveness verification: "
+                    + "record a verdict instead of closing it directly");
+        }
+        long notDone = c.getActions().stream()
+                .filter(a -> a.getStatus() != CapaActionStatus.DONE).count();
+        if (notDone > 0) {
+            throw new CapaStateException(notDone + " action(s) are not DONE: "
+                    + "complete them before closing this CAPA");
+        }
+        long stillOpen = ncRepository.countByTenantIdAndCapaCaseIdAndStatusNotIn(
+                c.getTenantId(), c.getId(), NC_SETTLED_STATUSES);
+        if (stillOpen > 0) {
+            throw new CapaStateException(stillOpen + " linked non-conformity(ies) are still open: "
+                    + "close them before closing this CAPA");
+        }
+        // Un dossier né d'un objectif qualité ne se ferme jamais sur une
+        // déclaration : son efficacité EST le retour du KPI sous la cible
+        // (ADR 0133). Le garde vaut ici aussi, sans quoi ce chemin deviendrait
+        // la porte dérobée par laquelle l'autre se contourne.
+        objectiveRecovery.forCase(c.getTenantId(), c.getId())
+                .filter(r -> !r.achieved())
+                .ifPresent(r -> {
+                    throw new CapaStateException(
+                            "This CAPA comes from a quality objective: its effectiveness is "
+                            + "the KPI returning to target for " + r.requiredPeriods()
+                            + " consecutive period(s), and " + r.onTargetPeriods()
+                            + " have been observed. Criterion: " + r.criterion());
+                });
+
+        Instant now = Instant.now();
+        // `effectivenessVerified` reste INTOUCHÉ. Le mettre à `true` dirait que
+        // l'efficacité a été vérifiée, le mettre à `false` qu'elle a échoué :
+        // aucune des deux n'est vraie. Nul veut dire « on n'a pas jugé », et
+        // c'est exactement ce qui s'est passé.
+        c.setStatus(CapaStatus.CLOSED);
+        c.setClosedAt(now);
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.CLOSED_WITHOUT_VERIFICATION);
+        return toResponse(saved);
+    }
+
+    /**
      * Le verdict de la requête, quelle que soit la forme employée.
      *
      * <p>Exactement l'un des deux champs : {@code verdict}, la forme à employer,
@@ -1596,7 +1697,13 @@ public class CapaService {
             if (notDone > 0) {
                 blockers.add(new CapaDto.ClosureBlocker(ClosureBlockerCode.ACTIONS_NOT_DONE, notDone));
             }
-            if (isContainmentOnly(actions)) {
+            // SEULEMENT SUR LE CHEMIN DU VERDICT (ADR 0137). « N'a fait
+            // qu'endiguer » s'oppose a la declaration d'une efficacite
+            // demontree, pas a la fermeture elle-meme : depuis l'ADR 0135 le
+            // dossier d'endiguement ne contient que de l'endiguement, et
+            // l'annoncer comme obstacle eteignait le seul bouton qui lui
+            // restait -- il ne se fermait alors jamais.
+            if (isContainmentOnly(actions) && verificationPromise(c)) {
                 blockers.add(new CapaDto.ClosureBlocker(
                         ClosureBlockerCode.CONTAINMENT_ONLY, actions.size()));
             }

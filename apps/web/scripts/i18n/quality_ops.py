@@ -134,6 +134,54 @@ TRANSLATIONS = {
     "capa.detail.action-advance-error": ("Mise à jour de l'action impossible.", "Could not update the action.", "No se pudo actualizar la acción.", "تعذّر تحديث الإجراء.", "アクションを更新できませんでした。", "无法更新措施。"),
     "capa.detail.action-done-tooltip": ("Action terminée", "Action completed", "Acción completada", "اكتمل الإجراء", "アクション完了", "措施已完成"),
     'capa.detail.confirm-effective-message': ("Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).", "You confirm that the actions had the expected effect. The case will be closed (CLOSED).", "Confirmas que las acciones tuvieron el efecto esperado. El caso se cerrará (CLOSED).", "أنت تؤكّد أن الإجراءات حقّقت الأثر المتوقّع. ستُغلق الحالة (CLOSED).", "アクションが期待された効果をもたらしたことを確認します。ケースはクローズ（CLOSED）されます。", "你确认这些措施达到了预期效果。案例将被关闭（CLOSED）。"),
+    # --- cloture sans verdict : aucune verification n'a ete promise ---------
+    'capa.detail.no-verification-prompt': (
+        "Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se "
+        "clôt sur le constat que l'action a été menée.",
+        'No effectiveness verification was requested on this case: it closes on '
+        'the finding that the action was carried out.',
+        'No se ha solicitado ninguna verificación de eficacia en este expediente: '
+        'se cierra constatando que la acción se ha llevado a cabo.',
+        'لم يُطلب أي تحقق من الفعالية لهذا الملف: يُغلق بناءً على '
+        'معاينة أن الإجراء قد نُفّذ.',
+        'このケースには有効性検証が要求されていません。対策が実施されたことを'
+        '確認して終結します。',
+        '该档案未要求有效性验证：以措施已实施的事实结案。'),
+    'capa.detail.close-case': (
+        'Clôturer', 'Close', 'Cerrar', 'إغلاق', '終結', '结案'),
+    'capa.detail.confirm-close-title': (
+        'Clôturer ce dossier ?', 'Close this case?',
+        '¿Cerrar este expediente?', 'إغلاق هذا الملف؟',
+        'このケースを終結しますか？', '结案？'),
+    'capa.detail.confirm-close-message': (
+        "Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se "
+        "clôt sur le constat que l'action a été menée. Le journal dira "
+        "« clos sans vérification », et non « efficace ».",
+        'No effectiveness verification was requested on this case: it closes on '
+        'the finding that the action was carried out. The journal will read '
+        '"closed without verification", not "effective".',
+        'No se ha solicitado ninguna verificación de eficacia en este expediente: '
+        'se cierra constatando que la acción se ha llevado a cabo. El registro '
+        'dirá «cerrado sin verificación», no «eficaz».',
+        'لم يُطلب أي تحقق من الفعالية لهذا الملف: يُغلق بناءً على '
+        'معاينة أن الإجراء قد نُفّذ. سيُسجّل «مغلق دون تحقق»، '
+        'وليس «فعّال».',
+        'このケースには有効性検証が要求されていません。対策が実施されたことを'
+        '確認して終結します。記録には「検証なしで終結」と残り、'
+        '「有効」とは残りません。',
+        '该档案未要求有效性验证：以措施已实施的事实结案。'
+        '日志将记为“未经验证结案”，而非“有效”。'),
+    'capa.detail.yes-close': (
+        'Oui, clôturer', 'Yes, close', 'Sí, cerrar', 'نعم، أغلق',
+        'はい、終結します', '是，结案'),
+    'capa.detail.closed-unverified': (
+        'Dossier clôturé.', 'Case closed.', 'Expediente cerrado.',
+        'تم إغلاق الملف.', 'ケースを終結しました。', '档案已结案。'),
+    'capa.detail.close-error': (
+        "Le dossier n'a pas pu être clôturé.", 'The case could not be closed.',
+        'No se ha podido cerrar el expediente.', 'تعذّر إغلاق الملف.',
+        'ケースを終結できませんでした。', '无法结案。'),
+
     'capa.detail.confirm-effective-title': ('Confirmer efficacité ?', "Confirm effectiveness?", "¿Confirmar eficacia?", "تأكيد الفعّالية؟", "有効性を確認しますか？", "确认有效性？"),
     'capa.detail.confirm-not-effective-message': ("Tu signales que les actions n'ont pas été efficaces. Le cas reste RESOLVED — il faudra rouvrir ou créer un nouveau CAPA.", "You report that the actions were not effective. The case remains RESOLVED — you will need to reopen or create a new CAPA.", "Señalas que las acciones no fueron eficaces. El caso permanece RESOLVED — habrá que reabrir o crear un nuevo CAPA.", "أنت تشير إلى أن الإجراءات لم تكن فعّالة. تبقى الحالة RESOLVED — سيلزم إعادة فتحها أو إنشاء CAPA جديدة.", "アクションが有効でなかったことを報告します。ケースは RESOLVED のままです — 再開するか、新しい CAPA を作成する必要があります。", "你报告这些措施未见成效。案例保持 RESOLVED 状态 — 需重新开启或创建新的 CAPA。"),
     'capa.detail.confirm-not-effective-title': ('Confirmer non-efficacité ?', "Confirm ineffectiveness?", "¿Confirmar ineficacia?", "تأكيد عدم الفعّالية؟", "有効でないことを確認しますか？", "确认无效？"),
