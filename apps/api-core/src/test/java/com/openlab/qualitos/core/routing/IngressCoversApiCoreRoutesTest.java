@@ -42,6 +42,22 @@ class IngressCoversApiCoreRoutesTest {
 
     private static final String MARQUE = "@RequestMapping(" + '"';
 
+    /**
+     * Les surfaces appelées EN GRAPPE, qui ne doivent PAS être dans l'ingress.
+     *
+     * <p>Toutes les surfaces d'api-core ne sont pas destinées au navigateur.
+     * {@code /api/v1/mail} envoie un courriel depuis la messagerie du client :
+     * le moteur l'appelle de service à service, parce que le mot de passe de
+     * cette messagerie vit dans api-core et nulle part ailleurs. Lui ouvrir une
+     * règle d'ingress la rendrait joignable depuis l'extérieur, et donnerait le
+     * moyen d'écrire au nom d'une organisation — c'est l'inverse de ce que ce
+     * banc protège.
+     *
+     * <p>Y inscrire un chemin est un ACTE DÉLIBÉRÉ : la liste est courte, elle
+     * se relit, et le banc vérifie les deux sens.
+     */
+    private static final List<String> SURFACES_INTERNES = List.of("/api/v1/mail");
+
     @Test
     @DisplayName("chaque @RequestMapping d'api-core est couvert par une règle d'ingress vers api-core")
     void toute_surface_est_routee() throws IOException {
@@ -53,7 +69,20 @@ class IngressCoversApiCoreRoutesTest {
         assertThat(chemins).as("aucun @RequestMapping lu — l'extraction est cassée").isNotEmpty();
         assertThat(regles).as("aucune règle api-core lue — l'extraction est cassée").isNotEmpty();
 
-        List<String> orphelins = chemins.stream().filter(chemin -> !estCouvert(chemin, regles)).toList();
+        // LES DEUX SENS. Une exemption qui ne vaudrait que dans un sens serait un
+        // trou : il suffirait d'ajouter plus tard une règle d'ingress sur une
+        // surface interne pour l'exposer sans que rien ne le dise.
+        List<String> exposeesParErreur = SURFACES_INTERNES.stream()
+                .filter(chemin -> estCouvert(chemin, regles)).toList();
+        assertThat(exposeesParErreur)
+                .as("Ces surfaces sont appelées en grappe et ne doivent pas être joignables "
+                        + "depuis l'extérieur : retirer leur règle de l'ingress, ou les sortir "
+                        + "de SURFACES_INTERNES si la décision a changé")
+                .isEmpty();
+
+        List<String> orphelins = chemins.stream()
+                .filter(chemin -> !SURFACES_INTERNES.contains(chemin))
+                .filter(chemin -> !estCouvert(chemin, regles)).toList();
 
         assertThat(orphelins)
                 .as("Ces chemins d'api-core n'ont pas de règle d'ingress : ils partiraient "

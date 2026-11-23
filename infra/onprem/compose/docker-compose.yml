@@ -182,6 +182,14 @@ services:
       AI_CLIENT_SECRET: ${AI_CLIENT_SECRET}
       AI_SERVICE_URL: http://ai-service:8085
       AI_TOKEN_URI: http://keycloak:8080/auth/realms/qualitos/protocol/openid-connect/token
+      # La derogation part de la messagerie DU CLIENT, dont le mot de passe vit
+      # dans api-core : le moteur l'appelle de service a service pour envoyer, et
+      # inscrit dans le courriel un lien vers l'ecran du dossier. Les deux
+      # adresses manquaient au mode leger, et la parite avec le chart (ADR 0084)
+      # existe precisement pour que ce genre d'oubli ne se decouvre pas chez un
+      # client, le jour ou la premiere derogation refuse de partir.
+      CORE_BASE_URL: http://api-core:8080
+      WEB_BASE_URL: https://${QOS_HOST}
       DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
       DB_USER: qualitos
       DB_PASSWORD: ${POSTGRES_PASSWORD}
