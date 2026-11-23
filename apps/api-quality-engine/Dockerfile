@@ -7,6 +7,11 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
+# Reglages Maven du depot (.mvn/maven.config) : patience du resolveur sur un
+# registre qui bride (429). COPIE AVANT toute invocation de mvn, sinon la
+# construction d'image reste au defaut de trente secondes alors que le poste
+# et la CI, eux, lisent bien ce fichier.
+COPY .mvn/ .mvn/
 COPY pom.xml ./
 COPY apps/api-core/pom.xml apps/api-core/
 COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
