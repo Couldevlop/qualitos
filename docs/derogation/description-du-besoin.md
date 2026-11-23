@@ -188,13 +188,31 @@ Ce paramétrage **existe déjà**, et il n'y a rien à créer :
 - le modèle porte exactement ce qu'il faut — `fromAddress`, `fromName`,
   `replyTo`, le serveur sortant et sa sécurité, un interrupteur `enabled`, et un
   **envoi d'essai** daté par `verifiedAt` ;
-- `configured: false` **interdit l'envoi au client**, et ne déclenche aucun
-  repli. Arbitré le 23 novembre : « chaque tenant va renseigner les paramètres
-  de sa messagerie donc il n'y a pas de repli qui tienne. » C'est cohérent avec
-  l'expéditeur par client (ADR 0127) : un courriel qui engage l'organisation
-  vis-à-vis de son client ne peut pas partir d'une adresse générique de
-  plateforme, que le destinataire ne reconnaîtrait pas. Le dossier reste donc
-  « Approuvée par la qualité », renvoyable, et l'écran dit quoi régler.
+- `configured: false` fait **partir le courriel de la messagerie de la
+  plateforme**, sous une adresse générique, l'initiateur restant en copie
+  cachée. Arbitré le 24 novembre : « en production on choisira un mail
+  générique mais pour le tenant qui utilise QualitOS et le mail de l'envoyeur
+  sera en copie cachée. »
+
+  C'est aussi ce que dit déjà le contrat de `pourEnvoi` — « vide signifie
+  "prends celle de la plateforme" » — et ce que fait la **facture**, qui sort
+  elle aussi vers le client : `TenantAwareInvoiceMailer` prend la messagerie du
+  client s'il en a réglé une, celle de la plateforme sinon. La dérogation était
+  le seul courriel sortant à refuser au lieu de se replier.
+
+  **Le repli ne vaut que pour l'absence de réglage.** Une messagerie de client
+  réglée mais qui échoue, ou dont l'hôte est refusé, ne se rabat **pas** sur la
+  plateforme : le message partirait d'une adresse que le client n'a pas choisie,
+  pour un courrier qui l'engage. L'échec remonte et le dossier reste
+  renvoyable — exactement la règle de la facture.
+
+  Quand ni l'une ni l'autre n'est disponible, le refus subsiste, et l'écran dit
+  quoi régler.
+
+  > *Trace d'un aller-retour :* une première lecture, le 23 novembre, avait
+  > conclu « pas de repli ». Elle reposait sur une image incomplète — ni le
+  > voisin qu'est la facture, ni le contrat de `pourEnvoi` n'avaient été mis
+  > sous les yeux de l'arbitre. La question a été reposée avec ces deux pièces.
 
 La copie cachée, elle, se pose **au message** et non au paramétrage : rien à
 ajouter à l'écran.
