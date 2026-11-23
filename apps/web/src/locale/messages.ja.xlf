@@ -11462,6 +11462,14 @@ Portail clients</source>
         <source>Analyse et maîtrise</source>
         <target state="translated">分析と管理</target>
       </trans-unit>
+      <trans-unit id="derogation.group.cause" datatype="html">
+        <source>La cause, et ce qui a été fait tout de suite</source>
+        <target state="translated">原因と即時に行ったこと</target>
+      </trans-unit>
+      <trans-unit id="derogation.group.correction" datatype="html">
+        <source>Ce qui est engagé pour qu'il ne revienne pas</source>
+        <target state="translated">再発を防ぐために約束したこと</target>
+      </trans-unit>
       <trans-unit id="derogation.section.attachments" datatype="html">
         <source>Pièces jointes</source>
         <target state="translated">添付資料</target>

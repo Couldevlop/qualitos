@@ -210,31 +210,48 @@
 
       <!-- 4 ---------------------------------------------------------------- -->
       <qos-panel title="Analyse et maîtrise" i18n-title="@@derogation.section.analysis">
-        <mat-form-field appearance="outline" class="pleine-largeur">
-          <mat-label i18n="@@derogation.field.root-cause">Cause racine</mat-label>
-          <textarea matInput formControlName="rootCause" rows="3" maxlength="20000"
-                    data-test="cause-racine"></textarea>
-        </mat-form-field>
+        <div class="analyse">
+          <!-- CE QUI S'EST PASSÉ, ET CE QU'ON A FAIT TOUT DE SUITE. Les deux se
+               lisent ensemble : l'endiguement répond à la cause, et un lecteur
+               qui juge le dossier les compare. -->
+          <fieldset class="analyse__groupe">
+            <legend i18n="@@derogation.group.cause">La cause, et ce qui a été fait tout de suite</legend>
+            <div class="analyse__champs">
+              <mat-form-field appearance="outline">
+                <mat-label i18n="@@derogation.field.root-cause">Cause racine</mat-label>
+                <textarea matInput formControlName="rootCause" rows="3" maxlength="20000"
+                          data-test="cause-racine"></textarea>
+              </mat-form-field>
 
-        <mat-form-field appearance="outline" class="pleine-largeur">
-          <mat-label i18n="@@derogation.field.containment">Mesures d'endiguement</mat-label>
-          <textarea matInput formControlName="containment" rows="3" maxlength="20000"
-                    data-test="endiguement"></textarea>
-        </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label i18n="@@derogation.field.containment">Mesures d'endiguement</mat-label>
+                <textarea matInput formControlName="containment" rows="3" maxlength="20000"
+                          data-test="endiguement"></textarea>
+              </mat-form-field>
+            </div>
+          </fieldset>
 
-        <mat-form-field appearance="outline" class="pleine-largeur">
-          <mat-label i18n="@@derogation.field.corrective">Action corrective engagée</mat-label>
-          <textarea matInput formControlName="correctiveAction" rows="3" maxlength="20000"
-                    data-test="action-corrective"></textarea>
-        </mat-form-field>
+          <!-- CE QUI EST ENGAGÉ POUR QUE ÇA NE REVIENNE PAS. La référence CAPA
+               appartient à ce groupe-là : c'est le dossier qui porte l'action. -->
+          <fieldset class="analyse__groupe">
+            <legend i18n="@@derogation.group.correction">Ce qui est engagé pour qu'il ne revienne pas</legend>
+            <div class="analyse__champs">
+              <mat-form-field appearance="outline">
+                <mat-label i18n="@@derogation.field.corrective">Action corrective engagée</mat-label>
+                <textarea matInput formControlName="correctiveAction" rows="3" maxlength="20000"
+                          data-test="action-corrective"></textarea>
+              </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label i18n="@@derogation.field.capa">Référence CAPA</mat-label>
-          <input matInput formControlName="capaReference" maxlength="200" data-test="reference-capa">
-          <mat-hint i18n="@@derogation.field.capa-hint">
-            Le dossier CAPA qui traite la cause, s'il en existe un.
-          </mat-hint>
-        </mat-form-field>
+              <mat-form-field appearance="outline" class="analyse__court">
+                <mat-label i18n="@@derogation.field.capa">Référence CAPA</mat-label>
+                <input matInput formControlName="capaReference" maxlength="200" data-test="reference-capa">
+                <mat-hint i18n="@@derogation.field.capa-hint">
+                  Le dossier CAPA qui traite la cause, s'il en existe un.
+                </mat-hint>
+              </mat-form-field>
+            </div>
+          </fieldset>
+        </div>
       </qos-panel>
 
       <!-- 5 ---------------------------------------------------------------- -->

@@ -85,6 +85,73 @@
   margin-top: var(--qos-space-4);
 }
 
+// ---------- analyse et maîtrise ----------
+
+// Quatre champs à la file, chacun sur toute la largeur du panneau, ne disaient
+// pas ce qu'on remplissait — et une ligne de saisie de 1300 px pour une phrase
+// est un espace qu'on traverse sans le lire. Deux groupes NOMMÉS, deux colonnes,
+// et une largeur de lecture bornée.
+//
+// `fieldset`/`legend` natifs et non deux titres : le groupe porte la relation
+// entre son intitulé et ses champs, et c'est elle qu'un lecteur d'écran annonce
+// en entrant dans la zone. Un `<h3>` suivi de champs ne l'annonce pas.
+.analyse {
+  // La borne vaut pour la LECTURE, pas pour l'écran : au-delà, l'œil perd la
+  // ligne en revenant à la marge. Le panneau, lui, garde toute sa largeur.
+  max-width: 68rem;
+
+  &__groupe {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    // Un `fieldset` vaut `min-inline-size: min-content` par defaut : il refuse
+    // de retrecir sous la largeur de son contenu, et deborderait du panneau sur
+    // un ecran etroit au lieu de laisser la grille se replier.
+    min-inline-size: 0;
+
+    // Un trait ENTRE les groupes, jamais après le dernier : une séparation qui
+    // ne sépare de rien se lit comme un champ manquant.
+    & + & {
+      margin-top: var(--qos-space-4);
+      padding-top: var(--qos-space-4);
+      border-top: 1px solid var(--qos-border-subtle);
+    }
+
+    legend {
+      padding: 0;
+      margin-bottom: var(--qos-space-3);
+      color: var(--qos-fg-secondary);
+      font-size: var(--qos-fs-xs);
+      font-weight: var(--qos-fw-semibold);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__champs {
+    display: grid;
+    // DEUX colonnes fixes et non `auto-fit` : les champs de ce groupe vont par
+    // paire, et `auto-fit` en mettrait trois sur un grand écran, séparant ce
+    // que la légende vient de rassembler.
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--qos-space-3) var(--qos-space-4);
+  }
+
+  // La référence d'un dossier tient en quelques caractères. Lui laisser une
+  // demi-largeur de panneau ferait croire qu'on attend un paragraphe.
+  &__court {
+    max-width: 18rem;
+  }
+}
+
+// En-dessous, deux colonnes de saisie deviennent deux colonnes étroites : on
+// revient à une seule, qui reste lisible.
+@media (max-width: 900px) {
+  .analyse__champs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 // ---------- lignes d'écart ----------
 
 .lignes {

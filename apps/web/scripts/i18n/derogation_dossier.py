@@ -131,6 +131,24 @@ TRANSLATIONS = {
         '分析と管理',
         '分析与控制',
     ),
+    # Les deux groupes nommes de « Analyse et maitrise » : quatre champs a la
+    # file ne disaient pas ce qu'on remplissait.
+    'derogation.group.cause': (
+        "La cause, et ce qui a été fait tout de suite",
+        'The cause, and what was done immediately',
+        'La causa y lo que se hizo de inmediato',
+        'السبب، وما تمّ اتخاذه فوراً',
+        '原因と即時に行ったこと',
+        '原因，以及当时立即采取的措施',
+    ),
+    'derogation.group.correction': (
+        "Ce qui est engagé pour qu'il ne revienne pas",
+        'What is committed so it does not come back',
+        'Lo que se emprende para que no se repita',
+        'ما التُزِم به لمنع تكراره',
+        '再発を防ぐために約束したこと',
+        '为防止再次发生而承诺的措施',
+    ),
     'derogation.section.attachments': (
         'Pièces jointes',
         'Attachments',
