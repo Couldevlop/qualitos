@@ -188,7 +188,7 @@ services:
       # adresses manquaient au mode leger, et la parite avec le chart (ADR 0084)
       # existe precisement pour que ce genre d'oubli ne se decouvre pas chez un
       # client, le jour ou la premiere derogation refuse de partir.
-      CORE_BASE_URL: http://api-core:8080
+      CORE_BASE_URL: http://api-core:8081
       WEB_BASE_URL: https://${QOS_HOST}
       DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
       DB_USER: qualitos

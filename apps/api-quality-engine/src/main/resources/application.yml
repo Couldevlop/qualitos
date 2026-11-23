@@ -262,7 +262,7 @@ qualitos:
   # derogation demande son nom a l'annuaire, et la demande de validation serait
   # refusee partout.
   core:
-    base-url: ${CORE_BASE_URL:http://localhost:8080}
+    base-url: ${CORE_BASE_URL:http://localhost:8081}
     # Bornes du client HTTP vers api-core (ms). Un api-core injoignable dont les
     # paquets sont jetes sans refus ne rend jamais la main : sans ces bornes, la
     # requete etait retenue jusqu'au 504 de la passerelle.
