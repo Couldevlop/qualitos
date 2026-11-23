@@ -1,0 +1,392 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Dérogation client" i18n-eyebrow="@@derogation.form.eyebrow"
+    [title]="dossier ? dossier.reference : nouveauTitre"
+    subtitle="Demande d'autorisation d'expédier un lot qui s'écarte du plan. Le dossier est validé en interne par un manager qualité avant de partir au client."
+    i18n-subtitle="@@derogation.form.subtitle">
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="chargement || envoiEnCours" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="echec" role="alert" i18n="@@derogation.form.load-failed">
+    Le dossier n'a pas pu être chargé.
+  </p>
+
+  <ng-container *ngIf="!chargement && !echec">
+
+    <!-- L'état, et ce qu'il implique. Une pastille seule ne dit pas ce qui
+         s'est passé ni ce qu'on attend : le bandeau le dit. -->
+    <section class="entete" *ngIf="dossier as d">
+      <qos-status-pill [label]="statusLabel(d.status)" [tone]="statusTone(d.status)"
+                       data-test="statut-dossier"></qos-status-pill>
+      <span class="entete__meta">
+        <ng-container i18n="@@derogation.form.created-by">Ouvert par</ng-container>
+        <strong>{{ d.createdByName || '—' }}</strong>
+        <ng-container i18n="@@derogation.form.on">le</ng-container>
+        {{ d.createdAt | date: 'dd/MM/yyyy' }}
+      </span>
+      <button mat-stroked-button type="button" (click)="ouvrirLeDocument()"
+              class="entete__document" data-test="voir-document">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span i18n="@@derogation.form.open-pdf">Relire le document</span>
+      </button>
+    </section>
+
+    <!-- LE MOTIF DU RENVOI EST CE QU'IL FAUT CORRIGER : il se lit en premier,
+         avant le formulaire, et non replié au fond de la page. -->
+    <aside class="a-corriger" *ngIf="dossier?.status === 'TO_AMEND' && dossier?.amendReason"
+           role="note" data-test="motif-renvoi-affiche">
+      <mat-icon>undo</mat-icon>
+      <div>
+        <p class="a-corriger__titre" i18n="@@derogation.form.to-amend-title">
+          Renvoyé pour correction
+        </p>
+        <p class="a-corriger__texte">{{ dossier?.amendReason }}</p>
+      </div>
+    </aside>
+
+    <form [formGroup]="formulaire" (ngSubmit)="enregistrer()" class="sections">
+
+      <!-- 1 ---------------------------------------------------------------- -->
+      <qos-panel title="Identification" i18n-title="@@derogation.section.identification">
+        <div class="grille">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.customer">Client</mat-label>
+            <input matInput formControlName="customerName" maxlength="200" data-test="client">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.contact">Contact qualité du client</mat-label>
+            <input matInput formControlName="customerQualityContact" maxlength="200"
+                   data-test="contact-client">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.order">N° de commande</mat-label>
+            <input matInput formControlName="customerOrderNo" maxlength="100" data-test="commande">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.part">Référence pièce</mat-label>
+            <input matInput formControlName="partReference" maxlength="200" data-test="piece">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.index">Indice</mat-label>
+            <input matInput formControlName="partIndex" maxlength="40" data-test="indice">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.batch">N° de lot</mat-label>
+            <input matInput formControlName="batchNumber" maxlength="100" data-test="lot">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.quantity">Quantité concernée</mat-label>
+            <input matInput type="number" formControlName="quantity" min="0" data-test="quantite">
+            <mat-error *ngIf="formulaire.controls.quantity.hasError('min')"
+                       i18n="@@derogation.field.quantity-positive">
+              La quantité ne peut pas être négative.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.request-date">Date de la demande</mat-label>
+            <input matInput [matDatepicker]="demande" formControlName="requestDate"
+                   data-test="date-demande">
+            <mat-datepicker-toggle matIconSuffix [for]="demande"
+                                   i18n-aria-label="@@derogation.field.open-calendar"
+                                   aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+            <mat-datepicker #demande></mat-datepicker>
+            <mat-hint i18n="@@derogation.field.request-date-hint">
+              Pré-remplie à l'ouverture du dossier.
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </qos-panel>
+
+      <!-- 2 ---------------------------------------------------------------- -->
+      <qos-panel title="Nature de la dérogation" i18n-title="@@derogation.section.nature">
+        <div class="grille">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.shipment">Stade d'expédition</mat-label>
+            <mat-select formControlName="shipmentStage" data-test="stade">
+              <mat-option *ngFor="let e of etapes" [value]="e">{{ shipmentLabel(e) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.origin">Origine de l'écart</mat-label>
+            <mat-select formControlName="deviationOrigin" data-test="origine">
+              <mat-option *ngFor="let o of origines" [value]="o">{{ originLabel(o) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.occurrence">Occurrence</mat-label>
+            <mat-select formControlName="occurrence" data-test="occurrence">
+              <mat-option *ngFor="let o of occurrences" [value]="o">{{ occurrenceLabel(o) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.field.duration">Durée</mat-label>
+            <mat-select formControlName="durationKind" data-test="duree">
+              <mat-option *ngFor="let d of durees" [value]="d">{{ durationLabel(d) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="pleine-largeur">
+            <mat-label i18n="@@derogation.field.duration-detail">Précision sur la durée</mat-label>
+            <input matInput formControlName="durationDetail" maxlength="300"
+                   data-test="duree-detail">
+            <mat-hint i18n="@@derogation.field.duration-detail-hint">
+              Par exemple : jusqu'au lot 2026-W48, ou pour les trois prochaines livraisons.
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </qos-panel>
+
+      <!-- 3 ---------------------------------------------------------------- -->
+      <qos-panel title="Description de l'écart" i18n-title="@@derogation.section.deviation">
+        <!-- Chaque ligne oppose CE QUI ÉTAIT ATTENDU à CE QUI A ÉTÉ MESURÉ :
+             c'est cette opposition qui fait l'écart, et le client la relit. -->
+        <table class="lignes" formArrayName="lines">
+          <thead>
+            <tr>
+              <th i18n="@@derogation.line.specification">Spécification</th>
+              <th i18n="@@derogation.line.actual">Valeur réelle</th>
+              <th i18n="@@derogation.line.qty">Quantité non conforme</th>
+              <th><span class="sr-only" i18n="@@derogation.line.actions">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ligne of lignes.controls; let i = index" [formGroupName]="i">
+              <td>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="specification" maxlength="500"
+                         [attr.data-test]="'specification-' + i">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput formControlName="actualValue" maxlength="500"
+                         [attr.data-test]="'valeur-' + i">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <input matInput type="number" formControlName="nonConformingQty" min="0"
+                         [attr.data-test]="'quantite-nc-' + i">
+                </mat-form-field>
+              </td>
+              <td class="lignes__actions">
+                <button mat-icon-button type="button" (click)="retirerLaLigne(i)"
+                        [disabled]="!modifiable"
+                        i18n-aria-label="@@derogation.line.remove" aria-label="Retirer cette ligne"
+                        [attr.data-test]="'retirer-ligne-' + i">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button mat-stroked-button type="button" (click)="ajouterUneLigne()"
+                [disabled]="!modifiable" data-test="ajouter-ligne">
+          <mat-icon>add</mat-icon>
+          <span i18n="@@derogation.line.add">Ajouter une ligne</span>
+        </button>
+
+        <mat-form-field appearance="outline" class="pleine-largeur haut">
+          <mat-label i18n="@@derogation.field.justification">Justification de la demande</mat-label>
+          <textarea matInput formControlName="justification" rows="4" maxlength="20000"
+                    data-test="justification"></textarea>
+          <mat-hint i18n="@@derogation.field.justification-hint">
+            Pourquoi l'écart reste acceptable : aptitude à l'emploi, essais, avis technique.
+          </mat-hint>
+        </mat-form-field>
+      </qos-panel>
+
+      <!-- 4 ---------------------------------------------------------------- -->
+      <qos-panel title="Analyse et maîtrise" i18n-title="@@derogation.section.analysis">
+        <mat-form-field appearance="outline" class="pleine-largeur">
+          <mat-label i18n="@@derogation.field.root-cause">Cause racine</mat-label>
+          <textarea matInput formControlName="rootCause" rows="3" maxlength="20000"
+                    data-test="cause-racine"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="pleine-largeur">
+          <mat-label i18n="@@derogation.field.containment">Mesures d'endiguement</mat-label>
+          <textarea matInput formControlName="containment" rows="3" maxlength="20000"
+                    data-test="endiguement"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="pleine-largeur">
+          <mat-label i18n="@@derogation.field.corrective">Action corrective engagée</mat-label>
+          <textarea matInput formControlName="correctiveAction" rows="3" maxlength="20000"
+                    data-test="action-corrective"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@derogation.field.capa">Référence CAPA</mat-label>
+          <input matInput formControlName="capaReference" maxlength="200" data-test="reference-capa">
+          <mat-hint i18n="@@derogation.field.capa-hint">
+            Le dossier CAPA qui traite la cause, s'il en existe un.
+          </mat-hint>
+        </mat-form-field>
+      </qos-panel>
+
+      <!-- 5 ---------------------------------------------------------------- -->
+      <qos-panel title="Pièces jointes" i18n-title="@@derogation.section.attachments">
+        <mat-form-field appearance="outline" class="pleine-largeur">
+          <mat-label i18n="@@derogation.field.attachments">Pièces jointes au dossier</mat-label>
+          <input matInput formControlName="attachmentsNote" maxlength="500"
+                 data-test="pieces-jointes">
+          <mat-hint i18n="@@derogation.field.attachments-hint">
+            Ce que le dossier comporte : rapport d'essai, relevé dimensionnel, photo.
+          </mat-hint>
+        </mat-form-field>
+      </qos-panel>
+
+      <div class="barre-enregistrement" *ngIf="modifiable">
+        <button mat-button type="button" (click)="retourAuRegistre()"
+                i18n="@@derogation.form.back">Retour au registre</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="envoiEnCours"
+                data-test="enregistrer">
+          <mat-icon>save</mat-icon>
+          <span i18n="@@derogation.form.save">Enregistrer</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- 6 : LE CYCLE. Il est hors du formulaire parce qu'il ne s'enregistre
+         pas : chaque geste est sa propre décision, et son propre appel. -->
+    <qos-panel title="Validation" i18n-title="@@derogation.section.validation"
+               *ngIf="dossier as d">
+
+      <!-- La signature acquise, telle qu'elle figure sur le document. -->
+      <div class="signature" *ngIf="d.signedByName" data-test="signature-acquise">
+        <img *ngIf="d.signaturePngBase64" class="signature__trace"
+             [src]="'data:image/png;base64,' + d.signaturePngBase64"
+             i18n-alt="@@derogation.validation.signature-alt" alt="Signature du manager qualité">
+        <p class="signature__legende">
+          <ng-container i18n="@@derogation.validation.signed-by">Signé par</ng-container>
+          <strong>{{ d.signedByName }}</strong>
+          <ng-container *ngIf="d.signedAt">
+            <ng-container i18n="@@derogation.validation.signed-on">le</ng-container>
+            {{ d.signedAt | date: 'dd/MM/yyyy HH:mm' }}
+          </ng-container>
+        </p>
+      </div>
+
+      <!-- La demande de validation : le manager se CHOISIT DANS L'ANNUAIRE. -->
+      <div class="demande" *ngIf="peutDemanderLaValidation">
+        <qos-user-picker label="Manager qualité" i18n-label="@@derogation.validation.manager"
+                         hint="Il recevra un courriel avec le lien vers ce dossier."
+                         i18n-hint="@@derogation.validation.manager-hint"
+                         required
+                         (userSelected)="surChoixDuManager($event)"
+                         data-test="choix-manager"></qos-user-picker>
+        <button mat-flat-button color="primary" type="button"
+                (click)="demanderLaValidation()"
+                [disabled]="!managerChoisi || envoiEnCours"
+                data-test="demander-validation">
+          <mat-icon>how_to_reg</mat-icon>
+          <span i18n="@@derogation.validation.request">Validation manager</span>
+        </button>
+      </div>
+
+      <p class="attente" *ngIf="d.status === 'PENDING_INTERNAL'" data-test="en-attente">
+        <ng-container i18n="@@derogation.validation.waiting">En attente de la signature de</ng-container>
+        <strong>{{ d.managerAccountName || '—' }}</strong>.
+      </p>
+
+      <div class="gestes">
+        <button mat-stroked-button type="button" *ngIf="peutRetirer" (click)="retirer()"
+                [disabled]="envoiEnCours" data-test="retirer-demande">
+          <mat-icon>undo</mat-icon>
+          <span i18n="@@derogation.validation.withdraw">Retirer la demande</span>
+        </button>
+
+        <!-- LE MANAGER NE REFUSE PAS : il signe, ou il renvoie. Refuser
+             usurperait la décision du client, seul à pouvoir accorder la
+             dérogation. -->
+        <button mat-flat-button color="primary" type="button" *ngIf="peutSigner"
+                (click)="signer()" [disabled]="envoiEnCours" data-test="signer">
+          <mat-icon>draw</mat-icon>
+          <span i18n="@@derogation.validation.approve">Approuver et signer</span>
+        </button>
+        <button mat-stroked-button type="button" *ngIf="peutSigner"
+                (click)="renvoyerPourCorrection()" [disabled]="envoiEnCours"
+                data-test="renvoyer">
+          <mat-icon>edit_note</mat-icon>
+          <span i18n="@@derogation.validation.send-back">Renvoyer pour correction</span>
+        </button>
+
+        <button mat-stroked-button type="button" *ngIf="peutRouvrir" (click)="rouvrir()"
+                [disabled]="envoiEnCours" data-test="rouvrir">
+          <mat-icon>lock_open</mat-icon>
+          <span i18n="@@derogation.validation.reopen">Rouvrir</span>
+        </button>
+
+        <button mat-flat-button color="primary" type="button" *ngIf="peutEnvoyer"
+                (click)="envoyerAuClient()" [disabled]="envoiEnCours" data-test="envoyer-client">
+          <mat-icon>send</mat-icon>
+          <span i18n="@@derogation.validation.send">Validation client</span>
+        </button>
+      </div>
+
+      <!-- La réponse du client, qui arrive hors de la plateforme : c'est
+           l'initiateur qui l'y inscrit, à la date où le client a répondu et
+           non à celle de la saisie. -->
+      <div class="reponse" *ngIf="peutRepondrePourLeClient" [formGroup]="reponseClient">
+        <p class="reponse__titre" i18n="@@derogation.customer.title">Réponse du client</p>
+        <p class="reponse__aide" i18n="@@derogation.customer.hint">
+          Envoyé le {{ d.sentAt | date: 'dd/MM/yyyy' // i18n(ph="sentAt") }} à {{ d.customerEmail // i18n(ph="email") }}.
+        </p>
+        <div class="reponse__champs">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.customer.decision">Décision</mat-label>
+            <mat-select formControlName="decision" data-test="decision-client">
+              <mat-option *ngFor="let dec of decisions" [value]="dec">
+                {{ decisionLabel(dec) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@derogation.customer.date">Date de la réponse</mat-label>
+            <input matInput [matDatepicker]="reponseDate" formControlName="decidedOn"
+                   data-test="date-decision">
+            <mat-datepicker-toggle matIconSuffix [for]="reponseDate"
+                                   i18n-aria-label="@@derogation.field.open-calendar"
+                                   aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+            <mat-datepicker #reponseDate></mat-datepicker>
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="button"
+                  (click)="enregistrerLaReponseDuClient()"
+                  [disabled]="reponseClient.invalid || envoiEnCours"
+                  data-test="enregistrer-decision">
+            <mat-icon>how_to_vote</mat-icon>
+            <span i18n="@@derogation.customer.record">Enregistrer la réponse</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- La réponse acquise. « Acceptée sous conditions » vaut un accord, et
+           ce n'est pas la même chose qu'une acceptation : on l'affiche en
+           propre plutôt que de la ramener à l'état du dossier. -->
+      <p class="reponse-acquise" *ngIf="d.customerDecision !== 'PENDING'"
+         data-test="reponse-acquise">
+        <ng-container i18n="@@derogation.customer.answered">Le client a répondu</ng-container>
+        <strong>{{ decisionLabel(d.customerDecision) }}</strong>
+        <ng-container *ngIf="d.customerDecisionDate">
+          <ng-container i18n="@@derogation.customer.answered-on">le</ng-container>
+          {{ d.customerDecisionDate | date: 'dd/MM/yyyy' }}
+        </ng-container>
+      </p>
+    </qos-panel>
+  </ng-container>
+</div>

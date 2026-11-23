@@ -1,0 +1,228 @@
+// Le dossier de dérogation, ses six sections. Chaque section est un panneau du
+// design system : c'est ce qui donne au dossier sa lisibilité de formulaire
+// papier, là où un seul bloc de trente champs se parcourt mal.
+
+:host {
+  display: block;
+}
+
+// ---------- en-tête ----------
+
+.entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-4);
+  margin-bottom: var(--qos-space-4);
+
+  &__meta {
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+
+    strong {
+      margin: 0 0.25rem;
+      color: var(--qos-fg-primary);
+    }
+  }
+
+  &__document {
+    margin-left: auto;
+  }
+}
+
+// Le motif du renvoi : un AVERTISSEMENT et non une erreur. Le dossier n'est
+// pas rejeté, il attend une correction — et c'est ce texte qu'il faut lire.
+.a-corriger {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-5);
+  padding: var(--qos-space-4);
+  border: 1px solid var(--qos-border-strong);
+  border-left-width: 4px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+
+  mat-icon {
+    flex: none;
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__titre {
+    margin: 0 0 var(--qos-space-1);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__texte {
+    margin: 0;
+    color: var(--qos-fg-secondary);
+    // Le motif est un texte libre, parfois sur plusieurs lignes : les
+    // conserver, sinon une liste de points saisie à la main devient un pavé.
+    white-space: pre-wrap;
+  }
+}
+
+// ---------- sections ----------
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--qos-space-3) var(--qos-space-4);
+}
+
+.pleine-largeur {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.haut {
+  margin-top: var(--qos-space-4);
+}
+
+// ---------- lignes d'écart ----------
+
+.lignes {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 0 var(--qos-space-2) var(--qos-space-2);
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-medium);
+    text-align: left;
+  }
+
+  td {
+    padding: 0 var(--qos-space-2) var(--qos-space-2) 0;
+    vertical-align: top;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  &__actions {
+    width: 3rem;
+    // Aligné sur la ligne de saisie et non sur le haut de la cellule.
+    padding-top: var(--qos-space-1);
+  }
+}
+
+// Masqué à l'œil, lu par les lecteurs d'écran : une colonne d'actions sans
+// intitulé laisse le tableau sans en-tête pour sa dernière colonne.
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.barre-enregistrement {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--qos-space-2);
+}
+
+// ---------- validation ----------
+
+.signature {
+  margin-bottom: var(--qos-space-4);
+
+  &__trace {
+    display: block;
+    max-width: 20rem;
+    // Blanc en dur, comme le fond du tracé : le trait est noir, et un fond de
+    // thème sombre le rendrait invisible.
+    background: #ffffff;
+    border: 1px solid var(--qos-border-subtle);
+    border-radius: var(--qos-radius-sm);
+  }
+
+  &__legende {
+    margin: var(--qos-space-2) 0 0;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-sm);
+
+    strong {
+      margin: 0 0.25rem;
+      color: var(--qos-fg-primary);
+    }
+  }
+}
+
+.demande {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  qos-user-picker {
+    flex: 1 1 20rem;
+  }
+}
+
+.attente,
+.reponse-acquise {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-fg-secondary);
+
+  strong {
+    margin: 0 0.25rem;
+    color: var(--qos-fg-primary);
+  }
+}
+
+.gestes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+}
+
+.reponse {
+  margin-top: var(--qos-space-5);
+  padding-top: var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+
+  &__titre {
+    margin: 0 0 var(--qos-space-1);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__aide {
+    margin: 0 0 var(--qos-space-3);
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__champs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--qos-space-3);
+
+    mat-form-field {
+      flex: 1 1 13rem;
+    }
+  }
+}
+
+.echec {
+  padding: var(--qos-space-5);
+  border: 1px dashed var(--qos-danger-fg);
+  border-radius: var(--qos-radius-md);
+  color: var(--qos-danger-fg);
+  text-align: center;
+}

@@ -1,0 +1,27 @@
+// L'envoi au client. L'avertissement est une note et non une erreur : rien
+// n'est fautif, mais le geste est irréversible et doit se lire avant d'agir.
+
+:host {
+  display: block;
+}
+
+.avertissement {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  margin: 0 0 var(--qos-space-4);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border: 1px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+
+  mat-icon {
+    flex: none;
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.plein {
+  width: 100%;
+}

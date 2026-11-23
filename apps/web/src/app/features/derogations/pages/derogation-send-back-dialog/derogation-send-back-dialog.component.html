@@ -1,0 +1,28 @@
+<qos-form-dialog
+  title="Renvoyer pour correction" i18n-title="@@derogation.send-back.title"
+  [subtitle]="data.reference"
+  [formGroup]="formulaire"
+  [submitDisabled]="formulaire.invalid"
+  submitLabel="Renvoyer" i18n-submitLabel="@@derogation.send-back.confirm"
+  submitIcon="undo"
+  (submitted)="renvoyer()"
+  (cancelled)="annuler()">
+
+  <p class="explication" i18n="@@derogation.send-back.explain">
+    Vous ne refusez pas la dérogation : seul le client peut l'accorder ou la
+    refuser. Vous renvoyez le dossier à son auteur pour qu'il le corrige.
+  </p>
+
+  <mat-form-field appearance="outline" class="plein">
+    <mat-label i18n="@@derogation.send-back.reason">Ce qui doit être corrigé</mat-label>
+    <textarea matInput formControlName="reason" rows="5" maxlength="20000"
+              data-test="motif-renvoi"></textarea>
+    <mat-hint i18n="@@derogation.send-back.reason-hint">
+      C'est le seul texte que l'auteur du dossier verra.
+    </mat-hint>
+    <mat-error *ngIf="formulaire.controls.reason.hasError('required')"
+               i18n="@@derogation.send-back.reason-required">
+      Le motif du renvoi est requis.
+    </mat-error>
+  </mat-form-field>
+</qos-form-dialog>

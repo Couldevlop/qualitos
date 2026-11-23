@@ -1,0 +1,61 @@
+<h2 mat-dialog-title i18n="@@derogation.send.title">Validation client</h2>
+
+<mat-dialog-content>
+  <!-- Ce que l'envoi engage, dit avant et non après : c'est le seul geste du
+       cycle qui sorte de l'organisation, et il ne se reprend pas. -->
+  <p class="avertissement" role="note">
+    <mat-icon>outgoing_mail</mat-icon>
+    <span i18n="@@derogation.send.warning">
+      Le dossier part au client avec son document signé en pièce jointe. Une fois
+      envoyé, il ne peut plus être rouvert ni modifié.
+    </span>
+  </p>
+
+  <p class="dossier">
+    <span i18n="@@derogation.send.which">Dossier</span>
+    <strong>{{ data.reference }}</strong>
+  </p>
+
+  <form [formGroup]="formulaire" (ngSubmit)="envoyer()">
+    <mat-form-field appearance="outline" class="plein">
+      <mat-label i18n="@@derogation.send.email">Adresse du client</mat-label>
+      <input matInput type="email" formControlName="customerEmail" maxlength="320"
+             data-test="adresse-client">
+      <mat-error *ngIf="formulaire.controls.customerEmail.hasError('required')"
+                 i18n="@@derogation.send.email-required">
+        L'adresse du client est requise.
+      </mat-error>
+      <mat-error *ngIf="formulaire.controls.customerEmail.hasError('email')"
+                 i18n="@@derogation.send.email-invalid">
+        Cette adresse n'est pas valide.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="plein">
+      <mat-label i18n="@@derogation.send.language">Langue du document</mat-label>
+      <mat-select formControlName="language" data-test="langue-document">
+        <mat-option value="FR" i18n="@@derogation.send.language-fr">Français</mat-option>
+        <mat-option value="EN" i18n="@@derogation.send.language-en">Anglais</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@derogation.send.language-hint">
+        Figée sur le dossier à l'envoi : le client doit pouvoir relire ce qu'il a reçu.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="plein">
+      <mat-label i18n="@@derogation.send.comment">Commentaire (facultatif)</mat-label>
+      <textarea matInput formControlName="comment" rows="4" maxlength="20000"
+                data-test="commentaire-envoi"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="annuler()" data-test="annuler-envoi"
+          i18n="@@derogation.send.cancel">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="envoyer()"
+          [disabled]="formulaire.invalid" data-test="confirmer-envoi">
+    <mat-icon>send</mat-icon>
+    <span i18n="@@derogation.send.submit">Envoyer au client</span>
+  </button>
+</mat-dialog-actions>

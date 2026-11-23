@@ -44,6 +44,69 @@ public enum Permission {
     CAPA_ACTION_MANAGE("capa.action.manage", "capa", pilotage()),
     CAPA_ACTION_UPDATE("capa.action.update", "capa", plus(pilotage(), USER)),
 
+    // ---------- dérogations (concessions client) ----------
+    /**
+     * Sans elle, on ne voit que ses propres dossiers et ceux qu’on doit signer
+     * (ADR 0081). Une dérogation nomme un client et une tolérance qu’on a
+     * manquée : c’est une information plus sensible qu’un écart interne.
+     */
+    /**
+     * Lire le registre et une fiche.
+     *
+     * <p>Distincte de {@code derogation.create} : les lectures s'appuyaient sur
+     * le droit de CREER, si bien qu'un manager designe qui n'est qu'auditeur
+     * voyait le compteur et la liste de ses validations, puis se faisait refuser
+     * le dossier qu'il doit signer.
+     */
+    DEROGATION_VIEW("derogation.view", "derogation", interne()),
+    DEROGATION_VIEW_ALL("derogation.view.all", "derogation", interne()),
+    DEROGATION_CREATE("derogation.create", "derogation", pilotage()),
+    DEROGATION_EDIT("derogation.edit", "derogation", pilotage()),
+    /**
+     * Demander la validation du manager, et la retirer.
+     *
+     * <p>Le même droit pour les deux gestes : celui qui demande est celui qui
+     * retire, et le domaine vérifie en plus qu’il est bien l’initiateur de CE
+     * dossier.
+     */
+    DEROGATION_REQUEST_APPROVAL("derogation.request.approval", "derogation", pilotage()),
+    /**
+     * Signer, et renvoyer pour correction.
+     *
+     * <p><b>Volontairement large</b> : {@code tous()}. Le dossier désigne son
+     * manager, et c’est l’agrégat qui vérifie que le signataire est bien celui-là.
+     * Restreindre ce droit à {@code pilotage()} laisserait un dossier confié à un
+     * compte hors de ces rôles sans personne pour le signer — ni l’initiateur, qui
+     * n’est pas le manager, ni un autre manager, que le dossier refuse. Le
+     * dossier serait bloqué sans issue.
+     */
+    DEROGATION_APPROVE("derogation.approve", "derogation", interne()),
+    /** Rouvrir un dossier signé, ce qui annule la signature. */
+    DEROGATION_REOPEN("derogation.reopen", "derogation", pilotage()),
+    /**
+     * Envoyer la demande au client : le seul geste qui sort de l’organisation.
+     *
+     * <p>Au pilotage, et au <b>même ensemble que tous les gestes de
+     * l’initiateur</b> : l’agrégat n’accepte que l’initiateur, donc ouvrir et
+     * envoyer doivent aller ensemble — sinon un dossier ouvert par un rôle plus
+     * large serait inenvoyable par quiconque, ni par lui faute de droit, ni par
+     * le pilotage que l’agrégat refuse. C’est le piège évité sur
+     * {@code derogation.approve}, et un banc le vérifie sur l’énumération
+     * elle-même, parce qu’il ne lève ni à la compilation ni aux tests de
+     * domaine.
+     *
+     * <p>Le pilotage, et non tout utilisateur, parce que la maquette ne nomme
+     * que deux rôles — « Responsable qualité fournisseur (demandeur) » et
+     * « Manager qualité (signataire) » — et que ce geste fait partir un
+     * courriel depuis l’adresse de l’organisation. {@code api-core} pose la même
+     * liste au point d’envoi : les deux côtés doivent dire la même chose, et le
+     * contrôle est là plutôt que dans l’omission du chemin dans l’ingress, qui
+     * n’en est pas un.
+     */
+    DEROGATION_SEND("derogation.send", "derogation", pilotage()),
+    /** Porter la décision du client au dossier. */
+    DEROGATION_DECIDE("derogation.decide", "derogation", pilotage()),
+
     // ---------- non-conformités ----------
     /** Sans elle, on ne voit que les non-conformités qu'on a déclarées (ADR 0081). */
     NC_VIEW_ALL("nc.view.all", "nc", tous()),
@@ -193,6 +256,25 @@ public enum Permission {
      */
     private static EnumSet<SystemRole> tous() {
         return EnumSet.complementOf(EnumSet.of(SUPER_ADMIN));
+    }
+
+    /**
+     * Tous les rôles du client SAUF l'auditeur tiers.
+     *
+     * <p>{@link #tous()} l'inclut, et c'est voulu pour les registres internes :
+     * un auditeur de cabinet doit pouvoir constater. Mais une dérogation est une
+     * correspondance avec un <b>client</b> : le registre porte les noms des
+     * clients et les écarts négociés avec eux, et un cabinet qui travaille aussi
+     * pour le concurrent n'a pas à les lire. Lui accorder la signature serait
+     * plus grave encore — un tiers pourrait approuver un dossier s'il en était
+     * désigné manager.
+     *
+     * <p>Son accès reste possible dossier par dossier, si le client l'y désigne
+     * ou lui accorde explicitement le droit : c'est le propre d'un défaut
+     * d'octroi, qui se règle dans la console.
+     */
+    private static EnumSet<SystemRole> interne() {
+        return EnumSet.complementOf(EnumSet.of(SUPER_ADMIN, SystemRole.EXTERNAL_AUDITOR));
     }
 
     private static EnumSet<SystemRole> plus(EnumSet<SystemRole> base, SystemRole... autres) {

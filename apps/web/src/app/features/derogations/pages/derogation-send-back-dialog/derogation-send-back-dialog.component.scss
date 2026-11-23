@@ -1,0 +1,16 @@
+// Le renvoi pour correction. L'explication précède le champ parce qu'elle
+// change ce qu'on y écrit : on ne rédige pas le même texte selon qu'on croit
+// refuser un dossier ou demander une correction.
+
+:host {
+  display: block;
+}
+
+.explication {
+  margin: 0 0 var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+}
+
+.plein {
+  width: 100%;
+}

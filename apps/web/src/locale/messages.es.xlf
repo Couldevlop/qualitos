@@ -11218,6 +11218,638 @@ Portal de clientes</target>
         <source>Suppression refusée.</source>
         <target state="translated">Eliminación rechazada.</target>
       </trans-unit>
+      <trans-unit id="nav.derogations" datatype="html">
+        <source>Dérogations client</source>
+        <target state="translated">Concesiones de cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.eyebrow" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">No conformidad</target>
+      </trans-unit>
+      <trans-unit id="derogation.title" datatype="html">
+        <source>Dérogations client</source>
+        <target state="translated">Concesiones de cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.subtitle" datatype="html">
+        <source>Demandez à votre client l'autorisation d'expédier un lot qui s'écarte du plan. Chaque dossier est validé en interne par un manager qualité avant de partir.</source>
+        <target state="translated">Solicite a su cliente la autorización para enviar un lote que se desvía del plano. Cada expediente se valida internamente por un responsable de calidad antes de salir.</target>
+      </trans-unit>
+      <trans-unit id="derogation.tabs" datatype="html">
+        <source>Vues du registre</source>
+        <target state="translated">Vistas del registro</target>
+      </trans-unit>
+      <trans-unit id="derogation.tab-register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">Registro</target>
+      </trans-unit>
+      <trans-unit id="derogation.tab-approvals" datatype="html">
+        <source>Mes validations</source>
+        <target state="translated">Mis validaciones</target>
+      </trans-unit>
+      <trans-unit id="derogation.new" datatype="html">
+        <source>Nouvelle dérogation</source>
+        <target state="translated">Nueva concesión</target>
+      </trans-unit>
+      <trans-unit id="derogation.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el registro.</target>
+      </trans-unit>
+      <trans-unit id="derogation.empty-register" datatype="html">
+        <source>Aucune dérogation ne correspond à cette recherche.</source>
+        <target state="translated">Ninguna concesión coincide con esta búsqueda.</target>
+      </trans-unit>
+      <trans-unit id="derogation.empty-approvals" datatype="html">
+        <source>Aucun dossier n'attend votre signature.</source>
+        <target state="translated">Ningún expediente espera su firma.</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-owner" datatype="html">
+        <source>Créateur</source>
+        <target state="translated">Creador</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-part" datatype="html">
+        <source>Produit</source>
+        <target state="translated">Producto</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">Todos</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">Filtrar</target>
+      </trans-unit>
+      <trans-unit id="derogation.filter-clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">Borrar</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-created" datatype="html">
+        <source>Date de création</source>
+        <target state="translated">Fecha de creación</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-part" datatype="html">
+        <source>Produit</source>
+        <target state="translated">Producto</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-author" datatype="html">
+        <source>Créateur</source>
+        <target state="translated">Creador</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-deviation" datatype="html">
+        <source>Défaut</source>
+        <target state="translated">Defecto</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="derogation.col-attachments" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">Adjuntos</target>
+      </trans-unit>
+      <trans-unit id="derogation.prev-page" datatype="html">
+        <source>Page précédente</source>
+        <target state="translated">Página anterior</target>
+      </trans-unit>
+      <trans-unit id="derogation.next-page" datatype="html">
+        <source>Page suivante</source>
+        <target state="translated">Página siguiente</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Borrador</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.pending-internal" datatype="html">
+        <source>En attente du manager qualité</source>
+        <target state="translated">Pendiente del responsable de calidad</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.to-amend" datatype="html">
+        <source>À modifier</source>
+        <target state="translated">Para modificar</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.quality-approved" datatype="html">
+        <source>Approuvée par la qualité</source>
+        <target state="translated">Aprobada por calidad</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.pending-customer" datatype="html">
+        <source>En attente du client</source>
+        <target state="translated">Pendiente del cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">Aceptada</target>
+      </trans-unit>
+      <trans-unit id="derogation.status.refused" datatype="html">
+        <source>Refusée</source>
+        <target state="translated">Rechazada</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pendiente</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.accepted" datatype="html">
+        <source>Acceptée</source>
+        <target state="translated">Aceptada</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.accepted-conditions" datatype="html">
+        <source>Acceptée sous conditions</source>
+        <target state="translated">Aceptada con condiciones</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision.refused" datatype="html">
+        <source>Refusée</source>
+        <target state="translated">Rechazada</target>
+      </trans-unit>
+      <trans-unit id="derogation.shipment.to-ship" datatype="html">
+        <source>Pièces à expédier</source>
+        <target state="translated">Piezas por enviar</target>
+      </trans-unit>
+      <trans-unit id="derogation.shipment.already-shipped" datatype="html">
+        <source>Pièces déjà expédiées</source>
+        <target state="translated">Piezas ya enviadas</target>
+      </trans-unit>
+      <trans-unit id="derogation.origin.product" datatype="html">
+        <source>Lié au produit</source>
+        <target state="translated">Relacionado con el producto</target>
+      </trans-unit>
+      <trans-unit id="derogation.origin.process" datatype="html">
+        <source>Lié au process</source>
+        <target state="translated">Relacionado con el proceso</target>
+      </trans-unit>
+      <trans-unit id="derogation.occurrence.first" datatype="html">
+        <source>Première occurrence</source>
+        <target state="translated">Primera ocurrencia</target>
+      </trans-unit>
+      <trans-unit id="derogation.occurrence.repeat" datatype="html">
+        <source>Répétition</source>
+        <target state="translated">Repetición</target>
+      </trans-unit>
+      <trans-unit id="derogation.duration.temporary" datatype="html">
+        <source>Temporaire</source>
+        <target state="translated">Temporal</target>
+      </trans-unit>
+      <trans-unit id="derogation.duration.permanent" datatype="html">
+        <source>Permanente</source>
+        <target state="translated">Permanente</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.eyebrow" datatype="html">
+        <source>Dérogation client</source>
+        <target state="translated">Concesión de cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.new-title" datatype="html">
+        <source>Nouvelle dérogation</source>
+        <target state="translated">Nueva concesión</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.subtitle" datatype="html">
+        <source>Demande d'autorisation d'expédier un lot qui s'écarte du plan. Le dossier est validé en interne par un manager qualité avant de partir au client.</source>
+        <target state="translated">Solicitud de autorización para enviar un lote que se desvía del plano. El expediente se valida internamente por un responsable de calidad antes de enviarse al cliente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.load-failed" datatype="html">
+        <source>Le dossier n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el expediente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.created-by" datatype="html">
+        <source>Ouvert par</source>
+        <target state="translated">Creado por</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.on" datatype="html">
+        <source>le</source>
+        <target state="translated">el</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.open-pdf" datatype="html">
+        <source>Relire le document</source>
+        <target state="translated">Revisar el documento</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.to-amend-title" datatype="html">
+        <source>Renvoyé pour correction</source>
+        <target state="translated">Devuelto para corrección</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">Volver al registro</target>
+      </trans-unit>
+      <trans-unit id="derogation.form.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">Guardar</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">Identificación</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.nature" datatype="html">
+        <source>Nature de la dérogation</source>
+        <target state="translated">Naturaleza de la concesión</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.deviation" datatype="html">
+        <source>Description de l'écart</source>
+        <target state="translated">Descripción de la desviación</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.analysis" datatype="html">
+        <source>Analyse et maîtrise</source>
+        <target state="translated">Análisis y control</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.attachments" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">Adjuntos</target>
+      </trans-unit>
+      <trans-unit id="derogation.section.validation" datatype="html">
+        <source>Validation</source>
+        <target state="translated">Validación</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.contact" datatype="html">
+        <source>Contact qualité du client</source>
+        <target state="translated">Contacto de calidad del cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.order" datatype="html">
+        <source>N° de commande</source>
+        <target state="translated">N.º de pedido</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.part" datatype="html">
+        <source>Référence pièce</source>
+        <target state="translated">Referencia de pieza</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.index" datatype="html">
+        <source>Indice</source>
+        <target state="translated">Índice</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.batch" datatype="html">
+        <source>N° de lot</source>
+        <target state="translated">N.º de lote</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.quantity" datatype="html">
+        <source>Quantité concernée</source>
+        <target state="translated">Cantidad afectada</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.quantity-positive" datatype="html">
+        <source>La quantité ne peut pas être négative.</source>
+        <target state="translated">La cantidad no puede ser negativa.</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.request-date" datatype="html">
+        <source>Date de la demande</source>
+        <target state="translated">Fecha de la solicitud</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.request-date-hint" datatype="html">
+        <source>Pré-remplie à l'ouverture du dossier.</source>
+        <target state="translated">Rellenada al crear el expediente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.open-calendar" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Abrir el calendario</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.shipment" datatype="html">
+        <source>Stade d'expédition</source>
+        <target state="translated">Fase de envío</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.origin" datatype="html">
+        <source>Origine de l'écart</source>
+        <target state="translated">Origen de la desviación</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.occurrence" datatype="html">
+        <source>Occurrence</source>
+        <target state="translated">Ocurrencia</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration" datatype="html">
+        <source>Durée</source>
+        <target state="translated">Duración</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration-detail" datatype="html">
+        <source>Précision sur la durée</source>
+        <target state="translated">Detalle de la duración</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.duration-detail-hint" datatype="html">
+        <source>Par exemple : jusqu'au lot 2026-W48, ou pour les trois prochaines livraisons.</source>
+        <target state="translated">Por ejemplo: hasta el lote 2026-W48, o para las tres próximas entregas.</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.specification" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">Especificación</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.actual" datatype="html">
+        <source>Valeur réelle</source>
+        <target state="translated">Valor real</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.qty" datatype="html">
+        <source>Quantité non conforme</source>
+        <target state="translated">Cantidad no conforme</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.add" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">Añadir una fila</target>
+      </trans-unit>
+      <trans-unit id="derogation.line.remove" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">Eliminar esta fila</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.justification" datatype="html">
+        <source>Justification de la demande</source>
+        <target state="translated">Justificación de la solicitud</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.justification-hint" datatype="html">
+        <source>Pourquoi l'écart reste acceptable : aptitude à l'emploi, essais, avis technique.</source>
+        <target state="translated">Por qué la desviación sigue siendo aceptable: aptitud para el uso, ensayos, dictamen técnico.</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.root-cause" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">Causa raíz</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.containment" datatype="html">
+        <source>Mesures d'endiguement</source>
+        <target state="translated">Medidas de contención</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.corrective" datatype="html">
+        <source>Action corrective engagée</source>
+        <target state="translated">Acción correctiva emprendida</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.capa" datatype="html">
+        <source>Référence CAPA</source>
+        <target state="translated">Referencia CAPA</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.capa-hint" datatype="html">
+        <source>Le dossier CAPA qui traite la cause, s'il en existe un.</source>
+        <target state="translated">El expediente CAPA que trata la causa, si existe.</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.attachments" datatype="html">
+        <source>Pièces jointes au dossier</source>
+        <target state="translated">Adjuntos del expediente</target>
+      </trans-unit>
+      <trans-unit id="derogation.field.attachments-hint" datatype="html">
+        <source>Ce que le dossier comporte : rapport d'essai, relevé dimensionnel, photo.</source>
+        <target state="translated">Lo que incluye el expediente: informe de ensayo, registro dimensional, fotografía.</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">Responsable de calidad</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.manager-hint" datatype="html">
+        <source>Il recevra un courriel avec le lien vers ce dossier.</source>
+        <target state="translated">Recibirá un correo con el enlace a este expediente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.request" datatype="html">
+        <source>Validation manager</source>
+        <target state="translated">Validación del responsable</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.waiting" datatype="html">
+        <source>En attente de la signature de</source>
+        <target state="translated">Esperando la firma de</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.withdraw" datatype="html">
+        <source>Retirer la demande</source>
+        <target state="translated">Retirar la solicitud</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.approve" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">Aprobar y firmar</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.send-back" datatype="html">
+        <source>Renvoyer pour correction</source>
+        <target state="translated">Devolver para corrección</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">Reabrir</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.send" datatype="html">
+        <source>Validation client</source>
+        <target state="translated">Validación del cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signed-by" datatype="html">
+        <source>Signé par</source>
+        <target state="translated">Firmado por</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signed-on" datatype="html">
+        <source>le</source>
+        <target state="translated">el</target>
+      </trans-unit>
+      <trans-unit id="derogation.validation.signature-alt" datatype="html">
+        <source>Signature du manager qualité</source>
+        <target state="translated">Firma del responsable de calidad</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.title" datatype="html">
+        <source>Réponse du client</source>
+        <target state="translated">Respuesta del cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.hint" datatype="html">
+        <source>Envoyé le <x id="SENTAT"/> à <x id="EMAIL"/>.</source>
+        <target state="translated">Enviado el <x id="SENTAT"/> a <x id="EMAIL"/>.</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">Decisión</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.date" datatype="html">
+        <source>Date de la réponse</source>
+        <target state="translated">Fecha de la respuesta</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.record" datatype="html">
+        <source>Enregistrer la réponse</source>
+        <target state="translated">Registrar la respuesta</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.answered" datatype="html">
+        <source>Le client a répondu</source>
+        <target state="translated">El cliente respondió</target>
+      </trans-unit>
+      <trans-unit id="derogation.customer.answered-on" datatype="html">
+        <source>le</source>
+        <target state="translated">el</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.title" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">Aprobar y firmar</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.intro" datatype="html">
+        <source>Vous engagez votre responsabilité sur le dossier</source>
+        <target state="translated">Asume su responsabilidad sobre el expediente</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.name" datatype="html">
+        <source>Nom du signataire</source>
+        <target state="translated">Nombre del firmante</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.name-required" datatype="html">
+        <source>Le nom du signataire est requis.</source>
+        <target state="translated">El nombre del firmante es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.hint" datatype="html">
+        <source>Signez dans le cadre, à la souris, au doigt ou au stylet.</source>
+        <target state="translated">Firme en el cuadro, con el ratón, el dedo o un lápiz óptico.</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.canvas" datatype="html">
+        <source>Cadre de signature</source>
+        <target state="translated">Cuadro de firma</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">Borrar</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.empty" datatype="html">
+        <source>Aucun tracé pour l'instant.</source>
+        <target state="translated">Aún no hay trazo.</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="derogation.sign.submit" datatype="html">
+        <source>Approuver et signer</source>
+        <target state="translated">Aprobar y firmar</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.title" datatype="html">
+        <source>Validation client</source>
+        <target state="translated">Validación del cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.warning" datatype="html">
+        <source>Le dossier part au client avec son document signé en pièce jointe. Une fois envoyé, il ne peut plus être rouvert ni modifié.</source>
+        <target state="translated">El expediente se envía al cliente con su documento firmado adjunto. Una vez enviado, ya no puede reabrirse ni modificarse.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.which" datatype="html">
+        <source>Dossier</source>
+        <target state="translated">Expediente</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email" datatype="html">
+        <source>Adresse du client</source>
+        <target state="translated">Dirección del cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email-required" datatype="html">
+        <source>L'adresse du client est requise.</source>
+        <target state="translated">La dirección del cliente es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.email-invalid" datatype="html">
+        <source>Cette adresse n'est pas valide.</source>
+        <target state="translated">Esta dirección no es válida.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language" datatype="html">
+        <source>Langue du document</source>
+        <target state="translated">Idioma del documento</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-hint" datatype="html">
+        <source>Figée sur le dossier à l'envoi : le client doit pouvoir relire ce qu'il a reçu.</source>
+        <target state="translated">Fijado en el expediente al enviar: el cliente debe poder releer lo que recibió.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-fr" datatype="html">
+        <source>Français</source>
+        <target state="translated">Francés</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.language-en" datatype="html">
+        <source>Anglais</source>
+        <target state="translated">Inglés</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">Comentario (opcional)</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="derogation.send.submit" datatype="html">
+        <source>Envoyer au client</source>
+        <target state="translated">Enviar al cliente</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.title" datatype="html">
+        <source>Renvoyer pour correction</source>
+        <target state="translated">Devolver para corrección</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.explain" datatype="html">
+        <source>Vous ne refusez pas la dérogation : seul le client peut l'accorder ou la refuser. Vous renvoyez le dossier à son auteur pour qu'il le corrige.</source>
+        <target state="translated">No está rechazando la concesión: solo el cliente puede concederla o rechazarla. Devuelve el expediente a su autor para que lo corrija.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason" datatype="html">
+        <source>Ce qui doit être corrigé</source>
+        <target state="translated">Lo que debe corregirse</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason-hint" datatype="html">
+        <source>C'est le seul texte que l'auteur du dossier verra.</source>
+        <target state="translated">Es el único texto que verá el autor del expediente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.reason-required" datatype="html">
+        <source>Le motif du renvoi est requis.</source>
+        <target state="translated">El motivo de la devolución es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="derogation.send-back.confirm" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">Devolver</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.title" datatype="html">
+        <source>Rouvrir le dossier</source>
+        <target state="translated">Reabrir el expediente</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.message" datatype="html">
+        <source>La signature sera annulée et le dossier repassera en brouillon. Ce n'est possible que parce qu'il n'est pas encore parti au client.</source>
+        <target state="translated">La firma se anulará y el expediente volverá a borrador. Solo es posible porque todavía no se ha enviado al cliente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopen.confirm" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">Reabrir</target>
+      </trans-unit>
+      <trans-unit id="derogation.saved" datatype="html">
+        <source>Dossier enregistré.</source>
+        <target state="translated">Expediente guardado.</target>
+      </trans-unit>
+      <trans-unit id="derogation.approval-requested" datatype="html">
+        <source>Demande envoyée au manager qualité.</source>
+        <target state="translated">Solicitud enviada al responsable de calidad.</target>
+      </trans-unit>
+      <trans-unit id="derogation.withdrawn" datatype="html">
+        <source>Demande retirée, le dossier repasse en brouillon.</source>
+        <target state="translated">Solicitud retirada, el expediente vuelve a borrador.</target>
+      </trans-unit>
+      <trans-unit id="derogation.sent-back" datatype="html">
+        <source>Dossier renvoyé pour correction.</source>
+        <target state="translated">Expediente devuelto para corrección.</target>
+      </trans-unit>
+      <trans-unit id="derogation.approved" datatype="html">
+        <source>Dossier approuvé et signé.</source>
+        <target state="translated">Expediente aprobado y firmado.</target>
+      </trans-unit>
+      <trans-unit id="derogation.reopened" datatype="html">
+        <source>Dossier rouvert, signature annulée.</source>
+        <target state="translated">Expediente reabierto, firma anulada.</target>
+      </trans-unit>
+      <trans-unit id="derogation.sent" datatype="html">
+        <source>Dossier envoyé au client.</source>
+        <target state="translated">Expediente enviado al cliente.</target>
+      </trans-unit>
+      <trans-unit id="derogation.decision-recorded" datatype="html">
+        <source>Réponse du client enregistrée.</source>
+        <target state="translated">Respuesta del cliente registrada.</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.list" datatype="html">
+        <source>Le registre des dérogations n'a pas pu être lu.</source>
+        <target state="translated">No se pudo leer el registro de concesiones.</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.load" datatype="html">
+        <source>Ce dossier de dérogation n'a pas pu être lu.</source>
+        <target state="translated">No se pudo leer este expediente de concesión.</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.pdf" datatype="html">
+        <source>Le document n'a pas pu être produit.</source>
+        <target state="translated">No se pudo generar el documento.</target>
+      </trans-unit>
+      <trans-unit id="derogation.error.action" datatype="html">
+        <source>L'opération n'a pas abouti. Le dossier est inchangé.</source>
+        <target state="translated">La operación no se completó. El expediente no ha cambiado.</target>
+      </trans-unit>
       <trans-unit id="shell.search.open-aria" datatype="html">
         <source>Rechercher un écran</source>
         <target state="translated">Buscar una pantalla</target>

@@ -79,6 +79,13 @@ const routes: Routes = [
           .then(m => m.CostOfQualityModule)
       },
       {
+        // La dérogation client. Le module charge aussi le sélecteur de date, il
+        // ne se charge donc qu'à l'ouverture de son registre.
+        path: 'derogations',
+        loadChildren: () => import('./features/derogations/derogations.module')
+          .then(m => m.DerogationsModule)
+      },
+      {
         // Tableau de bord du système de management intégré (docs/Tableau de bord SMI.pptx).
         path: 'smi',
         loadChildren: () => import('./features/smi/smi.module').then(m => m.SmiModule)

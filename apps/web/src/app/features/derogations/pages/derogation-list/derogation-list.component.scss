@@ -1,0 +1,171 @@
+// Le registre des dérogations : les colonnes et les filtres de la maquette,
+// rendus avec les jetons du design system pour suivre les thèmes clair et
+// sombre. Aucune couleur en dur — une valeur littérale ici deviendrait
+// illisible au thème sombre, et c'est le défaut que la refonte a soldé.
+
+:host {
+  display: block;
+}
+
+// ---------- onglets ----------
+
+.onglets {
+  display: flex;
+  gap: var(--qos-space-1);
+  border-bottom: 1px solid var(--qos-border-subtle);
+  margin-bottom: var(--qos-space-5);
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-3) var(--qos-space-4);
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--qos-fg-secondary);
+    font: inherit;
+    font-weight: var(--qos-fw-medium);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--qos-bg-hover);
+      color: var(--qos-fg-primary);
+    }
+
+    // Le focus reste visible : l'onglet se parcourt au clavier, et c'est le
+    // seul repère pour qui n'emploie pas la souris.
+    &:focus-visible {
+      outline: 2px solid var(--qos-border-focus);
+      outline-offset: -2px;
+    }
+
+    &--actif {
+      border-bottom-color: var(--qos-accent-bg);
+      color: var(--qos-fg-primary);
+    }
+
+    mat-icon {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
+
+  // L'alerte rouge et son nombre : c'est ce qui fait entrer un manager
+  // prévenu par courriel. Un simple point ne dirait pas combien.
+  &__alerte {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.375rem;
+    height: 1.375rem;
+    padding: 0 var(--qos-space-1);
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-danger-fg);
+    color: var(--qos-fg-inverse);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-bold);
+    line-height: 1;
+  }
+}
+
+// ---------- filtres ----------
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  qos-user-picker,
+  mat-form-field {
+    flex: 1 1 13rem;
+    min-width: 11rem;
+  }
+
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    // Aligné sur la ligne de saisie des champs, et non sur leur étiquette.
+    padding-top: var(--qos-space-1);
+  }
+}
+
+.barre-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--qos-space-4);
+}
+
+// ---------- messages ----------
+
+.echec,
+.vide {
+  padding: var(--qos-space-5);
+  border: 1px dashed var(--qos-border-default);
+  border-radius: var(--qos-radius-md);
+  color: var(--qos-fg-secondary);
+  text-align: center;
+}
+
+.echec {
+  border-color: var(--qos-danger-fg);
+  color: var(--qos-danger-fg);
+}
+
+// ---------- registre ----------
+
+.registre {
+  width: 100%;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  overflow: hidden;
+
+  &__reference {
+    font-family: var(--qos-font-mono);
+    font-weight: var(--qos-fw-medium);
+    white-space: nowrap;
+  }
+
+  // Le défaut peut être long ; on le borne plutôt que d'étirer la table.
+  &__defaut {
+    max-width: 18rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__nuance {
+    display: block;
+    margin-top: var(--qos-space-1);
+    color: var(--qos-fg-tertiary);
+    font-size: var(--qos-fs-xs);
+  }
+
+  &__ligne {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--qos-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--qos-border-focus);
+      outline-offset: -2px;
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--qos-space-2);
+  margin-top: var(--qos-space-3);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}

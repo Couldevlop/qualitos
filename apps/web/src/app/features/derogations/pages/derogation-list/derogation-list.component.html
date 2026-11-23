@@ -1,0 +1,167 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Non-conformité" i18n-eyebrow="@@derogation.eyebrow"
+    title="Dérogations client" i18n-title="@@derogation.title"
+    subtitle="Demandez à votre client l'autorisation d'expédier un lot qui s'écarte du plan. Chaque dossier est validé en interne par un manager qualité avant de partir."
+    i18n-subtitle="@@derogation.subtitle">
+  </qos-page-header>
+
+  <!--
+    Les deux onglets. « Mes validations » porte son nombre en pastille rouge :
+    c'est par là qu'un manager entre quand un courriel l'a prévenu, et l'alerte
+    doit se voir sans qu'on la cherche.
+  -->
+  <nav class="onglets" role="tablist" aria-label="Vues du registre"
+       i18n-aria-label="@@derogation.tabs">
+    <button type="button" role="tab" class="onglets__item"
+            [class.onglets__item--actif]="onglet === 'registre'"
+            [attr.aria-selected]="onglet === 'registre'"
+            (click)="ouvrirOnglet('registre')" data-test="onglet-registre">
+      <mat-icon>list_alt</mat-icon>
+      <span i18n="@@derogation.tab-register">Registre</span>
+    </button>
+    <button type="button" role="tab" class="onglets__item"
+            [class.onglets__item--actif]="onglet === 'validations'"
+            [attr.aria-selected]="onglet === 'validations'"
+            (click)="ouvrirOnglet('validations')" data-test="onglet-validations">
+      <mat-icon>how_to_reg</mat-icon>
+      <span i18n="@@derogation.tab-approvals">Mes validations</span>
+      <span class="onglets__alerte" *ngIf="aValider > 0" data-test="compteur-validations"
+            [attr.aria-label]="aValider + ' dossiers attendent votre signature'">
+        {{ aValider }}
+      </span>
+    </button>
+  </nav>
+
+  <!-- Les filtres du registre. Ils ne s'appliquent pas à « Mes validations » :
+       ce qu'on doit signer nous concerne par définition. -->
+  <form class="filtres" *ngIf="onglet === 'registre'" [formGroup]="filtres"
+        (ngSubmit)="appliquerLesFiltres()">
+    <qos-user-picker label="Créateur" i18n-label="@@derogation.filter-owner"
+                     (userSelected)="surChoixDuCreateur($event)"
+                     data-test="filtre-createur"></qos-user-picker>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@derogation.filter-part">Produit</mat-label>
+      <input matInput formControlName="partReference" data-test="filtre-produit">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@derogation.filter-customer">Client</mat-label>
+      <input matInput formControlName="customerName" data-test="filtre-client">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@derogation.filter-status">Statut</mat-label>
+      <mat-select formControlName="status" data-test="filtre-statut">
+        <mat-option [value]="null" i18n="@@derogation.filter-all">Tous</mat-option>
+        <mat-option *ngFor="let s of statuts" [value]="s">{{ statusLabel(s) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filtres__actions">
+      <button mat-stroked-button type="submit" data-test="filtrer">
+        <mat-icon>search</mat-icon>
+        <span i18n="@@derogation.filter-apply">Filtrer</span>
+      </button>
+      <button mat-button type="button" (click)="effacerLesFiltres()" data-test="effacer-filtres">
+        <span i18n="@@derogation.filter-clear">Effacer</span>
+      </button>
+    </div>
+  </form>
+
+  <div class="barre-actions" *ngIf="peutCreer && onglet === 'registre'">
+    <button mat-flat-button color="primary" type="button" (click)="creer()"
+            data-test="nouvelle-derogation">
+      <mat-icon>add</mat-icon>
+      <span i18n="@@derogation.new">Nouvelle dérogation</span>
+    </button>
+  </div>
+
+  <mat-progress-bar *ngIf="chargement" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="echec" role="alert" i18n="@@derogation.load-failed">
+    Le registre n'a pas pu être chargé.
+  </p>
+
+  <p class="vide" *ngIf="!chargement && !echec && lignes.length === 0">
+    <ng-container *ngIf="onglet === 'validations'; else registreVide">
+      <span i18n="@@derogation.empty-approvals">Aucun dossier n'attend votre signature.</span>
+    </ng-container>
+    <ng-template #registreVide>
+      <span i18n="@@derogation.empty-register">Aucune dérogation ne correspond à cette recherche.</span>
+    </ng-template>
+  </p>
+
+  <table mat-table [dataSource]="lignes" class="registre"
+         *ngIf="lignes.length > 0" data-test="registre">
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-created">Date de création</th>
+      <td mat-cell *matCellDef="let l">{{ l.createdAt | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-reference">Référence</th>
+      <td mat-cell *matCellDef="let l" class="registre__reference">{{ l.reference }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="partReference">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-part">Produit</th>
+      <td mat-cell *matCellDef="let l">{{ l.partReference || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="customerName">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-customer">Client</th>
+      <td mat-cell *matCellDef="let l">{{ l.customerName || '—' }}</td>
+    </ng-container>
+
+    <!-- Le créateur par son NOM, jamais par son identifiant. -->
+    <ng-container matColumnDef="createdByName">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-author">Créateur</th>
+      <td mat-cell *matCellDef="let l">{{ l.createdByName || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="firstDeviation">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-deviation">Défaut</th>
+      <td mat-cell *matCellDef="let l" class="registre__defaut">{{ l.firstDeviation || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-status">Statut</th>
+      <td mat-cell *matCellDef="let l">
+        <qos-status-pill [label]="statusLabel(l.status)"
+                         [tone]="statusTone(l.status)"></qos-status-pill>
+        <!-- La nuance du client n'est pas dans l'état : « Acceptée sous
+             conditions » vaut un accord, et ce n'est pas la même chose. -->
+        <span class="registre__nuance"
+              *ngIf="l.customerDecision === 'ACCEPTED_WITH_CONDITIONS'">
+          {{ decisionLabel(l.customerDecision) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="attachmentsNote">
+      <th mat-header-cell *matHeaderCellDef i18n="@@derogation.col-attachments">Pièces jointes</th>
+      <td mat-cell *matCellDef="let l">{{ l.attachmentsNote || '—' }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colonnes"></tr>
+    <tr mat-row *matRowDef="let l; columns: colonnes" class="registre__ligne"
+        tabindex="0" (click)="ouvrir(l)" (keydown.enter)="ouvrir(l)"
+        [attr.data-test]="'ligne-' + l.reference"></tr>
+  </table>
+
+  <div class="pagination" *ngIf="total > taille">
+    <button mat-icon-button type="button" (click)="pagePrecedente()" [disabled]="page === 0"
+            i18n-aria-label="@@derogation.prev-page" aria-label="Page précédente">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span aria-live="polite" data-test="pagination">{{ depuis }} – {{ jusqua }} / {{ total }}</span>
+    <button mat-icon-button type="button" (click)="pageSuivante()"
+            [disabled]="jusqua >= total"
+            i18n-aria-label="@@derogation.next-page" aria-label="Page suivante">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>

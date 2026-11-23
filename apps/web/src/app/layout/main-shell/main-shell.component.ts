@@ -208,7 +208,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
         // suite du meme geste : on constate un ecart, puis on le traite. La
         // ranger dans « Operations » l'eloignait de ce qui la declenche.
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering', module: 'capa' },
-        { label: $localize`:@@nav.capa-efficacite:Efficacité CAPA`,   route: '/capa/efficacite', icon: 'insights', module: 'capa' }
+        { label: $localize`:@@nav.capa-efficacite:Efficacité CAPA`,   route: '/capa/efficacite', icon: 'insights', module: 'capa' },
+        // La dérogation suit la CAPA parce qu'elle en est le voisin immédiat :
+        // on constate un écart, on le traite, et parfois on demande au client
+        // l'autorisation d'expédier quand même. Module capa, comme la CAPA :
+        // c'est le même registre d'écarts qui la déclenche.
+        { label: $localize`:@@nav.derogations:Dérogations client`, route: '/derogations', icon: 'handshake', module: 'capa' }
       ]
     },
     {
