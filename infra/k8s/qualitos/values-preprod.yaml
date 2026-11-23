@@ -136,6 +136,15 @@ services:
       # Comptes de connexion (ADR 0079) : l'API d'administration Keycloak par
       # l'adresse INTERNE — le WAF de l'ingress refuse ses écritures.
       IDENTITY_KEYCLOAK_URL: http://keycloak.qualitos-preprod.svc.cluster.local:8080/auth
+      # Messagerie de la plateforme, pour la recette. Elle sert au courriel
+      # client d'une derogation quand l'organisation n'a pas regle la sienne,
+      # et aux factures. Ici elle pointe le RECEPTACLE : les messages
+      # s'arretent dans la grappe et se lisent dans son interface, donc aucun
+      # courriel de recette ne part vers une boite reelle.
+      QUALITOS_MAIL_ENABLED: "true"
+      QUALITOS_MAIL_FROM: notifications@preprod.qualitos.openlabconsulting.com
+      SPRING_MAIL_HOST: mailcatcher.qualitos-preprod.svc.cluster.local
+      SPRING_MAIL_PORT: "1025"
     # KEYCLOAK_PROVISIONER_SECRET, lu dans Keycloak par deploy.sh.
     # qualitos-api-core-secrets : QUALITOS_SECRET_KEY, la cle des secrets
     # relisibles (ADR 0127). Engendree UNE FOIS par deploy.sh et jamais
@@ -248,3 +257,9 @@ services:
 
 autoscaling:
   enabled: false
+
+# Le receptacle de courriel : allume ICI et nulle part ailleurs. Il retient les
+# messages au lieu de les remettre, ce qui est exactement ce qu'on veut d'un
+# environnement de recette, et exactement ce qu'on ne veut pas ailleurs.
+mailcatcher:
+  enabled: true

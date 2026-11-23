@@ -31,6 +31,17 @@ externalServices:
   qdrantUrl: http://qdrant.qualitos.svc.cluster.local:6333
   ollamaUrl: http://ollama.qualitos.svc.cluster.local:11434
 
+# Receptacle de courriel pour les environnements d'essai. ETEINT par defaut :
+# il retient les messages au lieu de les remettre, ce qu'aucun environnement
+# servant de vrais destinataires ne doit faire. Voir templates/mailcatcher.yaml.
+mailcatcher:
+  enabled: false
+  image: docker.io/axllent/mailpit
+  digest: sha256:81370195cd4a0eab9604d17c2617a7525b0486f9365555253b6c5376c6350f1a
+  resources:
+    requests: { cpu: 10m, memory: 32Mi }
+    limits: { cpu: 200m, memory: 128Mi }
+
 serviceAccount:
   create: true
   name: qualitos

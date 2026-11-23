@@ -1,0 +1,110 @@
+{{/*
+Un réceptacle de courriel, pour les environnements d'essai UNIQUEMENT.
+
+Il accepte tout ce qu'on lui soumet en SMTP et ne le remet à personne : les
+messages s'arrêtent dans la grappe et se lisent dans son interface. C'est ce qui
+permet d'éprouver un envoi de bout en bout — l'expéditeur, la copie cachée, la
+pièce jointe — sans identifiants d'un vrai serveur et sans qu'un courriel de
+recette parte vers une boîte réelle.
+
+POURQUOI IL N'EST PAS DÉCLARÉ SOUS `services:`. Ce bloc décrit les services
+BÂTIS par ce dépôt : le déploiement tiré en dérive la liste des images à
+attendre, sous la forme `<registre>/<image>:<étiquette du commit>`. Un
+réceptacle venant d'un registre public n'a pas d'image à cette adresse ; déclaré
+là, il serait attendu à chaque déploiement, indéfiniment et sans rien dire.
+
+IL EST ÉTEINT PARTOUT SAUF OÙ ON L'ALLUME. Un réceptacle en production
+retiendrait silencieusement des courriels que leurs destinataires attendent.
+*/}}
+{{- if .Values.mailcatcher.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailcatcher
+  labels:
+    app.kubernetes.io/name: mailcatcher
+    app.kubernetes.io/component: test-only
+    {{- include "qualitos.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    {{- toYaml .Values.global.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mailcatcher
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mailcatcher
+        app.kubernetes.io/component: test-only
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: mailcatcher
+          # Épinglée par empreinte : une étiquette mobile ferait changer le
+          # contenu d'un déploiement à l'autre sans que rien ne le dise.
+          image: {{ printf "%s@%s" .Values.mailcatcher.image .Values.mailcatcher.digest | quote }}
+          imagePullPolicy: IfNotPresent
+          env:
+            # Pas d'authentification : le réceptacle n'est joignable que depuis
+            # la grappe, et lui demander des identifiants reviendrait à inventer
+            # un secret de plus pour un service qui ne remet rien.
+            - name: MP_SMTP_AUTH_ACCEPT_ANY
+              value: "true"
+            - name: MP_SMTP_AUTH_ALLOW_INSECURE
+              value: "true"
+            # Les messages vivent en mémoire : ils disparaissent au
+            # redémarrage, et c'est voulu — un courriel de recette n'a pas à
+            # survivre à l'essai qui l'a produit.
+            - name: MP_MAX_MESSAGES
+              value: "200"
+          ports:
+            - name: smtp
+              containerPort: 1025
+            - name: http
+              containerPort: 8025
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.mailcatcher.resources | nindent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: smtp
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            tcpSocket:
+              port: smtp
+            initialDelaySeconds: 3
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailcatcher
+  labels:
+    app.kubernetes.io/name: mailcatcher
+    app.kubernetes.io/component: test-only
+    {{- include "qualitos.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: mailcatcher
+  ports:
+    - name: smtp
+      port: 1025
+      targetPort: smtp
+    # L'interface de lecture reste en ClusterIP, sans entrée publique : les
+    # messages retenus portent les pièces jointes des dossiers d'essai, et une
+    # adresse ouverte les exposerait à qui connaît le nom d'hôte. On la consulte
+    # par un relais de port, le temps d'une recette.
+    - name: http
+      port: 8025
+      targetPort: http
+{{- end }}
