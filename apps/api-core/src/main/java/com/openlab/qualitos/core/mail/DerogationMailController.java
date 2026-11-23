@@ -11,8 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,30 +85,13 @@ public class DerogationMailController {
     private final TenantMailSettingsService settings;
     private final MailSenderFactory factory;
     private final MailHostPolicy hostPolicy;
-    /**
-     * La messagerie de la plateforme, quand le deploiement en a regle une.
-     *
-     * <p>{@code ObjectProvider} parce qu'elle peut ne pas exister : sans
-     * {@code spring.mail.host}, Spring ne cree aucun {@link JavaMailSender}, et
-     * exiger le bean ferait echouer le demarrage d'api-core sur une capacite
-     * dont ses autres surfaces n'ont pas besoin.
-     */
-    private final ObjectProvider<JavaMailSender> plateforme;
-    private final boolean plateformeActive;
-    private final String adressePlateforme;
 
     public DerogationMailController(TenantMailSettingsService settings,
                                     MailSenderFactory factory,
-                                    MailHostPolicy hostPolicy,
-                                    ObjectProvider<JavaMailSender> plateforme,
-                                    @Value("${qualitos.mail.enabled:false}") boolean plateformeActive,
-                                    @Value("${qualitos.mail.from:}") String adressePlateforme) {
+                                    MailHostPolicy hostPolicy) {
         this.settings = settings;
         this.factory = factory;
         this.hostPolicy = hostPolicy;
-        this.plateforme = plateforme;
-        this.plateformeActive = plateformeActive;
-        this.adressePlateforme = adressePlateforme == null ? "" : adressePlateforme.trim();
     }
 
     /**
@@ -221,58 +202,37 @@ public class DerogationMailController {
     }
 
     /**
-     * De quelle messagerie part ce courriel, et selon quelle regle.
+     * De quelle messagerie part ce courriel.
      *
-     * <p><b>Celle du client quand il en a regle une</b> : c'est ce qui rend
-     * l'ecran de reglage autre chose qu'un formulaire decoratif, et le client
-     * destinataire reconnait l'adresse de son fournisseur.
+     * <p><b>De celle du client, et d'aucune autre.</b> Le reglage vit dans les
+     * parametres de son organisation, comme tout parametrage (ADR 0127), et il
+     * y designe une adresse generique — celle du service qualite, non celle
+     * d'une personne. Le courriel engage l'organisation vis-a-vis de son
+     * client : il doit partir d'une adresse que ce client reconnait.
      *
-     * <p><b>Celle de la plateforme quand il n'a rien regle</b>, sous une adresse
-     * generique, l'initiateur restant en copie cachee. C'est le contrat que
-     * {@link TenantMailSettingsService#pourEnvoi} enonce lui-meme -- vide
-     * signifie « prends celle de la plateforme » -- et c'est deja ce que fait la
-     * facture, qui sort elle aussi vers le client
-     * ({@code TenantAwareInvoiceMailer}). La derogation etait le seul courriel
-     * sortant a refuser au lieu de se replier, et un dossier signe restait
-     * bloque pour un reglage dont l'initiateur n'avait pas la main.
+     * <p><b>Pas de repli sur une messagerie de plateforme</b>, meme quand il en
+     * existe une. C'est ce qui distingue cet envoi de celui d'une facture : une
+     * facture emane de QualitOS, une derogation emane du fournisseur de son
+     * destinataire. Partir d'une adresse generique de plateforme ferait arriver
+     * chez le client un courrier qui l'engage sous un nom qui n'est pas celui
+     * de son fournisseur.
      *
-     * <p><b>Le repli ne vaut que pour l'ABSENCE de reglage.</b> Une messagerie
-     * de client reglee mais dont l'hote est refuse -- ou qui echouera a l'envoi
-     * -- ne se rabat pas sur la plateforme : le message partirait d'une adresse
-     * que le client n'a pas choisie, sous l'identite de QualitOS, pour un
-     * courrier qui l'engage. Le refus remonte, et le dossier reste renvoyable.
-     *
-     * <p>La politique d'hote ne s'applique qu'a la messagerie du client : son
-     * hote vient d'une saisie, celui de la plateforme d'un deploiement.
+     * <p>Faute de reglage, le refus nomme ce que l'utilisateur peut faire. Le
+     * dossier reste « Approuvee par la qualite », donc renvoyable des que la
+     * messagerie est reglee.
      */
     private Expedition expedition(UUID tenantId) {
-        Optional<MailAccount> propre = settings.pourEnvoi(tenantId);
-        if (propre.isPresent()) {
-            MailAccount reglage = propre.get();
-            String refus = hostPolicy.refus(reglage.getHost());
-            if (refus != null) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, refus);
-            }
-            return new Expedition(factory.creer(reglage, settings.motDePasseClair(reglage)),
-                    reglage.getFromAddress(), reglage.getHost(), reglage.getReplyTo());
+        MailAccount reglage = settings.pourEnvoi(tenantId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.CONFLICT,
+                        "La messagerie de votre organisation n'est pas configurée :"
+                                + " réglez-la dans l'administration avant d'envoyer une"
+                                + " dérogation à un client."));
+        String refus = hostPolicy.refus(reglage.getHost());
+        if (refus != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, refus);
         }
-
-        JavaMailSender generique = plateformeActive ? plateforme.getIfAvailable() : null;
-        if (generique == null || adressePlateforme.isEmpty()) {
-            // Le refus nomme ce que l'UTILISATEUR peut faire. L'etat de la
-            // messagerie de la plateforme est l'affaire de l'exploitant, et il
-            // se lit dans le journal ci-dessous, pas a l'ecran.
-            log.warn("derogation.mail.no-sender tenant_id={} platform_enabled={} platform_from={}",
-                    tenantId, plateformeActive, adressePlateforme.isEmpty() ? "absent" : "present");
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Aucune messagerie n'est disponible pour cet envoi :"
-                            + " réglez celle de votre organisation dans l'administration"
-                            + " avant d'envoyer une dérogation à un client.");
-        }
-        // Pas de repondre-a : la plateforme n'en a pas a proposer, et en forger
-        // un vers l'initiateur exposerait au client une adresse interne que la
-        // copie cachee a justement pour role de ne pas montrer.
-        return new Expedition(generique, adressePlateforme, "plateforme", null);
+        return new Expedition(factory.creer(reglage, settings.motDePasseClair(reglage)),
+                reglage.getFromAddress(), reglage.getHost(), reglage.getReplyTo());
     }
 
     // ---- ce qui vient du jeton, et de lui seul -------------------------------

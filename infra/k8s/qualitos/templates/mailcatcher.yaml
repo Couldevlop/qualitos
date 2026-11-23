@@ -2,10 +2,13 @@
 Un réceptacle de courriel, pour les environnements d'essai UNIQUEMENT.
 
 Il accepte tout ce qu'on lui soumet en SMTP et ne le remet à personne : les
-messages s'arrêtent dans la grappe et se lisent dans son interface. C'est ce qui
-permet d'éprouver un envoi de bout en bout — l'expéditeur, la copie cachée, la
-pièce jointe — sans identifiants d'un vrai serveur et sans qu'un courriel de
-recette parte vers une boîte réelle.
+messages s'arrêtent dans la grappe et se lisent dans son interface.
+
+Une organisation de recette le DÉSIGNE dans ses propres paramètres de messagerie,
+comme elle désignerait un vrai serveur. C'est donc le chemin de production qui
+s'éprouve — le réglage par organisation, l'expéditeur qu'elle a choisi, la copie
+cachée, la pièce jointe — sans identifiants d'un vrai serveur, et sans qu'un
+courriel de recette parte vers une boîte réelle.
 
 POURQUOI IL N'EST PAS DÉCLARÉ SOUS `services:`. Ce bloc décrit les services
 BÂTIS par ce dépôt : le déploiement tiré en dérive la liste des images à

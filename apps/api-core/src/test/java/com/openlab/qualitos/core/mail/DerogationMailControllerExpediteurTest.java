@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,41 +33,35 @@ import static org.mockito.Mockito.verify;
 /**
  * D'ou part le courriel d'une derogation, et sous quelle adresse.
  *
- * <p>Un dossier signe restait bloque pour un reglage dont l'initiateur n'avait
- * pas la main : la derogation refusait quand le client n'avait pas configure sa
- * messagerie, alors que la facture -- qui sort elle aussi vers le client, par la
- * meme methode -- se replie sur celle de la plateforme. Ce banc fixe les trois
- * etages et, surtout, la regle qui les separe : le repli ne vaut QUE pour
- * l'absence de reglage.
+ * <p>De la messagerie de l'organisation, et d'aucune autre. Le reglage vit dans
+ * les parametres de cette organisation, comme tout parametrage (ADR 0127), et
+ * elle y designe une adresse generique -- celle du service qualite, non celle
+ * d'une personne. Pas de repli sur une messagerie de plateforme : le courriel
+ * engage l'organisation vis-a-vis de son client, et il doit partir d'une adresse
+ * que ce client reconnait.
  */
 @DisplayName("D'ou part le courriel d'une derogation")
 class DerogationMailControllerExpediteurTest {
 
     private static final UUID CLIENT = UUID.randomUUID();
     private static final String INITIATEUR = "initiateur@organisation.fr";
-    private static final String GENERIQUE = "notifications@qualitos.fr";
 
     private final TenantMailSettingsService settings = mock(TenantMailSettingsService.class);
     private final MailSenderFactory factory = mock(MailSenderFactory.class);
     private final MailHostPolicy hostPolicy = mock(MailHostPolicy.class);
-    @SuppressWarnings("unchecked")
-    private final ObjectProvider<JavaMailSender> fourniture = mock(ObjectProvider.class);
     private final JavaMailSender envoyeur = mock(JavaMailSender.class);
+
+    private DerogationMailController controleur;
 
     @BeforeEach
     void poserLeContexte() {
         TenantContext.setTenantId(CLIENT.toString());
-        Jwt jeton = Jwt.withTokenValue("jeton-de-banc")
-                .header("alg", "none")
-                .claim("sub", UUID.randomUUID().toString())
-                .claim("email", INITIATEUR)
-                .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plusSeconds(600))
-                .build();
-        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jeton));
+        SecurityContextHolder.getContext().setAuthentication(
+                new JwtAuthenticationToken(jeton(INITIATEUR)));
         given(envoyeur.createMimeMessage())
                 .willAnswer(i -> new MimeMessage(Session.getInstance(new Properties())));
         given(factory.creer(any(), any())).willReturn(envoyeur);
+        controleur = new DerogationMailController(settings, factory, hostPolicy);
     }
 
     @AfterEach
@@ -77,9 +70,16 @@ class DerogationMailControllerExpediteurTest {
         SecurityContextHolder.clearContext();
     }
 
-    private DerogationMailController controleur(boolean plateformeActive, String adresse) {
-        return new DerogationMailController(settings, factory, hostPolicy, fourniture,
-                plateformeActive, adresse);
+    private static Jwt jeton(String adresse) {
+        Jwt.Builder construction = Jwt.withTokenValue("jeton-de-banc")
+                .header("alg", "none")
+                .claim("sub", UUID.randomUUID().toString())
+                .issuedAt(Instant.now())
+                .expiresAt(Instant.now().plusSeconds(600));
+        if (adresse != null) {
+            construction.claim("email", adresse);
+        }
+        return construction.build();
     }
 
     private static DerogationMailController.SendRequest demande() {
@@ -89,8 +89,15 @@ class DerogationMailControllerExpediteurTest {
     }
 
     private static MailAccount reglageDuClient() {
-        return new MailAccount("qualite@organisation.fr", "Qualite Organisation", null,
-                "smtp.organisation.fr", 587, MailSecurity.STARTTLS, "u", "v1.a.b", true);
+        return new MailAccount("qualite@organisation.fr", "Qualite Organisation",
+                "qualite@organisation.fr", "smtp.organisation.fr", 587,
+                MailSecurity.STARTTLS, "u", "v1.a.b", true);
+    }
+
+    /** Le reglage de l'organisation est en place et son hote accepte. */
+    private void messagerieReglee() {
+        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.of(reglageDuClient()));
+        given(hostPolicy.refus("smtp.organisation.fr")).willReturn(null);
     }
 
     /** Le message reellement poste, pour lire ses en-tetes. */
@@ -101,144 +108,118 @@ class DerogationMailControllerExpediteurTest {
     }
 
     @Test
-    @DisplayName("le client a regle sa messagerie : le courriel part de SON adresse")
-    void laMessagerieDuClientLEmporte() throws Exception {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.of(reglageDuClient()));
-        given(hostPolicy.refus("smtp.organisation.fr")).willReturn(null);
+    @DisplayName("le courriel part de l'adresse reglee par l'organisation")
+    void leCourrielPartDeLAdresseDeLOrganisation() throws Exception {
+        messagerieReglee();
 
-        controleur(true, GENERIQUE).send(demande());
+        controleur.send(demande());
 
-        assertThat(messagePoste().getFrom()[0])
-                .hasToString("qualite@organisation.fr");
-    }
-
-    @Test
-    @DisplayName("le client n'a rien regle : le courriel part de l'adresse generique")
-    void sansReglageLaPlateformePrendLeRelais() throws Exception {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
-
-        controleur(true, GENERIQUE).send(demande());
-
-        assertThat(messagePoste().getFrom()[0]).hasToString(GENERIQUE);
+        assertThat(messagePoste().getFrom()[0]).hasToString("qualite@organisation.fr");
     }
 
     @Test
     @DisplayName("l'initiateur est en copie cachee, et le client ne le voit pas")
     void lInitiateurEstEnCopieCachee() throws Exception {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
+        messagerieReglee();
 
-        controleur(true, GENERIQUE).send(demande());
+        controleur.send(demande());
 
         MimeMessage message = messagePoste();
-        assertThat(message.getRecipients(Message.RecipientType.BCC))
-                .hasSize(1);
+        assertThat(message.getRecipients(Message.RecipientType.BCC)).hasSize(1);
         assertThat(message.getRecipients(Message.RecipientType.BCC)[0])
                 .hasToString(INITIATEUR);
         assertThat(message.getRecipients(Message.RecipientType.TO)[0])
                 .hasToString("client@exemple.fr");
+        // La copie n'a de sens que cachee : en Cc, l'adresse interne de
+        // l'initiateur arriverait sous les yeux du client.
         assertThat(message.getRecipients(Message.RecipientType.CC)).isNull();
     }
 
     @Test
-    @DisplayName("la piece jointe part avec le courriel generique")
-    void laPieceJointePartAussi() throws Exception {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
+    @DisplayName("la reponse du client revient a l'adresse que l'organisation a designee")
+    void laReponseRevientALAdresseDesignee() throws Exception {
+        messagerieReglee();
 
-        controleur(true, GENERIQUE).send(demande());
+        controleur.send(demande());
 
-        assertThat(messagePoste().getContent())
-                .isInstanceOf(jakarta.mail.Multipart.class);
+        assertThat(messagePoste().getReplyTo()[0]).hasToString("qualite@organisation.fr");
     }
 
     @Test
-    @DisplayName("une messagerie de client dont l'hote est refuse NE se replie PAS")
-    void unHoteRefuseNeSeReplitPas() {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.of(reglageDuClient()));
-        given(hostPolicy.refus("smtp.organisation.fr"))
-                .willReturn("Cet hote de messagerie n'est pas autorise.");
+    @DisplayName("la derogation part en piece jointe")
+    void laDerogationPartEnPieceJointe() throws Exception {
+        messagerieReglee();
 
-        assertThatThrownBy(() -> controleur(true, GENERIQUE).send(demande()))
+        controleur.send(demande());
+
+        assertThat(messagePoste().getContent()).isInstanceOf(jakarta.mail.Multipart.class);
+    }
+
+    @Test
+    @DisplayName("sans messagerie reglee, le refus dit ce que l'utilisateur peut faire")
+    void sansMessagerieRegleeLeRefusEstActionnable() {
+        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controleur.send(demande()))
                 .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("n'est pas autorise");
+                .hasMessageContaining("La messagerie de votre organisation n'est pas configurée")
+                .hasMessageContaining("administration");
 
         verify(envoyeur, never()).send(any(MimeMessage.class));
     }
 
     @Test
-    @DisplayName("ni client ni plateforme : le refus dit ce que l'utilisateur peut faire")
-    void sansAucuneMessagerieLeRefusEstActionnable() {
+    @DisplayName("aucun repli : sans reglage, rien ne part d'une autre adresse")
+    void aucunRepliSurUneAutreAdresse() {
         given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> controleur(false, GENERIQUE).send(demande()))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("Aucune messagerie n'est disponible")
-                .hasMessageContaining("votre organisation");
+        assertThatThrownBy(() -> controleur.send(demande()))
+                .isInstanceOf(ResponseStatusException.class);
+
+        // Pas de fabrique d'expediteur appelee, donc aucune messagerie de
+        // substitution : le courriel ne peut pas partir sous une identite que
+        // l'organisation n'a pas choisie.
+        verify(factory, never()).creer(any(), any());
     }
 
     @Test
-    @DisplayName("la plateforme active mais sans adresse d'expedition ne sert pas")
-    void laPlateformeSansAdresseNeSertPas() {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
+    @DisplayName("un hote refuse par la politique arrete l'envoi")
+    void unHoteRefuseArreteLEnvoi() {
+        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.of(reglageDuClient()));
+        given(hostPolicy.refus("smtp.organisation.fr"))
+                .willReturn("Ce serveur n'est pas joignable depuis la plateforme.");
 
-        assertThatThrownBy(() -> controleur(true, "  ").send(demande()))
+        assertThatThrownBy(() -> controleur.send(demande()))
                 .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("Aucune messagerie n'est disponible");
-    }
+                .hasMessageContaining("n'est pas joignable");
 
-    @Test
-    @DisplayName("la plateforme annoncee mais absente du contexte ne sert pas non plus")
-    void laPlateformeAnnonceeMaisAbsenteNeSertPas() {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(null);
-
-        assertThatThrownBy(() -> controleur(true, GENERIQUE).send(demande()))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("Aucune messagerie n'est disponible");
+        verify(envoyeur, never()).send(any(MimeMessage.class));
     }
 
     @Test
     @DisplayName("un serveur qui refuse l'envoi le dit en francais, et reste renvoyable")
     void unServeurQuiRefuseLeDitEnFrancais() {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
+        messagerieReglee();
         org.mockito.BDDMockito.willThrow(new MailSendException("connexion refusee"))
                 .given(envoyeur).send(any(MimeMessage.class));
 
-        assertThatThrownBy(() -> controleur(true, GENERIQUE).send(demande()))
+        assertThatThrownBy(() -> controleur.send(demande()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("n'a pas accepté l'envoi")
                 .hasMessageContaining("renvoyable")
+                // La cause technique reste au journal (OWASP A09).
                 .hasMessageNotContaining("connexion refusee");
     }
 
     @Test
     @DisplayName("sans adresse dans le jeton, le courriel part quand meme, sans copie")
     void sansAdresseDansLeJetonLeCourrielPartSansCopie() throws Exception {
-        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(
-                Jwt.withTokenValue("sans-adresse").header("alg", "none")
-                        .claim("sub", UUID.randomUUID().toString())
-                        .issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(600))
-                        .build()));
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
+        SecurityContextHolder.getContext().setAuthentication(
+                new JwtAuthenticationToken(jeton(null)));
+        messagerieReglee();
 
-        controleur(true, GENERIQUE).send(demande());
+        controleur.send(demande());
 
         assertThat(messagePoste().getRecipients(Message.RecipientType.BCC)).isNull();
-    }
-
-    @Test
-    @DisplayName("la politique d'hote ne s'applique pas a la messagerie de la plateforme")
-    void laPolitiqueDHoteNeViseQueLeClient() throws Exception {
-        given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
-        given(fourniture.getIfAvailable()).willReturn(envoyeur);
-
-        controleur(true, GENERIQUE).send(demande());
-
-        verify(hostPolicy, never()).refus(any());
     }
 }
