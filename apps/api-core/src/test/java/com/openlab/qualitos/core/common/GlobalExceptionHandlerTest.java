@@ -11,6 +11,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -116,5 +117,40 @@ class GlobalExceptionHandlerTest {
         ProblemDetail result = handler.handleGeneric(ex);
         assertThat(result.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         assertThat(result.getTitle()).isEqualTo("Internal Server Error");
+    }
+    /**
+     * Ce qu un service d aval peut relayer : la PHRASE, pas le message du journal.
+     *
+     * <p>getMessage() d une ResponseStatusException rend « 409 CONFLICT "..." » --
+     * le statut en prefixe et la phrase entre guillemets. Publie tel quel, ce
+     * bruit occupait la place de la raison : le moteur qualite, qui relaie le
+     * refus d envoi d une derogation, n avait plus rien d affichable, et l ecran
+     * retombait sur « Erreur serveur, reessayez » pour un reglage que
+     * l utilisateur etait le seul a pouvoir faire.
+     */
+    @Test
+    @DisplayName("Publie le detail declare, et non le message de developpeur")
+    void publieLeDetailDeclare() {
+        String phrase = "La messagerie de votre organisation n'est pas configuree.";
+        ResponseStatusException ex =
+                new ResponseStatusException(HttpStatus.CONFLICT, phrase);
+
+        ProblemDetail result = handler.handleGeneric(ex);
+
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        assertThat(result.getDetail()).isEqualTo(phrase);
+        assertThat(result.getDetail()).doesNotContain("409 CONFLICT");
+        assertThat(result.getDetail()).doesNotContain("\"");
+    }
+
+    @Test
+    @DisplayName("Retombe sur le message quand la reponse ne declare aucun detail")
+    void retombeSurLeMessageSansDetailDeclare() {
+        ResponseStatusException ex = new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+
+        ProblemDetail result = handler.handleGeneric(ex);
+
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
+        assertThat(result.getDetail()).isNotBlank();
     }
 }

@@ -82,10 +82,27 @@ public class DerogationExceptionHandler {
                 "derogation-forbidden", "Derogation Gesture Not Yours");
     }
 
+    /**
+     * Le courriel n'est pas parti, et l'ecran doit dire POURQUOI.
+     *
+     * <p>{@code userMessage} est le canal DECLARE des phrases destinees a
+     * l'utilisateur, celui que l'ecran lit -- {@code detail} ne l'est pas, et il
+     * ne l'affiche jamais, parce qu'un detail peut porter un nom de classe ou
+     * une contrainte de base (OWASP A09). Sans cette propriete, le refus le plus
+     * actionnable qui soit -- « la messagerie de votre organisation n'est pas
+     * configuree » -- se lisait « Erreur serveur, reessayez dans un instant » :
+     * un conseil faux, puisque reessayer ne configure rien, et la perte de la
+     * seule information qui permettait d'agir.
+     *
+     * <p>La phrase vient de {@code CoreMailAdapter}, qui l'a deja bornee et
+     * nettoyee ; c'est la meme borne que celle de l'ecran.
+     */
     @ExceptionHandler(DerogationMailException.class)
     public ProblemDetail courriel(DerogationMailException ex) {
-        return ProblemDetails.of(HttpStatus.BAD_GATEWAY, ex.getMessage(),
+        ProblemDetail probleme = ProblemDetails.of(HttpStatus.BAD_GATEWAY, ex.getMessage(),
                 "derogation-mail-failed", "Derogation Mail Not Sent");
+        probleme.setProperty("userMessage", ex.getMessage());
+        return probleme;
     }
 
     @ExceptionHandler(DirectoryUnavailableException.class)

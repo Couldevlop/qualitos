@@ -419,8 +419,17 @@ public class GlobalExceptionHandler {
         // d'audit n'expose aucune écriture.
         if (ex instanceof org.springframework.web.ErrorResponse cadre) {
             log.warn("rejected request: {}", ex.getMessage());
+            // Le DETAIL de la reponse, pas le message de l exception. Pour une
+            // ResponseStatusException, getMessage() rend « 409 CONFLICT "..." » :
+            // le statut en prefixe et la phrase entre guillemets, une forme ecrite
+            // pour un journal. Le corps declare, lui, porte la phrase seule, celle
+            // que l appelant peut montrer. Un service qui relayait ce refus
+            // transmettait donc du bruit a la place de la raison, et l ecran
+            // n avait plus rien d affichable.
+            String phrase = cadre.getBody().getDetail();
             ProblemDetail problem = ProblemDetail.forStatusAndDetail(
-                    HttpStatus.valueOf(cadre.getStatusCode().value()), ex.getMessage());
+                    HttpStatus.valueOf(cadre.getStatusCode().value()),
+                    (phrase == null || phrase.isBlank()) ? ex.getMessage() : phrase);
             problem.setProperty("timestamp", Instant.now());
             return problem;
         }
