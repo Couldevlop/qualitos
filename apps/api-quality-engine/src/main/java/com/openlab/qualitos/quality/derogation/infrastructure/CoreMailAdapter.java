@@ -97,7 +97,7 @@ public class CoreMailAdapter implements DerogationMailPort {
                 "attachmentName", courriel.attachmentName(),
                 "attachmentBase64", Base64.getEncoder().encodeToString(courriel.pdf()));
         try {
-            gateway.rest().post()
+            gateway.restEnvoi().post()
                     .uri(gateway.base() + "/api/v1/mail/derogation")
                     .headers(gateway::autoriser)
                     .contentType(MediaType.APPLICATION_JSON)
