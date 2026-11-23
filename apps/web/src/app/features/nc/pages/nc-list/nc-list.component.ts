@@ -58,8 +58,12 @@ const RECHERCHE_DELAI_MS = 300;
 })
 export class NcListComponent implements OnInit {
 
+  // `createdAt` et non `detectedAt` en dernière colonne : la date de détection
+  // est saisie à la main et se corrige, celle de création est celle du
+  // registre. C'est elle qui ordonne la liste, et une colonne qui n'est pas
+  // celle du tri se lit comme un tri cassé.
   readonly displayedColumns = ['reference', 'title', 'category', 'severity', 'status',
-                               'reporter', 'detectedAt'];
+                               'reporter', 'createdAt'];
   readonly statusFilter = new FormControl<NcStatus | ''>('');
   readonly severityFilter = new FormControl<NcSeverity | ''>('');
   readonly categoryFilter = new FormControl<NcCategory | ''>('');
@@ -70,13 +74,19 @@ export class NcListComponent implements OnInit {
   subcategories: NcSubcategory[] = [];
 
   /**
-   * Statuts proposés au filtre. `RESOLVED` en est volontairement absent : c'est
-   * un état de passage, franchi le temps d'enregistrer la résolution puis
-   * clôturé dans la foulée, et le proposer renvoyait presque toujours une liste
-   * vide. Les NC résolues se retrouvent sous `CLOSED`.
+   * Statuts proposés au filtre : les quatre ISSUES d'un écart.
+   *
+   * <p>`RESOLVED`, `UNDER_ANALYSIS` et `ACTION_DEFINED` en sont absents : ce
+   * sont des états de passage, traversés le temps d'instruire l'écart. Filtrer
+   * dessus revient à demander « qui est en train de travailler à l'instant »,
+   * et non « où en sont mes écarts » : la réponse changeait d'un jour à
+   * l'autre sans qu'aucune décision n'ait été prise. Un écart en cours
+   * d'instruction se lit sous `OPEN`, qu'il n'a pas quitté.
+   *
+   * <p>Le serveur, lui, accepte toujours les six : le filtre restreint ce
+   * qu'on PROPOSE, il ne retire rien à ce qu'on peut demander.
    */
-  readonly statuses: NcStatus[] = [
-    'OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED', 'REJECTED'];
+  readonly statuses: NcStatus[] = ['OPEN', 'CLOSED', 'CANCELLED', 'REJECTED'];
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
 

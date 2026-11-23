@@ -122,7 +122,7 @@ describe('CapaActionPanelComponent', () => {
     TestBed.resetTestingModule();
 
     capa = jasmine.createSpyObj<CapaService>('CapaService',
-      ['getCase', 'openCase', 'updateAction',
+      ['getCase', 'openCase', 'updateAction', 'deleteAction',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence']);
     capa.openCase.and.returnValue(of(dossier({ id: 'capa-neuve' })));
     capa.getCase.and.returnValue(opts.panne
@@ -132,6 +132,7 @@ describe('CapaActionPanelComponent', () => {
     capa.listActionEvidences.and.returnValue(of(opts.preuves ?? []));
     capa.uploadActionEvidence.and.returnValue(of(preuve()));
     capa.deleteActionEvidence.and.returnValue(of(void 0));
+    capa.deleteAction.and.returnValue(of(void 0));
 
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     ferme = undefined;
@@ -784,6 +785,45 @@ describe('CapaActionPanelComponent', () => {
 
     expect(panneau().stockageCoupe).toBeTrue();
     expect(panneau().peutJoindre(action())).toBeFalse();
+  });
+
+  it('supprime l\'action apres confirmation, et la garde si on se ravise', async () => {
+    await setup();
+
+    ferme = false;
+    panneau().supprimerAction(action());
+    expect(capa.deleteAction).not.toHaveBeenCalled();
+
+    ferme = true;
+    panneau().supprimerAction(action());
+    expect(capa.deleteAction).toHaveBeenCalledWith('capa-1', 'act-1');
+  });
+
+  it('garde l\'action quand la suppression echoue, et le dit', async () => {
+    await setup();
+    capa.deleteAction.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })));
+    ferme = true;
+
+    panneau().supprimerAction(action());
+
+    expect(snack.open).toHaveBeenCalled();
+  });
+
+  /** Un dossier clos est un ecrit arrete : en retirer une action le reecrirait. */
+  it('ne supprime rien sur un dossier clos, et n\'offre pas le geste', async () => {
+    await setup({ dossier: dossier({ status: 'CLOSED' }) });
+    ferme = true;
+
+    expect(panneau().peutSupprimer(action())).toBeFalse();
+    panneau().supprimerAction(action());
+    expect(capa.deleteAction).not.toHaveBeenCalled();
+  });
+
+  it('nomme l\'action dans l\'etiquette de la poubelle', async () => {
+    await setup();
+    // Huit lignes rendraient huit poubelles indiscernables au lecteur d'ecran.
+    expect(panneau().ariaSupprimer(action())).toContain('Remplacer le joint');
   });
 
   it('retire la piece apres confirmation, et la garde si on se ravise', async () => {

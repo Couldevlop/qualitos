@@ -237,6 +237,25 @@ class CapaControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void close_withoutVerification_success() throws Exception {
+        when(service.closeWithoutVerification(CAPA)).thenReturn(caseResp(CapaStatus.CLOSED));
+
+        mockMvc.perform(post("/api/v1/capa/cases/{id}/close", CAPA).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CLOSED"));
+    }
+
+    /** Une promesse de verification se solde par un verdict : 409, pas 200. */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void close_whenVerificationPromised_returns409() throws Exception {
+        when(service.closeWithoutVerification(CAPA))
+                .thenThrow(new CapaStateException("This CAPA promised an effectiveness verification"));
+
+        mockMvc.perform(post("/api/v1/capa/cases/{id}/close", CAPA).with(csrf()))
+                .andExpect(status().isConflict());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void effectiveness_missingField_returns400() throws Exception {
         // Le refus d'un corps vide n'est plus porte par Jakarta mais par le
         // service : depuis l'ADR 0108, la requete accepte DEUX formes — le

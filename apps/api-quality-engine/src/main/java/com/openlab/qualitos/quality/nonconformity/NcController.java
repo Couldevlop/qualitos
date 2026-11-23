@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +48,25 @@ public class NcController {
              * cherche, et un motif très long ferait travailler la base pour rien.
              */
             @RequestParam(required = false) @Size(max = 100) String q,
-            @PageableDefault(size = 20) Pageable pageable) {
+            /**
+             * Le registre se lit du plus récent au plus ancien.
+             *
+             * <p>Sans tri demandé, la base rendait les écarts dans l'ordre où
+             * elle les trouvait : l'écart ouvert il y a cinq minutes pouvait
+             * paraître entre deux de la semaine passée, et la première page ne
+             * répondait plus à « qu'est-ce qui vient d'arriver ».
+             *
+             * <p>Sur la CRÉATION et non sur la détection : la date de détection
+             * est saisie à la main, se corrige après coup et peut précéder de
+             * longtemps le signalement ; trier dessus ferait remonter un écart
+             * ancien déclaré aujourd'hui, ou descendre celui qu'on vient
+             * d'écrire. L'horodatage de création, lui, est celui du registre.
+             *
+             * <p>C'est un DÉFAUT : un `sort` explicite dans la requête le
+             * remplace, et les écrans qui en demandent un gardent le leur.
+             */
+            @PageableDefault(size = 20, sort = "createdAt",
+                             direction = Sort.Direction.DESC) Pageable pageable) {
         return service.findAll(status, severity, category, subcategoryCode, origin, productId, q, pageable);
     }
 

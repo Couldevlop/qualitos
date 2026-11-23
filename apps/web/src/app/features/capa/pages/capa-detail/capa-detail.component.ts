@@ -468,6 +468,72 @@ export class CapaDetailComponent implements OnInit {
   }
 
   /**
+   * Vrai quand ce dossier a PROMIS de vérifier son effet.
+   *
+   * <p>La question se tranche à l'ouverture, et elle engage. Répondue « non »,
+   * ou jamais posée — ce qui est le cas d'un endiguement, à qui le formulaire
+   * ne la pose pas — il n'y aura pas d'évaluation, et la clôture ne doit donc
+   * pas en réclamer une.
+   *
+   * <p>`=== true` et non une simple vérité : nul veut dire « la question n'a
+   * pas été posée », ce qui n'est pas une promesse. Un critère annoncé en est
+   * une, lui : il dit ce qu'on mesurera. Et celle d'une SEULE action compte
+   * aussi (ADR 0131) : la fiche n'écrit que le niveau du dossier, mais une
+   * action peut avoir répondu « oui » de son côté — l'ignorer ici offrirait un
+   * bouton que le serveur refuserait par un 409.
+   *
+   * <p>MÊME LECTURE que `CapaService.verificationPromise` côté serveur. Les
+   * deux doivent dire la même chose, sans quoi l'écran annoncerait autre chose
+   * que ce que le serveur fera.
+   */
+  verificationPromise(c: CapaCaseResponse): boolean {
+    return !!c.effectivenessCriterion
+      || c.verificationRequired === true
+      || (c.actions ?? []).some(a => a.verificationRequired === true);
+  }
+
+  /**
+   * Clôt le dossier sans verdict, après confirmation.
+   *
+   * <p>L'écran n'offrait que « Efficace — clôturer » : on fermait un dossier
+   * dont on avait justement déclaré ne pas vérifier l'effet en inscrivant au
+   * registre une efficacité que personne n'avait constatée. Un dossier
+   * d'endiguement, lui, ne pouvait pas se fermer du tout.
+   */
+  cloturerSansVerification(): void {
+    if (this.acting$.value) return;
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: $localize`:@@capa.detail.confirm-close-title:Clôturer ce dossier ?`,
+        message: $localize`:@@capa.detail.confirm-close-message:Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée. Le journal dira « clos sans vérification », et non « efficace ».`,
+        confirmLabel: $localize`:@@capa.detail.yes-close:Oui, clôturer`
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirme => {
+      if (!confirme) return;
+      this.acting$.next(true);
+      this.capa.closeWithoutVerification(this.caseId)
+        .pipe(finalize(() => this.acting$.next(false)))
+        .subscribe({
+          next: () => {
+            this.snack.open(
+              $localize`:@@capa.detail.closed-unverified:Dossier clôturé.`,
+              $localize`:@@common.ok:OK`, { duration: 2500 });
+            this.reload$.next();
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[capa-detail] close failed', err?.status, err?.error?.title);
+            this.snack.open(
+              safeErrorMessage(err, $localize`:@@capa.detail.close-error:Le dossier n'a pas pu être clôturé.`),
+              $localize`:@@common.ok:OK`, { duration: 4000 });
+          }
+        });
+    });
+  }
+
+  /**
    * Vrai quand la vérification d'efficacité est ATTENDUE mais pas encore
    * possible : le dossier travaille toujours.
    *

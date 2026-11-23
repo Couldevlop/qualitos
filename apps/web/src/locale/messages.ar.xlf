@@ -6730,6 +6730,26 @@ Portail clients</source>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">لم يعد هذا الإجراء موجوداً — أعد تحميل الملف.</target>
       </trans-unit>
+      <trans-unit id="capa.action.remove-aria" datatype="html">
+        <source>Supprimer l'action : <x id="title"/></source>
+        <target state="translated">حذف الإجراء: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-title" datatype="html">
+        <source>Supprimer cette action ?</source>
+        <target state="translated">حذف هذا الإجراء؟</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-message" datatype="html">
+        <source>L'action et ses preuves seront retirées du dossier. La suppression est tracée au journal, mais l'action ne se restaure pas.</source>
+        <target state="translated">سيتم حذف الإجراء وأدلته من الملف. يُسجّل الحذف في السجل، لكن لا يمكن استعادة الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.removed" datatype="html">
+        <source>Action supprimée.</source>
+        <target state="translated">تم حذف الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-failed" datatype="html">
+        <source>L'action n'a pas pu être supprimée.</source>
+        <target state="translated">تعذّر حذف الإجراء.</target>
+      </trans-unit>
       <trans-unit id="capa.detail.actions-title" datatype="html">
         <source>Actions</source>
         <target state="translated">الإجراءات</target>
@@ -28165,6 +28185,34 @@ historique 12 mois</source>
       <trans-unit id="capa.detail.confirm-effective-message" datatype="html">
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
         <target state="translated">أنت تؤكّد أن الإجراءات حقّقت الأثر المتوقّع. ستُغلق الحالة (CLOSED).</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.no-verification-prompt" datatype="html">
+        <source>Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée.</source>
+        <target state="translated">لم يُطلب أي تحقق من الفعالية لهذا الملف: يُغلق بناءً على معاينة أن الإجراء قد نُفّذ.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.close-case" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.confirm-close-title" datatype="html">
+        <source>Clôturer ce dossier ?</source>
+        <target state="translated">إغلاق هذا الملف؟</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.confirm-close-message" datatype="html">
+        <source>Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée. Le journal dira « clos sans vérification », et non « efficace ».</source>
+        <target state="translated">لم يُطلب أي تحقق من الفعالية لهذا الملف: يُغلق بناءً على معاينة أن الإجراء قد نُفّذ. سيُسجّل «مغلق دون تحقق»، وليس «فعّال».</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.yes-close" datatype="html">
+        <source>Oui, clôturer</source>
+        <target state="translated">نعم، أغلق</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.closed-unverified" datatype="html">
+        <source>Dossier clôturé.</source>
+        <target state="translated">تم إغلاق الملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.close-error" datatype="html">
+        <source>Le dossier n'a pas pu être clôturé.</source>
+        <target state="translated">تعذّر إغلاق الملف.</target>
       </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-title" datatype="html">
         <source>Confirmer efficacité ?</source>

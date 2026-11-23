@@ -106,7 +106,10 @@ describe('NcEightDComponent', () => {
   }
 
   async function monter(roles: string[], capaCaseId: string | null = 'capa-9',
-                        capaCases?: { id: string; title: string; status: string }[],
+                        capaCases?: {
+                          id: string; title: string; status: string;
+                          containmentOnly?: boolean;
+                        }[],
                         statut: NcResponse['status'] = 'ACTION_DEFINED'): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
       ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
@@ -526,6 +529,48 @@ describe('NcEightDComponent', () => {
     expect(component.montreLesPreuves('D6')).toBe(true);
     ['D1', 'D2', 'D3', 'D4', 'D5', 'D7', 'D8'].forEach(
       code => expect(component.montreLesPreuves(code)).toBe(false));
+  });
+
+  /**
+   * LE D6 ATTESTE LES ACTIONS CORRECTIVES, et l'endiguement n'en est pas une.
+   *
+   * <p>Bloquer un lot arrete l'effet et laisse la cause entiere (ISO 9001
+   * 10.2) : on demandait donc au dossier d'endiguement une preuve
+   * d'efficacite qu'il ne peut pas donner. Son geste se lit au D3.
+   */
+  it('écarte du D6 le dossier qui n\'endigue que', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-end', title: 'Bloquer le lot', status: 'OPEN', containmentOnly: true },
+      { id: 'capa-9', title: 'Reviser la frequence', status: 'IN_PROGRESS' }
+    ]);
+
+    const panneaux = fixture.debugElement.queryAll(By.directive(CapaEvidencePanelStubComponent));
+    expect(panneaux.length).toBe(1);
+    expect((panneaux[0].componentInstance as CapaEvidencePanelStubComponent).capaCaseId)
+      .toBe('capa-9');
+  });
+
+  it('dit où iront les preuves quand l\'écart n\'a QUE de l\'endiguement', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-end', [
+      { id: 'capa-end', title: 'Bloquer le lot', status: 'OPEN', containmentOnly: true }
+    ]);
+
+    expect(fixture.nativeElement.querySelector('[data-test="8d-preuves"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-test="8d-preuves-vide"]')).not.toBeNull();
+  });
+
+  /**
+   * Un dossier dont le serveur n'a RIEN dit se montre : `containmentOnly`
+   * absent veut dire « on ne sait pas », et on ne cache pas une preuve sur
+   * une supposition.
+   */
+  it('montre au D6 le dossier dont on ignore la nature', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Dossier ancien', status: 'OPEN' }
+    ]);
+
+    expect(fixture.debugElement.queryAll(
+      By.directive(CapaEvidencePanelStubComponent)).length).toBe(1);
   });
 
   /**

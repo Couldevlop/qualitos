@@ -6730,6 +6730,26 @@ Customer portal</target>
         <source>Cette action n'existe plus — recharge la fiche.</source>
         <target state="translated">This action no longer exists — reload the case.</target>
       </trans-unit>
+      <trans-unit id="capa.action.remove-aria" datatype="html">
+        <source>Supprimer l'action : <x id="title"/></source>
+        <target state="translated">Delete the action: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-title" datatype="html">
+        <source>Supprimer cette action ?</source>
+        <target state="translated">Delete this action?</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-message" datatype="html">
+        <source>L'action et ses preuves seront retirées du dossier. La suppression est tracée au journal, mais l'action ne se restaure pas.</source>
+        <target state="translated">The action and its evidence will be removed from the case. The deletion is journalled, but the action cannot be restored.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.removed" datatype="html">
+        <source>Action supprimée.</source>
+        <target state="translated">Action deleted.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.remove-failed" datatype="html">
+        <source>L'action n'a pas pu être supprimée.</source>
+        <target state="translated">The action could not be deleted.</target>
+      </trans-unit>
       <trans-unit id="capa.detail.actions-title" datatype="html">
         <source>Actions</source>
         <target state="translated">Actions</target>
@@ -28165,6 +28185,34 @@ declared income
       <trans-unit id="capa.detail.confirm-effective-message" datatype="html">
         <source>Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).</source>
         <target state="translated">You confirm that the actions had the expected effect. The case will be closed (CLOSED).</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.no-verification-prompt" datatype="html">
+        <source>Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée.</source>
+        <target state="translated">No effectiveness verification was requested on this case: it closes on the finding that the action was carried out.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.close-case" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.confirm-close-title" datatype="html">
+        <source>Clôturer ce dossier ?</source>
+        <target state="translated">Close this case?</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.confirm-close-message" datatype="html">
+        <source>Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée. Le journal dira « clos sans vérification », et non « efficace ».</source>
+        <target state="translated">No effectiveness verification was requested on this case: it closes on the finding that the action was carried out. The journal will read "closed without verification", not "effective".</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.yes-close" datatype="html">
+        <source>Oui, clôturer</source>
+        <target state="translated">Yes, close</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.closed-unverified" datatype="html">
+        <source>Dossier clôturé.</source>
+        <target state="translated">Case closed.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.close-error" datatype="html">
+        <source>Le dossier n'a pas pu être clôturé.</source>
+        <target state="translated">The case could not be closed.</target>
       </trans-unit>
       <trans-unit id="capa.detail.confirm-effective-title" datatype="html">
         <source>Confirmer efficacité ?</source>

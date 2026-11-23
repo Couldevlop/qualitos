@@ -172,14 +172,14 @@
                qui demontre que le probleme a cesse (ISO 9001 10.2). La fiche
                de l'ecart faisait deja cette difference. -->
           <ng-container *ngIf="montreLesPreuves(discipline.code)">
-            <div class="vivant" *ngIf="(capaCaseIds$ | async)?.length"
+            <div class="vivant" *ngIf="(dossiersAPreuve$ | async)?.length"
                  data-test="8d-preuves">
               <p class="vivant-note" i18n="@@nc.8d.live-note-evidence">État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</p>
-              <qos-capa-evidence-panel *ngFor="let dossier of (capaCaseIds$ | async)"
+              <qos-capa-evidence-panel *ngFor="let dossier of (dossiersAPreuve$ | async)"
                                        [capaCaseId]="dossier.id"
                                        [statut]="$any(dossier.status)"></qos-capa-evidence-panel>
             </div>
-            <div class="vivant" *ngIf="(capaCaseIds$ | async)?.length === 0"
+            <div class="vivant" *ngIf="(dossiersAPreuve$ | async)?.length === 0"
                  data-test="8d-preuves-vide">
               <p class="vivant-note" i18n="@@nc.8d.evidence-empty">
                 Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert

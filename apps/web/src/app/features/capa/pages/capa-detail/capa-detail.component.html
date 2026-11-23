@@ -166,7 +166,33 @@
             <span>{{ effectivenessPendingLabel(c) }}</span>
           </div>
 
-          <div class="effectiveness-block" *ngIf="canVerifyEffectiveness(c.status)">
+          <!-- AUCUNE VÉRIFICATION PROMISE : le dossier se clôt sur le constat que
+               l'action a été menée, et le journal le dit ainsi. Réclamer un
+               verdict ici revenait à faire déclarer une efficacité que personne
+               n'avait constatée, sur un critère que personne n'avait mesuré — et
+               un dossier d'endiguement, à qui la question n'est jamais posée, ne
+               pouvait alors pas se fermer du tout. -->
+          <div class="effectiveness-block"
+               *ngIf="canVerifyEffectiveness(c.status) && !verificationPromise(c)"
+               data-test="capa-cloture-directe">
+            <p class="effectiveness-prompt">
+              <mat-icon>task_alt</mat-icon>
+              <span i18n="@@capa.detail.no-verification-prompt">Aucune vérification d'efficacité n'a été demandée sur ce dossier : il se clôt sur le constat que l'action a été menée.</span>
+            </p>
+            <div class="effectiveness-actions" *qosCan="'capa.verify'">
+              <button mat-flat-button color="primary" type="button"
+                      (click)="cloturerSansVerification()"
+                      [disabled]="(acting$ | async) || blocksClosure(c)"
+                      [matTooltip]="closureTooltip(c)"
+                      data-test="capa-cloturer">
+                <mat-icon>check_circle</mat-icon>
+                <span i18n="@@capa.detail.close-case">Clôturer</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="effectiveness-block"
+               *ngIf="canVerifyEffectiveness(c.status) && verificationPromise(c)">
             <p class="effectiveness-prompt">
               <mat-icon>fact_check</mat-icon>
               <span><strong i18n="@@capa.detail.effectiveness-required">Vérification d'efficacité requise.</strong>

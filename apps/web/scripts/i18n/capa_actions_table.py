@@ -77,5 +77,43 @@ TRANSLATIONS = {
         'この対策はもう存在しません。ページを再読み込みしてください。',
         '该措施已不存在 — 请重新加载档案。'),
 
+    # --- suppression d'une action -------------------------------------------
+    # Une action saisie par erreur restait inscrite au registre faute de geste
+    # pour la retirer, et retenait la cloture du dossier tant qu'on ne l'avait
+    # pas menee.
+    'capa.action.remove-aria': (
+        "Supprimer l'action : {$title}",
+        'Delete the action: {$title}',
+        'Eliminar la acción: {$title}',
+        'حذف الإجراء: {$title}',
+        '対策を削除：{$title}',
+        '删除措施：{$title}'),
+    'capa.action.remove-title': (
+        'Supprimer cette action ?', 'Delete this action?',
+        '¿Eliminar esta acción?', 'حذف هذا الإجراء؟',
+        'この対策を削除しますか？', '删除该措施？'),
+    'capa.action.remove-message': (
+        "L'action et ses preuves seront retirées du dossier. La suppression est "
+        "tracée au journal, mais l'action ne se restaure pas.",
+        'The action and its evidence will be removed from the case. The deletion '
+        'is journalled, but the action cannot be restored.',
+        'La acción y sus pruebas se retirarán del expediente. La eliminación queda '
+        'registrada, pero la acción no se puede restaurar.',
+        'سيتم حذف الإجراء وأدلته من الملف. يُسجّل الحذف في السجل، '
+        'لكن لا يمكن استعادة الإجراء.',
+        '対策とその証拠がケースから削除されます。削除は記録されますが、'
+        '対策は復元できません。',
+        '该措施及其证据将从档案中移除。删除会记入日志，但措施无法恢复。'),
+    'capa.action.removed': (
+        'Action supprimée.', 'Action deleted.', 'Acción eliminada.',
+        'تم حذف الإجراء.', '対策を削除しました。', '已删除措施。'),
+    'capa.action.remove-failed': (
+        "L'action n'a pas pu être supprimée.",
+        'The action could not be deleted.',
+        'No se ha podido eliminar la acción.',
+        'تعذّر حذف الإجراء.',
+        '対策を削除できませんでした。',
+        '无法删除该措施。'),
+
     # --- boîte de dialogue d'ajout d'action ---------------------------------
 }
