@@ -223,6 +223,64 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
       { id: 'capa-9', title: 'Celui du serveur', status: 'OPEN' }
     ], 'capa-1')).map(d => d.id)).toEqual(['capa-9']);
   });
+  // ---------- plusieurs dossiers : les preuves s additionnent --------------
+
+  /**
+   * Le D6 pose un panneau par dossier. Tous ecrivaient leur compte sous la meme
+   * cle : le dernier arrive effacait celui des precedents. Un ecart dont le
+   * premier dossier porte des preuves et le dernier aucune se declarait vide.
+   */
+  it('additionne les preuves des dossiers au lieu de les ecraser', () => {
+    const n = ecart([
+      { id: 'capa-a', title: 'Premier', status: 'OPEN' },
+      { id: 'capa-b', title: 'Second', status: 'OPEN' }
+    ], 'capa-a');
+    setup(n);
+
+    component.compterPreuves('capa-a', 3);
+    component.compterPreuves('capa-b', 0);
+
+    expect(component.etapeFaite('D6', n))
+      .withContext('trois preuves sur le premier dossier : le D6 porte quelque chose')
+      .toBeTrue();
+  });
+
+  it('met a jour le compte d un dossier sans toucher aux autres', () => {
+    const n = ecart([
+      { id: 'capa-a', title: 'Premier', status: 'OPEN' },
+      { id: 'capa-b', title: 'Second', status: 'OPEN' }
+    ], 'capa-a');
+    setup(n);
+
+    component.compterPreuves('capa-a', 2);
+    component.compterPreuves('capa-b', 1);
+    // Le premier dossier perd ses pieces : le second garde la sienne.
+    component.compterPreuves('capa-a', 0);
+
+    expect(component.etapeFaite('D6', n))
+      .withContext('une preuve subsiste sur le second dossier')
+      .toBeTrue();
+
+    component.compterPreuves('capa-b', 0);
+    expect(component.etapeFaite('D6', n))
+      .withContext('plus aucune preuve nulle part, et rien d autre au D6')
+      .toBeFalse();
+  });
+
+  it('repart de zero quand la fiche est relue', () => {
+    const n = ecart([{ id: 'capa-a', title: 'Premier', status: 'OPEN' }], 'capa-a');
+    setup(n);
+
+    component.compterPreuves('capa-a', 4);
+    expect(component.etapeFaite('D6', n)).toBeTrue();
+
+    // Un dossier retire laisserait sinon son compte dans le total.
+    component.reload();
+    expect(component.etapeFaite('D6', n))
+      .withContext('les panneaux encore a l ecran reannoncent leur compte')
+      .toBeFalse();
+  });
+
   // ---------- l endiguement prouve au D3, pas au D6 ------------------------
 
   /**

@@ -223,6 +223,20 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly comptesParEtape = new Map<EtapeCode, number>();
 
   /**
+   * Les preuves du D6, comptees PAR DOSSIER puis additionnees.
+   *
+   * <p>Le D6 pose un panneau par dossier, et chacun annonce ce qu il porte.
+   * Tous ecrivaient sous la meme cle : le dernier arrive effacait le compte des
+   * precedents. Un ecart dont le premier dossier portait trois preuves et le
+   * dernier aucune se declarait donc vide, et le sommaire affirmait qu il
+   * restait a faire ce qui venait d etre fait.
+   *
+   * <p>Les autres disciplines n ont qu un panneau, qui agrege lui-meme les
+   * actions de tous les dossiers : elles n ont pas ce besoin.
+   */
+  private readonly preuvesParDossier = new Map<string, number>();
+
+  /**
    * Le commentaire d'efficacité en cours de frappe, par dossier.
    *
    * <p>Il n'existe que tant qu'il diffère de l'enregistré : une entrée restée
@@ -263,6 +277,20 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Un panneau a fini de lire : le sommaire peut dire vrai pour sa discipline. */
   compter(code: EtapeCode, combien: number): void {
     this.comptesParEtape.set(code, combien);
+  }
+
+  /**
+   * Un panneau de preuves a fini de lire : son compte s AJOUTE a celui des
+   * autres dossiers, il ne les remplace pas.
+   *
+   * <p>La cle est le dossier, et non l ordre d arrivee : un panneau qui relit
+   * apres un depot met a jour SON compte, sans toucher aux autres.
+   */
+  compterPreuves(dossierId: string, combien: number): void {
+    this.preuvesParDossier.set(dossierId, combien);
+    let total = 0;
+    this.preuvesParDossier.forEach(n => { total += n; });
+    this.comptesParEtape.set('D6', total);
   }
 
   /** Amene l etape sous les yeux. Le sommaire est une aide, pas un filtre. */
@@ -715,6 +743,13 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * dépendre.
    */
   reload(): void {
+    // Les comptes de preuves repartent de zero : un dossier retire laisserait
+    // sinon son compte dans le total, et le D6 se dirait fait sans rien porter.
+    // Les panneaux encore a l ecran reannoncent le leur en se rechargeant.
+    this.preuvesParDossier.clear();
+    // Le TOTAL aussi : vider la carte par dossier sans le recalculer laissait
+    // l ancien total en place, et le D6 restait coche sur des preuves parties.
+    this.comptesParEtape.set('D6', 0);
     this.reload$.next();
   }
 

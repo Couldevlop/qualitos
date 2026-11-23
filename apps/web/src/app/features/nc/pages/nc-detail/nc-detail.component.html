@@ -878,7 +878,7 @@
                   <span class="capa-dossier-titre">{{ d.title }}</span>
                 </div>
                 <qos-capa-evidence-panel [capaCaseId]="d.id" [statut]="$any(d.status)"
-                                         (counted)="compter('D6', $event)"
+                                         (counted)="compterPreuves(d.id, $event)"
                                          data-test="preuves-dossier"></qos-capa-evidence-panel>
 
                 <!-- LE COMMENTAIRE, facultatif : ce que les pieces ne disent pas
