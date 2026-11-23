@@ -11462,6 +11462,14 @@ Portal de clientes</target>
         <source>Analyse et maîtrise</source>
         <target state="translated">Análisis y control</target>
       </trans-unit>
+      <trans-unit id="derogation.group.cause" datatype="html">
+        <source>La cause, et ce qui a été fait tout de suite</source>
+        <target state="translated">La causa y lo que se hizo de inmediato</target>
+      </trans-unit>
+      <trans-unit id="derogation.group.correction" datatype="html">
+        <source>Ce qui est engagé pour qu'il ne revienne pas</source>
+        <target state="translated">Lo que se emprende para que no se repita</target>
+      </trans-unit>
       <trans-unit id="derogation.section.attachments" datatype="html">
         <source>Pièces jointes</source>
         <target state="translated">Adjuntos</target>

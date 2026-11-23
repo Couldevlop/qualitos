@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.derogation.infrastructure;
 import com.openlab.qualitos.quality.derogation.application.DerogationMailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -46,11 +47,39 @@ public class CoreGateway {
 
     private final String baseUrl;
     private final RestClient client;
+    private final RestClient clientEnvoi;
 
-    public CoreGateway(@Value("${qualitos.core.base-url:}") String baseUrl,
-                       RestClient.Builder builder) {
+    public CoreGateway(
+            @Value("${qualitos.core.base-url:}") String baseUrl,
+            @Value("${qualitos.core.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${qualitos.core.read-timeout-ms:10000}") int readTimeoutMs,
+            @Value("${qualitos.core.send-read-timeout-ms:45000}") int sendReadTimeoutMs,
+            RestClient.Builder builder) {
         this.baseUrl = baseUrl == null ? "" : baseUrl.trim().replaceAll("/+$", "");
-        this.client = builder.build();
+        // DES BORNES, comme sur tous les autres clients sortants du moteur
+        // (passerelle IA, Fabric, webhooks). Sans elles, un api-core qui
+        // n'acquitte pas -- injoignable, ou dont les paquets sont jetes sans
+        // refus -- retient le fil de la requete jusqu'a ce que la passerelle
+        // rende un 504 : l'ecran attend une minute, puis echoue sans rien dire
+        // d'utile, et le dossier reste dans son etat precedent. Borne, le meme
+        // incident rend une erreur nette en cinq secondes.
+        SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
+        rf.setConnectTimeout(connectTimeoutMs);
+        rf.setReadTimeout(readTimeoutMs);
+        this.client = builder.requestFactory(rf).build();
+
+        // DEUX BORNES, parce que les deux appels n'attendent pas la meme chose.
+        // Lire un nom dans l'annuaire se mesure en millisecondes. Envoyer la
+        // derogation au client fait relayer a api-core un courriel avec piece
+        // jointe sur le SMTP du client : api-core borne chaque etape a 10 s, et
+        // un envoi en enchaine une dizaine. Abandonner au bout de dix secondes
+        // laisserait l'envoi se terminer la-bas pendant que le dossier reste en
+        // arriere ici -- et le client recevrait la derogation DEUX FOIS au
+        // reessai. La borne longue reste sous le delai de la passerelle.
+        SimpleClientHttpRequestFactory rfEnvoi = new SimpleClientHttpRequestFactory();
+        rfEnvoi.setConnectTimeout(connectTimeoutMs);
+        rfEnvoi.setReadTimeout(sendReadTimeoutMs);
+        this.clientEnvoi = builder.requestFactory(rfEnvoi).build();
     }
 
     boolean estConfigure() {
@@ -66,8 +95,20 @@ public class CoreGateway {
         return baseUrl;
     }
 
+    /** Pour les lectures breves : l'annuaire. */
     RestClient rest() {
         return client;
+    }
+
+    /**
+     * Pour l'envoi au client, qui attend un relais SMTP de bout en bout.
+     *
+     * <p>Distinct de {@link #rest()} : un envoi n'est pas rejouable sans que le
+     * client recoive deux fois, et il ne doit donc pas etre abandonne tant
+     * qu'api-core peut encore le mener a bien.
+     */
+    RestClient restEnvoi() {
+        return clientEnvoi;
     }
 
     /**

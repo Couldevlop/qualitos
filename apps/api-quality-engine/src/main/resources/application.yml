@@ -263,6 +263,15 @@ qualitos:
   # refusee partout.
   core:
     base-url: ${CORE_BASE_URL:http://localhost:8080}
+    # Bornes du client HTTP vers api-core (ms). Un api-core injoignable dont les
+    # paquets sont jetes sans refus ne rend jamais la main : sans ces bornes, la
+    # requete etait retenue jusqu'au 504 de la passerelle.
+    connect-timeout-ms: ${CORE_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${CORE_READ_TIMEOUT_MS:10000}
+    # L'envoi au client attend un relais SMTP complet (api-core borne chaque
+    # etape a 10 s). Plus long que la lecture d'annuaire, et sous le delai de la
+    # passerelle : abandonner plus tot ferait recevoir la derogation deux fois.
+    send-read-timeout-ms: ${CORE_SEND_READ_TIMEOUT_MS:45000}
 
   # L'adresse publique de l'interface, pour les liens des courriels et des
   # notifications. Jamais lue dans un en-tete de requete : un lien construit sur
