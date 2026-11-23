@@ -161,6 +161,17 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     expect(component.observedLabel(o)).toBe('92.63 ppm');
   });
 
+  it('arrondit aussi le report absolu de l infobulle, au centieme', async () => {
+    // La colonne montrait « 92.63 % » quand l'infobulle deroulait
+    // « -5.3666666667 » : deux precisions pour une meme mesure, sur une meme
+    // ligne, dont une que personne ne peut lire.
+    await build();
+    const o = objectif({
+      assessment: { ...objectif().assessment, deviationAbsolute: -5.3666666667 }
+    });
+    expect(component.deviationTitle(o)).toBe('-5.37 ppm');
+  });
+
   it('n\'ajoute pas de décimales à un réel qui n\'en a pas', async () => {
     await build();
     expect(component.observedLabel(objectif())).toBe('900 ppm');

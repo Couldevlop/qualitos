@@ -178,12 +178,21 @@ export class ObjectivesReviewComponent implements OnInit {
     return `${arrondi > 0 ? '+' : ''}${arrondi} %`;
   }
 
+  /**
+   * L'écart absolu, en unités du KPI, pour l'infobulle.
+   *
+   * <p>Arrondi au centième comme {@link observedLabel}, et pour la même raison :
+   * la colonne voisine montrait « 92.63 % » quand l'infobulle déroulait
+   * « -5.3666666667 » — deux précisions pour une même mesure sur une même
+   * ligne, dont une que personne ne peut lire.
+   */
   deviationTitle(o: QualityObjective): string {
     const abs = o.assessment.deviationAbsolute;
     if (abs == null) {
       return '';
     }
-    return `${abs > 0 ? '+' : ''}${abs}${o.kpiUnit ? ' ' + o.kpiUnit : ''}`;
+    const arrondi = Math.round(abs * 100) / 100;
+    return `${arrondi > 0 ? '+' : ''}${arrondi}${o.kpiUnit ? ' ' + o.kpiUnit : ''}`;
   }
 
   /**
