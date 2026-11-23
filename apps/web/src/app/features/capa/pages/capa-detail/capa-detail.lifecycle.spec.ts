@@ -65,7 +65,7 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
       ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
        'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence',
        'updateAction', 'addAction', 'deleteCase',
-       'verifyEffectiveness', 'rejectCase']);
+       'verifyEffectiveness', 'closeWithoutVerification', 'rejectCase']);
     capa.listEvidences.and.returnValue(of([]));
     capa.listActionEvidences.and.returnValue(of([]));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
@@ -185,6 +185,82 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
   });
 
   // --- vérification d'efficacité (ISO 9001 §10.2) ---------------------------
+
+  // --- cloture directe : aucune verification n'a ete promise ----------------
+
+  /**
+   * La question se tranche a l'ouverture, et elle engage. Repondue « non » --
+   * ou jamais posee, ce qui est le cas d'un endiguement -- la cloture ne doit
+   * pas reclamer un verdict : l'ecran n'offrait que « Efficace -- cloturer »,
+   * et fermait donc le dossier en inscrivant au registre une efficacite que
+   * personne n'avait constatee.
+   */
+  it('clôture sans verdict quand aucune vérification n\'a été promise', () => {
+    setup('RESOLVED');
+    capa.closeWithoutVerification.and.returnValue(of(dossier('CLOSED')));
+
+    expect(component.verificationPromise(dossier('RESOLVED'))).toBeFalse();
+    expect(fixture.nativeElement.querySelector('[data-test="capa-cloture-directe"]'))
+      .not.toBeNull();
+
+    component.cloturerSansVerification();
+
+    expect(dialog.open).toHaveBeenCalled();
+    expect(capa.closeWithoutVerification).toHaveBeenCalledWith(CASE_ID);
+    expect(capa.verifyEffectiveness).not.toHaveBeenCalled();
+  });
+
+  it('demande le verdict, et non la clôture directe, quand la vérification a été promise', () => {
+    // `setup` repose le bouchon : on l'arme APRES, puis on remonte la fiche a
+    // la main. Le banc precedent se contentait d'appeler l'aide sur un objet
+    // litteral -- il ne regardait pas l'ecran, et passait quoi qu'il arrive.
+    capa.getCase.and.returnValue(
+      of({ ...dossier('RESOLVED'), verificationRequired: true }));
+    fixture = TestBed.createComponent(CapaDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[data-test="capa-cloture-directe"]'))
+      .toBeNull();
+    const libelles = Array.from<HTMLButtonElement>(
+      fixture.nativeElement.querySelectorAll('.effectiveness-actions button'))
+      .map(b => b.textContent ?? '').join(' | ');
+    expect(libelles).toContain('Non efficace');
+  });
+
+  /**
+   * Un « oui » porte par une SEULE action engage le dossier (ADR 0131) : la
+   * fiche n'ecrit que le niveau du dossier, et offrir la cloture directe ici
+   * aurait tendu un bouton que le serveur refuse par un 409.
+   */
+  it('refuse la clôture directe quand une seule action a promis sa vérification', () => {
+    const avecAction: CapaCaseResponse = {
+      ...dossier('RESOLVED'),
+      actions: [{
+        id: 'a1', capaId: CASE_ID, title: 'act', status: 'DONE',
+        actionType: 'CORRECTIVE', verificationRequired: true
+      }]
+    };
+
+    capa.getCase.and.returnValue(of(avecAction));
+    fixture = TestBed.createComponent(CapaDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.verificationPromise(avecAction)).toBeTrue();
+    expect(fixture.nativeElement.querySelector('[data-test="capa-cloturer"]'))
+      .toBeNull();
+  });
+
+  it('garde le dossier ouvert quand le serveur refuse la clôture, et le dit', () => {
+    setup('RESOLVED');
+    capa.closeWithoutVerification.and.returnValue(
+      throwError(() => new HttpErrorResponse({ status: 409 })));
+
+    component.cloturerSansVerification();
+
+    expect(snack.open).toHaveBeenCalled();
+  });
 
   it('clôture après confirmation d\'efficacité', () => {
     setup('RESOLVED');

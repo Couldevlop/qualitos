@@ -435,12 +435,46 @@ describe('CapaCreateDialogComponent — fenêtre unique', () => {
     component.submit();
 
     const envoye = open.calls.mostRecent().args[0] as OpenCapaRequest;
-    // La source n'est pas envoyée : c'est le serveur qui la fixe.
-    expect(envoye.sourceType).toBeUndefined();
-    expect(envoye.sourceRef).toBeUndefined();
+    // LA SOURCE IMPOSÉE PART AVEC LA DEMANDE.
+    //
+    // Elle ne partait pas, au motif que la route de l'écran d'origine la fixe
+    // côté serveur. C'est vrai de l'escalade d'un écart, d'un constat d'audit
+    // et d'un risque -- pas du bouton d'une discipline du 8D, qui ouvre le
+    // dossier par la route LIBRE. Le dossier naissait alors « interne, sans
+    // référence » : présent au registre, introuvable au D3, au D5, au D7 et
+    // dans le rapport 8D, puisque la fiche de l'écart retrouve ses dossiers
+    // PAR LEUR SOURCE. L'envoyer ne gêne pas les routes qui la posent : elles
+    // ignorent celle du corps.
+    expect(envoye.sourceType).toBe('NON_CONFORMITY');
+    expect(envoye.sourceRef).toBe('NC-2026-0001');
     expect(capa.openCase).not.toHaveBeenCalled();
     expect(ref.close).toHaveBeenCalledWith(jasmine.objectContaining({ capaId: 'c-nc' }));
   });
+
+  it("depuis une discipline du 8D, la route libre reçoit la source de l'écart",
+    async () => {
+      // LE BANC QUI MANQUAIT. Les deux moitiés de la chaîne étaient éprouvées
+      // séparément avec un bouchon au milieu : le panneau vérifiait la source
+      // PASSÉE à la fenêtre, et la fenetre vérifiait une requête FABRIQUÉE à
+      // la main. Le `submit()` réel -- celui qui retirait la source -- ne
+      // tournait dans aucun des deux, et c'est là que vivait le défaut.
+      capa.openCase.and.returnValue(of(ouvert()));
+      await setup({
+        source: { type: 'NON_CONFORMITY', reference: 'NC-2026-0042' },
+        prefill: { type: 'CONTAINMENT', criticity: 'HIGH' },
+        lockType: true
+      });
+
+      component.form.patchValue({
+        title: 'Isoler le lot', dueDate: DEMAIN, verificationRequired: false
+      });
+      component.submit();
+
+      // C'est la CHARGE UTILE qui compte, et non ce que la fenêtre affiche.
+      const envoye = capa.openCase.calls.mostRecent().args[0] as OpenCapaRequest;
+      expect(envoye.sourceType).toBe('NON_CONFORMITY');
+      expect(envoye.sourceRef).toBe('NC-2026-0042');
+    });
 
   it('depuis un risque : criticité de la cotation, propriétaire proposé s\'il est EXACTEMENT dans l\'annuaire', async () => {
     const open = jasmine.createSpy('open').and.returnValue(of({ capaId: 'c-r' }));

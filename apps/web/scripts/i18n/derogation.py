@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table i18n — la derogation client (ADR 0137).
+"""Table i18n — la derogation client (ADR 0138).
 
 id: (fr, en, es, ar, ja, zh).
 

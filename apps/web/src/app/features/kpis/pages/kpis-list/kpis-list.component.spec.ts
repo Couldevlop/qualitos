@@ -174,6 +174,37 @@ describe('KpisListComponent (service doublé)', () => {
     expect(svc.list.calls.mostRecent().args[0]).toBe(0);
   });
 
+  it('montre le KPI créé en alignant le filtre sur son statut', () => {
+    build();
+    dialogResult = { id: 'kpi-2', status: 'DRAFT' };
+    component.openCreate();
+
+    // Sans cela, le brouillon qu'on vient d'écrire serait absent de la liste
+    // d'où on l'a créé, le filtre étant posé sur « Actif » d'office.
+    expect(component.statusFilter.value).toBe('DRAFT');
+    expect(svc.list.calls.mostRecent().args[2]).toBe('DRAFT');
+  });
+
+  it('ne touche pas au filtre quand il montre déjà le statut créé', () => {
+    build();
+    dialogResult = { id: 'kpi-2', status: 'ACTIVE' };
+    const before = svc.list.calls.count();
+    component.openCreate();
+
+    expect(component.statusFilter.value).toBe('ACTIVE');
+    expect(svc.list.calls.count()).toBeGreaterThan(before);
+  });
+
+  it('ne touche pas au filtre « Tous », qui montre déjà tout', () => {
+    build();
+    component.statusFilter.setValue('');
+    dialogResult = { id: 'kpi-2', status: 'DRAFT' };
+    component.openCreate();
+
+    expect(component.statusFilter.value).toBe('');
+    expect(svc.list.calls.mostRecent().args[2]).toBeUndefined();
+  });
+
   it('ne recharge rien quand la création est annulée', () => {
     build();
     dialogResult = undefined;

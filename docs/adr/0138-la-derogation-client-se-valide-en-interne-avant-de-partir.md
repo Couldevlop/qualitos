@@ -1,4 +1,4 @@
-# ADR 0137 — La dérogation client se valide en interne avant de partir
+# ADR 0138 — La dérogation client se valide en interne avant de partir
 
 - **Statut** : accepté
 - **Date** : 2026-11-22

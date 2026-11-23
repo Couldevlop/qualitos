@@ -51,7 +51,7 @@ public class CapaRevisionTrigger implements RevisionTrigger<CapaTransitionEvent>
 
     @Override
     public List<RevisionRequest> propose(CapaTransitionEvent event) {
-        if (event.transition() != CapaTransition.CLOSED) return List.of();
+        if (!event.transition().closesCase()) return List.of();
 
         Map<String, Object> payload = event.payload();
         // Les DEUX sources qui designent un ecart du registre : le constat

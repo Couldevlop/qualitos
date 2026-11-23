@@ -161,6 +161,18 @@
                       class="action-panel__faite" aria-hidden="true"
                       i18n-matTooltip="@@capa.detail.action-done-tooltip"
                       matTooltip="Action terminée">check_circle</mat-icon>
+            <!-- EFFACER L'ACTION. Une action saisie par erreur restait inscrite
+                 au registre faute de geste pour la retirer, et retenait la
+                 clôture du dossier tant qu'on ne l'avait pas menée. L'étiquette
+                 nomme l'action : huit lignes rendraient huit poubelles
+                 indiscernables au lecteur d'écran. -->
+            <button mat-icon-button type="button" *qosCan="'capa.action.manage'"
+                    [disabled]="!peutSupprimer(a) || ((acting$ | async) ?? false)"
+                    (click)="supprimerAction(a); $event.stopPropagation()"
+                    [attr.aria-label]="ariaSupprimer(a)"
+                    data-test="capa-action-supprimer">
+              <mat-icon aria-hidden="true">delete</mat-icon>
+            </button>
           </td>
         </tr>
       </tbody>

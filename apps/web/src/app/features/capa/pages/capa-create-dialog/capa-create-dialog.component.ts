@@ -647,10 +647,21 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
         request.effectivenessCriterion = critere;
       }
     }
-    if (!this.sourceLocked) {
-      request.sourceType = v.sourceType;
-      request.sourceRef = v.sourceRef.trim() || undefined;
-    }
+    // LA SOURCE PART TOUJOURS, imposee ou choisie.
+    //
+    // Elle ne partait pas quand l'ecran d'origine l'imposait, au motif que cet
+    // ecran passe par une route qui la pose lui-meme. C'est vrai de
+    // l'escalade d'un ecart, d'un constat d'audit et d'un risque -- pas du
+    // bouton d'une discipline du 8D, qui ouvre le dossier par la route libre.
+    // Le dossier naissait donc « interne » sans reference : present au
+    // registre, introuvable au D3, au D5, au D7 et dans le rapport 8D, parce
+    // que la fiche de l'ecart retrouve ses dossiers PAR LEUR SOURCE.
+    //
+    // Envoyer la source imposee est inoffensif pour les routes qui la posent :
+    // elles la fixent cote serveur et ignorent celle du corps.
+    request.sourceType = this.data.source?.type ?? v.sourceType;
+    const reference = (this.data.source?.reference ?? v.sourceRef).trim();
+    request.sourceRef = reference || undefined;
 
     this.persist(request)
       .pipe(

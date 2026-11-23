@@ -66,15 +66,30 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
     actionType: 'CONTAINMENT', ...over
   });
 
+  // `verificationRequired: true` : ces bancs decrivent le chemin du VERDICT
+  // -- « Non efficace » et « Efficace -- cloturer ». Un dossier qui n'a promis
+  // aucune verification porte un simple « Cloturer », couvert plus bas.
   const dossier = (blockers?: ClosureBlocker[]): CapaCaseResponse => ({
     id: CASE_ID, tenantId: 't1', title: 'Étiquetage manquant', type: 'CORRECTIVE',
     criticity: 'HIGH', status: 'RESOLVED', sourceType: 'INTERNAL', ownerId: 'u1',
     createdAt: '2026-08-01T00:00:00Z', updatedAt: '2026-08-01T00:00:00Z',
-    actions: [action()], closureBlockers: blockers
+    actions: [action()], closureBlockers: blockers, verificationRequired: true
   });
+
+  /** Le dossier sans promesse de verification : il porte « Cloturer ». */
+  const dossierSansVerification = (blockers?: ClosureBlocker[]): CapaCaseResponse =>
+    ({ ...dossier(blockers), verificationRequired: false });
 
   function setup(blockers?: ClosureBlocker[]): void {
     capa.getCase.and.returnValue(of(dossier(blockers)));
+    fixture = TestBed.createComponent(CapaDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  /** Le meme montage, sur un dossier qui n'a promis aucune verification. */
+  function setupSansVerification(blockers?: ClosureBlocker[]): void {
+    capa.getCase.and.returnValue(of(dossierSansVerification(blockers)));
     fixture = TestBed.createComponent(CapaDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -178,6 +193,28 @@ describe('CapaDetailComponent — motifs de blocage de la clôture', () => {
   });
 
   // --- libellés -------------------------------------------------------------
+
+  /**
+   * Le bouton « Cloturer » promet la meme chose que « Efficace -- cloturer » :
+   * fermer le dossier. Un obstacle l'eteint donc pareillement, sans quoi la
+   * cloture directe serait la porte par laquelle les obstacles se contournent.
+   */
+  it('éteint aussi la clôture directe tant qu\'un obstacle demeure', () => {
+    setupSansVerification([{ code: 'ACTIONS_NOT_DONE', count: 1 }]);
+
+    const bouton: HTMLButtonElement =
+      fixture.nativeElement.querySelector('[data-test="capa-cloturer"]');
+    expect(bouton).not.toBeNull();
+    expect(bouton.disabled).toBeTrue();
+  });
+
+  it('allume la clôture directe quand rien ne s\'oppose', () => {
+    setupSansVerification([]);
+
+    const bouton: HTMLButtonElement =
+      fixture.nativeElement.querySelector('[data-test="capa-cloturer"]');
+    expect(bouton.disabled).toBeFalse();
+  });
 
   it('accorde le singulier et le pluriel sur le décompte', () => {
     setup([]);

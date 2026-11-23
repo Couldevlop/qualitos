@@ -38,7 +38,7 @@ public class StakeholderCapaListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onCapaTransition(CapaTransitionEvent event) {
-        if (event.transition() != CapaTransition.CLOSED) {
+        if (!event.transition().closesCase()) {
             return;
         }
         UUID capaId = uuid(event.payload().get("id"));

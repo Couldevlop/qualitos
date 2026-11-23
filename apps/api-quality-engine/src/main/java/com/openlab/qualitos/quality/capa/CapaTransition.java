@@ -29,6 +29,17 @@ public enum CapaTransition {
     CLOSED("capa.case.closed", EventType.CAPA_CASE_CLOSED,
             "Dossier CAPA clos après vérification d'efficacité"),
     /**
+     * Clôture SANS vérification, parce qu'aucune n'avait été promise.
+     *
+     * <p>Distincte de {@link #CLOSED}, et c'est tout l'enjeu : le journal ne
+     * doit pas affirmer une efficacité démontrée là où personne n'a jugé.
+     * L'auditeur qui relit la ligne doit pouvoir dire, des années plus tard,
+     * que la clôture ne s'appuyait sur aucun relevé — et que ce n'est pas un
+     * oubli, mais la décision prise à l'ouverture du dossier.
+     */
+    CLOSED_WITHOUT_VERIFICATION("capa.case.closed-unverified", EventType.CAPA_CASE_CLOSED,
+            "Dossier CAPA clos sans vérification d'efficacité"),
+    /**
      * Vérification non concluante. Le dossier RETOURNE en traitement : c'est un
      * fait au moins aussi important que la clôture, puisqu'il dit que l'action
      * corrective n'a pas produit son effet.
@@ -88,5 +99,19 @@ public enum CapaTransition {
 
     public String summary() {
         return summary;
+    }
+
+    /**
+     * Vrai des DEUX transitions qui ferment le dossier.
+     *
+     * <p>Ceux qui reagissent a la fermeture -- requalification des parties
+     * interessees, proposition de revision du PFMEA -- reagissent au FAIT que
+     * le dossier s'est ferme, pas a la demonstration d'une efficacite. Les
+     * laisser comparer a {@code CLOSED} seul aurait rendu la cloture directe
+     * silencieuse pour eux, et le defaut ne se serait vu que des mois plus
+     * tard, au PFMEA non revise.
+     */
+    public boolean closesCase() {
+        return this == CLOSED || this == CLOSED_WITHOUT_VERIFICATION;
     }
 }

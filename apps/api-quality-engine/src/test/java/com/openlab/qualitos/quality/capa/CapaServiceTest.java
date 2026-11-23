@@ -454,6 +454,103 @@ class CapaServiceTest {
                 .isInstanceOf(CapaStateException.class);
     }
 
+    // --- cloture directe : aucune verification n'a ete promise ---
+
+    /**
+     * La question se tranche a l'ouverture, et elle engage : repondue « non »,
+     * ou jamais posee, la cloture ne doit pas reclamer un verdict. L'ecran
+     * n'offrait que « Efficace -- cloturer », et inscrivait donc au registre
+     * une efficacite que personne n'avait constatee.
+     */
+    @Test
+    void closeWithoutVerification_noPromise_closesAndJudgesNothing() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setVerificationRequired(false);
+        action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.closeWithoutVerification(c.getId());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+        assertThat(c.getClosedAt()).isNotNull();
+        // NI vrai NI faux : personne n'a juge, et le registre ne doit pas
+        // laisser croire le contraire.
+        assertThat(c.getEffectivenessVerified()).isNull();
+    }
+
+    /**
+     * L'ENDIGUEMENT SE CLOT PAR ICI, et seulement par ici. Depuis l'ADR 0135
+     * chaque action porte son dossier : le refus oppose par verifyEffectiveness
+     * a un dossier qui n'endigue que le rendait infermable pour toujours.
+     */
+    @Test
+    void closeWithoutVerification_containmentOnly_closes() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.closeWithoutVerification(c.getId());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    /** Une promesse de verification ne se contourne pas : elle se solde. */
+    @Test
+    void closeWithoutVerification_casePromised_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setVerificationRequired(true);
+        action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.closeWithoutVerification(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    @Test
+    void closeWithoutVerification_actionPromised_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaAction a = action(c, CapaActionStatus.DONE);
+        a.setVerificationRequired(true);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.closeWithoutVerification(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    /** Un critere annonce dit ce qu'on mesurera : il se solde par un verdict. */
+    @Test
+    void closeWithoutVerification_criterionAnnounced_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setEffectivenessCriterion("rebuts < 2 % sur 3 mois");
+        action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.closeWithoutVerification(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    /** Les autres obstacles de la cloture restent opposes par ce chemin. */
+    @Test
+    void closeWithoutVerification_actionNotDone_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        action(c, CapaActionStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.closeWithoutVerification(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    @Test
+    void closeWithoutVerification_notResolved_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.closeWithoutVerification(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
     // --- reject ---
     @Test
     void reject_open_success() {
@@ -1544,6 +1641,10 @@ class CapaServiceTest {
     @Test
     void findById_containmentOnly_isAnnouncedBeforeTheClick() {
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        // « N'a fait qu'endiguer » s'oppose a la DECLARATION d'une efficacite,
+        // pas a la fermeture : l'obstacle ne vaut donc que sur le chemin du
+        // verdict, celui d'un dossier qui a promis de verifier (ADR 0137).
+        c.setVerificationRequired(true);
         action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
         action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
@@ -1551,6 +1652,21 @@ class CapaServiceTest {
 
         assertThat(service.findById(c.getId()).closureBlockers())
                 .containsExactly(new CapaDto.ClosureBlocker(ClosureBlockerCode.CONTAINMENT_ONLY, 2));
+    }
+
+    /**
+     * LE BANC QUI MANQUAIT. L'ecran eteint « Cloturer » sur la liste d'obstacles
+     * du serveur : si celle-ci annoncait encore CONTAINMENT_ONLY, le dossier
+     * d'endiguement resterait infermable malgre son nouveau chemin.
+     */
+    @Test
+    void findById_containmentOnlyWithoutPromise_isNoObstacle() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+
+        assertThat(service.findById(c.getId()).closureBlockers()).isEmpty();
     }
 
     @Test
@@ -1569,6 +1685,7 @@ class CapaServiceTest {
         // L'écran doit pouvoir tout dire d'un coup : ne montrer que le premier
         // obstacle enverrait l'utilisateur en corriger un pour en découvrir un autre.
         CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setVerificationRequired(true);
         action(c, CapaActionStatus.PENDING, CapaActionType.CONTAINMENT);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(1L);

@@ -688,9 +688,9 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(capaService.casesOf(premier, n.getReference())).thenReturn(List.of(
                 new CapaDto.CaseRef(premier, "Dossier de la fiche", CapaStatus.IN_PROGRESS,
-                        null, List.of()),
+                        null, List.of(), false),
                 new CapaDto.CaseRef(second, "Dossier ouvert depuis la liste", CapaStatus.OPEN,
-                        null, List.of())));
+                        null, List.of(), false)));
 
         List<NcDto.CapaCaseRef> dossiers = service.findById(n.getId()).capaCases();
 
