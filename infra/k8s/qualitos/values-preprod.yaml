@@ -248,3 +248,9 @@ services:
 
 autoscaling:
   enabled: false
+
+# Le receptacle de courriel : allume ICI et nulle part ailleurs. Il retient les
+# messages au lieu de les remettre, ce qui est exactement ce qu'on veut d'un
+# environnement de recette, et exactement ce qu'on ne veut pas ailleurs.
+mailcatcher:
+  enabled: true
