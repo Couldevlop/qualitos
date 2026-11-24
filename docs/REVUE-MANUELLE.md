@@ -20,7 +20,8 @@
 > page se refait. Les cases cochées restent dans votre navigateur — une revue
 > en cours est un brouillon, pas un livrable.
 >
-> Mesures de ce document : **2026-11-13**, sur `5db707f`. Les chiffres se
+> Mesures de ce document : **2026-11-13**, sur `5db707f` ; les familles I et J et
+> les commandes du §2.4 ont été vérifiées le **2026-11-24**. Les chiffres se
 > remesurent (`bash scripts/passation-chiffres.sh`) ; les **méthodes**, non.
 
 ---
@@ -34,7 +35,7 @@
 | Savoir ce qui casse dans ce dépôt | §5.5 — le catalogue des familles de défauts. **La section la plus rentable.** |
 | Former quelqu'un à relire | §1, §3, §5.5, puis faites-lui relire une PR déjà fusionnée et comparez |
 
-**Si vous ne lisez qu'une chose** : le **§1.2** (les sept classes de défaut que
+**Si vous ne lisez qu'une chose** : le **§1.2** (les neuf classes de défaut que
 rien d'automatique n'attrape) et le **§5.5** (celles qui sont déjà arrivées).
 Tout le reste, la CI le fait mieux que vous.
 
@@ -71,10 +72,10 @@ application d'importer Spring, JPA, Hibernate, Jackson ou POI. **Lisez bien le
 §5.3 avant de vous reposer dessus** : ces règles sont écrites module par module,
 à la main, et **la majorité des modules n'en a aucune**.
 
-### 1.2 Les sept classes de défaut qu'aucun de ces travaux ne verra
+### 1.2 Les neuf classes de défaut qu'aucun de ces travaux ne verra
 
 C'est pour celles-là que vous relisez. Aucune n'est détectable par un outil, et
-les sept ont déjà produit un défaut réel dans ce dépôt.
+les neuf ont déjà produit un défaut réel dans ce dépôt.
 
 | # | Classe | Pourquoi la machine est aveugle |
 | --- | --- | --- |
@@ -85,8 +86,10 @@ les sept ont déjà produit un défaut réel dans ce dépôt.
 | 5 | **Une information affirmée alors qu'on ne la sait pas encore** | L'affichage est syntaxiquement juste ; il est faux une seconde, ou pour toujours |
 | 6 | **Un commentaire ou un ADR devenu faux** | Rien ne compile un commentaire |
 | 7 | **Une hypothèse d'exploitation non écrite** (un seul exemplaire, un ordre, une horloge) | Le code marche — sur la machine où il a été écrit |
+| 8 | **Ce qui s'affiche ne se relit pas** | Écrire et lire sont deux chemins ; aucun test ne les confronte tant qu'on ne l'écrit pas |
+| 9 | **L'écran perd ce que le serveur a gardé** | Les deux sont corrects séparément ; la perte n'existe qu'au rechargement |
 
-Les sept sont dépliées au **§5.5**, avec l'endroit où chacune est arrivée.
+Les neuf sont dépliées au **§5.5**, avec l'endroit où chacune est arrivée.
 
 ---
 
@@ -151,8 +154,17 @@ Une revue entièrement sur écran laisse passer tout le §5.5. Le minimum :
 TEMP=D:/tmp TMP=D:/tmp TESTCONTAINERS_RYUK_DISABLED=true \
   mvn -P dev -Dtest='com.openlab.qualitos.quality.capa.**' test
 
+# Front : restreindre au perimetre, sinon c'est dix minutes.
+#
+# DEUX pieges, tous deux verifies le 24/11/2026. Le motif doit viser les SPECS et
+# rien d'autre : un `**/<dossier>/**` happe le .scss et le .html, et la suite
+# echoue SUR LE BUNDLE sans qu'aucun banc n'ait tourne. Et `--code-coverage=false`
+# n'est pas une economie : sur un perimetre restreint les seuils globaux sont
+# forcement manques, la commande rend 1, et on croit avoir un banc rouge.
+# Dans les deux cas le code de sortie trompe — c'est la ligne TOTAL qui tranche.
 cd apps/web && npx ng test --watch=false --browsers=ChromeHeadless \
-  > /d/tmp/karma.log 2>&1; grep -a 'TOTAL' /d/tmp/karma.log
+  --include='**/<le-composant>.component.spec.ts' --code-coverage=false \
+  > /d/tmp/karma.log 2>&1; grep -aE 'TOTAL|FAILED' /d/tmp/karma.log
 ```
 
 Puis **ouvrez l'écran** et faites le geste que la PR décrit. Les pièges qui
@@ -497,13 +509,27 @@ quand il n'y a rien », c'est un défaut.
 - Vécu : deux blocs Javadoc empilés sur la même méthode, le premier affirmant
   l'inverse du second — et c'était exactement la croyance périmée qui venait de
   faire échouer un test de bout en bout.
+- Vécu : l'écran **Messagerie** annonçait que « vos courriels continuent de
+  partir de l'adresse de la plateforme ». Vrai de la facture, qui émane de
+  QualitOS ; **faux** de la dérogation, qui engage l'organisation et ne part pas
+  sans messagerie réglée depuis l'arbitrage du 24 novembre 2026. Le texte avait
+  survécu au renversement de la décision qu'il décrivait, et l'administrateur
+  l'aurait découvert au moment d'envoyer un dossier à son client.
+- Vécu : l'aide d'un champ promettait une date « pré-remplie à l'ouverture du
+  dossier », et la javadoc du domaine le confirmait — le champ arrivait vide.
+  Une aide est une promesse ; non tenue, elle fait douter du reste de l'écran.
 - Les traductions sont **générées** : ne modifiez jamais
   `apps/web/src/locale/messages.*.xlf`. Les textes vivent dans
-  `apps/web/scripts/i18n/*.py`. La CI refuse une divergence — mais elle ne voit
-  pas un texte français juste et une traduction qui dit autre chose.
+  `apps/web/scripts/i18n/*.py`, et `python scripts/gen-i18n-xlf.py` les refait.
+  La CI refuse une divergence — mais elle ne voit pas un texte français juste et
+  une traduction qui dit autre chose. *Règle enfreinte le 24 novembre 2026 : les
+  cinq `.xlf` modifiés à la main, le `.py` oublié. La relecture l'a rattrapé
+  avant la CI ; c'est exactement ce que ce document sert à attraper.*
 
 **Question de revue** : *le diff change un comportement décrit ailleurs ?* Si oui,
-l'ailleurs est dans le périmètre de la PR. `grep -rln '<le sujet>' docs/`.
+l'ailleurs est dans le périmètre de la PR. `grep -rln '<le sujet>' docs/`. Et pour
+un arbitrage renversé, cherchez-le aussi **dans les écrans** :
+`grep -rn '<le sujet>' apps/web/scripts/i18n/`.
 
 #### G — L'hypothèse d'exploitation non écrite
 
@@ -521,15 +547,64 @@ Du code qui marche sur la machine où il a été écrit.
   incident entre les deux laisse un acte non journalisé. Dette connue, assumée,
   écrite (`PASSATION.md` §9).
 
+- Vécu : un conteneur durci avec `readOnlyRootFilesystem: true` pour un
+  programme qui ouvre sa base sous `/tmp`. Il n'a **jamais démarré** : 101
+  redémarrages, une ligne de journal, `read-only file system`. Le durcissement
+  était juste ; ce qui manquait, c'est l'emplacement inscriptible qu'il suppose.
+  Et le volume ajouté ne doit pas être un disque de nœud : il entrerait dans la
+  sauvegarde, et des pièces jointes de recette y survivraient à la recette.
+- Vécu : un fournisseur Angular posé **à la racine** pour cinq modules chargés
+  **à la demande**. Chacun a son injecteur et refournit le sien : la
+  substitution racine perdait, en silence, sur les cinq écrans concernés. Un
+  `loadChildren` change qui gagne.
+
 **Question de revue** : *qu'est-ce que ce code suppose du monde — un seul
 exemplaire, un ordre d'exécution, une horloge, un système de fichiers
-inscriptible — et où est-ce écrit ?*
+inscriptible, un injecteur — et où est-ce écrit ?*
 
 #### H — La personne réduite à un identifiant
 
 Règle du dépôt : un responsable, un pilote, un propriétaire se **choisit dans
 l'annuaire** (`qos-user-picker`, 44 usages) et s'affiche **par son nom**. Jamais
 un UUID à l'écran, jamais un champ de texte libre pour désigner quelqu'un.
+
+#### I — Ce que le logiciel affiche, il ne sait pas le relire
+
+Écrire une valeur et la relire sont **deux chemins distincts**. Rien ne les
+confronte tant qu'on n'écrit pas le test qui le fait, et ils divergent sans
+bruit.
+
+- Vécu : le champ de date. `NativeDateAdapter` **écrit** `24/11/2026` en
+  français, puis s'en remet à `Date.parse` pour le relire — qui ne connaît que
+  l'ordre américain et rend `NaN`. Le champ passait au rouge sur la date qu'il
+  venait lui-même d'afficher, et seul le calendrier permettait d'avancer.
+- Plus grave que le refus : `05/06/2026` était **accepté**, et lu comme le
+  6 mai. Une valeur refusée se voit ; une valeur acceptée et fausse part au
+  client. Quand les deux lectures sont possibles, la bonne n'est jamais celle du
+  hasard.
+- Ce qui se suppose se mesure : l'ordre des champs vient de `Intl`, et les
+  chiffres aussi — l'arabe écrit la date en chiffres arabes-indiens et y insère
+  des marques de sens d'écriture invisibles (`U+200F`). Une seule langue oubliée
+  et elle devient la seule où l'on ne peut pas retaper ce qui est à l'écran.
+
+**Question de revue** : pour toute valeur **affichée puis ressaisissable**,
+*`parse(format(x))` rend-il `x` — dans toutes les langues construites ?* Si le
+test n'existe pas, il n'y a aucune raison que ce soit vrai.
+
+#### J — L'écran perd ce que le serveur a gardé
+
+Un état qui ne vit que dans le composant disparaît au rechargement. Les deux
+moitiés sont correctes séparément ; la perte n'apparaît qu'au moment où l'écran
+se refait.
+
+- Vécu : le manager qualité d'une dérogation. Rouvrir un dossier le recharge, et
+  le champ repartait vide — alors que le serveur l'avait gardé, et que le
+  domaine le dit en toutes lettres : « la signature est effacée, le manager
+  désigné reste. » Il fallait redésigner quelqu'un de déjà connu.
+
+**Question de revue** : *quels champs de cet écran ne sont pas remplis depuis la
+fiche rendue par le serveur ?* Chacun est un candidat. Le geste qui révèle la
+famille est toujours le même : **recharger après une action**.
 
 ### 5.6 Tests, textes, accessibilité, documentation
 
@@ -543,6 +618,19 @@ c'est **ce qui est couvert**.
 | Un compteur est-il codé en dur ? | `expect(items.length).toBe(7)` casse au huitième élément et n'apprend rien |
 | Le cas porte-t-il le nom de la **règle** ? | « devrait marcher » ne documente rien. Ici les noms de cas sont la spécification (§4, question 4) |
 | Une correction de défaut a-t-elle son **banc de non-régression** ? | Un correctif sans test se re-cassera |
+| Le banc a-t-il été **éprouvé à l'envers** ? | Un banc qui passe avec ET sans le correctif ne prouve rien. On retire le correctif, on vérifie qu'il tombe, et **sur le bon motif** — puis on remet |
+| Le banc vérifie-t-il la **forme**, ou seulement la présence ? | Un document dont on teste le texte peut avoir ses lignes superposées : l'extracteur les rend quand même |
+| Un seul jeu d'essai suffit-il à faire tomber le cas ? | Une mise en page ne casse qu'à certaines tailles : on **balaie** l'intervalle plutôt que d'en choisir une |
+
+**Éprouver un banc à l'envers**, concrètement : les trois correctifs de la
+campagne du 24 novembre 2026 ont tous été passés par là, et le message d'échec
+nommait le chiffre exact — « deux lignes de base à 89,0 et 98,0, soit 9,0 point
+d'écart pour un texte de 9 points », « avec 6 ligne(s) d'écart, une page se
+termine sur « 6. Décision du client » ». Un banc qui tombe sans dire pourquoi
+n'aide personne au prochain passage. Et c'est aussi ce contrôle qui a révélé
+qu'un `--include` trop large happe le `.scss` et le `.html` : la suite échouait
+sur le bundle, pas sur un banc — **un échec pour le mauvais motif ne prouve rien
+non plus**.
 
 **Les textes.** Toute chaîne visible porte un `i18n="@@clé"`. Une clé nouvelle
 existe dans les tables Python, pas directement dans le `.xlf`.

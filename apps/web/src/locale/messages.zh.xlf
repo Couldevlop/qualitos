@@ -19475,8 +19475,8 @@ historique 12 mois</source>
         <target state="translated">启用</target>
       </trans-unit>
       <trans-unit id="mail.settings.activation-help" datatype="html">
-        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
-        <target state="translated">在启用之前，您的邮件仍由平台地址发出。请先行验证：保存设置并不等于已验证。</target>
+        <source>Tant que la messagerie n'est pas activée, seuls les courriels de la plateforme partent, depuis son adresse. Ceux qui engagent votre organisation, comme une dérogation envoyée à votre client, ne partent pas tant qu'elle n'est pas réglée. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">在启用之前，只有平台自身的邮件会从平台地址发出。代表贵组织发出的邮件，例如发送给客户的让步申请，在完成设置之前不会发出。请先行验证：保存设置并不等于已验证。</target>
       </trans-unit>
       <trans-unit id="mail.settings.enable" datatype="html">
         <source>Envoyer les courriels depuis cette messagerie</source>

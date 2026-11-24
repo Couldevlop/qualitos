@@ -191,21 +191,36 @@ TRANSLATIONS = {
     'mail.settings.activation': (
         'Mise en service', 'Going live', 'Puesta en servicio', 'التشغيل',
         '運用開始', '启用'),
+    # Distingue les deux sortes de courriels : la facture emane de QualitOS et
+    # se replie sur son adresse ; la derogation engage l organisation et ne part
+    # pas sans messagerie reglee (arbitrage du 24 novembre 2026, PR #300).
+    # La phrase precedente promettait un repli pour TOUS les courriels.
     'mail.settings.activation-help': (
-        "Tant que la messagerie n'est pas activée, vos courriels continuent de "
-        "partir de l'adresse de la plateforme. Éprouvez-la d'abord : "
-        "enregistrer un réglage n'est pas l'avoir vérifié.",
-        'Until this mailbox is switched on, your email keeps going out from the '
-        "platform's address. Prove it first: saving a setting is not having "
+        "Tant que la messagerie n'est pas activée, seuls les courriels de la "
+        "plateforme partent, depuis son adresse. Ceux qui engagent votre "
+        "organisation, comme une dérogation envoyée à votre client, ne partent "
+        "pas tant qu'elle n'est pas réglée. Éprouvez-la d'abord : enregistrer "
+        "un réglage n'est pas l'avoir vérifié.",
+        "Until this mailbox is switched on, only the platform's own email goes "
+        'out, from its address. Email that commits your organisation — a '
+        'concession sent to your customer, for instance — does not go out until '
+        'this is set up. Prove it first: saving a setting is not having '
         'verified it.',
-        'Mientras no se active, sus correos seguirán saliendo desde la '
-        'dirección de la plataforma. Compruébela primero: guardar un ajuste no '
-        'es haberlo verificado.',
-        'ما لم يتم تشغيل هذا البريد، ستظل رسائلك تُرسل من عنوان المنصّة. أثبِت '
-        'صحّته أولًا: فحفظ الإعداد ليس تحقّقًا منه.',
-        '有効にするまで、メールはプラットフォームのアドレスから送信され続けます。'
-        'まずテスト送信で確認してください。保存したことは確認したことではありません。',
-        '在启用之前，您的邮件仍由平台地址发出。请先行验证：保存设置并不等于已验证。'),
+        'Mientras el correo no esté activado, solo salen los correos de la '
+        'plataforma, desde su dirección. Los que comprometen a su organización, '
+        'como una concesión enviada a su cliente, no salen hasta que esté '
+        'configurado. Pruébelo primero: guardar un ajuste no es haberlo '
+        'verificado.',
+        'ما دام البريد غير مُفعّل، لا تُرسَل إلا رسائل المنصّة، من عنوانها. أمّا '
+        'الرسائل التي تُلزِم مؤسستك، مثل طلب استثناء يُرسَل إلى عميلك، فلا تُرسَل '
+        'قبل ضبطه. اختبره أولًا: فحفظ الإعداد ليس تحقّقًا منه.',
+        '有効にするまで、送信されるのはプラットフォームのアドレスからの通知のみです。'
+        'お客様へ送る特別採用のように、貴組織の責任で送る文書は、設定が済むまで'
+        '送信されません。まずテスト送信で確認してください。'
+        '保存したことは確認したことではありません。',
+        '在启用之前，只有平台自身的邮件会从平台地址发出。代表贵组织发出的邮件，'
+        '例如发送给客户的让步申请，在完成设置之前不会发出。请先行验证：'
+        '保存设置并不等于已验证。'),
     'mail.settings.enable': (
         'Envoyer les courriels depuis cette messagerie',
         'Send email from this mailbox',

@@ -118,8 +118,17 @@ export class DerogationFormComponent implements OnInit {
   /** Le titre d'un dossier qui n'a pas encore de référence. */
   readonly nouveauTitre = $localize`:@@derogation.form.new-title:Nouvelle dérogation`;
 
-  /** Le manager choisi dans l'annuaire, pour la demande de validation. */
-  managerChoisi: DirectoryUser | null = null;
+  /**
+   * Le manager désigné, par son identifiant de compte.
+   *
+   * <p>C'est un champ de formulaire et non une variable à part, pour une raison
+   * précise : il doit se REMPLIR depuis la fiche. Il ne vivait que dans l'écran,
+   * si bien qu'une réouverture — qui recharge la fiche — laissait le champ vide
+   * alors que le serveur avait gardé le manager, et qu'il fallait le redésigner
+   * pour rien. Le domaine est pourtant clair : « la signature est effacée, le
+   * manager désigné reste. »
+   */
+  readonly managerCtrl = new FormControl<string | null>(null);
 
   /** La réponse du client, saisie par l'initiateur à sa réception. */
   readonly reponseClient = new FormGroup({
@@ -153,6 +162,14 @@ export class DerogationFormComponent implements OnInit {
     if (!id || id === 'nouvelle') {
       this.neuf = true;
       this.lignes.push(ligneVide());
+      // « Pré-remplie à l'ouverture du dossier », dit l'aide du champ, et le
+      // domaine le confirme : « le formulaire la propose pré-remplie ». Elle
+      // arrivait pourtant vide, et la promesse démentait l'écran. Ici
+      // seulement : sur un dossier qui existe, c'est SA date qui fait foi.
+      const aujourdhui = new Date();
+      this.formulaire.patchValue({
+        requestDate: new Date(aujourdhui.getFullYear(), aujourdhui.getMonth(), aujourdhui.getDate())
+      }, { emitEvent: false });
       return;
     }
     this.charger(id);
@@ -204,6 +221,11 @@ export class DerogationFormComponent implements OnInit {
       capaReference: d.capaReference ?? '',
       attachmentsNote: d.attachmentsNote ?? ''
     }, { emitEvent: false });
+
+    // Le manager désigné revient avec la fiche : sans cela, rouvrir un dossier
+    // vidait le champ et obligeait à redésigner quelqu'un que le serveur
+    // connaissait déjà.
+    this.managerCtrl.setValue(d.managerAccountId ?? null, { emitEvent: false });
 
     this.lignes.clear({ emitEvent: false });
     for (const l of d.lines) {
@@ -283,14 +305,15 @@ export class DerogationFormComponent implements OnInit {
   }
 
   surChoixDuManager(personne: DirectoryUser | null): void {
-    this.managerChoisi = personne;
+    this.managerCtrl.setValue(personne?.accountId ?? null);
   }
 
   demanderLaValidation(): void {
-    if (!this.dossier || !this.managerChoisi) {
+    const manager = this.managerCtrl.value;
+    if (!this.dossier || !manager) {
       return;
     }
-    this.agir(this.service.requestApproval(this.dossier.id, this.managerChoisi.accountId),
+    this.agir(this.service.requestApproval(this.dossier.id, manager),
       $localize`:@@derogation.approval-requested:Demande envoyée au manager qualité.`);
   }
 

@@ -280,6 +280,50 @@ describe('DerogationFormComponent', () => {
     expect(service.requestApproval).toHaveBeenCalledWith('d-1', 'kc-manager');
   });
 
+  it('le manager deja designe revient avec la fiche', async () => {
+    // Rouvrir un dossier le recharge. Le champ ne vivait que dans l ecran : il
+    // repartait vide, et il fallait redesigner quelqu un que le serveur
+    // connaissait deja. Le domaine est pourtant clair — « la signature est
+    // effacee, le manager designe reste ».
+    await monter('d-1', dossier('QUALITY_APPROVED', {
+      managerAccountId: 'kc-manager', managerAccountName: 'Sophie Marchand'
+    }));
+
+    expect(composant.managerCtrl.value).toBe('kc-manager');
+  });
+
+  it('un dossier sans manager laisse le champ vide', async () => {
+    await monter('d-1', dossier('DRAFT'));
+
+    expect(composant.managerCtrl.value).toBeNull();
+  });
+
+  it('la date de la demande arrive pre-remplie au jour courant sur un dossier NEUF',
+    async () => {
+      // L aide du champ l annonce — « pre-remplie a l ouverture du dossier » —
+      // et le domaine le confirme. Elle arrivait vide : la promesse demetait
+      // l ecran.
+      await monter(null);
+
+      const posee = composant.formulaire.controls.requestDate.value!;
+      const aujourdhui = new Date();
+
+      expect(posee).withContext('aucune date posee').not.toBeNull();
+      expect(posee.getFullYear()).toBe(aujourdhui.getFullYear());
+      expect(posee.getMonth()).toBe(aujourdhui.getMonth());
+      expect(posee.getDate()).toBe(aujourdhui.getDate());
+    });
+
+  it('un dossier qui EXISTE garde sa date, et non celle du jour', async () => {
+    await monter('d-1', dossier('DRAFT', { requestDate: '2026-09-18' }));
+
+    const posee = composant.formulaire.controls.requestDate.value!;
+
+    expect(posee.getFullYear()).toBe(2026);
+    expect(posee.getMonth()).toBe(8);
+    expect(posee.getDate()).toBe(18);
+  });
+
   it('sans manager choisi, la demande ne part pas', async () => {
     await monter('d-1', dossier('DRAFT'));
     composant.demanderLaValidation();
