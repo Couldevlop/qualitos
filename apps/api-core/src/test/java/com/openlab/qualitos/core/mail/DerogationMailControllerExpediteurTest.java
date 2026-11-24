@@ -221,4 +221,41 @@ class DerogationMailControllerExpediteurTest {
 
         assertThat(messagePoste().getRecipients(Message.RecipientType.BCC)).isNull();
     }
+
+    @Test
+    @DisplayName("l en-tete porte le NOM de l organisation, et pas le logo QualitOS")
+    void lEnTetePorteLeNomDeLOrganisation() throws Exception {
+        messagerieReglee();
+
+        controleur.send(demande());
+
+        String entier = contenuEntier(messagePoste());
+        assertThat(entier).contains("Qualite Organisation");
+        // Le fond de l affaire : ce courriel part vers le client d un client,
+        // sous une adresse que ce client a reglee, et il l engage. Le logo de la
+        // plateforme tromperait le destinataire sur qui lui ecrit.
+        assertThat(entier).doesNotContain("logo-qualitos");
+    }
+
+    @Test
+    @DisplayName("les deux versions partent : le texte reste entier sous le HTML")
+    void lesDeuxVersionsPartent() throws Exception {
+        messagerieReglee();
+
+        controleur.send(demande());
+
+        String entier = contenuEntier(messagePoste());
+        assertThat(entier).contains("Bonjour,");
+        assertThat(entier).contains("<!DOCTYPE html>");
+    }
+
+    /** Le message entier, tel qu il partirait sur le reseau. */
+    private static String contenuEntier(MimeMessage message) throws Exception {
+        java.io.ByteArrayOutputStream sortie = new java.io.ByteArrayOutputStream();
+        message.writeTo(sortie);
+        // Le corps voyage encode : on retire les coupures de ligne souples, sans
+        // quoi une balise se lirait coupee en deux.
+        return sortie.toString(java.nio.charset.StandardCharsets.UTF_8)
+                .replace("=\r\n", "").replace("=\n", "");
+    }
 }

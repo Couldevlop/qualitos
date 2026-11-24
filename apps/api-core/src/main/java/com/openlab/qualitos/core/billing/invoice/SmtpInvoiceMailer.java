@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.openlab.qualitos.mail.MailTemplate;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.MailPreparationException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -61,7 +62,9 @@ public class SmtpInvoiceMailer implements PlatformInvoiceMailPort {
             helper.setFrom(from);
             helper.setTo(to);
             helper.setSubject(singleLine(subject));
-            helper.setText(body, false);
+            helper.setText(body, MailTemplate.plateforme(body));
+            helper.addInline(MailTemplate.LOGO_CID,
+                    new ByteArrayResource(MailTemplate.logo()), "image/png");
             helper.addAttachment(attachmentName(subject), new ByteArrayResource(pdf),
                     "application/pdf");
         } catch (MessagingException e) {
