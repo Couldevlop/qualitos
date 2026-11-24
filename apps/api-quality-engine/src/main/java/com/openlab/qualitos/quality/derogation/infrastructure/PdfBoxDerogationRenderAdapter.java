@@ -66,10 +66,15 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
      * Sur un document qui part au client, c'est ce qui se lisait comme un bloc
      * compact où rien ne se détache.
      *
-     * <p>24 et non davantage : c'est la dernière valeur qui laisse un dossier
-     * courant tenir sur UNE page. À 26, le document déborde et le titre de la
-     * sixième section reste seul en bas de la première — une section orpheline
-     * se lit plus mal qu'une ligne serrée.
+     * <p>24 et non davantage : mesurée sur un dossier courant — une ligne
+     * d'écart, les six sections remplies — c'est la dernière valeur qui le
+     * laisse tenir sur UNE page. Un dossier plus fourni déborde de toute façon,
+     * et c'est normal ; ce qu'on refuse, c'est de faire déborder le cas
+     * ordinaire pour gagner deux points d'air.
+     *
+     * <p>Ce n'est PAS la garde contre les sections orphelines : celle-là vit
+     * dans {@code titre()}, qui réserve une ligne derrière lui, et elle tient
+     * quelle que soit cette valeur.
      */
     private static final float ROW = 24f;
 
@@ -297,8 +302,16 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             y -= 36f;
         }
 
+        /**
+         * Un titre de section.
+         *
+         * <p>Il réserve sa propre hauteur ET une ligne derrière lui. Sans cela
+         * il pouvait tomber en dernier sur une page, son contenu commençant sur
+         * la suivante : le lecteur voyait une section annoncée puis vide, et
+         * devait tourner la page pour savoir de quoi elle parlait.
+         */
         void titre(String titre) throws IOException {
-            place(26f);
+            place(24f + ROW);
             flux.setNonStrokingColor(PANEL[0], PANEL[1], PANEL[2]);
             flux.addRect(MARGIN, y - 17f, CONTENT_W, 17f);
             flux.fill();
@@ -362,7 +375,15 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             return lignes.size();
         }
 
-        /** Une étiquette et son paragraphe, replié sur la largeur utile. */
+        /**
+         * Une étiquette et son paragraphe, replié sur la largeur utile.
+         *
+         * <p>Même rythme qu'une paire, aux mêmes cotes : étiquette à -5, texte à
+         * -15,5, puis {@link #LEADING} par ligne. Le bloc suivait auparavant une
+         * mesure à lui — 13, 11 et 3 — qui faisait 27 points là où la paire en
+         * faisait 24. L'écart était modeste mais visible : sur une même page, la
+         * section 4 flottait quand les sections 1 et 2 se serraient.
+         */
         void bloc(String etiquette, String texte, DerogationLabels l) throws IOException {
             place(ROW);
             flux.setNonStrokingColor(MUTED[0], MUTED[1], MUTED[2]);
@@ -371,18 +392,27 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             flux.newLineAtOffset(MARGIN, y - 5f);
             flux.showText(reduire(etiquette));
             flux.endText();
-            y -= 13f;
-            for (String ligne : replier(texte == null ? l.t("empty") : texte, WRAP)) {
-                place(11f);
+            // La ligne de base courante, et rien d'autre a suivre : le curseur de
+            // la page ne se recale qu'a la fin, une seule fois.
+            float ligne = y - 15.5f;
+            for (String texteLigne : replier(texte == null ? l.t("empty") : texte, WRAP)) {
+                if (ligne < BOTTOM) {
+                    nouvelle();
+                    // En haut d'une page de suite, le paragraphe reprend sans
+                    // repeter son etiquette : elle est restee avec son debut.
+                    ligne = y - 11f;
+                }
                 flux.setNonStrokingColor(INK[0], INK[1], INK[2]);
                 flux.beginText();
                 flux.setFont(regular, 9f);
-                flux.newLineAtOffset(MARGIN, y - 4f);
-                flux.showText(reduire(ligne));
+                flux.newLineAtOffset(MARGIN, ligne);
+                flux.showText(reduire(texteLigne));
                 flux.endText();
-                y -= 11f;
+                ligne -= LEADING;
             }
-            y -= 3f;
+            // Une ligne posee a -15,5 doit laisser le curseur a -ROW : on rend
+            // donc a la derniere ligne ecrite le meme talon qu'a une paire.
+            y = ligne + LEADING - (ROW - 15.5f);
         }
 
         void sourdine(String texte) throws IOException {

@@ -242,6 +242,59 @@ class PdfBoxDerogationRenderAdapterTest {
         }
     }
 
+    @Test
+    void aucunePageNeSeTermineSurUnTitreDeSection() throws IOException {
+        // Un titre pose en dernier sur une page annonce une section dont le
+        // contenu commence sur la suivante : le lecteur voit une section vide
+        // et doit tourner la page pour savoir de quoi elle parle. Une seule
+        // taille de dossier ne fait pas tomber le cas, on balaie donc toutes
+        // celles qui tiennent entre une page et trois.
+        for (int combien = 0; combien <= 40; combien++) {
+            Derogation d = dossierComplet();
+            d.reopen(DEMANDEUR, T0);
+            List<DerogationLine> lignes = new ArrayList<>();
+            for (int i = 1; i <= combien; i++) {
+                lignes.add(new DerogationLine(i, "Cote numero " + i + " du plan indice C",
+                        "mesure " + i + ",5 mm", new BigDecimal(i)));
+            }
+            d.edit(DEMANDEUR, identification(), Nature.parDefaut(), lignes, "ok", analyse(), T0);
+            byte[] document = rendu.render(d, DerogationLanguage.FR);
+
+            for (String fin : dernieresLignesDesPages(document)) {
+                assertThat(fin)
+                        .as("avec %d ligne(s) d ecart, une page se termine sur « %s »",
+                                combien, fin)
+                        .doesNotMatch("^\\d+\\.\\s+\\S.*");
+            }
+        }
+    }
+
+    /**
+     * La derniere ligne de texte de chaque page, pagination mise a part.
+     *
+     * <p>Le pied de page porte « n / N » sur toutes les pages : il serait
+     * toujours la derniere ligne, et masquerait le titre qu on cherche.
+     */
+    private static List<String> dernieresLignesDesPages(byte[] pdf) throws IOException {
+        List<String> fins = new ArrayList<>();
+        try (PDDocument document = Loader.loadPDF(pdf)) {
+            for (int page = 1; page <= document.getNumberOfPages(); page++) {
+                PDFTextStripper extracteur = new PDFTextStripper();
+                extracteur.setStartPage(page);
+                extracteur.setEndPage(page);
+                String derniere = "";
+                for (String ligne : extracteur.getText(document).split("\\R")) {
+                    String net = ligne.strip();
+                    if (!net.isEmpty() && !net.matches("\\d+\\s*/\\s*\\d+")) {
+                        derniere = net;
+                    }
+                }
+                fins.add(derniere);
+            }
+        }
+        return fins;
+    }
+
     /**
      * Les lignes de base distinctes de la premiere page, de haut en bas.
      *
