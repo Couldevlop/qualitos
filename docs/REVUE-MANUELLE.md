@@ -153,8 +153,17 @@ Une revue entièrement sur écran laisse passer tout le §5.5. Le minimum :
 TEMP=D:/tmp TMP=D:/tmp TESTCONTAINERS_RYUK_DISABLED=true \
   mvn -P dev -Dtest='com.openlab.qualitos.quality.capa.**' test
 
+# Front : restreindre au perimetre, sinon c'est dix minutes.
+#
+# DEUX pieges, tous deux verifies le 24/11/2026. Le motif doit viser les SPECS et
+# rien d'autre : un `**/<dossier>/**` happe le .scss et le .html, et la suite
+# echoue SUR LE BUNDLE sans qu'aucun banc n'ait tourne. Et `--code-coverage=false`
+# n'est pas une economie : sur un perimetre restreint les seuils globaux sont
+# forcement manques, la commande rend 1, et on croit avoir un banc rouge.
+# Dans les deux cas le code de sortie trompe — c'est la ligne TOTAL qui tranche.
 cd apps/web && npx ng test --watch=false --browsers=ChromeHeadless \
-  > /d/tmp/karma.log 2>&1; grep -a 'TOTAL' /d/tmp/karma.log
+  --include='**/<le-composant>.component.spec.ts' --code-coverage=false \
+  > /d/tmp/karma.log 2>&1; grep -aE 'TOTAL|FAILED' /d/tmp/karma.log
 ```
 
 Puis **ouvrez l'écran** et faites le geste que la PR décrit. Les pièges qui
