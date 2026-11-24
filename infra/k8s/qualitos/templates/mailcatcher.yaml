@@ -59,9 +59,6 @@ spec:
               value: "true"
             - name: MP_SMTP_AUTH_ALLOW_INSECURE
               value: "true"
-            # Les messages vivent en mémoire : ils disparaissent au
-            # redémarrage, et c'est voulu — un courriel de recette n'a pas à
-            # survivre à l'essai qui l'a produit.
             - name: MP_MAX_MESSAGES
               value: "200"
           ports:
@@ -74,6 +71,13 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+          volumeMounts:
+            # Le réceptacle tient ses messages dans une base, qu'il ouvre sous
+            # /tmp. La racine étant en lecture seule — et elle doit le rester —
+            # il lui faut cet emplacement inscriptible, faute de quoi il s'arrête
+            # aussitôt sur « read-only file system » et redémarre sans fin.
+            - name: travail
+              mountPath: /tmp
           resources:
             {{- toYaml .Values.mailcatcher.resources | nindent 12 }}
           livenessProbe:
@@ -86,6 +90,21 @@ spec:
               port: smtp
             initialDelaySeconds: 3
             periodSeconds: 10
+      volumes:
+        # En MÉMOIRE, et non sur le disque du nœud. Un emptyDir ordinaire écrit
+        # sous /var/lib/kubelet : les messages y vivraient le temps du pod, mais
+        # ils entreraient dans la sauvegarde du nœud, et les pièces jointes des
+        # dossiers d'essai s'y retrouveraient conservées bien après la recette.
+        # Un tmpfs ne survit pas à l'arrêt du pod, ni à celui de la machine.
+        #
+        # La taille se compte dans la limite mémoire du conteneur : c'est pour
+        # cela que cette limite est à 256Mi en regard d'un tmpfs de 64Mi, de
+        # sorte que le plafond de rétention ne pousse pas le pod hors de sa
+        # limite.
+        - name: travail
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
 ---
 apiVersion: v1
 kind: Service

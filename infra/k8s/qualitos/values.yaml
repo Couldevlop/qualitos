@@ -40,7 +40,7 @@ mailcatcher:
   digest: sha256:81370195cd4a0eab9604d17c2617a7525b0486f9365555253b6c5376c6350f1a
   resources:
     requests: { cpu: 10m, memory: 32Mi }
-    limits: { cpu: 200m, memory: 128Mi }
+    limits: { cpu: 200m, memory: 256Mi }
 
 serviceAccount:
   create: true
