@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.openlab.qualitos.mail.MailTemplate;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -173,7 +174,12 @@ public class DerogationMailController {
                 }
             });
             aide.setSubject(uneSeuleLigne(requete.subject()));
-            aide.setText(requete.body(), false);
+            // En-tete au NOM DE L ORGANISATION, sans logo QualitOS : ce courriel
+            // part vers le client d'un client, sous une adresse que ce client a
+            // reglee, et il l'engage. Signer du logo de la plateforme tromperait
+            // le destinataire sur qui lui ecrit.
+            aide.setText(requete.body(),
+                    MailTemplate.organisation(reglage.getFromName(), requete.body()));
             aide.addAttachment(nomDeFichier(requete.attachmentName()),
                     new ByteArrayResource(piece), "application/pdf");
         } catch (MessagingException e) {

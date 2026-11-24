@@ -1,8 +1,12 @@
 package com.openlab.qualitos.quality.audit;
 
+import com.openlab.qualitos.mail.MailTemplate;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,10 +14,16 @@ import org.springframework.stereotype.Component;
  * activé uniquement quand {@code qualitos.mail.enabled=true}. Sans cela, aucun bean
  * n'est créé et le rappel se limite à la notification interne.
  *
- * <p>Message en TEXTE BRUT, à dessein. Le corps porte le titre de l'audit, saisi
- * par un utilisateur ; en HTML il faudrait l'échapper, et un oubli d'échappement
- * dans un courriel se voit rarement avant qu'il ne serve (OWASP A03). Le texte
- * brut retire le problème au lieu de le gérer.
+ * <p>Message en DEUX VERSIONS, texte et HTML. Le texte brut reste envoyé tel
+ * quel : un lecteur qui refuse le HTML garde un message complet.
+ *
+ * <p>Ce courriel était en texte brut seul, et le motif écrit ici était bon : le
+ * corps porte le titre de l'audit, saisi par un utilisateur, et un oubli
+ * d'échappement dans un courriel se voit rarement avant qu'il ne serve
+ * (OWASP A03). Ce qui a changé n'est pas le risque, c'est OÙ il se traite :
+ * l'échappement ne se refait plus à chaque envoi, il vit une seule fois dans
+ * {@link MailTemplate}, où il est éprouvé par des bancs dédiés. Un oubli n'est
+ * plus possible call site par call site.
  *
  * <p>Identifiants et hôte viennent de {@code spring.mail.*}, donc de
  * l'environnement : aucun secret en dur (§18.2.3), et rien de ce qui est envoyé
@@ -41,11 +51,24 @@ public class SmtpAuditReminderMailer implements AuditReminderMailer {
 
     @Override
     public void send(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(to);
-        message.setSubject(singleLine(subject));
-        message.setText(body);
+        MimeMessage message = sender.createMimeMessage();
+        try {
+            // Multipart : le logo voyage DANS le message, et la version texte
+            // accompagne la version HTML.
+            MimeMessageHelper aide = new MimeMessageHelper(message, true, "UTF-8");
+            aide.setFrom(from);
+            aide.setTo(to);
+            aide.setSubject(singleLine(subject));
+            aide.setText(body == null ? "" : body, MailTemplate.plateforme(body));
+            // Apres setText : le cadre range les elements en ligne dans la partie
+            // qu'il vient de creer.
+            aide.addInline(MailTemplate.LOGO_CID,
+                    new ByteArrayResource(MailTemplate.logo()), "image/png");
+        } catch (MessagingException e) {
+            // Un rappel qui ne se prepare pas est une anomalie du programme, pas
+            // une reponse du relais : on ne l'avale pas silencieusement.
+            throw new IllegalStateException("Preparation du rappel impossible.", e);
+        }
         sender.send(message);
     }
 

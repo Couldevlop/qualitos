@@ -8,6 +8,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
+import com.openlab.qualitos.mail.MailTemplate;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -78,7 +79,11 @@ public class TenantAwareInvoiceMailer implements InvoiceMailPort {
             // Sujet sur UNE ligne : un saut de ligne y permettrait d'injecter
             // d'autres en-tetes, donc d'autres destinataires.
             aide.setSubject(subject == null ? "" : subject.replaceAll("[\\r\\n]+", " ").strip());
-            aide.setText(body, false);
+            // La facture emane de QualitOS, meme postee depuis la messagerie du
+            // client : elle porte donc le logo de la plateforme.
+            aide.setText(body, MailTemplate.plateforme(body));
+            aide.addInline(MailTemplate.LOGO_CID,
+                    new ByteArrayResource(MailTemplate.logo()), "image/png");
             aide.addAttachment(nomPieceJointe(subject), new ByteArrayResource(pdf),
                     "application/pdf");
         } catch (MessagingException e) {

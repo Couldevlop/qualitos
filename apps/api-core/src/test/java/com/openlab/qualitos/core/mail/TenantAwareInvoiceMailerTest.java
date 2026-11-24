@@ -167,4 +167,26 @@ class TenantAwareInvoiceMailerTest {
         assertThat(capture.getValue().getReplyTo()[0].toString()).contains("retour@client.fr");
         assertThat(capture.getValue().getFrom()[0].toString()).contains("qualite@client.fr");
     }
+    @Test
+    @DisplayName("la facture porte le logo de la plateforme, meme postee par le client")
+    void laFacturePorteLeLogoDeLaPlateforme() throws Exception {
+        // Une facture emane de QualitOS : c est la plateforme qui facture, meme
+        // quand le message part de la messagerie reglee par l organisation.
+        given(settings.pourEnvoi(any())).willReturn(Optional.of(reglage()));
+        TenantContext.setTenantId(TENANT.toString());
+
+        mailer.send("client@exemple.fr", "Facture 2026-001", "Veuillez trouver la facture.",
+                "%PDF".getBytes());
+
+        org.mockito.ArgumentCaptor<MimeMessage> capture =
+                org.mockito.ArgumentCaptor.forClass(MimeMessage.class);
+        verify(envoyeur).send(capture.capture());
+        java.io.ByteArrayOutputStream sortie = new java.io.ByteArrayOutputStream();
+        capture.getValue().writeTo(sortie);
+        String entier = sortie.toString(java.nio.charset.StandardCharsets.UTF_8)
+                .replace("=\r\n", "").replace("=\n", "");
+        assertThat(entier).contains("logo-qualitos");
+        assertThat(entier).contains("Veuillez trouver la facture.");
+        assertThat(entier).contains("<!DOCTYPE html>");
+    }
 }
