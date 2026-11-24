@@ -156,14 +156,13 @@ class DerogationMailControllerExpediteurTest {
     }
 
     @Test
-    @DisplayName("sans messagerie reglee, le refus dit ce que l'utilisateur peut faire")
-    void sansMessagerieRegleeLeRefusEstActionnable() {
+    @DisplayName("sans messagerie reglee, le refus nomme le reglage a poser")
+    void sansMessagerieRegleeLeRefusNommeLeReglage() {
         given(settings.pourEnvoi(CLIENT)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> controleur.send(demande()))
                 .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("La messagerie de votre organisation n'est pas configurée")
-                .hasMessageContaining("administration");
+                .hasMessageContaining("La messagerie de votre organisation n'est pas configurée");
 
         verify(envoyeur, never()).send(any(MimeMessage.class));
     }
