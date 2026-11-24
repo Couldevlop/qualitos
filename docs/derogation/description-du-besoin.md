@@ -188,31 +188,28 @@ Ce paramétrage **existe déjà**, et il n'y a rien à créer :
 - le modèle porte exactement ce qu'il faut — `fromAddress`, `fromName`,
   `replyTo`, le serveur sortant et sa sécurité, un interrupteur `enabled`, et un
   **envoi d'essai** daté par `verifiedAt` ;
-- `configured: false` fait **partir le courriel de la messagerie de la
-  plateforme**, sous une adresse générique, l'initiateur restant en copie
-  cachée. Arbitré le 24 novembre : « en production on choisira un mail
-  générique mais pour le tenant qui utilise QualitOS et le mail de l'envoyeur
-  sera en copie cachée. »
+- `configured: false` signifie que l'organisation **n'a pas encore réglé** sa
+  messagerie.
 
-  C'est aussi ce que dit déjà le contrat de `pourEnvoi` — « vide signifie
-  "prends celle de la plateforme" » — et ce que fait la **facture**, qui sort
-  elle aussi vers le client : `TenantAwareInvoiceMailer` prend la messagerie du
-  client s'il en a réglé une, celle de la plateforme sinon. La dérogation était
-  le seul courriel sortant à refuser au lieu de se replier.
+**Arbitrage du 24 novembre 2026 — aucun repli.** Sans réglage, l'envoi au client
+**ne part pas**, et le refus nomme le paramétrage à poser ; le dossier reste
+« Approuvé qualité », donc renvoyable dès que la messagerie est réglée. La
+messagerie se règle dans les paramètres de l'organisation, qui y désigne une
+**adresse générique** — celle de son service qualité plutôt que celle d'une
+personne.
 
-  **Le repli ne vaut que pour l'absence de réglage.** Une messagerie de client
-  réglée mais qui échoue, ou dont l'hôte est refusé, ne se rabat **pas** sur la
-  plateforme : le message partirait d'une adresse que le client n'a pas choisie,
-  pour un courrier qui l'engage. L'échec remonte et le dossier reste
-  renvoyable — exactement la règle de la facture.
+C'est ce qui distingue ce courriel de celui d'une **facture**, laquelle se replie
+bien sur la messagerie de la plateforme (`TenantAwareInvoiceMailer`) : une facture
+émane de QualitOS, une dérogation émane du fournisseur de son destinataire.
+Partir d'une adresse de plateforme ferait arriver chez le client un courrier qui
+l'engage sous un nom qui n'est pas celui de son fournisseur.
 
-  Quand ni l'une ni l'autre n'est disponible, le refus subsiste, et l'écran dit
-  quoi régler.
-
-  > *Trace d'un aller-retour :* une première lecture, le 23 novembre, avait
-  > conclu « pas de repli ». Elle reposait sur une image incomplète — ni le
-  > voisin qu'est la facture, ni le contrat de `pourEnvoi` n'avaient été mis
-  > sous les yeux de l'arbitre. La question a été reposée avec ces deux pièces.
+> Une version antérieure de ce paragraphe annonçait l'inverse — un repli sur la
+> messagerie de la plateforme, sous une adresse générique, l'initiateur restant
+> en copie cachée. La lecture était fautive : « adresse générique » désignait une
+> adresse générique **du client**, non de la plateforme. La trace est conservée
+> plutôt qu'effacée, le javadoc de `pourEnvoi` portant encore la formule qui a
+> induit l'erreur.
 
 La copie cachée, elle, se pose **au message** et non au paramétrage : rien à
 ajouter à l'écran.

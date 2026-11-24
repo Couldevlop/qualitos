@@ -95,13 +95,6 @@ public class DerogationMailController {
     }
 
     /**
-     * De quoi poster un message : l'expediteur technique, l'adresse affichee, et
-     * l'hote, pour le journal.
-     */
-    private record Expedition(JavaMailSender envoyeur, String expediteur, String hote,
-                              String repondreA) {}
-
-    /**
      * Ce que le moteur transmet.
      *
      * <p>Ni client, ni expéditeur, ni copie cachée : ils viennent du jeton.
@@ -147,20 +140,27 @@ public class DerogationMailController {
     @Operation(summary = "Sends a concession request to a customer from the tenant's mailbox")
     public ResponseEntity<Void> send(@Valid @RequestBody SendRequest requete) {
         UUID tenantId = clientDuJeton();
-        Expedition expedition = expedition(tenantId);
+        MailAccount reglage = settings.pourEnvoi(tenantId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.CONFLICT,
+                        "La messagerie de votre organisation n'est pas configurée :"
+                                + " réglez-la avant d'envoyer une dérogation à un client."));
+        String refus = hostPolicy.refus(reglage.getHost());
+        if (refus != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, refus);
+        }
 
         String destinataire = adresseUnique(requete.to());
         byte[] piece = pieceJointePdf(requete.attachmentBase64());
 
-        JavaMailSender envoyeur = expedition.envoyeur();
+        JavaMailSender envoyeur = factory.creer(reglage, settings.motDePasseClair(reglage));
         MimeMessage message = envoyeur.createMimeMessage();
         try {
             // true : message multipart, condition necessaire a la piece jointe.
             MimeMessageHelper aide = new MimeMessageHelper(message, true, "UTF-8");
-            aide.setFrom(expedition.expediteur());
+            aide.setFrom(reglage.getFromAddress());
             aide.setTo(destinataire);
-            if (expedition.repondreA() != null && !expedition.repondreA().isBlank()) {
-                aide.setReplyTo(expedition.repondreA());
+            if (reglage.getReplyTo() != null && !reglage.getReplyTo().isBlank()) {
+                aide.setReplyTo(reglage.getReplyTo());
             }
             // L'initiateur en COPIE CACHEE, et son adresse vient du jeton : il
             // garde une trace de ce qu'il a envoye sans que le client voie une
@@ -183,56 +183,22 @@ public class DerogationMailController {
         try {
             envoyeur.send(message);
         } catch (MailException panne) {
-            // Le serveur de messagerie refuse ou ne repond pas. Sans ce filet, la
+            // Le serveur sortant refuse ou ne repond pas. Sans ce filet, la
             // panne tombait dans le gestionnaire generique et ressortait en
             // « An unexpected error occurred » : une phrase en anglais, sans
             // rapport avec le geste, pour un incident dont l'utilisateur doit
             // seulement savoir qu'il peut renvoyer. La cause technique reste au
             // journal, elle n'a rien a faire a l'ecran (OWASP A09).
             log.warn("derogation.mail.send-failed host={} cause={}",
-                    expedition.hote(), panne.getClass().getSimpleName());
+                    reglage.getHost(), panne.getClass().getSimpleName());
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
                     "Le serveur de messagerie n'a pas accepté l'envoi."
                             + " Le dossier n'est pas parti, et reste renvoyable.", panne);
         }
         // Ni le destinataire ni le corps ne sont journalises (section 22 #9).
         log.info("derogation.mail.sent host={} from={}",
-                expedition.hote(), expedition.expediteur());
+                reglage.getHost(), reglage.getFromAddress());
         return ResponseEntity.accepted().build();
-    }
-
-    /**
-     * De quelle messagerie part ce courriel.
-     *
-     * <p><b>De celle du client, et d'aucune autre.</b> Le reglage vit dans les
-     * parametres de son organisation, comme tout parametrage (ADR 0127), et il
-     * y designe une adresse generique — celle du service qualite, non celle
-     * d'une personne. Le courriel engage l'organisation vis-a-vis de son
-     * client : il doit partir d'une adresse que ce client reconnait.
-     *
-     * <p><b>Pas de repli sur une messagerie de plateforme</b>, meme quand il en
-     * existe une. C'est ce qui distingue cet envoi de celui d'une facture : une
-     * facture emane de QualitOS, une derogation emane du fournisseur de son
-     * destinataire. Partir d'une adresse generique de plateforme ferait arriver
-     * chez le client un courrier qui l'engage sous un nom qui n'est pas celui
-     * de son fournisseur.
-     *
-     * <p>Faute de reglage, le refus nomme ce que l'utilisateur peut faire. Le
-     * dossier reste « Approuvee par la qualite », donc renvoyable des que la
-     * messagerie est reglee.
-     */
-    private Expedition expedition(UUID tenantId) {
-        MailAccount reglage = settings.pourEnvoi(tenantId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.CONFLICT,
-                        "La messagerie de votre organisation n'est pas configurée :"
-                                + " réglez-la dans l'administration avant d'envoyer une"
-                                + " dérogation à un client."));
-        String refus = hostPolicy.refus(reglage.getHost());
-        if (refus != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, refus);
-        }
-        return new Expedition(factory.creer(reglage, settings.motDePasseClair(reglage)),
-                reglage.getFromAddress(), reglage.getHost(), reglage.getReplyTo());
     }
 
     // ---- ce qui vient du jeton, et de lui seul -------------------------------
