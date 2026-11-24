@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
+import { QosDateAdapter } from '../../shared/date/qos-date-adapter';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -67,6 +68,13 @@ const routes: Routes = [
     SharedModule, UiModule, UserPickerModule,
     MatDatepickerModule, MatNativeDateModule,
     RouterModule.forChild(routes)
-  ]
+  ],
+  // L'adaptateur de date du produit remplace celui de `MatNativeDateModule`,
+  // qui ne sait pas RELIRE ce qu'il affiche : il s'en remet a `Date.parse`, qui
+  // ne connait que l'ordre americain. Une date tapee au clavier etait refusee
+  // en francais, et pire, lue a l'envers quand les deux lectures etaient
+  // possibles. Chaque module differe ayant son propre injecteur, la
+  // substitution se pose ici et non a la racine, ou elle serait perdante.
+  providers: [{ provide: DateAdapter, useClass: QosDateAdapter }],
 })
 export class ApqpModule {}
