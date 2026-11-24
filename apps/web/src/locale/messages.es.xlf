@@ -19475,8 +19475,8 @@ historial de 12 meses</target>
         <target state="translated">Puesta en servicio</target>
       </trans-unit>
       <trans-unit id="mail.settings.activation-help" datatype="html">
-        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
-        <target state="translated">Mientras no se active, sus correos seguirán saliendo desde la dirección de la plataforma. Compruébela primero: guardar un ajuste no es haberlo verificado.</target>
+        <source>Tant que la messagerie n'est pas activée, seuls les courriels de la plateforme partent, depuis son adresse. Ceux qui engagent votre organisation, comme une dérogation envoyée à votre client, ne partent pas tant qu'elle n'est pas réglée. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">Mientras el correo no esté activado, solo salen los correos de la plataforma, desde su dirección. Los que comprometen a su organización, como una concesión enviada a su cliente, no salen hasta que esté configurado. Pruébelo primero: guardar un ajuste no es haberlo verificado.</target>
       </trans-unit>
       <trans-unit id="mail.settings.enable" datatype="html">
         <source>Envoyer les courriels depuis cette messagerie</source>

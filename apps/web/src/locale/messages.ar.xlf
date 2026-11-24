@@ -19475,8 +19475,8 @@ historique 12 mois</source>
         <target state="translated">التشغيل</target>
       </trans-unit>
       <trans-unit id="mail.settings.activation-help" datatype="html">
-        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
-        <target state="translated">ما لم يتم تشغيل هذا البريد، ستظل رسائلك تُرسل من عنوان المنصّة. أثبِت صحّته أولًا: فحفظ الإعداد ليس تحقّقًا منه.</target>
+        <source>Tant que la messagerie n'est pas activée, seuls les courriels de la plateforme partent, depuis son adresse. Ceux qui engagent votre organisation, comme une dérogation envoyée à votre client, ne partent pas tant qu'elle n'est pas réglée. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">ما دام البريد غير مُفعّل، لا تُرسَل إلا رسائل المنصّة، من عنوانها. أمّا الرسائل التي تُلزِم مؤسستك، مثل طلب استثناء يُرسَل إلى عميلك، فلا تُرسَل قبل ضبطه. اختبره أولًا: فحفظ الإعداد ليس تحقّقًا منه.</target>
       </trans-unit>
       <trans-unit id="mail.settings.enable" datatype="html">
         <source>Envoyer les courriels depuis cette messagerie</source>

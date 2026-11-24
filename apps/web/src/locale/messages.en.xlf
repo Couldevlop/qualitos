@@ -19475,8 +19475,8 @@ declared income
         <target state="translated">Going live</target>
       </trans-unit>
       <trans-unit id="mail.settings.activation-help" datatype="html">
-        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
-        <target state="translated">Until this mailbox is switched on, your email keeps going out from the platform's address. Prove it first: saving a setting is not having verified it.</target>
+        <source>Tant que la messagerie n'est pas activée, seuls les courriels de la plateforme partent, depuis son adresse. Ceux qui engagent votre organisation, comme une dérogation envoyée à votre client, ne partent pas tant qu'elle n'est pas réglée. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">Until this mailbox is switched on, only the platform's own email goes out, from its address. Email that commits your organisation — a concession sent to your customer, for instance — does not go out until this is set up. Prove it first: saving a setting is not having verified it.</target>
       </trans-unit>
       <trans-unit id="mail.settings.enable" datatype="html">
         <source>Envoyer les courriels depuis cette messagerie</source>

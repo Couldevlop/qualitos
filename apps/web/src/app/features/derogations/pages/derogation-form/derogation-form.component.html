@@ -303,11 +303,12 @@
                          hint="Il recevra un courriel avec le lien vers ce dossier."
                          i18n-hint="@@derogation.validation.manager-hint"
                          required
+                         [formControl]="managerCtrl"
                          (userSelected)="surChoixDuManager($event)"
                          data-test="choix-manager"></qos-user-picker>
         <button mat-flat-button color="primary" type="button"
                 (click)="demanderLaValidation()"
-                [disabled]="!managerChoisi || envoiEnCours"
+                [disabled]="!managerCtrl.value || envoiEnCours"
                 data-test="demander-validation">
           <mat-icon>how_to_reg</mat-icon>
           <span i18n="@@derogation.validation.request">Validation manager</span>

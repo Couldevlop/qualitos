@@ -19474,8 +19474,8 @@ historique 12 mois</source>
         <target state="translated">運用開始</target>
       </trans-unit>
       <trans-unit id="mail.settings.activation-help" datatype="html">
-        <source>Tant que la messagerie n'est pas activée, vos courriels continuent de partir de l'adresse de la plateforme. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
-        <target state="translated">有効にするまで、メールはプラットフォームのアドレスから送信され続けます。まずテスト送信で確認してください。保存したことは確認したことではありません。</target>
+        <source>Tant que la messagerie n'est pas activée, seuls les courriels de la plateforme partent, depuis son adresse. Ceux qui engagent votre organisation, comme une dérogation envoyée à votre client, ne partent pas tant qu'elle n'est pas réglée. Éprouvez-la d'abord : enregistrer un réglage n'est pas l'avoir vérifié.</source>
+        <target state="translated">有効にするまで、送信されるのはプラットフォームのアドレスからの通知のみです。お客様へ送る特別採用のように、貴組織の責任で送る文書は、設定が済むまで送信されません。まずテスト送信で確認してください。保存したことは確認したことではありません。</target>
       </trans-unit>
       <trans-unit id="mail.settings.enable" datatype="html">
         <source>Envoyer les courriels depuis cette messagerie</source>
