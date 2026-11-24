@@ -57,7 +57,29 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
     private static final float WIDTH = PDRectangle.A4.getWidth();
     private static final float HEIGHT = PDRectangle.A4.getHeight();
     private static final float CONTENT_W = WIDTH - 2 * MARGIN;
-    private static final float ROW = 15f;
+    /**
+     * La hauteur d'une ligne simple : une étiquette et sa valeur.
+     *
+     * <p>Elle valait 15, et les lignes se chevauchaient. L'étiquette de la ligne
+     * suivante montait à 14,6 points sous l'origine quand la valeur de la
+     * précédente descendait à 15,9 : non pas serrées, SUPERPOSÉES de 1,3 point.
+     * Sur un document qui part au client, c'est ce qui se lisait comme un bloc
+     * compact où rien ne se détache.
+     *
+     * <p>24 et non davantage : c'est la dernière valeur qui laisse un dossier
+     * courant tenir sur UNE page. À 26, le document déborde et le titre de la
+     * sixième section reste seul en bas de la première — une section orpheline
+     * se lit plus mal qu'une ligne serrée.
+     */
+    private static final float ROW = 24f;
+
+    /**
+     * L'interligne d'un texte de 9 points qui se replie sur plusieurs lignes.
+     *
+     * <p>Il valait 10, soit 1,11 fois le corps : en dessous de ce qu'une ligne
+     * de texte demande pour se lire. 11,5 donne 1,28, la proportion usuelle.
+     */
+    private static final float LEADING = 11.5f;
     private static final float BOTTOM = MARGIN + 36f;
 
     /** Caractères d'un paragraphe sur la largeur utile, en 9 points. */
@@ -302,12 +324,12 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             int hautG = replier(vg == null ? l.t("empty") : vg, PAIR_MAX).size();
             int hautD = dte == null ? 1 : replier(vd == null ? l.t("empty") : vd, PAIR_MAX).size();
             int lignes = Math.max(hautG, hautD);
-            place(ROW + (lignes - 1) * 10f);
+            place(ROW + (lignes - 1) * LEADING);
             cellule(MARGIN, g, vg, l);
             if (dte != null) {
                 cellule(MARGIN + demi, dte, vd, l);
             }
-            y -= ROW + (lignes - 1) * 10f;
+            y -= ROW + (lignes - 1) * LEADING;
         }
 
         /**
@@ -328,14 +350,14 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             flux.endText();
             flux.setNonStrokingColor(INK[0], INK[1], INK[2]);
             List<String> lignes = replier(valeur == null ? l.t("empty") : valeur, PAIR_MAX);
-            float ligne = y - 14f;
+            float ligne = y - 15.5f;
             for (String texte : lignes) {
                 flux.beginText();
                 flux.setFont(regular, 9f);
                 flux.newLineAtOffset(x, ligne);
                 flux.showText(reduire(texte));
                 flux.endText();
-                ligne -= 10f;
+                ligne -= LEADING;
             }
             return lignes.size();
         }
@@ -392,7 +414,7 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             flux.newLineAtOffset(MARGIN + CONTENT_W * 0.80f, y - 8f);
             flux.showText(reduire(c));
             flux.endText();
-            y -= 13f;
+            y -= 15f;
             filet();
         }
 
@@ -409,24 +431,24 @@ public class PdfBoxDerogationRenderAdapter implements DerogationPdfPort {
             List<String> cm = replier(b == null ? tiret : b, COL_SPEC);
             List<String> cd = replier(c == null ? tiret : c, COL_QTY);
             int lignes = Math.max(cg.size(), Math.max(cm.size(), cd.size()));
-            place(ROW + (lignes - 1) * 10f);
+            place(ROW + (lignes - 1) * LEADING);
             colonne(MARGIN, cg);
             colonne(MARGIN + CONTENT_W * 0.40f, cm);
             colonne(MARGIN + CONTENT_W * 0.80f, cd);
-            y -= ROW + (lignes - 1) * 10f;
+            y -= ROW + (lignes - 1) * LEADING;
             filet();
         }
 
         private void colonne(float x, List<String> lignes) throws IOException {
             flux.setNonStrokingColor(INK[0], INK[1], INK[2]);
-            float ligne = y - 10f;
+            float ligne = y - 11f;
             for (String texte : lignes) {
                 flux.beginText();
                 flux.setFont(regular, 9f);
                 flux.newLineAtOffset(x, ligne);
                 flux.showText(reduire(texte));
                 flux.endText();
-                ligne -= 10f;
+                ligne -= LEADING;
             }
         }
 

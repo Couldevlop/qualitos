@@ -14,6 +14,7 @@ import com.openlab.qualitos.quality.derogation.domain.SignatureTrace;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.text.TextPosition;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -215,6 +216,56 @@ class PdfBoxDerogationRenderAdapterTest {
         return new Analysis("Usure de l'outil de reprise", "Lot isole et trie a 100 %",
                 "Remplacement de l'outil et controle en cours de serie",
                 "8D-2026-0042, prevu le 15/12/2026", "Rapport de mesures, 3 photos");
+    }
+
+    @Test
+    void deuxLignesVoisinesNeSeChevauchentJAMAIS() throws IOException {
+        // Le defaut que ce banc verrouille : la hauteur de ligne valait 15
+        // points pour une etiquette de 7,5 posee a -5 et une valeur de 9 posee
+        // a -14. L etiquette de la ligne SUIVANTE montait alors a 14,6 sous
+        // l origine quand la valeur de la precedente descendait a 15,9 : les
+        // deux se superposaient de 1,3 point. Sur un document qui part au
+        // client, l identification, la nature et les ecarts se lisaient comme
+        // un bloc compact ou rien ne se detachait.
+        //
+        // On ne mesure pas une apparence, on mesure des lignes de base : c est
+        // la seule grandeur qui dit si deux textes peuvent se toucher.
+        List<Float> bases = lignesDeBase(rendu.render(dossierComplet(), DerogationLanguage.FR));
+
+        assertThat(bases).hasSizeGreaterThan(20);
+        for (int i = 1; i < bases.size(); i++) {
+            float ecart = bases.get(i) - bases.get(i - 1);
+            assertThat(ecart)
+                    .as("deux lignes de base a %.1f et %.1f, soit %.1f point d ecart"
+                            + " pour un texte de 9 points", bases.get(i - 1), bases.get(i), ecart)
+                    .isGreaterThanOrEqualTo(10f);
+        }
+    }
+
+    /**
+     * Les lignes de base distinctes de la premiere page, de haut en bas.
+     *
+     * <p>Les deux colonnes d une paire partagent la MEME ligne de base : on
+     * regroupe donc par ordonnee avant de comparer, sans quoi on mesurerait
+     * l ecart entre un libelle de gauche et son voisin de droite, qui est nul
+     * et parfaitement normal.
+     */
+    private static List<Float> lignesDeBase(byte[] pdf) throws IOException {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
+            java.util.TreeSet<Float> ordonnees = new java.util.TreeSet<>();
+            PDFTextStripper releve = new PDFTextStripper() {
+                @Override
+                protected void writeString(String texte, List<TextPosition> positions) {
+                    for (TextPosition position : positions) {
+                        ordonnees.add(Math.round(position.getYDirAdj() * 10f) / 10f);
+                    }
+                }
+            };
+            releve.setStartPage(1);
+            releve.setEndPage(1);
+            releve.getText(document);
+            return new ArrayList<>(ordonnees);
+        }
     }
 
     private static String texteDe(byte[] pdf) throws IOException {
