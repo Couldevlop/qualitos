@@ -21,7 +21,11 @@ COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
 # Tenir cette liste synchronisée avec <modules> de /pom.xml.
 COPY libs/industry-commons/pom.xml libs/industry-commons/
 COPY libs/security-commons-crypto/pom.xml libs/security-commons-crypto/
+# Gabarit commun des courriels (libs/mail-commons) : le reacteur lit TOUS les
+# modules declares au pom parent, meme avec -pl/-am. Un pom manquant ici et la
+# construction s'arrete sur « Child module does not exist ».
 COPY libs/licensing/pom.xml libs/licensing/
+COPY libs/mail-commons/pom.xml libs/mail-commons/
 COPY libs/keycloak-spi-ldap/pom.xml libs/keycloak-spi-ldap/
 COPY apps/api-iot-hub/pom.xml apps/api-iot-hub/
 COPY apps/blockchain-service/pom.xml apps/blockchain-service/
@@ -33,6 +37,7 @@ RUN mvn -B -ntp -pl apps/api-core -am dependency:go-offline || true
 # Édition et licence on-premise (ADR 0082) : la licence s'appuie sur la crypto hybride.
 COPY libs/security-commons-crypto/src libs/security-commons-crypto/src
 COPY libs/licensing/src libs/licensing/src
+COPY libs/mail-commons/src libs/mail-commons/src
 COPY apps/api-core/src apps/api-core/src
 RUN mvn -B -ntp -pl apps/api-core -am package -DskipTests
 

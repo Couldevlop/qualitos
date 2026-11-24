@@ -23,7 +23,11 @@ COPY apps/api-core/pom.xml apps/api-core/
 COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
 COPY libs/industry-commons/pom.xml libs/industry-commons/
 COPY libs/security-commons-crypto/pom.xml libs/security-commons-crypto/
+# Gabarit commun des courriels (libs/mail-commons) : le reacteur lit TOUS les
+# modules declares au pom parent, meme avec -pl/-am. Un pom manquant ici et la
+# construction s'arrete sur « Child module does not exist ».
 COPY libs/licensing/pom.xml libs/licensing/
+COPY libs/mail-commons/pom.xml libs/mail-commons/
 COPY libs/keycloak-spi-ldap/pom.xml libs/keycloak-spi-ldap/
 COPY apps/api-iot-hub/pom.xml apps/api-iot-hub/
 COPY apps/blockchain-service/pom.xml apps/blockchain-service/

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import com.openlab.qualitos.mail.MailTemplate;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -48,14 +50,22 @@ public class SmtpMailProbe implements MailProbePort {
         try {
             JavaMailSender envoyeur = factory.creer(reglage, motDePasseClair);
             MimeMessage message = envoyeur.createMimeMessage();
-            MimeMessageHelper aide = new MimeMessageHelper(message, false, "UTF-8");
+            // Multipart : le logo voyage DANS le message, et la version texte
+            // accompagne la version HTML.
+            MimeMessageHelper aide = new MimeMessageHelper(message, true, "UTF-8");
             aide.setFrom(expediteur(reglage));
             aide.setTo(destinataire);
             if (reglage.getReplyTo() != null && !reglage.getReplyTo().isBlank()) {
                 aide.setReplyTo(reglage.getReplyTo());
             }
             aide.setSubject(SUJET);
-            aide.setText(CORPS, false);
+            // Les deux versions : le client de messagerie choisit, et un lecteur
+            // qui refuse le HTML garde un message complet.
+            aide.setText(CORPS, MailTemplate.plateforme(CORPS));
+            // Apres setText : le cadre range les elements en ligne dans la partie
+            // qu'il vient de creer.
+            aide.addInline(MailTemplate.LOGO_CID,
+                    new ByteArrayResource(MailTemplate.logo()), "image/png");
             envoyeur.send(message);
             return null;
         } catch (MessagingException | MailException e) {

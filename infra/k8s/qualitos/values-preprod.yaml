@@ -136,6 +136,16 @@ services:
       # Comptes de connexion (ADR 0079) : l'API d'administration Keycloak par
       # l'adresse INTERNE — le WAF de l'ingress refuse ses écritures.
       IDENTITY_KEYCLOAK_URL: http://keycloak.qualitos-preprod.svc.cluster.local:8080/auth
+      # Le receptacle de courriel vit DANS la grappe : son nom resout vers une
+      # adresse privee, que MailHostPolicy refuse en edition SaaS pour ne pas
+      # faire du reglage de messagerie un scanner de reseau interne (SSRF,
+      # §11.1 A10). Cette surcharge leve la regle ICI, et ici seulement, pour
+      # qu'une organisation de recette puisse designer le receptacle comme elle
+      # designerait un vrai serveur. Contrepartie assumee sur cet
+      # environnement : un administrateur de client y peut sonder le reseau de
+      # la grappe. Le drapeau existe deja pour l'on-premise, ou un relais
+      # interne est le cas normal.
+      QUALITOS_MAIL_ALLOW_INTERNAL_HOSTS: "true"
     # KEYCLOAK_PROVISIONER_SECRET, lu dans Keycloak par deploy.sh.
     # qualitos-api-core-secrets : QUALITOS_SECRET_KEY, la cle des secrets
     # relisibles (ADR 0127). Engendree UNE FOIS par deploy.sh et jamais
