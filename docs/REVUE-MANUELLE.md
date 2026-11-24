@@ -20,7 +20,8 @@
 > page se refait. Les cases cochées restent dans votre navigateur — une revue
 > en cours est un brouillon, pas un livrable.
 >
-> Mesures de ce document : **2026-11-24**, sur `525fea71`. Les chiffres se
+> Mesures de ce document : **2026-11-13**, sur `5db707f` ; les familles I et J et
+> les commandes du §2.4 ont été vérifiées le **2026-11-24**. Les chiffres se
 > remesurent (`bash scripts/passation-chiffres.sh`) ; les **méthodes**, non.
 
 ---
@@ -34,7 +35,7 @@
 | Savoir ce qui casse dans ce dépôt | §5.5 — le catalogue des familles de défauts. **La section la plus rentable.** |
 | Former quelqu'un à relire | §1, §3, §5.5, puis faites-lui relire une PR déjà fusionnée et comparez |
 
-**Si vous ne lisez qu'une chose** : le **§1.2** (les sept classes de défaut que
+**Si vous ne lisez qu'une chose** : le **§1.2** (les neuf classes de défaut que
 rien d'automatique n'attrape) et le **§5.5** (celles qui sont déjà arrivées).
 Tout le reste, la CI le fait mieux que vous.
 
