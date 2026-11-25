@@ -41,20 +41,33 @@ class EightDSnapshotAssemblerTest {
         // La date est du TEXTE dans l'instantané : c'est ce qui rend le rendu, donc
         // l'empreinte, recalculables à l'identique des années plus tard.
         assertThat(d2.lines()).contains("Détecté le : 01/09/2026 08:30 UTC");
-        assertThat(d2.lines()).contains("Clos le : 12/09/2026 16:00 UTC");
     }
 
     /**
-     * LE RAPPORT NOMME LE CLIENT, LE PRODUIT ET LE LOT.
-     *
-     * <p>Ils s'ecrivent sur la fiche depuis qu'on a cesse de les noyer dans la
-     * description, mais le rapport -- la piece que le client recoit -- ne les
-     * portait pas. Un 8D de reclamation qui ne nomme ni le client, ni le lot,
-     * ni le produit oblige son lecteur a revenir chercher dans l'outil ce que
-     * le document aurait du dire.
+     * SEPT LIGNES, PAS QUINZE. Le D2 recopiait la fiche : l'origine, la date de
+     * cloture, la zone, le client, le lot, qui a signale, le nombre de photos,
+     * la note de resolution. Chacune se defendait seule ; ensemble, elles
+     * noyaient les faits que le destinataire du rapport cherche.
      */
     @Test
-    void d2_nomme_le_client_le_produit_et_le_lot() {
+    void d2_s_en_tient_aux_sept_lignes_de_la_description() {
+        EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
+                "tenant-1", null, null);
+
+        assertThat(section(snapshot, "D2").lines()).noneMatch(l ->
+                l.startsWith("Origine") || l.startsWith("Clos le") || l.startsWith("Zone")
+                        || l.startsWith("Signalé par") || l.startsWith("Photos")
+                        || l.startsWith("Note de résolution"));
+    }
+
+    /**
+     * LE RAPPORT NOMME LE PRODUIT. C'est ce que le destinataire cherche en
+     * premier, et il s'ecrit sur la fiche depuis qu'on a cesse de le noyer dans
+     * la description. Le client et le lot, eux, ont quitte la description : ils
+     * identifient le dossier, ils ne decrivent pas le probleme.
+     */
+    @Test
+    void d2_nomme_le_produit() {
         EightDSources sources = new EightDSources(
                 nc(null, null, "Pompes Atlantique", "L-2411", "CAR-400 — Carter de pompe"),
                 List.of(), List.of(), List.of(), List.of(), null, List.of());
@@ -63,20 +76,17 @@ class EightDSnapshotAssemblerTest {
                 "tenant-1", null, null);
 
         EightDSnapshot.Section d2 = section(snapshot, "D2");
-        assertThat(d2.lines()).contains("Client : Pompes Atlantique");
         assertThat(d2.lines()).contains("Produit : CAR-400 — Carter de pompe");
-        assertThat(d2.lines()).contains("Lot : L-2411");
+        assertThat(d2.lines()).noneMatch(l -> l.startsWith("Client") || l.startsWith("Lot"));
     }
 
-    /** Un constat interne n'a pas de client : pas de ligne vide pour autant. */
+    /** Un constat sans produit : pas de ligne vide pour autant. */
     @Test
-    void d2_ne_laisse_pas_de_ligne_vide_quand_l_ecart_est_interne() {
+    void d2_ne_laisse_pas_de_ligne_vide_quand_le_produit_manque() {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "tenant-1", null, null);
 
-        EightDSnapshot.Section d2 = section(snapshot, "D2");
-        assertThat(d2.lines()).noneMatch(l -> l.startsWith("Client")
-                || l.startsWith("Produit") || l.startsWith("Lot"));
+        assertThat(section(snapshot, "D2").lines()).noneMatch(l -> l.startsWith("Produit"));
     }
 
     @Test
@@ -103,6 +113,11 @@ class EightDSnapshotAssemblerTest {
 
     // ---------- D8 : la reconnaissance de l'equipe ----------
 
+    /**
+     * RIEN D'ECRIT, et l'ecart solde : la phrase de la plateforme vaut mieux
+     * qu'une discipline vide dans un document remis au client. Elle n'ecrase
+     * alors aucune parole, puisqu'il n'y en a pas.
+     */
     @Test
     void d8_porte_la_reconnaissance_standard_des_que_l_ecart_est_solde() {
         // L'ecart de la fixture est clos et n'a escalade aucune CAPA : rien ne reste
@@ -117,18 +132,25 @@ class EightDSnapshotAssemblerTest {
         assertThat(snapshot.missingCodes()).doesNotContain("D8");
     }
 
+    /**
+     * CE QU'ON PREPARE EST CE QUI SORT. Le document ajoutait deux paragraphes de
+     * son cru sous le remerciement saisi : on ecrivait une phrase, on relisait
+     * le rapport, et on y trouvait trois fois plus de texte -- signe par
+     * l'equipe, qui ne l'avait pas ecrit. Relire un D8 avant de l'emettre
+     * n'avait alors plus de sens.
+     */
     @Test
-    void d8_ajoute_la_reconnaissance_standard_apres_le_remerciement_saisi() {
+    void d8_ne_porte_que_le_remerciement_saisi() {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null,
                 "Merci a Ada et Grace, qui ont tenu l'astreinte du week-end.",
                 "tenant-1", null, null);
 
         EightDSnapshot.Section d8 = section(snapshot, "D8");
         assertThat(d8.sourced()).isTrue();
-        // La saisie passe DEVANT : un remerciement nominatif vaut plus que la
-        // phrase de la plateforme, qui le complete au lieu de le remplacer.
-        assertThat(d8.lines().get(0)).isEqualTo("Merci a Ada et Grace, qui ont tenu l'astreinte du week-end.");
-        assertThat(d8.lines()).containsAll(EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
+        assertThat(d8.lines())
+                .containsExactly("Merci a Ada et Grace, qui ont tenu l'astreinte du week-end.");
+        assertThat(d8.lines()).doesNotContainAnyElementsOf(
+                EightDSnapshotAssembler.RECONNAISSANCE_STANDARD);
         // « Renseignée par l'équipe qualité » ne se lit plus au-dessus du
         // remerciement : qui l'a écrit se lit sur la fiche, pas en préambule.
         assertThat(d8.sourceLabel()).isEmpty();

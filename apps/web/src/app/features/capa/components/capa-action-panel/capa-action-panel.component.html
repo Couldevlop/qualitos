@@ -23,12 +23,17 @@
       <p *ngIf="natures.length === 0" i18n="@@capa.detail.action-missing">L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</p>
       <p *ngIf="natures.length > 0" data-test="capa-action-vide-nature"
          i18n="@@capa.actions.none-of-nature">Aucune action de cette nature n'a encore été écrite pour cet écart.</p>
+      <!-- UN AJOUT INTERDIT NE LAISSE PAS DE BOUTON MORT. Le rapport 8D se
+           lit : il montrait « Ajouter une action » eteint sous chaque tableau,
+           un geste propose et refuse du meme coup. -->
+      <ng-container *ngIf="ajoutAutorise">
       <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
               (click)="addAction()" [disabled]="ajoutFerme"
               data-test="capa-action-definir">
         <mat-icon aria-hidden="true">add</mat-icon>
         <span>{{ libelleAjout }}</span>
       </button>
+      </ng-container>
     </div>
 
     <!-- Le TABLEAU des actions : un ecart se traite rarement d'un seul geste --
@@ -179,12 +184,14 @@
     </table>
 
     <div class="action-panel__pied" *ngIf="actions.length">
+      <ng-container *ngIf="ajoutAutorise">
       <button mat-stroked-button color="primary" type="button" *qosCan="'capa.action.manage'"
               (click)="addAction()" [disabled]="ajoutFerme"
               data-test="capa-action-ajouter">
         <mat-icon aria-hidden="true">add</mat-icon>
         <span>{{ libelleAjout }}</span>
       </button>
+      </ng-container>
       <p class="action-panel__aide" *ngIf="!ajoutFerme" i18n="@@capa.actions.row-hint">
         Cliquez une ligne pour corriger l'action, son responsable ou son échéance.
       </p>

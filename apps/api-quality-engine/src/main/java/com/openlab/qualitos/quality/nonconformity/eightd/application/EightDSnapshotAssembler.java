@@ -222,22 +222,27 @@ public class EightDSnapshotAssembler {
     // ---------- D8 : la reconnaissance de l'équipe ----------
 
     /**
-     * D8 : ce que l'équipe qualité a écrit, puis — dès que l'écart est soldé — la
-     * reconnaissance standard.
+     * D8 : CE QUE L'ÉQUIPE A ÉCRIT. Rien d'autre, dès qu'elle a écrit.
      *
-     * <p>La saisie libre passe DEVANT : un remerciement nominatif, écrit par le
-     * responsable, vaut plus que la phrase de la plateforme, et la reconnaissance
-     * standard la complète au lieu de la remplacer.
+     * <p>Le document ajoutait deux paragraphes de son cru sous le remerciement
+     * saisi. On préparait « Merci à Ada et Grace », on relisait le rapport, et
+     * on y trouvait trois fois plus de texte — des phrases que personne de
+     * l'équipe n'avait écrites, signées par elle. Ce qu'on prépare doit être ce
+     * qui sort : c'est la seule façon de relire un D8 avant de l'émettre.
      *
-     * <p>Tant que l'écart n'est pas soldé, aucune reconnaissance n'est ajoutée :
-     * féliciter une équipe sur un dossier encore ouvert daterait le document d'un
-     * optimisme que la suite peut démentir.
+     * <p>La reconnaissance standard ne sert donc plus qu'au cas où RIEN n'a été
+     * écrit sur un écart soldé : elle vaut mieux qu'une discipline vide dans un
+     * document remis au client, et elle n'écrase alors aucune parole.
+     *
+     * <p>Tant que l'écart n'est pas soldé, elle ne vient pas : féliciter une
+     * équipe sur un dossier encore ouvert daterait le document d'un optimisme
+     * que la suite peut démentir.
      */
     private EightDSnapshot.Section reconnaissance(EightDSources sources, String texte) {
         List<String> lignes = new ArrayList<>(lignesDe(texte));
         boolean saisi = !lignes.isEmpty();
         boolean solde = toutEstSolde(sources);
-        if (solde) {
+        if (!saisi && solde) {
             lignes.addAll(RECONNAISSANCE_STANDARD);
         }
         // PLUS DE « Renseignée par l'équipe qualité » : la phrase attribuait la
@@ -268,6 +273,19 @@ public class EightDSnapshotAssembler {
 
     // ---------- D2 : la non-conformité ----------
 
+    /**
+     * SEPT LIGNES, celles de la liste de recette — et dans son ordre.
+     *
+     * <p>Le D2 en portait quinze : l'origine, la date de clôture, la zone, le
+     * client, le lot, qui a signalé, le nombre de photos, la note de
+     * résolution. Chacune se défendait seule ; ensemble, elles noyaient les
+     * six faits que le destinataire du rapport cherche — quoi, où, quand,
+     * combien — sous un relevé de fiche. « Décrire le problème » n'est pas
+     * « recopier le dossier ».
+     *
+     * <p>Rien n'est perdu : ces données vivent sur la fiche de l'écart, et le
+     * rapport n'est pas le seul endroit où on les lit.
+     */
     private EightDSnapshot.Section probleme(EightDSources.Nc nc) {
         List<String> lignes = new ArrayList<>();
         ajouter(lignes, "Référence", nc.reference());
@@ -275,29 +293,13 @@ public class EightDSnapshotAssembler {
         ajouter(lignes, "Constat", nc.description());
         ajouter(lignes, "Catégorie", libelle(CATEGORIES, nc.category()));
         ajouter(lignes, "Gravité", libelle(GRAVITES, nc.severity()));
-        ajouter(lignes, "Origine", libelle(ORIGINES, nc.origin()));
+        ajouter(lignes, "Produit", nc.productLabel());
         // LE MOT DE LA FICHE : un écart EXTERNE se reçoit d'un client, il ne se
         // détecte pas, et la fiche de l'écart fait déjà cette différence. Le
         // document émis disait « Détecté le » d'une réclamation reçue.
         ajouter(lignes,
                 "EXTERNAL".equals(texteOu(nc.origin(), "")) ? "Date de réception" : "Détecté le",
                 horodatage(nc.detectedAt()));
-        ajouter(lignes, "Clos le", horodatage(nc.closedAt()));
-        ajouter(lignes, "Zone", nc.zone());
-        // Le client, le lot, le produit : ce que le destinataire du rapport
-        // cherche en premier, et qui vit sur la fiche depuis qu'on a cesse de
-        // l'ecrire dans la description. Absents, ils ne laissent pas de ligne
-        // vide -- un 8D interne n'a pas de client.
-        ajouter(lignes, "Client", nc.customerName());
-        ajouter(lignes, "Produit", nc.productLabel());
-        ajouter(lignes, "Lot", nc.batchNumber());
-        ajouter(lignes, "Signalé par", nc.reporterName());
-        // Le NOMBRE de photos, et non les images : un 8D se relit des années plus
-        // tard, et un PDF qui embarquerait les clichés terrain pèserait des dizaines
-        // de mégaoctets pour des preuves qui vivent déjà dans la fiche.
-        ajouter(lignes, "Photos du terrain",
-                nc.photoCount() == 0 ? null : nc.photoCount() + " fichier(s)");
-        ajouter(lignes, "Note de résolution", nc.resolutionNote());
         // D2 est toujours servi : la non-conformité existe, sinon rien de tout ceci
         // n'aurait été demandé.
         return section(EightDDiscipline.D2, true,

@@ -1,6 +1,6 @@
 <div class="preuves-dossier">
 
-  <p class="preuves-dossier__aide" i18n="@@capa.evidence.hint">
+  <p class="preuves-dossier__aide" *ngIf="!sansAide" i18n="@@capa.evidence.hint">
     Ce qui atteste que l'action a produit son effet : relevé, procédure signée,
     photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.
   </p>
@@ -39,7 +39,7 @@
     </ul>
 
     <ng-template #aucune>
-      <p class="preuves-dossier__vide" *ngIf="!(chargement$ | async)"
+      <p class="preuves-dossier__vide" *ngIf="!(chargement$ | async) && !sansAide"
          data-test="preuves-dossier-vide"
          i18n="@@capa.evidence.none">
         Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.
@@ -58,10 +58,11 @@
     </button>
 
     <!-- La raison du verrou est énoncée, pas découverte au clic. -->
-    <p class="preuves-dossier__verrou" *ngIf="estTermine" i18n="@@capa.evidence.locked-closed">
+    <p class="preuves-dossier__verrou" *ngIf="estTermine && !sansAide"
+       i18n="@@capa.evidence.locked-closed">
       Le dossier est clos : ses preuves restent consultables, mais ne changent plus.
     </p>
-    <p class="preuves-dossier__verrou" *ngIf="!estTermine && estPlein"
+    <p class="preuves-dossier__verrou" *ngIf="!estTermine && estPlein && !sansAide"
        i18n="@@capa.evidence.locked-full">
       Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une
       pour en joindre une autre.

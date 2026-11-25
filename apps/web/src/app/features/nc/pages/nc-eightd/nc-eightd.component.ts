@@ -169,14 +169,6 @@ export class NcEightDComponent implements OnInit {
    */
   source?: { type: CapaSourceType; reference: string };
 
-  /**
-   * L'écart accepte-t-il encore qu'une discipline ouvre une CAPA de plus ?
-   *
-   * <p>Le droit d'écrire ne suffit pas : un écart CLOS, ANNULÉ ou REJETÉ
-   * n'attend plus d'action, et en décider une le laisserait bloquer une
-   * clôture déjà prononcée. Même règle que la fiche de l'écart.
-   */
-  ajoutAutorise = false;
 
   readonly idsDesDossiers$: Observable<readonly string[]> =
     this.capaCaseIds$.pipe(map(dossiers => (dossiers ?? []).map(d => d.id)));
@@ -286,8 +278,6 @@ export class NcEightDComponent implements OnInit {
               reference: nc.reference
             }
           : undefined;
-        this.ajoutAutorise = this.editable
-          && nc.status !== 'CLOSED' && nc.status !== 'CANCELLED' && nc.status !== 'REJECTED';
       },
       // On laisse `undefined` : l'écart n'a pas répondu, donc on ne SAIT pas
       // s'il porte un dossier. Écrire une liste vide reviendrait à affirmer

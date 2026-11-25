@@ -606,19 +606,21 @@ describe('CapaActionPanelComponent', () => {
   });
 
   /**
-   * LE FREIN VIENT DE L'ECART. Le verrou du dossier voisin ayant cesse d'en
-   * tenir lieu, sans cette entree on pourrait decider une action sur un ecart
-   * termine -- et la cloture de l'ecart l'attendrait.
+   * UN TABLEAU EN LECTURE SEULE, et qui se lit comme tel.
+   *
+   * <p>Le bouton restait ETEINT : le panneau proposait un geste et le refusait
+   * du meme coup. Cela se defendait tant que l'entree ne servait qu'a dire
+   * « cet ecart est termine » ; elle ne sert plus qu'au RAPPORT 8D, un
+   * document qu'on relit et qu'on remet au client, ou « Ajouter une action »
+   * n'a rien a faire, fut-il grise. La ou l'action se decide -- la fiche de
+   * l'ecart, le dossier CAPA -- l'entree vaut vrai et le bouton reste.
    */
-  it('n’ouvre aucune CAPA quand l’écart n’en accepte plus', async () => {
+  it('retire le bouton d’ajout quand l’appelant n’en veut pas', async () => {
     await setup({ dossier: dossier({ actions: [] }) });
     hote.ajoutAutorise = false;
     fixture.detectChanges();
 
-    // ETEINT, et non retire : c'est ce que le panneau faisait deja du verrou de
-    // cloture du dossier. Le bouton disparu, l'ecran ne dirait plus qu'on PEUT
-    // decider des actions ici -- il se lirait comme un tableau en lecture seule.
-    expect((un('capa-action-definir') as HTMLButtonElement).disabled).toBeTrue();
+    expect(un('capa-action-definir')).toBeNull();
     panneau().addAction();
     expect(dialog.open).not.toHaveBeenCalled();
   });

@@ -174,8 +174,12 @@ describe('NcEightDComponent', () => {
   it('dit qu\'une discipline n\'a pas de source plutôt que de laisser un bloc vide', async () => {
     await monter(['QUALITY_MANAGER']);
 
+    // D1 et D8 : rien a montrer, et elles le disent. D3 est vide elle aussi,
+     // mais elle PORTE le tableau des actions d'endiguement : annoncer « Non
+     // renseigne » juste au-dessus de son contenu faisait croire la discipline
+     // manquante a qui lisait la ligne suivante.
     const vides = hote().querySelectorAll('[data-test="discipline-vide"]');
-    expect(vides.length).toBe(3);
+    expect(vides.length).toBe(2);
     // ET ELLE DIT POURQUOI : le libellé de provenance ne survit qu'à la
     // discipline vide, où il distingue « rien à dire » de « on n'a pas
     // cherché ». Servie, elle ne le porte plus — et la ligne disparaît avec
@@ -701,30 +705,23 @@ describe('NcEightDComponent', () => {
    * n'apparaissaient nulle part dans le 8D.
    */
   /**
-   * Un ecart termine n'attend plus d'action : le rapport laisse relire ses
-   * disciplines, mais aucune n'ouvre plus de CAPA. Le droit d'ecrire ne
-   * suffisait pas a le dire -- il porte sur le ROLE, pas sur l'etat de
-   * l'ecart -- et une action decidee apres la cloture l'aurait ensuite
-   * bloquee. Meme critere que la fiche de l'ecart.
+   * LE RAPPORT SE LIT, IL NE SE SAISIT PAS. Chaque tableau portait « Ajouter
+   * une action » -- sur un ecart vivant comme sur un ecart clos, ou le bouton
+   * etait seulement eteint : un geste propose et refuse du meme coup, dans un
+   * document destine au client. Les actions s'ajoutent sur la FICHE de l'ecart,
+   * qui est faite pour cela.
    */
-  it('ferme l’ajout d’une CAPA quand l’écart est terminé', async () => {
-    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'CLOSED');
+  it('n’ouvre aucune CAPA depuis le rapport, quel que soit l’état de l’écart',
+     async () => {
+    for (const etat of ['CLOSED', 'ACTION_DEFINED'] as const) {
+      await monter(['QUALITY_MANAGER'], 'capa-9', undefined, etat);
 
-    expect(component.ajoutAutorise).toBeFalse();
-    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
-    expect(tableaux.length).toBeGreaterThan(0);
-    tableaux.forEach(t =>
-      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeFalse());
-  });
-
-  /** Sur un ecart vivant, la discipline ouvre une CAPA de plus. */
-  it('laisse une discipline ouvrir une CAPA sur un écart vivant', async () => {
-    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'ACTION_DEFINED');
-
-    expect(component.ajoutAutorise).toBeTrue();
-    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
-    tableaux.forEach(t =>
-      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeTrue());
+      const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+      expect(tableaux.length).withContext(etat).toBeGreaterThan(0);
+      tableaux.forEach(t =>
+        expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise)
+          .withContext(etat).toBeFalse());
+    }
   });
 
   it('montre les actions de TOUS les dossiers rattaches, pas seulement du premier', async () => {

@@ -144,7 +144,14 @@
           <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
                dont une figure tient lieu de texte ne la dit pas : le tableau ou
                le schema, juste en dessous, porte deja son propre etat. -->
-          <p class="vide" *ngIf="discipline.lines.length === 0 && !montreAuLieuDeDire(discipline.code)"
+          <!-- Une discipline qui porte un TABLEAU n'est pas vide. Le D1, le D3
+               et le D7 annonçaient « Non renseigné » juste au-dessus du tableau
+               qui les renseigne : le lecteur croyait la discipline manquante et
+               lisait son contenu dans la ligne suivante. -->
+          <p class="vide" *ngIf="discipline.lines.length === 0
+                                 && tableauxFiges(discipline).length === 0
+                                 && !montreLesActions(discipline.code)
+                                 && !montreAuLieuDeDire(discipline.code)"
              data-test="discipline-vide"
              i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
 
@@ -189,6 +196,7 @@
                  data-test="8d-preuves">
               <qos-capa-evidence-panel *ngFor="let dossier of (dossiersAPreuve$ | async)"
                                        [capaCaseId]="dossier.id"
+                                       [sansAide]="true"
                                        [statut]="$any(dossier.status)"></qos-capa-evidence-panel>
             </div>
             <div class="vivant" *ngIf="(dossiersAPreuve$ | async)?.length === 0"
@@ -222,7 +230,7 @@
                                      [source]="source"
                                      [colonneNature]="false"
                                      [colonnePreuve]="montreLaColonnePreuve(discipline.code)"
-                                     [ajoutAutorise]="ajoutAutorise"
+                                     [ajoutAutorise]="false"
                                      [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>

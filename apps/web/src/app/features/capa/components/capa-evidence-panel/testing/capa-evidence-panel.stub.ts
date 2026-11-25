@@ -19,6 +19,7 @@ import { Component, Input, NgModule } from '@angular/core';
 export class CapaEvidencePanelStubComponent {
   @Input() capaCaseId = '';
   @Input() statut: string | undefined;
+  @Input() sansAide = false;
 }
 
 @NgModule({

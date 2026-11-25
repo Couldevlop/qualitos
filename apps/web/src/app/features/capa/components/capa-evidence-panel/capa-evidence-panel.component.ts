@@ -38,6 +38,20 @@ export class CapaEvidencePanelComponent implements OnChanges {
   @Input() statut: CapaStatus | undefined;
 
   /**
+   * Tait les phrases qui EXPLIQUENT le dépôt, et ne garde que les pièces.
+   *
+   * <p>Le rapport 8D rappelle au D6 le titre de l'action et celui de ses
+   * pièces, rien d'autre : trois panneaux de preuve y répétaient chacun ce
+   * qu'est une preuve, ce qu'il advient d'un dossier clos et ce que vaut un
+   * dossier sans pièce — un paragraphe d'aide par dossier, dans un document
+   * remis au client.
+   *
+   * <p>Sur l'écran du dossier CAPA, où la preuve se DÉPOSE, ces phrases
+   * restent : c'est là qu'elles servent.
+   */
+  @Input() sansAide = false;
+
+  /**
    * Combien de pièces ce panneau porte, dès qu'il a fini de lire.
    *
    * <p>Même convention que le panneau d'actions, et pour la même raison : le
