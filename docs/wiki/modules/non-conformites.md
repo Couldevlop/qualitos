@@ -19,7 +19,9 @@ possibilité d'y joindre des **photos**.
    Vous **nommez l'équipe** qui le prend en charge — au moins une personne, choisie dans l'annuaire.
    Vous y êtes posé d'office en tête : retirez-vous si vous ne suivez pas l'écart.
 3. **Joindre des photos** pour documenter l'écart.
-4. **Suivre le traitement** : la NC évolue jusqu'à sa résolution.
+4. **Suivre le traitement** : la NC évolue jusqu'à sa résolution. *Résoudre* ne demande plus
+   rien : ce qui a résolu l'écart est déjà écrit, et mieux — les actions menées au D5 et au D7
+   du [rapport 8D](rapport-8d.md), les preuves de leur efficacité au D6.
 5. **Relier à une action** : *Nouvelle action* ouvre le dossier CAPA qui traite l'écart et sa
    première action (source verrouillée ; le titre et la description partent **vides** — ce sont
    des phrases à écrire, pas le constat à recopier). Une fois le dossier ouvert, le même bouton

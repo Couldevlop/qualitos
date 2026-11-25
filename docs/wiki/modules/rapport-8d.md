@@ -20,8 +20,22 @@ automatiquement** à partir du travail déjà fait dans les autres modules.
 | **D4 — Cause racine** | Les [Ishikawa](ishikawa.md) et [5 Pourquoi](five-whys.md) rattachés à l'écart, et la cause racine saisie sur la NC. Les mêmes figures se lisent, dessinées, sur la [fiche de l'écart](non-conformites.md) : le rapport ne les découvre pas |
 | **D5 — Actions décidées** (*Defined containment, corrective and preventive actions*) | La [CAPA](capa.md) escaladée depuis la NC, et ses actions **des trois natures** — endiguer, corriger, prévenir. C'est la discipline où l'on vient lire ce qui a été décidé : restreinte aux correctives, elle laissait dehors l'endiguement et la prévention écrits dans le dossier. Le tableau s'y lit et s'y avance ; à l'écran il remplace le texte agrégé, que le PDF garde |
 | **D6 — Mise en œuvre et preuves** | Les actions menées à terme et les pièces versées à la CAPA |
-| **D7 — Prévention de la récurrence** | Le mode de défaillance [PFMEA](produit-pfmea-control-plan.md) rattaché et les plans de surveillance du produit |
+| **D7 — Prévention de la récurrence** | Le mode de défaillance [PFMEA](produit-pfmea-control-plan.md) rattaché et les plans de surveillance du produit, et le tableau des actions **préventives** du dossier, avec sa colonne *Preuve* |
 | **D8 — Reconnaissance de l'équipe** | À saisir : ce que l'équipe a appris |
+
+### Où se dépose une preuve, et laquelle
+
+Deux choses distinctes portent le même mot, et elles ne se rangent pas au même endroit.
+
+- **La preuve d'une action** atteste que *ce geste-là* a été fait : une barrière installée, un
+  contrôle ajouté. Elle se joint **sur la ligne de l'action**, dans la colonne *Preuve* du
+  tableau — au **D3** et au **D7**.
+- **La preuve du dossier** démontre que *le problème a cessé* : un relevé, une carte de
+  contrôle, une procédure signée. Elle se dépose au **D6**, sur le dossier.
+
+C'est pourquoi le **D5 n'a pas de colonne *Preuve*** : ce qu'il a à démontrer n'est pas
+« l'action a été faite » mais « la cause a disparu », et cela se juge au D6.
+
 
 ## Parcours pas à pas
 

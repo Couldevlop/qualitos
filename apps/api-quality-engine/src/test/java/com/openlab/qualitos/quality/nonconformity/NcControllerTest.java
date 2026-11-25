@@ -369,12 +369,29 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("RESOLVED"));
     }
 
+    /**
+     * SANS NOTE, et meme SANS CORPS : la resolution passe. Elle exigeait la
+     * note, et l'ecran ouvrait donc une fenetre pour la reclamer avant chaque
+     * passage -- alors que ce qui a resolu l'ecart est deja ecrit, et mieux :
+     * les actions menees au D5 et au D7 du traitement 8D, les preuves de leur
+     * efficacite au D6.
+     */
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void resolve_missingNote_returns400() throws Exception {
+    void resolve_sansNote_passe() throws Exception {
+        when(service.resolve(eq(NC), any())).thenReturn(resp(NcStatus.RESOLVED));
         mockMvc.perform(post("/api/v1/nc/{id}/resolve", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("RESOLVED"));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void resolve_sansCorps_passe() throws Exception {
+        when(service.resolve(eq(NC), any())).thenReturn(resp(NcStatus.RESOLVED));
+        mockMvc.perform(post("/api/v1/nc/{id}/resolve", NC).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("RESOLVED"));
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")

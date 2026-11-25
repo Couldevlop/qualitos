@@ -328,6 +328,23 @@ export class NcEightDComponent implements OnInit {
     return NATURES_PAR_DISCIPLINE[code] ?? AUCUNE_NATURE;
   }
 
+  /**
+   * Vrai pour les disciplines dont le tableau montre la colonne « Preuve ».
+   *
+   * <p>Le D3 et le D7 l'ont, le D5 ne l'a pas, et c'est deliberé : la piece
+   * d'une action atteste que CE geste-la a ete fait -- un endiguement qu'on
+   * montre, une barriere qu'on installe. Le D5 supprime la cause, et ce qu'il
+   * a a demontrer n'est pas « l'action a ete faite » mais « le probleme a
+   * cesse » : cela se prouve au D6, sur le dossier.
+   *
+   * <p>Le rapport ne posait pas cette entree et montrait donc la colonne aux
+   * TROIS disciplines, quand la fiche ne la montrait qu'au D3 : deux ecrans du
+   * meme dossier ne disaient pas la meme chose.
+   */
+  montreLaColonnePreuve(code: string): boolean {
+    return code !== 'D5';
+  }
+
   /** Vrai pour les disciplines qui portent un tableau d'actions. */
   montreLesActions(code: string): boolean {
     return this.naturesDe(code).length > 0;

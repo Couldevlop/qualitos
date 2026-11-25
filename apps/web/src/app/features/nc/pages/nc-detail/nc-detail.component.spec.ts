@@ -501,7 +501,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     currentUser = { userId: 'u1' };
     svc = jasmine.createSpyObj<NcService>('NcService', [
       'getEightDReport', 
-      'getNc', 'listPhotos', 'startAnalysis', 'defineAction', 'close', 'cancel',
+      'getNc', 'listPhotos', 'startAnalysis', 'defineAction', 'resolve', 'close', 'cancel',
       'escalateToCapa', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision', 'subcategories'
     ]);
     svc.subcategories.and.returnValue(of({ entries: [], defaults: true }));
@@ -973,29 +973,24 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(svc.getNc).toHaveBeenCalledTimes(1);
   });
 
-  it('ouvre le dialogue de résolution sur la NC courante et recharge après résolution', () => {
-    setup();
-    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
-      .and.returnValue({ afterClosed: () => of(buildNc({ status: 'RESOLVED' })) } as never);
+  /**
+   * LA RESOLUTION NE RECLAME PLUS RIEN. Une fenetre exigeait une note de
+   * resolution avant chaque passage, alors que ce qui a resolu l'ecart est deja
+   * ecrit, et mieux : les actions menees au D5 et au D7, les preuves de leur
+   * efficacite au D6. Le banc verifie qu'AUCUNE fenetre ne s'ouvre -- sans quoi
+   * remettre le dialogue passerait inapercu.
+   */
+  it('résout sans ouvrir de fenêtre, et recharge la fiche', () => {
+    setup(buildNc({ status: 'ACTION_DEFINED' }));
+    svc.getNc.calls.reset();
+    svc.resolve.and.returnValue(of(buildNc({ status: 'RESOLVED' })));
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
 
-    // A l'etape ou l'on resout : avant elle, le bouton explique l'etape qui
-    // manque au lieu d'ouvrir la fenetre de resolution.
-    component.openResolve(buildNc({
-      id: UUID, reference: 'NC-2026-1001', status: 'ACTION_DEFINED' }));
+    component.openResolve(buildNc({ id: UUID, status: 'ACTION_DEFINED' }));
 
-    expect(openSpy.calls.mostRecent().args[1]?.data)
-      .toEqual({ ncId: UUID, reference: 'NC-2026-1001' });
+    expect(openSpy).not.toHaveBeenCalled();
+    expect(svc.resolve).toHaveBeenCalledWith(UUID, {});
     expect(svc.getNc).toHaveBeenCalledTimes(1);
-  });
-
-  it('ne recharge pas la fiche quand la résolution est abandonnée', () => {
-    setup();
-    spyOn(TestBed.inject(MatDialog), 'open')
-      .and.returnValue({ afterClosed: () => of(undefined) } as never);
-
-    component.openResolve(buildNc({ status: 'ACTION_DEFINED' }));
-
-    expect(svc.getNc).not.toHaveBeenCalled();
   });
 
   /**

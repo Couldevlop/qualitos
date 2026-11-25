@@ -400,7 +400,13 @@ export interface UpdateNcRequest {
 }
 
 export interface ResolveNcRequest {
-  resolutionNote: string;
+  /**
+   * Ce qui a resolu l'ecart, en texte libre. FACULTATIF : l'ecran ne le
+   * reclame plus -- les actions menees se lisent au D5 et au D7 du traitement
+   * 8D, et les preuves de leur efficacite au D6. Le champ reste pour les
+   * ecarts resolus avant ce jour, et pour l'API publique.
+   */
+  resolutionNote?: string;
 }
 
 /** Le rejet d'une réclamation externe : le motif est obligatoire. */

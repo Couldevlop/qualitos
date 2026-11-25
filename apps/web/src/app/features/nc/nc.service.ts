@@ -212,7 +212,9 @@ export class NcService {
       const now = new Date().toISOString();
       if (n) {
         n.status = 'RESOLVED';
-        n.resolutionNote = input.resolutionNote;
+        if (input.resolutionNote) {
+          n.resolutionNote = input.resolutionNote;
+        }
         n.resolvedAt = now;
         n.updatedAt = now;
         return of(n).pipe(delay(120));
