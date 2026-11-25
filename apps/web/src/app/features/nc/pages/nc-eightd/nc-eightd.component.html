@@ -197,6 +197,7 @@
               <qos-capa-evidence-panel *ngFor="let dossier of (dossiersAPreuve$ | async)"
                                        [capaCaseId]="dossier.id"
                                        [sansAide]="true"
+                                       [lectureSeule]="true"
                                        [statut]="$any(dossier.status)"></qos-capa-evidence-panel>
             </div>
             <div class="vivant" *ngIf="(dossiersAPreuve$ | async)?.length === 0"
@@ -231,6 +232,7 @@
                                      [colonneNature]="false"
                                      [colonnePreuve]="montreLaColonnePreuve(discipline.code)"
                                      [ajoutAutorise]="false"
+                                     [lectureSeule]="true"
                                      [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>

@@ -705,6 +705,35 @@ describe('NcEightDComponent', () => {
    * n'apparaissaient nulle part dans le 8D.
    */
   /**
+   * LE RAPPORT EST UN RESUME, et ses deux panneaux le savent. Il rappelle les
+   * actions du dossier et leurs pieces pour qu'on les relise et qu'on les
+   * remette au client ; il y proposait chaque geste du dossier -- ouvrir une
+   * ligne, avancer une action, l'effacer, joindre ou retirer une piece. Les
+   * gestes se decident la ou ils s'inscrivent : la fiche de l'ecart, le
+   * dossier CAPA.
+   */
+  it('passe ses tableaux et ses preuves en lecture seule', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Dossier de l’escalade', status: 'IN_PROGRESS' }
+    ]);
+
+    const tableaux = fixture.debugElement.queryAll(
+      By.directive(CapaActionPanelStubComponent));
+    expect(tableaux.length).toBeGreaterThan(0);
+    tableaux.forEach(t =>
+      expect((t.componentInstance as CapaActionPanelStubComponent).lectureSeule).toBeTrue());
+
+    const preuves = fixture.debugElement.queryAll(
+      By.directive(CapaEvidencePanelStubComponent));
+    expect(preuves.length).toBeGreaterThan(0);
+    preuves.forEach(p => {
+      const panneau = p.componentInstance as CapaEvidencePanelStubComponent;
+      expect(panneau.lectureSeule).toBeTrue();
+      expect(panneau.sansAide).toBeTrue();
+    });
+  });
+
+  /**
    * LE RAPPORT SE LIT, IL NE SE SAISIT PAS. Chaque tableau portait « Ajouter
    * une action » -- sur un ecart vivant comme sur un ecart clos, ou le bouton
    * etait seulement eteint : un geste propose et refuse du meme coup, dans un

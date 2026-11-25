@@ -20,6 +20,7 @@ export class CapaEvidencePanelStubComponent {
   @Input() capaCaseId = '';
   @Input() statut: string | undefined;
   @Input() sansAide = false;
+  @Input() lectureSeule = false;
 }
 
 @NgModule({

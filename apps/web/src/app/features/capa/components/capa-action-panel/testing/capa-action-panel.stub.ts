@@ -31,6 +31,7 @@ export class CapaActionPanelStubComponent {
   @Input() source?: { type: string; reference: string };
   /** L'ecart accepte-t-il encore qu'on decide des actions ? */
   @Input() ajoutAutorise = true;
+  @Input() lectureSeule = false;
   @Output() readonly changed = new EventEmitter<void>();
 }
 

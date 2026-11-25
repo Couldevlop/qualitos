@@ -75,6 +75,8 @@ function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
   template: `<qos-capa-action-panel [capaCaseIds]="ids" [natures]="natures" [team]="equipe"
                                     [source]="source" [ajoutAutorise]="ajoutAutorise"
                                     [colonneNature]="colonneNature"
+                                    [lectureSeule]="lectureSeule"
+                                    [colonnePreuve]="colonnePreuve"
                                     (changed)="changements = changements + 1"></qos-capa-action-panel>`,
   standalone: false
 })
@@ -89,6 +91,10 @@ class HoteComponent {
   equipe: { accountId: string }[] = [];
   /** Vraie : la fiche CAPA mêle les natures. Le rapport 8D la met à faux. */
   colonneNature = true;
+  /** Faux : la fiche CAPA se saisit. Le rapport 8D, lui, se lit. */
+  lectureSeule = false;
+  /** La colonne des pièces, celle du D3 et du D7 du rapport. */
+  colonnePreuve = true;
   changements = 0;
 }
 
@@ -902,6 +908,74 @@ describe('CapaActionPanelComponent', () => {
 
     expect(panneau().joindreAria('Remplacer le joint')).toContain('Remplacer le joint');
     expect(panneau().retirerAria('Remplacer le joint')).toContain('Remplacer le joint');
+  });
+
+  // ---------- le resume : un tableau qui se lit ----------
+
+  /**
+   * LE RAPPORT EST UN RESUME. Il rappelle les actions du dossier pour qu'on les
+   * relise et qu'on les remette au client ; il y proposait pourtant chaque
+   * geste du dossier -- ouvrir la ligne, avancer l'action, verifier son
+   * efficacite, l'effacer, joindre une preuve. Une action corrigee depuis le
+   * resume d'un document fige n'a plus de lieu ou se decider.
+   */
+  it('ne propose aucun geste quand le tableau est en lecture seule', async () => {
+    await setup({
+      dossier: dossier({
+        actions: [action({ status: 'PENDING' })]
+      })
+    });
+    hote.lectureSeule = true;
+    fixture.detectChanges();
+
+    expect(un('capa-action-avancer')).toBeNull();
+    expect(un('capa-action-supprimer')).toBeNull();
+    expect(un('capa-action-definir')).toBeNull();
+    expect(un('capa-action-ajouter')).toBeNull();
+  });
+
+  /**
+   * LA LIGNE NE S'OUVRE PLUS -- ni au clic, ni au clavier, et elle cesse de
+   * s'annoncer cliquable au lecteur d'ecran : un `role` retire n'empeche pas
+   * un gestionnaire de s'executer, le verrou est donc aussi dans le composant.
+   */
+  it('n’ouvre pas la ligne en lecture seule, et ne l’annonce plus cliquable',
+     async () => {
+    await setup();
+    hote.lectureSeule = true;
+    fixture.detectChanges();
+
+    const ligne = un('capa-action-ligne') as HTMLElement;
+    expect(ligne.getAttribute('role')).toBeNull();
+    expect(ligne.getAttribute('tabindex')).toBeNull();
+    ligne.click();
+    panneau().openAction(panneau().actions[0]);
+
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  /**
+   * CE QUI RELEVE DE L'ETAT RESTE : l'efficacite constatee se lit dans le
+   * resume -- c'est precisement ce qu'un destinataire y cherche. Seul le GESTE
+   * qui la prononce disparait.
+   */
+  it('garde l’état de l’action en lecture seule, et retire le geste',
+     async () => {
+    await setup({
+      dossier: dossier({
+        actions: [action({
+          status: 'DONE',
+          verificationVerdict: 'EFFECTIVE',
+          verifiedAt: '2026-11-25T10:00:00Z',
+          verifiedByName: 'COULIBALY Thomson'
+        })]
+      })
+    });
+    hote.lectureSeule = true;
+    fixture.detectChanges();
+
+    expect(un('capa-action-verifiee')).not.toBeNull();
+    expect(un('capa-action-verifier')).toBeNull();
   });
 
   it('donne une icone par famille de document', async () => {

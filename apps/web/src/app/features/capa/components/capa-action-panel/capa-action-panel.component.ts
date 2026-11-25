@@ -157,6 +157,21 @@ export class CapaActionPanelComponent implements OnChanges {
    */
   @Input() ajoutAutorise = true;
 
+  /**
+   * LE TABLEAU SE LIT, et rien d'autre : c'est un RÉSUMÉ.
+   *
+   * <p>Le rapport 8D rappelle les actions du dossier pour qu'on les relise et
+   * qu'on les remette au client. Il y proposait pourtant chaque geste du
+   * dossier : ouvrir la ligne pour corriger l'action, l'avancer d'un cran,
+   * vérifier son efficacité, l'effacer, joindre une preuve. Une action
+   * corrigée depuis le résumé d'un document figé n'a plus de lieu où se
+   * décider — et le document, lui, ne bouge pas.
+   *
+   * <p>Ce qui RELÈVE DE L'ÉTAT reste : l'efficacité constatée, l'action
+   * terminée, le nom des pièces. C'est ce que le résumé doit montrer.
+   */
+  @Input() lectureSeule = false;
+
   /** Émis après chaque changement enregistré : l'écran appelant peut se relire. */
   @Output() readonly changed = new EventEmitter<void>();
 
@@ -318,7 +333,29 @@ export class CapaActionPanelComponent implements OnChanges {
    * concerne pas.
    */
   get ajoutFerme(): boolean {
-    return !this.ajoutAutorise || !this.source || !this.dossierDAjout;
+    return !this.ajoutPropose || !this.source || !this.dossierDAjout;
+  }
+
+  /**
+   * L'ajout est-il seulement PROPOSE ici ?
+   *
+   * <p>Deux raisons de se taire, et elles ne se confondent pas : l'appelant
+   * refuse l'ajout, ou le tableau ne fait que se lire. Un resume qui garderait
+   * le bouton d'ajout cesserait d'etre un resume.
+   */
+  get ajoutPropose(): boolean {
+    return this.ajoutAutorise && !this.lectureSeule;
+  }
+
+  /**
+   * La ligne ne s'ouvre pas en lecture seule.
+   *
+   * <p>Verrou posé ICI et non sur le seul gabarit : le clavier atteint la
+   * ligne par d'autres chemins que le clic, et un `role` retiré n'empêche pas
+   * un gestionnaire de s'exécuter.
+   */
+  get ligneOuvrable(): boolean {
+    return !this.lectureSeule;
   }
 
   // ---------- lecture ----------
@@ -830,6 +867,9 @@ export class CapaActionPanelComponent implements OnChanges {
    * ligne qui ne réagit pas au clic passe pour une panne.
    */
   openAction(action: CapaActionResponse): void {
+    if (this.lectureSeule) {
+      return;
+    }
     const porteur = this.dossierDe(action);
     if (!porteur) {
       return;

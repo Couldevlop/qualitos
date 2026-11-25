@@ -29,7 +29,7 @@
            target="_blank" rel="noopener noreferrer">{{ p.originalFilename || p.id }}</a>
         <ng-template #sansLien><span class="piece__nom">{{ p.originalFilename || p.id }}</span></ng-template>
         <span class="piece__poids">{{ poids(p.sizeBytes) }}</span>
-        <button mat-icon-button color="warn" type="button" *ngIf="!estTermine"
+        <button mat-icon-button color="warn" type="button" *ngIf="!estTermine && !lectureSeule"
                 [disabled]="envoi$ | async" (click)="retirer(p)"
                 [attr.aria-label]="retirerAria(p)"
                 i18n-matTooltip="@@capa.evidence.remove-tooltip" matTooltip="Retirer cette preuve">

@@ -52,6 +52,12 @@ export class CapaEvidencePanelComponent implements OnChanges {
   @Input() sansAide = false;
 
   /**
+   * Les pièces se LISENT : ni dépôt, ni retrait. Même raison que le tableau
+   * d'actions du rapport — un résumé ne se saisit pas.
+   */
+  @Input() lectureSeule = false;
+
+  /**
    * Combien de pièces ce panneau porte, dès qu'il a fini de lire.
    *
    * <p>Même convention que le panneau d'actions, et pour la même raison : le
@@ -119,7 +125,8 @@ export class CapaEvidencePanelComponent implements OnChanges {
 
   /** Vrai quand une pièce de plus est possible : dossier ouvert, et place restante. */
   get peutDeposer(): boolean {
-    return !this.stockageCoupe
+    return !this.lectureSeule
+      && !this.stockageCoupe
       && !this.estTermine
       && this.pieces$.value.length < MAX_PIECES;
   }
