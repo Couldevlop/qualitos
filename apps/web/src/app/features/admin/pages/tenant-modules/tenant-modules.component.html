@@ -1,5 +1,5 @@
 <section class="admin-modules">
-  <qos-page-header title="Modules du tenant" i18n-title="@@admin.modules.title">
+  <qos-page-header title="Modules et facturation" i18n-title="@@admin.modules.title">
     <!-- Le texte disait « Activez… » à tout le monde, y compris à ceux qui n'en
          ont pas le pouvoir. Chaque lecteur lit désormais ce qui le concerne. -->
     <p qosSubtitle *ngIf="canManage$ | async; else readOnlyHint" i18n="@@admin.modules.subtitle-admin">

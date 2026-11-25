@@ -230,7 +230,7 @@ qualité et au manager qualité. Les autres membres lisent la matrice.
 
 ### Les ateliers
 
-L'administrateur du client règle la liste dans **Administration → Ateliers**
+L'administrateur du client règle la liste dans **Administration → Paramétrage → Ateliers de compétence**
 (`/admin/competences`, ou le bouton « Ateliers » de la matrice) : ajouter,
 renommer, ordonner, retirer, puis enregistrer. Sans réglage, la plateforme
 propose Usinage, Assemblage, Qualité, Maintenance. Retirer un atelier ne

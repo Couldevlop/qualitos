@@ -5,6 +5,20 @@
 Cette page complète celle du rôle [Admin Tenant](admin-tenant.md) : elle décrit **écran par
 écran** la section *Administration* du menu.
 
+## Deux onglets, et ce qui les sépare
+
+La console s'ouvre sur **deux onglets**, et la frontière entre eux est simple :
+
+| Onglet | Ce qu'on y règle | La question qu'il répond |
+|---|---|---|
+| **Gestion utilisateurs** | Les comptes, les rôles, les droits, et les accès accordés à un cabinet extérieur | *Qui travaille ici, et que peut-il faire ?* |
+| **Paramétrage** | Tout le reste : listes déroulantes, règles métier chiffrées, messagerie, modules et facturation, fournisseur d'IA, clés d'API, journal d'audit | *Sous quelles règles l'application fonctionne-t-elle ?* |
+
+La barre latérale ne montre plus que ces deux portes. **Les écrans n'ont pas changé
+d'adresse** : vos signets continuent d'ouvrir l'écran qu'ils visaient, et la recherche de la
+barre supérieure les trouve tous par leur nom — tapez « messagerie » ou « webhooks » sans
+savoir dans quel onglet ils se rangent.
+
 ## La règle de base
 
 > **Tout le paramétrage de l'application, à l'exception de la gestion des utilisateurs, est
@@ -25,7 +39,7 @@ Deux conséquences pratiques :
 | Écran | Route | À quoi il sert | Qui peut écrire |
 |---|---|---|---|
 | **Licence** | `/admin/licence` | Ce que couvre la licence de cette installation et jusqu'à quand : référence, date de validité, délai de grâce, comptes actifs sur le maximum autorisé, modules ouverts. Sur la plateforme de l'éditeur, l'écran l'indique — la licence ne s'y applique pas. | Lecture : administration du client |
-| **Modules du tenant** | `/admin/modules` | Voir **de quoi votre organisation dispose** : les modules du socle sont toujours ouverts, les autres relèvent de votre abonnement. | **Lecture seule pour vous** : ouvrir ou fermer un module facturé est une décision de l'éditeur, pas un réglage du client |
+| **Modules et facturation** | `/admin/modules` | Voir **de quoi votre organisation dispose** : les modules du socle sont toujours ouverts, les autres relèvent de votre abonnement. | **Lecture seule pour vous** : ouvrir ou fermer un module facturé est une décision de l'éditeur, pas un réglage du client |
 | **Équipe & habilitations** | `/admin/team` | Créer le compte d'un membre (adresse e-mail, prénom, nom, rôles), rechercher un membre ou un rôle, **retirer** ou **rétablir** un accès. Un membre conserve toujours au moins un rôle. | Administration du client |
 | **Rôles et droits** | `/admin/roles` | « Ce que chaque rôle peut faire, et qui le porte. » La matrice des droits, action par action ; glisser un membre sur un rôle le lui attribue. | `authz.manage` |
 | **Paramètres MOC** | `/admin/moc` | Classification des changements, **poids des domaines d'impact**, rappel, et validateurs requis de la gestion des changements. | `authz.manage` |

@@ -61,7 +61,7 @@
                  allumee sur /apqp/<projet>/2, un rang de phase. -->
             <a
               [routerLink]="item.route"
-              [class.qos-sidebar__link--active]="estActif(item.route)"
+              [class.qos-sidebar__link--active]="estActif(item)"
               class="qos-sidebar__link"
               (click)="onNavigate()"
               [title]="collapsed ? item.label : null">

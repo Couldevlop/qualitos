@@ -33,8 +33,11 @@ TRANSLATIONS = {
     # --- nav ---------------------------------------------------------
     'nav.admin-api-keys': ("Clés d'API", 'API keys', 'Claves de API', 'مفاتيح API', 'APIキー', 'API 密钥'),
     'nav.admin-audit-log': ("Journal d'audit", 'Audit log', 'Registro de auditoría', 'سجل التدقيق', '監査ログ', '审计日志'),
+    'nav.admin-competences': ('Ateliers de compétence', 'Competency workshops', 'Talleres de competencia', 'ورش الكفاءة', '能力ワークショップ', '能力工作坊'),
     'nav.admin-connectors': ('Connecteurs', 'Connectors', 'Conectores', 'الموصّلات', 'コネクタ', '连接器'),
-    'nav.admin-modules': ('Modules du tenant', 'Tenant modules', 'Módulos del inquilino', 'وحدات المستأجر', 'テナントのモジュール', '租户模块'),
+    # L'ecran porte l'activation des modules ET leur palier de facturation :
+    # son libelle le disait a moitie.
+    'nav.admin-modules': ('Modules et facturation', 'Modules and billing', 'Módulos y facturación', 'الوحدات والفوترة', 'モジュールと請求', '模块与计费'),
     'nav.admin-quotas': ("Quotas d'API", 'API quotas', 'Cuotas de API', 'حصص API', 'APIクォータ', 'API 配额'),
     'nav.admin-webhooks': ('Webhooks', 'Webhooks', 'Webhooks', 'خطافات الويب', 'Webhook', 'Webhook'),
     'nav.administration': ('Administration', 'Administration', 'Administración', 'الإدارة', '管理', '管理'),

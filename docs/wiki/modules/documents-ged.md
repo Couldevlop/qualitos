@@ -1,7 +1,7 @@
 # Module GED — Documentation qualité
 
 [← Retour à l'index](../README.md) · Route : **`/documents`** · Menu : *Opérations › GED*
-Administration : **`/admin/documents`** · Menu : *Administration › Documentation*
+Administration : **`/admin/documents`** · Menu : *Administration › Paramétrage › Documentation*
 
 ## À quoi sert ce module
 

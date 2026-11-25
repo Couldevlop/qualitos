@@ -90,7 +90,7 @@ donnez.**
 Chaque client choisit son fournisseur d'IA, et ce choix est **imposé** à tous ces écrans. Il n'y
 a aucun repli silencieux vers un autre fournisseur : si la politique du client n'est pas
 lisible, l'appel échoue et le dit, plutôt que de dégrader la souveraineté de vos données sans
-vous en informer. Le réglage se fait dans *Administration › Fournisseur d'IA*
+vous en informer. Le réglage se fait dans *Administration › Paramétrage › Fournisseur d'IA*
 (voir le [guide de l'administration du client](../roles/administration-du-client.md)).
 
 Le volume d'appels est contingenté par organisation : si le quota est atteint, l'écran l'annonce

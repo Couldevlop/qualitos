@@ -1,7 +1,7 @@
 # Module MOC — Gestion des changements
 
 [← Retour à l'index](../README.md) · Route : **`/changes`** · Menu : *Opérations › MOC*
-Administration : **`/admin/moc`** · Menu : *Administration › Paramètres MOC*
+Administration : **`/admin/moc`** · Menu : *Administration › Paramétrage › Paramètres MOC*
 
 ## À quoi sert ce module
 

@@ -1,0 +1,57 @@
+<section class="console">
+
+  <!-- Les onglets sont des LIENS : l'adresse de chaque ecran est preservee, et
+       un signet continue d'ouvrir l'ecran qu'il visait. -->
+  <!-- `mat-stretch-tabs` a false : par defaut Material etire ses onglets sur
+       toute la largeur, et DEUX onglets se retrouvaient aux deux extremites de
+       l'ecran, separes par un vide. Groupes a gauche, ils se lisent comme un
+       choix entre deux. -->
+  <nav mat-tab-nav-bar
+       class="console__onglets"
+       [mat-stretch-tabs]="false"
+       [tabPanel]="panneau"
+       [attr.aria-label]="libelleOnglets">
+    <a mat-tab-link
+       *ngFor="let onglet of onglets$ | async"
+       [routerLink]="onglet.route"
+       [active]="onglet.id === ongletCourant">
+      <mat-icon aria-hidden="true">{{ onglet.icon }}</mat-icon>
+      <span>{{ onglet.label }}</span>
+    </a>
+  </nav>
+
+  <mat-tab-nav-panel #panneau class="console__corps">
+
+    <!-- Le menu de l'onglet : groupe, parce qu'une colonne de dix-sept liens ne
+         se parcourt pas quand on cherche un reglage precis. -->
+    <aside class="console__menu" *ngIf="groupesCourants.length">
+      <!-- Le titre de groupe n'est PAS un titre de document : il precederait le
+           `h1` de l'ecran ouvert, et la hierarchie se lirait a l'envers. Il
+           nomme sa liste par `aria-labelledby`, ce qui donne au lecteur d'ecran
+           le meme reperage sans fausser le plan de la page. -->
+      <div class="groupe" *ngFor="let groupe of groupesCourants; let rang = index">
+        <div class="groupe__titre" [id]="'qos-groupe-' + rang">{{ groupe.label }}</div>
+        <ul class="groupe__items" [attr.aria-labelledby]="'qos-groupe-' + rang">
+          <li *ngFor="let item of groupe.items">
+            <a [routerLink]="item.route"
+               class="lien"
+               [class.lien--actif]="estActif(item)"
+               [attr.aria-current]="estActif(item) ? 'page' : null">
+              <mat-icon class="lien__icone" aria-hidden="true">{{ item.icon }}</mat-icon>
+              <span class="lien__libelle">{{ item.label }}</span>
+              <mat-icon *ngIf="item.horsConsole"
+                        class="lien__sortie"
+                        [matTooltip]="libelleHorsConsole"
+                        aria-hidden="true">open_in_new</mat-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="console__ecran">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-tab-nav-panel>
+</section>

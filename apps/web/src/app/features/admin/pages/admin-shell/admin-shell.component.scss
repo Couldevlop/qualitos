@@ -1,0 +1,138 @@
+.console {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+// Les onglets restent visibles quand l'ecran enfant defile : ils sont le seul
+// repere qui dit dans quelle moitie de la console on se trouve.
+.console__onglets {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--qos-bg-app);
+  border-bottom: 1px solid var(--qos-border-subtle, var(--qos-border-default));
+
+  mat-icon {
+    margin-inline-end: var(--qos-space-2);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.console__corps {
+  display: grid;
+  // Largeur fixe pour le menu : ses libelles sont courts et connus, et une
+  // colonne elastique le ferait respirer differemment d'un ecran a l'autre.
+  grid-template-columns: 17rem minmax(0, 1fr);
+  gap: var(--qos-space-6);
+  align-items: start;
+  padding-top: var(--qos-space-5);
+}
+
+.console__menu {
+  position: sticky;
+  top: var(--qos-space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-5);
+}
+
+.console__ecran {
+  min-width: 0;
+}
+
+.groupe__titre {
+  margin: 0 0 var(--qos-space-2);
+  padding-inline-start: var(--qos-space-3);
+  font-size: 11px;
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qos-fg-muted);
+}
+
+.groupe__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lien {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: 8px var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  color: var(--qos-fg-secondary, var(--qos-fg-primary));
+  text-decoration: none;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+  transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
+
+  &:hover {
+    background: var(--qos-bg-hover);
+    color: var(--qos-fg-primary);
+  }
+
+  // Visible au clavier : cette console se parcourt beaucoup a la tabulation, et
+  // le contour par defaut se perd sur un fond colore.
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus, var(--qos-accent-bg));
+    outline-offset: 2px;
+  }
+}
+
+.lien--actif {
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft, var(--qos-accent-bg));
+  font-weight: var(--qos-fw-semibold);
+
+  .lien__icone { color: inherit; }
+}
+
+.lien__icone {
+  flex: 0 0 auto;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.lien__libelle {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lien__sortie {
+  flex: 0 0 auto;
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  color: var(--qos-fg-muted);
+}
+
+// Sous 1100 px le menu passe au-dessus de l'ecran : garder deux colonnes
+// reduirait le contenu a une bande trop etroite pour un tableau de reglages.
+@media (max-width: 1100px) {
+  .console__corps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .console__menu {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--qos-space-4) var(--qos-space-6);
+  }
+
+  .groupe {
+    flex: 1 1 14rem;
+  }
+}

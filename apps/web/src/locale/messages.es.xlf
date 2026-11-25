@@ -380,6 +380,46 @@
         <source>Aucun client pour l'instant : créez le premier.</source>
         <target state="translated">Ningún cliente por ahora: cree el primero.</target>
       </trans-unit>
+      <trans-unit id="admin.tab.utilisateurs" datatype="html">
+        <source>Gestion utilisateurs</source>
+        <target state="translated">Gestion de usuarios</target>
+      </trans-unit>
+      <trans-unit id="admin.tab.parametrage" datatype="html">
+        <source>Paramétrage</source>
+        <target state="translated">Configuración</target>
+      </trans-unit>
+      <trans-unit id="admin.shell.tabs-aria" datatype="html">
+        <source>Sections de l'administration</source>
+        <target state="translated">Secciones de administración</target>
+      </trans-unit>
+      <trans-unit id="admin.shell.hors-console" datatype="html">
+        <source>Cet écran s'ouvre hors de la console d'administration</source>
+        <target state="translated">Esta pantalla se abre fuera de la consola de administración</target>
+      </trans-unit>
+      <trans-unit id="admin.group.equipe" datatype="html">
+        <source>Équipe et habilitations</source>
+        <target state="translated">Equipo y permisos</target>
+      </trans-unit>
+      <trans-unit id="admin.group.externes" datatype="html">
+        <source>Accès externes</source>
+        <target state="translated">Accesos externos</target>
+      </trans-unit>
+      <trans-unit id="admin.group.organisation" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">Organización</target>
+      </trans-unit>
+      <trans-unit id="admin.group.listes" datatype="html">
+        <source>Listes et règles métier</source>
+        <target state="translated">Listas y reglas de negocio</target>
+      </trans-unit>
+      <trans-unit id="admin.group.ia" datatype="html">
+        <source>Intelligence artificielle</source>
+        <target state="translated">Inteligencia artificial</target>
+      </trans-unit>
+      <trans-unit id="admin.group.securite" datatype="html">
+        <source>Sécurité et intégrations</source>
+        <target state="translated">Seguridad e integraciones</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">Cancelar</target>
@@ -1073,8 +1113,8 @@
         <target state="translated">En prueba</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">Módulos del inquilino</target>
+        <source>Modules et facturation</source>
+        <target state="translated">Módulos y facturación</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>
@@ -37556,13 +37596,17 @@ India (centro de servicio)</target>
         <source>Journal d'audit</source>
         <target state="translated">Registro de auditoría</target>
       </trans-unit>
+      <trans-unit id="nav.admin-competences" datatype="html">
+        <source>Ateliers de compétence</source>
+        <target state="translated">Talleres de competencia</target>
+      </trans-unit>
       <trans-unit id="nav.admin-connectors" datatype="html">
         <source>Connecteurs</source>
         <target state="translated">Conectores</target>
       </trans-unit>
       <trans-unit id="nav.admin-modules" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">Módulos del inquilino</target>
+        <source>Modules et facturation</source>
+        <target state="translated">Módulos y facturación</target>
       </trans-unit>
       <trans-unit id="nav.admin-quotas" datatype="html">
         <source>Quotas d'API</source>

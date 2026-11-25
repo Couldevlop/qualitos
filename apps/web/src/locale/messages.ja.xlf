@@ -380,6 +380,46 @@
         <source>Aucun client pour l'instant : créez le premier.</source>
         <target state="translated">まだ顧客はいません。最初の顧客を作成しましょう。</target>
       </trans-unit>
+      <trans-unit id="admin.tab.utilisateurs" datatype="html">
+        <source>Gestion utilisateurs</source>
+        <target state="translated">ユーザー管理</target>
+      </trans-unit>
+      <trans-unit id="admin.tab.parametrage" datatype="html">
+        <source>Paramétrage</source>
+        <target state="translated">設定</target>
+      </trans-unit>
+      <trans-unit id="admin.shell.tabs-aria" datatype="html">
+        <source>Sections de l'administration</source>
+        <target state="translated">管理のセクション</target>
+      </trans-unit>
+      <trans-unit id="admin.shell.hors-console" datatype="html">
+        <source>Cet écran s'ouvre hors de la console d'administration</source>
+        <target state="translated">この画面は管理コンソールの外で開きます</target>
+      </trans-unit>
+      <trans-unit id="admin.group.equipe" datatype="html">
+        <source>Équipe et habilitations</source>
+        <target state="translated">チームと権限</target>
+      </trans-unit>
+      <trans-unit id="admin.group.externes" datatype="html">
+        <source>Accès externes</source>
+        <target state="translated">外部アクセス</target>
+      </trans-unit>
+      <trans-unit id="admin.group.organisation" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">組織</target>
+      </trans-unit>
+      <trans-unit id="admin.group.listes" datatype="html">
+        <source>Listes et règles métier</source>
+        <target state="translated">リストと業務ルール</target>
+      </trans-unit>
+      <trans-unit id="admin.group.ia" datatype="html">
+        <source>Intelligence artificielle</source>
+        <target state="translated">人工知能</target>
+      </trans-unit>
+      <trans-unit id="admin.group.securite" datatype="html">
+        <source>Sécurité et intégrations</source>
+        <target state="translated">セキュリティと連携</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">キャンセル</target>
@@ -1073,8 +1113,8 @@
         <target state="translated">試用中</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">テナントのモジュール</target>
+        <source>Modules et facturation</source>
+        <target state="translated">モジュールと請求</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>
@@ -37555,13 +37595,17 @@ Inde (centre de service)</source>
         <source>Journal d'audit</source>
         <target state="translated">監査ログ</target>
       </trans-unit>
+      <trans-unit id="nav.admin-competences" datatype="html">
+        <source>Ateliers de compétence</source>
+        <target state="translated">能力ワークショップ</target>
+      </trans-unit>
       <trans-unit id="nav.admin-connectors" datatype="html">
         <source>Connecteurs</source>
         <target state="translated">コネクタ</target>
       </trans-unit>
       <trans-unit id="nav.admin-modules" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">テナントのモジュール</target>
+        <source>Modules et facturation</source>
+        <target state="translated">モジュールと請求</target>
       </trans-unit>
       <trans-unit id="nav.admin-quotas" datatype="html">
         <source>Quotas d'API</source>
