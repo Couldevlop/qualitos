@@ -1113,8 +1113,8 @@
         <target state="translated">En prueba</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">Módulos del inquilino</target>
+        <source>Modules et facturation</source>
+        <target state="translated">Módulos y facturación</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>

@@ -236,6 +236,11 @@ export const ADMIN_TABS: readonly AdminTab[] = [
   }
 ];
 
+/** Les adresses d'un onglet : celles dont il repond dans la barre laterale. */
+export function routesDeLOnglet(onglet: AdminTab): string[] {
+  return onglet.groups.flatMap(groupe => groupe.items.map(item => item.route));
+}
+
 /** Toutes les entrées des deux onglets, à plat — ce que la recherche indexe. */
 export function adminNavItems(): AdminItem[] {
   return ADMIN_TABS.flatMap(tab => tab.groups.flatMap(group => group.items));

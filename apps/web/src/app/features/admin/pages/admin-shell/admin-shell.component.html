@@ -25,9 +25,13 @@
     <!-- Le menu de l'onglet : groupe, parce qu'une colonne de dix-sept liens ne
          se parcourt pas quand on cherche un reglage precis. -->
     <aside class="console__menu" *ngIf="groupesCourants.length">
-      <div class="groupe" *ngFor="let groupe of groupesCourants">
-        <h2 class="groupe__titre">{{ groupe.label }}</h2>
-        <ul class="groupe__items">
+      <!-- Le titre de groupe n'est PAS un titre de document : il precederait le
+           `h1` de l'ecran ouvert, et la hierarchie se lirait a l'envers. Il
+           nomme sa liste par `aria-labelledby`, ce qui donne au lecteur d'ecran
+           le meme reperage sans fausser le plan de la page. -->
+      <div class="groupe" *ngFor="let groupe of groupesCourants; let rang = index">
+        <div class="groupe__titre" [id]="'qos-groupe-' + rang">{{ groupe.label }}</div>
+        <ul class="groupe__items" [attr.aria-labelledby]="'qos-groupe-' + rang">
           <li *ngFor="let item of groupe.items">
             <a [routerLink]="item.route"
                class="lien"

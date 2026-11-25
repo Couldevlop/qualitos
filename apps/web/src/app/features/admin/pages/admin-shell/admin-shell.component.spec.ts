@@ -21,6 +21,8 @@ describe('AdminShellComponent', () => {
   let evenements: Subject<unknown>;
   let urlCourante: string;
   let donneeDeLaRoute: Record<string, unknown> | undefined;
+  /** Aucune route enfant encore activee : l'enveloppe se rend avant elle. */
+  let sansEnfant = false;
 
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
   const routes = (): string[] => composant.groupesCourants
@@ -33,6 +35,7 @@ describe('AdminShellComponent', () => {
   async function monter(url: string, onglet?: string, edition: Edition = 'ONPREM'): Promise<void> {
     urlCourante = url;
     donneeDeLaRoute = onglet ? { onglet } : undefined;
+    sansEnfant = false;
     evenements = new Subject<unknown>();
 
     TestBed.resetTestingModule();
@@ -51,7 +54,11 @@ describe('AdminShellComponent', () => {
         },
         {
           provide: ActivatedRoute,
-          useValue: { get firstChild() { return { snapshot: { data: donneeDeLaRoute } }; } }
+          useValue: {
+            get firstChild() {
+              return sansEnfant ? null : { snapshot: { data: donneeDeLaRoute } };
+            }
+          }
         },
         { provide: EditionService, useValue: { edition: () => of(edition) } }
       ]
@@ -76,6 +83,19 @@ describe('AdminShellComponent', () => {
     await monter('/admin/roles');
 
     expect(composant.ongletCourant).toBe('utilisateurs');
+  });
+
+  it("l enveloppe rendue AVANT sa route enfant trouve quand meme son onglet", async () => {
+    // L'ordre d'activation n'est pas garanti : l'enveloppe peut se rendre alors
+    // que `firstChild` est encore nul. Sans repli, la lecture de `data.onglet`
+    // levait et la console ne s'affichait pas du tout.
+    await monter('/admin/webhooks', 'parametrage');
+    sansEnfant = true;
+    composant.ngOnInit();
+    fixture.detectChanges();
+
+    expect(composant.ongletCourant).toBe('parametrage');
+    expect(routes()).toContain('/admin/webhooks');
   });
 
   it("une adresse inconnue retombe sur le PREMIER onglet, jamais sur rien", async () => {

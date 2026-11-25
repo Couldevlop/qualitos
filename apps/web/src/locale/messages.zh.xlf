@@ -1113,8 +1113,8 @@
         <target state="translated">试用中</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">租户模块</target>
+        <source>Modules et facturation</source>
+        <target state="translated">模块与计费</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>

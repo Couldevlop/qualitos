@@ -224,7 +224,11 @@ TRANSLATIONS = {
     'admin.modules.tile-suspended': ('Suspendus', 'Suspended', 'Suspendidos', 'موقوفة مؤقتًا', '一時停止中', '已暂停'),
     'admin.modules.tile-total': ('Total activations', 'Total activations', 'Activaciones totales', 'إجمالي التفعيلات', '有効化の合計', '激活总数'),
     'admin.modules.tile-trial': ('En essai', 'On trial', 'En prueba', 'قيد التجربة', '試用中', '试用中'),
-    'admin.modules.title': ('Modules du tenant', 'Tenant modules', 'Módulos del inquilino', 'وحدات المستأجر', 'テナントのモジュール', '租户模块'),
+    # Le menu et la page doivent dire la meme chose : l'entree annonce
+    # « Modules et facturation » parce que c'est ici que se regle le palier de
+    # facturation de chaque module, et il n'existe aucun autre ecran de
+    # facturation. Le titre de la page suit.
+    'admin.modules.title': ('Modules et facturation', 'Modules and billing', 'Módulos y facturación', 'الوحدات والفوترة', 'モジュールと請求', '模块与计费'),
     'admin.modules.trial': ('Essai 30 j', '30-day trial', 'Prueba 30 días', 'تجربة 30 يومًا', '30日間の試用', '30 天试用'),
 
     # --- rate-limits -------------------------------------------------

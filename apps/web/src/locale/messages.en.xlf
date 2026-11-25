@@ -1113,8 +1113,8 @@
         <target state="translated">On trial</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">Tenant modules</target>
+        <source>Modules et facturation</source>
+        <target state="translated">Modules and billing</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>

@@ -15,7 +15,7 @@ import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
 import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
-import { ADMIN_TABS, adminNavItems } from './admin-nav';
+import { ADMIN_TABS, adminNavItems, routesDeLOnglet } from './admin-nav';
 import { NavHit, searchNav } from './nav-search';
 
 export interface NavItem {
@@ -43,6 +43,16 @@ export interface NavItem {
    * licence n'en a pas en SaaS.
    */
   edition?: Edition;
+  /**
+   * Les autres adresses dont cette entree repond, pour l'allumage et pour
+   * l'ouverture de son groupe.
+   *
+   * <p>Une entree de la barre menait jusqu'ici a UNE adresse et s'allumait sur
+   * elle seule. L'onglet « Parametrage » mene a `/admin/modules` mais couvre
+   * quinze ecrans : sans cette liste, quatorze d'entre eux laissaient la barre
+   * eteinte et le groupe replie -- on ne savait plus ou l'on etait.</p>
+   */
+  couvre?: readonly string[];
 }
 
 export interface NavSection {
@@ -298,7 +308,10 @@ export class MainShellComponent implements OnInit, OnDestroy {
         label: onglet.label,
         route: onglet.route,
         icon: onglet.icon,
-        roles: ADMIN_ROLES
+        roles: ADMIN_ROLES,
+        // L'onglet repond de TOUS ses ecrans : c'est ce qui le laisse allume
+        // sur `/admin/messagerie` comme sur `/admin/modules`.
+        couvre: routesDeLOnglet(onglet)
       }))
     }
   ];
@@ -630,18 +643,29 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * designe un rang de phase et non une entree de menu, « Projets » doit rester
    * allumee.
    */
-  estActif(route: string): boolean {
+  estActif(item: NavItem): boolean {
     const url = this.router.url.split('?')[0].split('#')[0];
-    return this.correspond(url, route)
-        && route.length === this.plusLongueCorrespondance(url);
+    const portee = this.portee(url, item);
+    return portee > 0 && portee === this.plusLongueCorrespondance(url);
+  }
+
+  /**
+   * Longueur de la meilleure adresse dont cette entree repond, 0 si aucune.
+   *
+   * <p>On prend la PLUS LONGUE : `/admin/modules` et `/admin` correspondraient
+   * tous deux a `/admin/modules`, et c'est la plus precise qui doit gagner.</p>
+   */
+  private portee(url: string, item: NavItem): number {
+    return [item.route, ...(item.couvre ?? [])]
+      .filter(route => this.correspond(url, route))
+      .reduce((max, route) => Math.max(max, route.length), 0);
   }
 
   /** Longueur de la route la plus longue qui corresponde a cette adresse. */
   private plusLongueCorrespondance(url: string): number {
     return this.sections
       .flatMap(section => section.items)
-      .filter(item => this.correspond(url, item.route))
-      .reduce((max, item) => Math.max(max, item.route.length), 0);
+      .reduce((max, item) => Math.max(max, this.portee(url, item)), 0);
   }
 
   private correspond(url: string, route: string): boolean {
@@ -704,8 +728,9 @@ export class MainShellComponent implements OnInit, OnDestroy {
     let best: { label: string; length: number } | null = null;
     for (const section of this.sections) {
       for (const item of section.items) {
-        if (this.correspond(url, item.route) && item.route.length > (best?.length ?? 0)) {
-          best = { label: section.label, length: item.route.length };
+        const portee = this.portee(url, item);
+        if (portee > 0 && portee > (best?.length ?? 0)) {
+          best = { label: section.label, length: portee };
         }
       }
     }

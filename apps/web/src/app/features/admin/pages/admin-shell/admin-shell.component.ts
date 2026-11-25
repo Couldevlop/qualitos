@@ -39,8 +39,19 @@ export class AdminShellComponent implements OnInit, OnDestroy {
    */
   onglets$!: Observable<AdminTab[]>;
 
-  /** Repere de l'onglet courant, lu dans `data.onglet` de la route enfant. */
-  ongletCourant: AdminTab['id'] = 'utilisateurs';
+  /**
+   * L'onglet courant LUI-MEME, et non son repere.
+   *
+   * <p>Garder l'objet supprime le `find` qui le retrouvait a chaque
+   * rafraichissement, et avec lui un repli defensif qu'aucun etat atteignable
+   * ne produisait -- donc intestable, donc faux confort.</p>
+   */
+  private onglet: AdminTab = ADMIN_TABS[0];
+
+  /** Repere de l'onglet courant, pour le gabarit. */
+  get ongletCourant(): AdminTab['id'] {
+    return this.onglet.id;
+  }
 
   /** Menu de l'onglet courant, filtre par edition. */
   groupesCourants: AdminGroup[] = [];
@@ -67,11 +78,10 @@ export class AdminShellComponent implements OnInit, OnDestroy {
       startWith(null as Edition | null),
       map(edition => {
         this.edition = edition;
-        const visibles = ADMIN_TABS
+        this.rafraichirMenu();
+        return ADMIN_TABS
           .map(tab => ({ ...tab, groups: this.filtrer(tab.groups, edition) }))
           .filter(tab => tab.groups.length > 0);
-        this.rafraichirMenu(visibles);
-        return visibles;
       })
     );
     // La route enfant designe l'onglet. On l'ecoute : passer d'un ecran a
@@ -81,7 +91,7 @@ export class AdminShellComponent implements OnInit, OnDestroy {
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe(() => {
         this.relireLaRoute();
-        this.rafraichirMenu(null);
+        this.rafraichirMenu();
       });
   }
 
@@ -102,20 +112,17 @@ export class AdminShellComponent implements OnInit, OnDestroy {
    */
   private relireLaRoute(): void {
     const parDonnee = this.route.firstChild?.snapshot.data?.['onglet'] as AdminTab['id'] | undefined;
-    if (parDonnee) {
-      this.ongletCourant = parDonnee;
-      return;
-    }
-    const url = this.router.url.split('?')[0];
-    const trouve = ADMIN_TABS.find(tab =>
-      tab.groups.some(g => g.items.some(i => url === i.route || url.startsWith(i.route + '/'))));
-    this.ongletCourant = trouve?.id ?? ADMIN_TABS[0].id;
+    const parLAdresse = () => {
+      const url = this.router.url.split('?')[0];
+      return ADMIN_TABS.find(tab =>
+        tab.groups.some(g => g.items.some(i => url === i.route || url.startsWith(i.route + '/'))));
+    };
+    this.onglet = ADMIN_TABS.find(tab => tab.id === parDonnee) ?? parLAdresse() ?? ADMIN_TABS[0];
   }
 
-  private rafraichirMenu(visibles: AdminTab[] | null): void {
-    const source = visibles ?? ADMIN_TABS
-      .map(tab => ({ ...tab, groups: this.filtrer(tab.groups, this.edition) }));
-    this.groupesCourants = source.find(t => t.id === this.ongletCourant)?.groups ?? [];
+  /** Le menu de l'onglet courant, filtre par l'edition connue a cet instant. */
+  private rafraichirMenu(): void {
+    this.groupesCourants = this.filtrer(this.onglet.groups, this.edition);
   }
 
   /** Retire les entrees d'une autre edition, puis les groupes devenus vides. */

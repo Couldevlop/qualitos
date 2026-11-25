@@ -1113,8 +1113,8 @@
         <target state="translated">試用中</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">テナントのモジュール</target>
+        <source>Modules et facturation</source>
+        <target state="translated">モジュールと請求</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>

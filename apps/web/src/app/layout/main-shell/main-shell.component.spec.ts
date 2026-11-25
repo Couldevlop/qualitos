@@ -119,24 +119,28 @@ describe('MainShellComponent (navigation model)', () => {
     // Le montage commun fabrique un routeur simule : on lui pose l'adresse
     // courante, qui est la seule entree de la regle.
     const routeur = h.router as unknown as { url: string };
+    // L'entree TELLE QU'ELLE EST dans la barre : `estActif` consulte desormais
+    // les adresses dont l'entree repond, pas seulement la sienne.
+    const entree = (route: string) => shell.sections
+      .flatMap(sec => sec.items).find(i => i.route === route)!;
 
     // Sur l'efficacite des CAPA, « CAPA » (/capa) prefixe /capa/efficacite :
     // sans la regle de la correspondance la plus longue, les deux s'allumaient
     // et le menu disait qu'on etait a deux endroits a la fois.
     routeur.url = '/capa/efficacite';
-    expect(shell.estActif('/capa/efficacite')).toBeTrue();
-    expect(shell.estActif('/capa')).toBeFalse();
+    expect(shell.estActif(entree('/capa/efficacite'))).toBeTrue();
+    expect(shell.estActif(entree('/capa'))).toBeFalse();
 
     // Mais un prefixe reste une correspondance valable : /apqp/pr1/2 designe un
     // projet et un rang de phase, pas une entree de menu, et « Projets » doit y
     // rester allumee.
     routeur.url = '/apqp/pr1/2';
-    expect(shell.estActif('/apqp')).toBeTrue();
+    expect(shell.estActif(entree('/apqp'))).toBeTrue();
 
     // Les parametres de requete et l'ancre ne changent pas l'entree active.
     routeur.url = '/capa/efficacite?from=menu#haut';
-    expect(shell.estActif('/capa/efficacite')).toBeTrue();
-    expect(shell.estActif('/capa')).toBeFalse();
+    expect(shell.estActif(entree('/capa/efficacite'))).toBeTrue();
+    expect(shell.estActif(entree('/capa'))).toBeFalse();
   });
 
   it('SPC a son groupe, en deux sous-menus : cartes de controle et Gage R&R', () => {
@@ -675,6 +679,42 @@ describe('MainShellComponent (visibilité par rôle)', () => {
     expect(routes(null)).toContain('/admin/licence');
   });
 
+  it("l onglet reste allume sur CHACUN de ses ecrans, et son groupe ouvert", () => {
+    // Le defaut que ce banc empeche : les deux entrees menent a /admin/team et
+    // /admin/modules, et `correspond` ne connait que l'egalite et le prefixe.
+    // Sur les dix-sept autres ecrans, la barre s'eteignait et le groupe restait
+    // replie -- on ne savait plus ou l'on etait dans l'application.
+    const shell = make();
+    const routeur = shell['router'] as unknown as { url: string };
+    const entree = (route: string) => shell.sections
+      .flatMap(sec => sec.items).find(i => i.route === route)!;
+
+    const cas: [string, string][] = [
+      ['/admin/messagerie', '/admin/modules'],
+      ['/admin/audit-log', '/admin/modules'],
+      ['/connectors', '/admin/modules'],
+      ['/admin/roles', '/admin/team'],
+      ['/admin/cabinets', '/admin/team']
+    ];
+    for (const [url, onglet] of cas) {
+      routeur.url = url;
+      expect(shell.estActif(entree(onglet))).withContext(url).toBeTrue();
+      // Et un seul des deux : une barre qui dit deux endroits a la fois ne dit rien.
+      const autre = onglet === '/admin/team' ? '/admin/modules' : '/admin/team';
+      expect(shell.estActif(entree(autre))).withContext(url + ' / ' + autre).toBeFalse();
+    }
+  });
+
+  it("l ecran d administration courant OUVRE le groupe de la barre", () => {
+    const shell = make();
+    (shell['router'] as unknown as { url: string }).url = '/admin/webhooks';
+    shell['collapsedSections'] = new Set(['Administration']);
+
+    shell['revealCurrentSection']();
+
+    expect(shell.isSectionCollapsed('Administration')).toBeFalse();
+  });
+
   it("la barre ne montre de l'administration que ses DEUX portes", () => {
     const admin = make().sections.find(sec => sec.items.some(i => i.route.startsWith('/admin')))!;
 
@@ -740,6 +780,44 @@ describe("MainShellComponent (recherche d'écran)", () => {
   });
 
   afterEach(() => h.component.ngOnDestroy());
+
+  /**
+   * Remonte la coquille pour un utilisateur donne : la recherche n'indexe que
+   * ce que l'utilisateur a le droit de voir, les roles font donc partie du cas.
+   */
+  function pour(roles: string[]): MainShellComponent {
+    const banc = harness();
+    banc.auth.user.and.returnValue(of({
+      userId: 'u', tenantId: 't', displayName: 'Essai', roles
+    } as never));
+    banc.component.ngOnInit();
+    banc.component.visibleSections$.subscribe();
+    return banc.component;
+  }
+
+  it("la recherche TROUVE un ecran d administration que la barre ne montre plus", () => {
+    // Par le vrai chemin -- `onSearchInput` -- et non en appelant le filtre a
+    // la main : c'est le CABLAGE qui etait en cause, pas le filtre. Un banc qui
+    // appelle `filterSections` directement passerait meme si l'affectation de
+    // `searchable` disparaissait.
+    const shell = pour(['ADMIN_TENANT']);
+
+    shell.onSearchInput('messagerie');
+    expect(shell.searchHits.map(x => x.item.route)).toContain('/admin/messagerie');
+
+    shell.onSearchInput('webhooks');
+    expect(shell.searchHits.map(x => x.item.route)).toContain('/admin/webhooks');
+  });
+
+  it("la recherche ne propose RIEN de l administration a qui n a pas les droits", () => {
+    const shell = pour(['USER']);
+
+    shell.onSearchInput('webhooks');
+    expect(shell.searchHits).toEqual([]);
+
+    shell.onSearchInput('journal');
+    expect(shell.searchHits.map(x => x.item.route).filter(r => r.startsWith('/admin'))).toEqual([]);
+  });
 
   function key(k: string, init: KeyboardEventInit = {}): KeyboardEvent {
     return new KeyboardEvent('keydown', { key: k, cancelable: true, ...init });

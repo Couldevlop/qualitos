@@ -1113,8 +1113,8 @@
         <target state="translated">قيد التجربة</target>
       </trans-unit>
       <trans-unit id="admin.modules.title" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">وحدات المستأجر</target>
+        <source>Modules et facturation</source>
+        <target state="translated">الوحدات والفوترة</target>
       </trans-unit>
       <trans-unit id="admin.modules.trial" datatype="html">
         <source>Essai 30 j</source>
