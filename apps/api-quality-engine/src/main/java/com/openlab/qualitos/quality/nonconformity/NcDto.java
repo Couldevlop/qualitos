@@ -271,6 +271,16 @@ public final class NcDto {
             @Size(max = 2000) String reason) {}
 
     /**
+     * Le RENVOI EN MODIFICATION, par le second regard.
+     *
+     * <p>Message facultatif : exiger une justification découragerait le renvoi
+     * lui-même, et un renvoi sans phrase vaut mieux qu'une clôture de
+     * complaisance. Même borne que les autres motifs de la fiche.
+     */
+    public record SendBackRequest(
+            @Size(max = 2000) String message) {}
+
+    /**
      * Ouvrir, depuis cet écart, le cycle ou le projet qui le traitera (§3.6).
      *
      * <p>{@code method} peut rester nulle : la gravité donne alors la méthode
@@ -339,6 +349,19 @@ public final class NcDto {
             Instant reopenedAt,
             /** Pourquoi il a été repris : récidive, relance du client, refus à tort. */
             String reopenReason,
+            /**
+             * Quand le SECOND REGARD a renvoyé le traitement au pilote, s'il
+             * l'a fait — et par qui.
+             *
+             * <p>Ce n'est pas une reprise : l'écart n'avait pas été clos, son
+             * analyse reste valable, et seul le traitement revient en chantier.
+             * Le fait reste inscrit après la clôture qui a fini par venir :
+             * c'est la trace de ce que le second regard a attrapé.
+             */
+            Instant sentBackAt,
+            String sentBackReason,
+            UUID sentBackById,
+            String sentBackByName,
             /**
              * Le SECOND REGARD, en trois temps : qui a résolu, qui valide, qui
              * a clos.

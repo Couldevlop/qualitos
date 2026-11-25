@@ -84,6 +84,18 @@
                 data-test="nc-resolve">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>
+        <!-- CLORE OU RENVOYER : les deux reponses du second regard. Sans la
+             seconde, qui valide n'avait que l'approbation -- et un ecart dont
+             le traitement ne tenait pas restait « resolu » sans que rien ne
+             dise pourquoi personne ne le cloturait. Le bouton ignore la liste
+             d'obstacles : ce sont eux qui appellent le renvoi. -->
+        <button mat-stroked-button (click)="sendBack(n)" *ngIf="canSendBack(n)"
+                data-test="nc-send-back" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.detail.send-back-tooltip"
+                matTooltip="Rendre le traitement à son pilote : l'écart redevient modifiable">
+          <mat-icon>undo</mat-icon>
+          <span i18n="@@nc.detail.send-back">Renvoyer</span>
+        </button>
         <button mat-flat-button color="primary" (click)="close(n)" *qosCan="'nc.close'"
                 [disabled]="(acting$ | async) || !canClose(n.status) || blocked(n)"
                 [matTooltip]="blocked(n) ? blockersHint(n) : closeTooltip"

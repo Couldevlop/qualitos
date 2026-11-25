@@ -61,6 +61,10 @@ import {
   NcReopenDialogComponent,
   NcReopenDialogData
 } from '../nc-reopen-dialog/nc-reopen-dialog.component';
+import {
+  NcSendBackDialogComponent,
+  NcSendBackDialogData
+} from '../nc-send-back-dialog/nc-send-back-dialog.component';
 
 /**
  * Les huit disciplines, par leur code. Un type ferme plutot qu une chaine :
@@ -382,6 +386,17 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * dit ce qui RESTE a faire -- le seul des deux qui appelle un geste.
    */
   bandeau(n: NcResponse): string | null {
+    // LE RENVOI PASSE PAR LES DATES, et non par l'ordre des branches comme les
+    // autres faits. Une reprise suit toujours la cloture qu'elle defait ; un
+    // renvoi, lui, PRECEDE la cloture qui finit par venir -- le mettre en tete
+    // sans regarder l'horloge ferait porter « renvoye le 3 » a une fiche close
+    // le 12.
+    if (n.sentBackAt && this.estLePlusRecent(
+          n.sentBackAt, [n.reopenedAt, n.closedAt, n.rejectedAt])) {
+      return this.phrase(
+        $localize`:@@nc.detail.banner-sent-back:Traitement renvoyé au pilote le`,
+        n.sentBackAt, n.sentBackReason);
+    }
     if (n.reopenedAt) {
       return this.phrase(
         $localize`:@@nc.8d.banner-reopened:Écart repris le`, n.reopenedAt, n.reopenReason);
@@ -404,6 +419,12 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       return $localize`:@@nc.8d.banner-cancelled:Écart annulé.`;
     }
     return null;
+  }
+
+  /** Vrai si cette date est postérieure à toutes les autres qui existent. */
+  private estLePlusRecent(date: string, autres: (string | undefined)[]): boolean {
+    const quand = new Date(date).getTime();
+    return autres.every(a => !a || new Date(a).getTime() <= quand);
   }
 
   /** « Clôturé le 12/03/2026 : joint remplacé ». Le motif ne vient que s il existe. */
@@ -1729,6 +1750,37 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.resolveTooltip;
   }
   canClose(status: NcStatus): boolean { return status === 'RESOLVED'; }
+
+  /**
+   * LA SECONDE REPONSE DU SECOND REGARD : renvoyer le traitement au pilote.
+   *
+   * <p>Au meme etat que la cloture -- resolu -- et sans la liste d'obstacles qui
+   * eteint le bouton de cloture. Ces obstacles (un dossier CAPA encore en
+   * travail, une revision d'analyse de risque qui manque) sont justement ce qui
+   * appelle un renvoi : les opposer ici n'aurait laisse au valideur aucune
+   * reponse du tout.
+   *
+   * <p>La personne qui a resolu l'ecart ne le voit pas : elle ne juge pas son
+   * propre travail, dans un sens comme dans l'autre, et le serveur la refuse.
+   */
+  canSendBack(n: NcResponse): boolean {
+    return n.status === 'RESOLVED' && !this.jeSuisLeResolveur(n);
+  }
+
+  /** Ouvre la fenetre du renvoi : il y a un message a ecrire, meme facultatif. */
+  sendBack(n: NcResponse): void {
+    if (this.acting$.value) return;
+    this.dialog.open<NcSendBackDialogComponent, NcSendBackDialogData, NcResponse | undefined>(
+      NcSendBackDialogComponent, {
+        data: { ncId: n.id, reference: n.reference },
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      }
+    ).afterClosed().subscribe(renvoi => {
+      if (renvoi) this.reload$.next();
+    });
+  }
 
   /**
    * Le motif, rédigé à partir de son code.

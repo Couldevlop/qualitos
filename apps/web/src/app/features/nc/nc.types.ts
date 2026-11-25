@@ -150,6 +150,18 @@ export interface NcResponse {
   /** Pourquoi il a été repris : récidive, relance du client, refus à tort. */
   reopenReason?: string;
   /**
+   * Quand le SECOND REGARD a renvoyé le traitement au pilote, s'il l'a fait.
+   *
+   * <p>Ce n'est pas une reprise : l'écart n'avait pas été clos, son analyse
+   * reste valable, et seul le traitement revient en chantier. Le fait reste
+   * inscrit après la clôture qui a fini par venir — c'est la trace de ce que
+   * le second regard a attrapé.
+   */
+  sentBackAt?: string;
+  sentBackReason?: string;
+  sentBackById?: string;
+  sentBackByName?: string;
+  /**
    * LE SECOND REGARD, en trois temps : qui a résolu, qui valide, qui a clos.
    *
    * <p>C'est ce qu'un auditeur vient lire — la preuve que la résolution et sa
@@ -422,6 +434,16 @@ export interface RejectNcRequest {
  */
 export interface ReopenNcRequest {
   reason?: string;
+}
+
+/**
+ * Le RENVOI EN MODIFICATION, par le second regard.
+ *
+ * <p>Message facultatif : exiger une justification découragerait le renvoi
+ * lui-même, et un renvoi sans phrase vaut mieux qu'une clôture de complaisance.
+ */
+export interface SendBackNcRequest {
+  message?: string;
 }
 
 // --- Analyse Vision 5S par IA (§3.2 / §1.4) ----------------------------------

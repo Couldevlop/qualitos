@@ -29,8 +29,45 @@ possibilité d'y joindre des **photos**.
    Les actions suivantes s'ajoutent, s'avancent et se prouvent dans le **tableau des actions**
    de la fiche, sous l'analyse de cause. Une NC peut déclencher une [CAPA](capa.md), un cycle
    [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md) selon la gravité.
-6. **Clôturer, et remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit
-   disciplines attendues par le client, dont six sont reprises automatiquement de ce dossier.
+6. **Faire relire, puis clôturer** : une fois l'écart *résolu*, c'est à quelqu'un d'autre de
+   trancher — voir « Le second regard » ci-dessous. Le [rapport 8D](rapport-8d.md) rassemble
+   alors les huit disciplines attendues par le client, dont six sont reprises automatiquement
+   de ce dossier.
+
+## Le second regard : clôturer, ou renvoyer
+
+**Personne ne valide son propre travail.** La personne qui a écrit la résolution ne peut pas
+clôturer l'écart : ce serait déclarer le problème traité *et* vérifié d'une seule signature,
+et l'organisation n'aurait rien à montrer à un auditeur (ISO 9001 §10.2). La fiche le dit
+avant le clic, et le bouton reste éteint avec son explication.
+
+Qui porte ce second regard ? Les rôles de pilotage, **ou** la personne **désignée** sur
+l'écart (champ *Valideur* de la fiche) — même sans rôle qualité. C'est ce qui permet à une
+petite organisation, ou à celle qui veut un regard venu d'un autre service, de confier la
+relecture à un chef d'atelier ou à un pilote de processus.
+
+Ce second regard a **deux réponses** :
+
+- **Clôturer** : plus rien à faire ici. La clôture pose les deux questions d'analyse de risque
+  (le PFMEA et le plan de surveillance sont-ils impactés ?) et refuse tant qu'un dossier CAPA
+  de l'écart reste en travail.
+- **Renvoyer** : le traitement revient à son pilote, et l'écart repasse à *action définie*.
+  L'analyse de cause, l'équipe, les actions, les preuves et le brouillon du rapport 8D restent
+  en place : on corrige ce qui ne va pas, puis on déclare l'écart résolu à nouveau. Le message
+  est **facultatif** — mais sans lui, le pilote devra deviner ce qui ne va pas.
+
+Deux points qui comptent :
+
+- **Le renvoi n'est pas une reprise.** *Renvoyer* dit « le traitement n'est pas encore bon »
+  sur un écart jamais clos ; *Rouvrir* dit « le problème est revenu » sur un écart refermé, et
+  ramène l'instruction à son début. Les deux se comptent séparément, pour que le taux de
+  récidive ne compte pas les refus de clôture.
+- **Rien n'est effacé.** La résolution précédente reste datée et signée ; le renvoi s'y ajoute.
+  Le bandeau de la fiche montre le fait le plus récent, et l'historique ne perd rien.
+
+> Si le dossier CAPA de l'écart a déjà été **clos**, ses actions ne se modifient plus : un
+> dossier clos est figé. Après un renvoi, on corrige la fiche, l'analyse et le rapport, mais
+> une action déjà close demande un nouveau dossier.
 
 ## L'équipe en charge
 
