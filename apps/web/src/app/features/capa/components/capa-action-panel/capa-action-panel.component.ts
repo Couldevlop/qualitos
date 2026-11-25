@@ -103,10 +103,11 @@ export class CapaActionPanelComponent implements OnChanges {
   /**
    * Montre ou non la colonne « Preuve », la pièce de CHAQUE action (ADR 0052).
    *
-   * <p>Vraie par défaut : la fiche CAPA et le D3 du traitement 8D attestent
-   * ainsi que tel geste a bien été fait. Le D5 et le D7 la mettent à faux, non
-   * par économie d'écran, mais parce que ce qu'ils ont à démontrer n'est pas
-   * « l'action a été faite » : c'est « le problème a cessé », et cela se prouve
+   * <p>Vraie par défaut : la fiche CAPA, le D3 et le D7 du traitement 8D
+   * attestent ainsi que tel geste a bien été fait — un endiguement qu'on
+   * montre, une barrière qu'on installe. Le D5 seul la met à faux, non par
+   * économie d'écran, mais parce que ce qu'il a à démontrer n'est pas
+   * « l'action a été faite » : c'est « la cause a disparu », et cela se prouve
    * au D6, sur le dossier, où le modèle de traitement 8D l'attend.
    */
   @Input() colonnePreuve = true;

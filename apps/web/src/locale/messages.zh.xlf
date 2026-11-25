@@ -22714,34 +22714,6 @@ historique 12 mois</source>
         <source>Shitsuke (Maintenir)</source>
         <target state="translated">素养（Shitsuke）</target>
       </trans-unit>
-      <trans-unit id="nc.resolve.title" datatype="html">
-        <source>Résoudre la non-conformité</source>
-        <target state="translated">解决不合格项</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
-        <target state="translated">描述已采取的措施及有效性证据，以关闭以下项的解决：</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-label" datatype="html">
-        <source>Note de résolution</source>
-        <target state="translated">解决说明</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
-        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
-        <target state="translated">已采取的纠正措施、验证、有效性证据……</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-required" datatype="html">
-        <source>La note de résolution est requise.</source>
-        <target state="translated">解决说明为必填项。</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.submit" datatype="html">
-        <source>Résoudre</source>
-        <target state="translated">解决</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.success" datatype="html">
-        <source>Non-conformité résolue.</source>
-        <target state="translated">不合格项已解决。</target>
-      </trans-unit>
       <trans-unit id="nc.detail.reject" datatype="html">
         <source>Rejeter</source>
         <target state="translated">驳回</target>
@@ -23114,14 +23086,6 @@ historique 12 mois</source>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">您没有关闭不合格项的权限，请让质量负责人执行该操作。</target>
       </trans-unit>
-      <trans-unit id="nc.blocker.action-to-do" datatype="html">
-        <source>à mener</source>
-        <target state="translated">待执行</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
-        <source>faite, son efficacité reste à vérifier</source>
-        <target state="translated">已执行，有效性尚待验证</target>
-      </trans-unit>
       <trans-unit id="nc.blocker.actions-count-one" datatype="html">
         <source>1 action le retient</source>
         <target state="translated">1 项措施仍未完成</target>
@@ -23129,10 +23093,6 @@ historique 12 mois</source>
       <trans-unit id="nc.blocker.actions-count-many" datatype="html">
         <source><x id="count"/> actions le retiennent</source>
         <target state="translated"><x id="count"/> 项措施仍未完成</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-pending" datatype="html">
-        <source>en attente</source>
-        <target state="translated">待处理</target>
       </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>

@@ -2042,24 +2042,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     ligne.focus({ preventScroll: true });
   }
 
-  /**
-   * CE QU'ON ATTEND de cette action-la, en toutes lettres.
-   *
-   * <p>Le serveur rend un code et jamais une phrase : il ne connait pas la
-   * langue du lecteur, et un code se traduit, se teste et survit a une
-   * reformulation. Un code inconnu -- serveur plus recent que l'ecran -- rend
-   * une phrase generique plutot qu'un libelle vide.
-   */
-  attenteDeLAction(action: NcBlockingAction): string {
-    if (action.reason === 'TO_DO') {
-      return $localize`:@@nc.blocker.action-to-do:à mener`;
-    }
-    if (action.reason === 'TO_VERIFY') {
-      return $localize`:@@nc.blocker.action-to-verify:faite, son efficacité reste à vérifier`;
-    }
-    return $localize`:@@nc.blocker.action-pending:en attente`;
-  }
-
   /** Le motif lui-meme sert de cle : deux motifs du meme code ne coexistent pas. */
   trackByMotif(_: number, motif: MotifDeBlocage): string {
     return motif.code;

@@ -381,7 +381,7 @@ public class EightDSnapshotAssembler {
         // action a l'autre, et c'est pourtant ce qu'on vient faire dans cette
         // discipline. Les memes donnees, mises en colonnes, se lisent d'un
         // coup d'oeil.
-        List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D5);
+        List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D5, false);
         int decidees = 0;
         for (EightDSnapshot.Table tableau : tableaux) {
             decidees += tableau.rows().size();
@@ -414,6 +414,18 @@ public class EightDSnapshotAssembler {
     /** Les colonnes, dans l'ordre de l'ecran, moins celle des gestes. */
     private static final List<String> COLONNES_ACTIONS =
             List.of("Nature", "Action", "Responsable", "Échéance", "État", "Preuves");
+
+    /**
+     * LES MEMES, SANS LA COLONNE DES PREUVES : les colonnes du D5.
+     *
+     * <p>La piece d'une action atteste que CE geste-la a ete fait. Le D5
+     * supprime la cause, et ce qu'il a a demontrer n'est pas « l'action a ete
+     * faite » mais « le probleme a cesse » : cela se prouve au D6, sur le
+     * dossier. L'ecran ne montre donc la colonne qu'au D3 et au D7, et ce
+     * document se presente comme lui.
+     */
+    private static final List<String> COLONNES_ACTIONS_SANS_PREUVE =
+            COLONNES_ACTIONS.subList(0, COLONNES_ACTIONS.size() - 1);
 
     /**
      * Les codes du modèle mis en mots, avec les libellés de l'écran.
@@ -473,6 +485,13 @@ public class EightDSnapshotAssembler {
      */
     private List<EightDSnapshot.Table> tableauxDesActions(List<EightDSources.Capa> capas,
                                                           List<String> natures) {
+        return tableauxDesActions(capas, natures, true);
+    }
+
+    private List<EightDSnapshot.Table> tableauxDesActions(List<EightDSources.Capa> capas,
+                                                          List<String> natures,
+                                                          boolean colonnePreuve) {
+        List<String> colonnes = colonnePreuve ? COLONNES_ACTIONS : COLONNES_ACTIONS_SANS_PREUVE;
         List<EightDSnapshot.Table> tableaux = new ArrayList<>();
         for (EightDSources.Capa capa : capas) {
             List<EightDSnapshot.Row> lignes = new ArrayList<>();
@@ -480,18 +499,21 @@ public class EightDSnapshotAssembler {
                 if (!natures.contains(texteOu(action.actionType(), "?"))) {
                     continue;
                 }
-                lignes.add(new EightDSnapshot.Row(List.of(
+                List<String> cellules = new ArrayList<>(List.of(
                         libelle(NATURES, texteOu(action.actionType(), "?")),
                         texteOu(action.title(), "(sans intitulé)"),
                         texteOu(action.assigneeName(), "-"),
                         action.dueDate() == null ? "-" : jour(action.dueDate()),
-                        libelle(ETATS, texteOu(action.status(), "?")),
-                        action.evidenceCount() == 0
-                                ? "-" : String.valueOf(action.evidenceCount()))));
+                        libelle(ETATS, texteOu(action.status(), "?"))));
+                if (colonnePreuve) {
+                    cellules.add(action.evidenceCount() == 0
+                            ? "-" : String.valueOf(action.evidenceCount()));
+                }
+                lignes.add(new EightDSnapshot.Row(List.copyOf(cellules)));
             }
             if (!lignes.isEmpty()) {
                 tableaux.add(new EightDSnapshot.Table(
-                        texteOu(capa.title(), "(sans intitulé)"), COLONNES_ACTIONS, lignes));
+                        texteOu(capa.title(), "(sans intitulé)"), colonnes, lignes));
             }
         }
         return tableaux;

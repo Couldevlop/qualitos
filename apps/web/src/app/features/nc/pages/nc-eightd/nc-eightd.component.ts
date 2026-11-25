@@ -354,9 +354,10 @@ export class NcEightDComponent implements OnInit {
    * Vrai pour la discipline qui porte les PREUVES du dossier.
    *
    * <p>Une seule, le D6. Les pieces des actions, elles, restent sur leur ligne
-   * au D3 : une piece d'action atteste que CE geste-la a ete fait, une preuve
-   * du dossier demontre que le probleme a cesse. La fiche de l'ecart fait deja
-   * cette difference ; le rapport ne la faisait pas, et ne deposait rien.
+   * au D3 et au D7 : une piece d'action atteste que CE geste-la a ete fait, une
+   * preuve du dossier demontre que le probleme a cesse. La fiche de l'ecart
+   * fait deja cette difference ; le rapport ne la faisait pas, et ne deposait
+   * rien.
    */
   montreLesPreuves(code: string): boolean {
     return code === 'D6';

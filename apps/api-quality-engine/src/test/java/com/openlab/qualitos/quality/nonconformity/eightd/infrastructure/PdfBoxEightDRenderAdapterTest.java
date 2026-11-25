@@ -535,6 +535,34 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(renderer.render(snapshot, URL)).isEqualTo(renderer.render(snapshot, URL));
     }
 
+    /**
+     * UN TABLEAU DE CINQ COLONNES GARDE L'INTITULE LARGE.
+     *
+     * <p>Le D5 n'a pas de colonne de preuve : son tableau n'a que cinq
+     * colonnes, et des colonnes egales donnaient a l'intitule -- le seul champ
+     * de phrase -- le cinquieme de la largeur, replie sur quatre lignes a cote
+     * de colonnes aux trois quarts vides. On mesure donc ou commence la colonne
+     * suivante : l'intitule doit tenir bien plus que sa part egale.
+     */
+    @Test
+    void un_tableau_de_cinq_colonnes_garde_l_intitule_large() throws IOException {
+        byte[] pdf = renderer.render(avecTableau(tableauSansPreuveDeDemo()), URL);
+
+        String texte = texteDe(pdf);
+        assertThat(texte).contains("KIND").contains("ACTION").contains("OWNER")
+                .contains("DUE DATE").contains("STATUS");
+        assertThat(texte).doesNotContain("EVIDENCE");
+
+        float debutIntitule = abscisseDe(pdf, "ACTION");
+        float debutPorteur = abscisseDe(pdf, "OWNER");
+        assertThat(debutIntitule).isGreaterThan(0f);
+        assertThat(debutPorteur).isGreaterThan(debutIntitule);
+        // La part egale vaut environ 95 points ; l'intitule en vaut le double.
+        assertThat(debutPorteur - debutIntitule)
+                .as("l'intitule du D5 ne doit pas se replier faute de place")
+                .isGreaterThan(120f);
+    }
+
     // ---------- fixtures ----------
 
     /** Un instantane complet dont le D4 porte la figure donnee, et aucune ligne. */
@@ -674,6 +702,31 @@ class PdfBoxEightDRenderAdapterTest {
     private static final List<String> COLONNES =
             List.of("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
 
+    /** Les memes, sans la colonne des preuves : celles du D5. */
+    private static final List<String> COLONNES_SANS_PREUVE =
+            List.of("Kind", "Action", "Owner", "Due date", "Status");
+
+    /**
+     * L'abscisse du premier caractere de ce texte, sur la premiere page qui le
+     * porte. Elle dit ou commence une colonne, et donc sa largeur.
+     */
+    private float abscisseDe(byte[] pdf, String recherche) throws IOException {
+        float[] x = {-1f};
+        try (PDDocument doc = Loader.loadPDF(pdf)) {
+            PDFTextStripper releve = new PDFTextStripper() {
+                @Override
+                protected void writeString(String texte, List<TextPosition> positions) {
+                    if (x[0] >= 0f || !texte.trim().equals(recherche) || positions.isEmpty()) {
+                        return;
+                    }
+                    x[0] = positions.get(0).getXDirAdj();
+                }
+            };
+            releve.getText(doc);
+        }
+        return x[0];
+    }
+
     private EightDSnapshot.Table tableauDeDemo() {
         return new EightDSnapshot.Table("Dossier A - fuite presse-etoupe", COLONNES, List.of(
                 new EightDSnapshot.Row(List.of("CONTAINMENT",
@@ -684,6 +737,14 @@ class PdfBoxEightDRenderAdapterTest {
                         "Alan Turing", "30/10/2026", "TODO", "-"))));
     }
 
+    /** Le meme tableau, sans la colonne des preuves : celui du D5. */
+    private EightDSnapshot.Table tableauSansPreuveDeDemo() {
+        return new EightDSnapshot.Table("Dossier A - fuite presse-etoupe",
+                COLONNES_SANS_PREUVE, List.of(
+                        new EightDSnapshot.Row(List.of("CORRECTIVE",
+                                "Remplacer le joint du presse-etoupe et reprendre le serrage",
+                                "Ada Lovelace", "14/09/2026", "DONE"))));
+    }
     /** Un instantane dont le D5 porte ce tableau, et rien d'autre. */
     private EightDSnapshot avecTableau(EightDSnapshot.Table tableau) {
         List<EightDSnapshot.Section> sections = new ArrayList<>();

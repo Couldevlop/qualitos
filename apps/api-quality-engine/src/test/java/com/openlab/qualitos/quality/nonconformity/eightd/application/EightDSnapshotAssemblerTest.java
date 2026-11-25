@@ -375,12 +375,15 @@ class EightDSnapshotAssemblerTest {
         assertThat(d5.tables()).hasSize(1);
         EightDSnapshot.Table decidees = d5.tables().get(0);
         assertThat(decidees.caption()).isEqualTo("Fuite presse-étoupe");
+        // SANS LA COLONNE DES PREUVES, comme a l'ecran : la piece d'une action
+        // atteste que CE geste-la a ete fait, et le D5 n'a pas a prouver qu'une
+        // action a ete faite mais que la cause a disparu -- cela se juge au D6,
+        // sur le dossier. Le document emis se presente comme la fiche.
         assertThat(decidees.columns())
-                .containsExactly("Nature", "Action", "Responsable", "Échéance", "État",
-                        "Preuves");
+                .containsExactly("Nature", "Action", "Responsable", "Échéance", "État");
         assertThat(decidees.rows()).hasSize(1);
         assertThat(decidees.rows().get(0).cells()).containsExactly(
-                "Corrective", "Remplacer le joint", "Grace", "10/09/2026", "Faite", "2");
+                "Corrective", "Remplacer le joint", "Grace", "10/09/2026", "Faite");
 
         // LA PREVENTIVE N'EST PLUS ICI : elle figurait au D5 **en plus** du D7,
         // de sorte que chaque action preventive se lisait deux fois dans le

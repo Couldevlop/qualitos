@@ -299,6 +299,18 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      */
     private static final float[] PARTS_COLONNES = {0.15f, 0.32f, 0.15f, 0.12f, 0.16f, 0.10f};
 
+    /**
+     * LES MEMES, SANS LA COLONNE DES PREUVES : les parts du D5.
+     *
+     * <p>La discipline qui supprime la cause ne porte pas de piece par
+     * action -- ce qu'elle a a demontrer se prouve au D6, sur le dossier --,
+     * et son tableau n'a donc que cinq colonnes. Les faire egales repliait
+     * l'intitule sur quatre lignes : la part rendue par la colonne absente
+     * revient aux cinq restantes, au prorata de ce qu'elles valaient.
+     */
+    private static final float[] PARTS_COLONNES_SANS_PREUVE =
+            {0.17f, 0.35f, 0.17f, 0.13f, 0.18f};
+
     /** La hauteur d'une ligne de tableau, par ligne de texte repliee. */
     private static final float LIGNE_CELLULE = 11f;
 
@@ -395,9 +407,11 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     private static float[] largeursDe(int n) {
         float utile = CONTENT_W - 24f;
         float[] largeurs = new float[n];
-        if (n == PARTS_COLONNES.length) {
+        float[] parts = n == PARTS_COLONNES.length ? PARTS_COLONNES
+                : n == PARTS_COLONNES_SANS_PREUVE.length ? PARTS_COLONNES_SANS_PREUVE : null;
+        if (parts != null) {
             for (int i = 0; i < n; i++) {
-                largeurs[i] = utile * PARTS_COLONNES[i];
+                largeurs[i] = utile * parts[i];
             }
             return largeurs;
         }

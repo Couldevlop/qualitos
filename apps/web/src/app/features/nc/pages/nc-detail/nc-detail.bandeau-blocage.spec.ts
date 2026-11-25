@@ -209,7 +209,7 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
    * savoir qu'il n'est pas clos ne dit pas laquelle on attend. Il fallait
    * l'ouvrir pour instruire soi-même ce que le serveur savait déjà.
    */
-  it('nomme chaque action qui retient la clôture, et ce qu’elle attend', async () => {
+  it('nomme chaque action qui retient la clôture, et RIEN DE PLUS', async () => {
     await monter();
     afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
       {
@@ -225,13 +225,19 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
       .withContext('sans la liste, il faut ouvrir le dossier pour savoir quoi faire')
       .not.toBeNull();
     expect(aFaire?.textContent).toContain('Reprendre les 12 vannes');
-    expect(aFaire?.parentElement?.textContent).toContain('à mener');
 
     const aVerifier = un('nc-blocker-action-act-2');
     expect(aVerifier?.textContent).toContain('Imprimer la plaque depuis l’ERP');
-    expect(aVerifier?.parentElement?.textContent)
-      .withContext('faite ne veut pas dire vérifiée (ADR 0132)')
-      .toContain('vérifier');
+
+    // UNE SEULE LIGNE PAR ACTION : son nom, et rien d'autre. L'etat d'attente
+    // suivait le nom et chaque action tenait donc deux lignes ; le nom suffit,
+    // le lien mene a l'action ou son etat se lit en entier. Sans cette garde,
+    // remettre l'etiquette passerait inapercu.
+    expect(aFaire?.parentElement?.textContent?.trim())
+      .withContext('le nom de l’action, seul, sur une ligne')
+      .toBe('Reprendre les 12 vannes');
+    expect(aVerifier?.parentElement?.textContent?.trim())
+      .toBe('Imprimer la plaque depuis l’ERP');
     // LE DÉCOMPTE du motif compte les DOSSIERS ; celui-ci compte le travail
     // qui reste dedans, et c'est lui qu'on vient lire.
     expect(texte('nc-blocker-compte-capa-1')).toContain('2 actions');
@@ -309,9 +315,10 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
       .querySelector('.blockers-actions')).toBeNull();
   });
 
-  // Un code d'attente que cet écran ne connaît pas — serveur plus récent — rend
-  // une phrase générique plutôt qu'un libellé vide.
-  it('écrit une attente générique pour un motif qu’il ne connaît pas', async () => {
+  // Un code d'attente que cet ecran ne connait pas -- serveur plus recent --
+  // ne change plus rien : la liste ne porte que le nom de l'action, et aucun
+  // libelle d'etat ne peut donc rester vide.
+  it('nomme l’action quel que soit le motif d’attente, même inconnu', async () => {
     await monter();
     afficher(ecart('RESOLVED', [{ code: 'CAPA_CASES_UNSETTLED', count: 1 }], [
       {
@@ -320,8 +327,8 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
       }
     ]));
 
-    expect(un('nc-blocker-action-act-9')?.parentElement?.textContent)
-      .toContain('en attente');
+    expect(un('nc-blocker-action-act-9')?.parentElement?.textContent?.trim())
+      .toBe('Une action');
   });
 
   // ---------- le droit qui manque à celui qui lit -------------------------
