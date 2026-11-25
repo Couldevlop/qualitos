@@ -94,6 +94,8 @@ class EightDControllerTest {
                 .andExpect(jsonPath("$.status").value("DRAFT"))
                 .andExpect(jsonPath("$.missingCodes[0]").value("D7"))
                 .andExpect(jsonPath("$.disciplines[0].editable").value(true));
+        // (la vue de ce banc fabrique une discipline modifiable : c'est le
+        // transport du drapeau qui se verifie ici, pas la regle du D8.)
     }
 
     @Test

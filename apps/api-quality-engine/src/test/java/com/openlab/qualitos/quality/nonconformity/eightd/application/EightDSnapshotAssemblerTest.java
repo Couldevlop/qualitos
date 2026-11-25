@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.nonconformity.eightd.application;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
 import com.openlab.qualitos.quality.nonconformity.eightd.domain.EightDSnapshot;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -710,6 +712,64 @@ class EightDSnapshotAssemblerTest {
     /** Les memes sources, mais avec l'equipe nommee sur la fiche. */
     private EightDSources sourcesAvecEquipe(List<EightDSources.Member> equipe) {
         return new EightDSources(nc(null), equipe, List.of(), List.of(), List.of(), null, List.of());
+    }
+
+    /**
+     * LE D6 NE RAPPELLE QUE LES ACTIONS CORRECTIVES (diapo 7 de la recette).
+     *
+     * <p>L'endiguement se lit au D3 et la prevention au D7, chacun avec la
+     * piece de son action : les reprendre ici rappelait trois fois le meme
+     * geste dans le meme document. Le D6 demontre que la CAUSE a disparu, et
+     * c'est l'action corrective qui en repond.
+     */
+    @Test
+    void d6_ne_rappelle_que_les_actions_correctives() {
+        EightDSources.Action endiguement = new EightDSources.Action(
+                "Bloquer le lot", null, "CONTAINMENT", "DONE", "Ada", null,
+                Instant.parse("2026-09-08T09:00:00Z"), List.of("tri.pdf"));
+        EightDSources.Action corrective = new EightDSources.Action(
+                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace", null,
+                Instant.parse("2026-09-09T09:00:00Z"), List.of());
+        EightDSources.Action preventive = new EightDSources.Action(
+                "Former les operateurs", null, "PREVENTIVE", "DONE", "Ada", null,
+                Instant.parse("2026-09-10T09:00:00Z"), List.of());
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH",
+                        "OPEN", null, null, null, null, List.of(),
+                        List.of(endiguement, corrective, preventive))),
+                null, List.of());
+
+        EightDSnapshot.Section d6 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D6");
+
+        assertThat(d6.lines()).contains("Remplacer le joint");
+        assertThat(d6.lines()).doesNotContain("Bloquer le lot", "Former les operateurs");
+    }
+
+    /** Les trois verdicts s'ecrivent en toutes lettres, et la date est facultative. */
+    @ParameterizedTest
+    @CsvSource({
+            "EFFECTIVE,efficace",
+            "PARTIAL,partiellement efficace",
+            "INEFFECTIVE,inefficace"
+    })
+    void d6_ecrit_chaque_verdict_en_toutes_lettres(String code, String attendu) {
+        EightDSources.Action jugee = new EightDSources.Action(
+                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace", null,
+                Instant.parse("2026-09-09T09:00:00Z"), List.of(), code, null);
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH",
+                        "OPEN", null, null, null, null, List.of(), List.of(jugee))),
+                null, List.of());
+
+        EightDSnapshot.Section d6 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D6");
+
+        // SANS DATE, PAS DE DATE INVENTEE : le verdict se lit seul. Un jugement
+        // repris d'un dossier ancien peut n'en porter aucune.
+        assertThat(d6.lines()).contains("Efficacit\u00e9 : " + attendu);
     }
 
     /**

@@ -37,7 +37,10 @@ class EightDSnapshotTest {
         EightDSnapshot snapshot =
                 new EightDSnapshot("NC-1", "Titre", "t", null, null, true, sections(false));
 
-        assertThat(snapshot.missingCodes()).containsExactly("D1", "D3", "D8");
+        // UNE SEULE DISCIPLINE SE SAISIT, LA RECONNAISSANCE (ADR 0139) : le
+        // jeu de sections de ce banc suit `estSaisie()`, et l'equipe comme
+        // l'endiguement ont desormais une source.
+        assertThat(snapshot.missingCodes()).containsExactly("D8");
     }
 
     @Test

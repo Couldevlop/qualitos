@@ -48,7 +48,6 @@ public class EightDSnapshotAssembler {
 
     private static final String A_SAISIR =
             "Aucune source dans la plateforme \u2014 cette discipline se renseigne à la main";
-    private static final String SAISI = "Renseignée par l'équipe qualité";
 
     /**
      * La reconnaissance que porte TOUT rapport 8D dont l'écart est soldé.
@@ -69,10 +68,6 @@ public class EightDSnapshotAssembler {
             + " la cause, et les mesures qui empêchent son retour.",
             "Cette clôture est la leur. Le savoir acquis a été versé aux standards de"
             + " l'organisation, pour que la prochaine équipe en parte.");
-
-    /** Pourquoi la reconnaissance figure au rapport. */
-    private static final String RECONNAISSANCE_AUTO =
-            "Reconnaissance standard — l'écart et ses actions correctives sont clos";
 
     /**
      * @param sources      ce que les autres modules savent de l'écart
@@ -224,11 +219,6 @@ public class EightDSnapshotAssembler {
                 label, List.of(), List.of(), tableaux);
     }
 
-    private EightDSnapshot.Section saisie(EightDDiscipline discipline, String texte) {
-        List<String> lignes = lignesDe(texte);
-        return section(discipline, !lignes.isEmpty(), lignes.isEmpty() ? A_SAISIR : SAISI, lignes);
-    }
-
     // ---------- D8 : la reconnaissance de l'équipe ----------
 
     /**
@@ -250,16 +240,11 @@ public class EightDSnapshotAssembler {
         if (solde) {
             lignes.addAll(RECONNAISSANCE_STANDARD);
         }
-        String label;
-        if (saisi && solde) {
-            label = SAISI + ", complétée par la reconnaissance standard";
-        } else if (saisi) {
-            label = SAISI;
-        } else if (solde) {
-            label = RECONNAISSANCE_AUTO;
-        } else {
-            label = A_SAISIR;
-        }
+        // PLUS DE « Renseignée par l'équipe qualité » : la phrase attribuait la
+        // discipline à un service au-dessus de ce qu'elle disait, là où le
+        // lecteur vient lire ce que l'équipe a appris. Servie, la discipline se
+        // tait sur sa provenance ; vide, elle dit ce qui manque.
+        String label = lignes.isEmpty() ? A_SAISIR : "";
         return section(EightDDiscipline.D8, !lignes.isEmpty(), label, lignes);
     }
 
@@ -613,7 +598,13 @@ public class EightDSnapshotAssembler {
             preuves += capa.caseEvidenceCount();
             for (EightDSources.Action action : capa.actions()) {
                 preuves += action.evidenceCount();
-                if (action.completedAt() == null) {
+                // LES CORRECTIVES SEULES. L'endiguement se lit au D3 et la
+                // prévention au D7, chacun avec la pièce de son action : les
+                // reprendre ici rappelait trois fois le même geste dans le même
+                // document. Le D6 démontre que la CAUSE a disparu, et c'est
+                // l'action corrective qui en répond.
+                if (!NATURES_D5.contains(texteOu(action.actionType(), "?"))
+                        || action.completedAt() == null) {
                     continue;
                 }
                 menees++;

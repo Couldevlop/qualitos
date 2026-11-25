@@ -77,15 +77,21 @@ class EightDServiceTest {
         assertThat(vue.issuable()).isTrue();
     }
 
+    /**
+     * UNE SEULE SE SAISIT, LA RECONNAISSANCE (ADR 0139). L'equipe vient de la
+     * fiche et l'endiguement de son dossier CAPA : les declarer modifiables
+     * ferait ouvrir un champ par l'ecran pour une donnee qui a deja sa source,
+     * et deux verites sur la meme equipe finiraient par diverger.
+     */
     @Test
-    void seules_d1_d3_et_d8_sont_declarees_modifiables() {
+    void seule_d8_est_declaree_modifiable() {
         EightDDto.ReportView vue = service.consulter(NC);
 
         List<String> modifiables = vue.disciplines().stream()
                 .filter(EightDDto.DisciplineView::editable)
                 .map(EightDDto.DisciplineView::code)
                 .toList();
-        assertThat(modifiables).containsExactly("D1", "D3", "D8");
+        assertThat(modifiables).containsExactly("D8");
     }
 
     @Test

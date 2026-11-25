@@ -8,26 +8,27 @@ package com.openlab.qualitos.quality.nonconformity.eightd.domain;
  * sans la recalculer.
  *
  * <p>Chaque discipline dit aussi <b>d'où vient son contenu</b> :
- * {@link #estSaisie()} distingue les trois qui n'ont aucune source dans la
- * plateforme (l'équipe, la sécurisation, la reconnaissance) des cinq qui agrègent
- * ce que les autres modules savent déjà. C'est la frontière qui justifie
- * l'existence du module : on n'ajoute un champ de saisie que là où rien ne
- * répond.
+ * {@link #estSaisie()} ne distingue plus qu'UNE discipline sans source dans la
+ * plateforme, la reconnaissance. L'équipe vient de la fiche de l'écart et
+ * l'endiguement de son dossier CAPA : les redemander faisait retaper ce que la
+ * plateforme savait déjà, et une discipline qu'on ressaisit est une discipline
+ * qu'on oublie. C'est la frontière qui justifie l'existence du module : on
+ * n'ajoute un champ de saisie que là où rien ne répond (ADR 0139).
  */
 public enum EightDDiscipline {
 
-    /** L'équipe qui a traité l'écart. Aucune source : se saisit. */
-    D1("D1", "Équipe", true),
+    /** L'équipe qui a traité l'écart. Source : l'équipe nommée sur la fiche. */
+    D1("D1", "Équipe", false),
 
     /** Le problème tel qu'il a été constaté. Source : la non-conformité. */
     D2("D2", "Description du problème", false),
 
-    /** Ce qui a protégé le client en attendant la cause. Aucune source : se saisit. */
+    /** Ce qui a protégé le client en attendant la cause. Source : les actions du dossier. */
     // « D'ENDIGUEMENT » EN MOINS : le mot est du jargon de méthode, et cette
     // discipline se lit par un client. « Actions immédiates » dit la même
     // chose. Un rapport déjà scellé garde le titre qu'il porte dans son
     // instantané : son empreinte tient à cela.
-    D3("D3", "Actions immédiates", true),
+    D3("D3", "Actions immédiates", false),
 
     /** La cause racine. Sources : Ishikawa, 5 pourquoi, cause racine de la NC. */
     D4("D4", "Cause racine", false),

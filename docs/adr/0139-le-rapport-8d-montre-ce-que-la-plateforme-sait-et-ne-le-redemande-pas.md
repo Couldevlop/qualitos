@@ -82,8 +82,13 @@ sait pas.**
 ## Conséquences
 
 - Un écart dont personne n'a nommé l'équipe sort un rapport **partiel**, et le
-  dit : « Aucun membre nommé sur la non-conformité ». C'est voulu — le D1 ne se
-  rattrape plus par une ligne de texte tapée au moment d'émettre.
+  dit : « Aucun membre nommé sur la non-conformité ». On le rattrape en nommant
+  l'équipe **sur la fiche**, et plus par une ligne tapée au moment d'émettre.
+- Le **D8 est désormais la seule discipline déclarée modifiable** (`estSaisie`).
+  Un texte D1 tapé sur un brouillon ancien **continue de s'imprimer** sous le
+  tableau de l'équipe — l'effacer détruirait une information qu'une équipe a
+  écrite — mais aucun écran ne permet plus de le modifier. Le D3, lui, ne
+  l'imprime plus : la diapo de recette demande de ne garder que le tableau.
 - Un D3 ou un D7 **sans action de sa nature** est désormais annoncé manquant,
   même si un brouillon portait un récit. Le document ne tient pour acquis que
   des gestes tracés.

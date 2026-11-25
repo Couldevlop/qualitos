@@ -531,8 +531,8 @@ export type EightDStatus = 'DRAFT' | 'ISSUED';
  *
  * `sourced` à false veut dire « rien à montrer », et `sourceLabel` dit alors
  * POURQUOI : c'est ce qui distingue un 8D d'un formulaire aux cases vides.
- * `editable` n'est vrai que pour D1, D3 et D8, les trois qui n'ont aucune source
- * dans la plateforme.
+ * `editable` n'est vrai que pour D8, la seule discipline qu'aucun module ne sait
+ * renseigner : l'equipe vient de la fiche, l'endiguement de son dossier CAPA.
  */
 export interface EightDDiscipline {
   code: string;

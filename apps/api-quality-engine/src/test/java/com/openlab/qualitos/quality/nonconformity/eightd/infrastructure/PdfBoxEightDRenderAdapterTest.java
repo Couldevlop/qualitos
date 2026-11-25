@@ -51,11 +51,12 @@ class PdfBoxEightDRenderAdapterTest {
 
     @Test
     void une_discipline_sans_source_le_dit_dans_le_pdf() throws IOException {
-        // D1, D3 et D8 vides : le document doit l'annoncer, pas laisser trois blancs.
+        // Le D8 vide : le document doit l'annoncer, pas laisser un blanc. Les
+        // sept autres ont une source (ADR 0139), et ce banc les sert.
         String texte = texteDe(renderer.render(snapshot(false), URL));
 
         assertThat(texte).contains("PARTIAL REPORT");
-        assertThat(texte).contains("D1, D3, D8");
+        assertThat(texte).contains("disciplines with no content: D8");
         assertThat(texte).contains("Not filled in.");
         assertThat(texte).contains("cette discipline se saisit");
     }
@@ -584,6 +585,37 @@ class PdfBoxEightDRenderAdapterTest {
                 .contains("Pilote");
         assertThat(texte).contains("NOM ET PRENOM").contains("ADRESSE MAIL").contains("ROLE");
         assertThat(texte).doesNotContain("Actions -");
+    }
+
+    /**
+     * LE D1 TEL QUE L'ASSEMBLEUR L'ECRIT VRAIMENT : les intitules accentues de
+     * la recette, et une adresse longue dans une colonne de 42 %.
+     *
+     * <p>Les bancs voisins ecrivent « Role » sans accent et des adresses
+     * courtes : ils verifient la geometrie, pas les mots. Ici on rend ce que le
+     * client recevra -- « Rôle et fonction », « Nom et prénom » -- parce que
+     * PDFBox LEVE sur un caractere que la police ne sait pas encoder (ADR 0134),
+     * et qu'une cellule qui deborde se voit a la lecture, jamais au compilateur.
+     */
+    @Test
+    void le_tableau_de_l_equipe_rend_les_intitules_accentues_et_une_adresse_longue()
+            throws IOException {
+        EightDSnapshot.Table equipe = new EightDSnapshot.Table(
+                "", List.of("Nom et prénom", "Adresse mail", "Rôle et fonction"), List.of(
+                        new EightDSnapshot.Row(List.of("Ada Lovelace",
+                                "ada.lovelace.prenom-compose@service-qualite.exemple.fr",
+                                "Pilote")),
+                        new EightDSnapshot.Row(List.of("Grace Hopper", "-", "Membre"))));
+
+        String texte = texteDe(renderer.render(avecTableau(equipe), URL));
+
+        assertThat(texte).contains("NOM ET PRÉNOM").contains("RÔLE ET FONCTION");
+        assertThat(texte).contains("Ada Lovelace").contains("Grace Hopper");
+        // L'ADRESSE RESTE ENTIERE : coupee, elle ne se recopie plus, et une
+        // coordonnee tronquee dans un document opposable vaut une erreur.
+        assertThat(texte).contains("ada.lovelace.prenom-compose@service-qualite.exemple.fr");
+        // Le membre sans adresse connue garde sa case, marquee d'un tiret.
+        assertThat(texte).contains("Membre");
     }
 
     // ---------- fixtures ----------
