@@ -3,6 +3,47 @@
 
 TRANSLATIONS = {
 
+    # --- la console a deux onglets ------------------------------------
+    # L'administration du client tient en deux onglets, « Gestion utilisateurs »
+    # et « Parametrage », et le menu de chacun est groupe : dix-sept reglages en
+    # une colonne ne se parcourent pas quand on en cherche un precis.
+    'admin.tab.utilisateurs': (
+        'Gestion utilisateurs', 'User management', 'Gestion de usuarios',
+        'إدارة المستخدمين', 'ユーザー管理', '用户管理'),
+    'admin.tab.parametrage': (
+        'Paramétrage', 'Settings', 'Configuración',
+        'الإعدادات', '設定', '设置'),
+    'admin.shell.tabs-aria': (
+        "Sections de l'administration", 'Administration sections',
+        'Secciones de administración', 'أقسام الإدارة', '管理のセクション', '管理分区'),
+    'admin.shell.hors-console': (
+        "Cet écran s'ouvre hors de la console d'administration",
+        'This screen opens outside the administration console',
+        'Esta pantalla se abre fuera de la consola de administración',
+        'تُفتح هذه الشاشة خارج وحدة تحكم الإدارة',
+        'この画面は管理コンソールの外で開きます',
+        '此页面将在管理控制台之外打开'),
+    'admin.group.equipe': (
+        'Équipe et habilitations', 'Team and permissions', 'Equipo y permisos',
+        'الفريق والصلاحيات', 'チームと権限', '团队与权限'),
+    'admin.group.externes': (
+        'Accès externes', 'External access', 'Accesos externos',
+        'الوصول الخارجي', '外部アクセス', '外部访问'),
+    'admin.group.organisation': (
+        'Organisation', 'Organisation', 'Organización',
+        'المؤسسة', '組織', '组织'),
+    'admin.group.listes': (
+        'Listes et règles métier', 'Lists and business rules',
+        'Listas y reglas de negocio', 'القوائم وقواعد العمل',
+        'リストと業務ルール', '列表与业务规则'),
+    'admin.group.ia': (
+        'Intelligence artificielle', 'Artificial intelligence',
+        'Inteligencia artificial', 'الذكاء الاصطناعي', '人工知能', '人工智能'),
+    'admin.group.securite': (
+        'Sécurité et intégrations', 'Security and integrations',
+        'Seguridad e integraciones', 'الأمن والتكامل',
+        'セキュリティと連携', '安全与集成'),
+
     # --- api-keys ----------------------------------------------------
     'admin.api-keys.cancel': ('Annuler', 'Cancel', 'Cancelar', 'إلغاء الأمر', 'キャンセル', '取消'),
     'admin.api-keys.col-actions': ('Actions', 'Actions', 'Acciones', 'الإجراءات', '操作', '操作'),

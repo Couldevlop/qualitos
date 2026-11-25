@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription, combineLatest, of } from 'rxjs';
-import { catchError, filter, map, shareReplay, startWith, tap } from 'rxjs/operators';
+import { catchError, filter, map, shareReplay, startWith } from 'rxjs/operators';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
 import { ADMIN_CONSOLE_ROLES } from '../../core/auth/tenant-admin';
@@ -15,6 +15,7 @@ import { EditionService } from '../../core/edition/edition.service';
 import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
 import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
+import { ADMIN_TABS, adminNavItems } from './admin-nav';
 import { NavHit, searchNav } from './nav-search';
 
 export interface NavItem {
@@ -281,138 +282,24 @@ export class MainShellComponent implements OnInit, OnDestroy {
     {
       label: $localize`:@@nav.administration:Administration`,
       collapsible: true,
-      items: [
-        // L'entrée « Clients » a quitté cette navigation : créer une
-        // organisation est le travail de l'éditeur, et il le fait depuis sa
-        // console (/platform/clients). La laisser ici mélangeait le
-        // paramétrage DU client — tout le reste de cette section — avec
-        // l'administration DE la plateforme, et un administrateur de client y
-        // voyait une entrée qui ne lui répondait que par un refus.
-        {
-          // La licence de l'installation on-premise : échéance, modules, utilisateurs.
-          label: $localize`:@@nav.admin-license:Licence`,
-          route: '/admin/licence',
-          icon: 'verified_user',
-          roles: ADMIN_ROLES,
-          edition: 'ONPREM'
-        },
-        {
-          label: $localize`:@@nav.admin-modules:Modules du tenant`,
-          route: '/admin/modules',
-          icon: 'tune',
-          roles: ADMIN_ROLES
-        },
-        {
-          label: $localize`:@@nav.admin-team:Équipe & habilitations`,
-          route: '/admin/team',
-          icon: 'group',
-          roles: ADMIN_ROLES
-        },
-        {
-          // La matrice des droits par client (ADR 0078) : actions × rôles, et
-          // l'équipe qu'on glisse sur un rôle.
-          label: $localize`:@@nav.admin-roles:Rôles et droits`,
-          route: '/admin/roles',
-          icon: 'admin_panel_settings',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Les paramètres de la gestion des changements (ADR 0087) : seuils, poids, validateurs.
-          label: $localize`:@@nav.admin-moc:Paramètres MOC`,
-          route: '/admin/moc',
-          icon: 'rule',
-          roles: ADMIN_ROLES
-        },
-        {
-          // La documentation qualité (ADR 0094) : revues, fichiers, arborescence, processus.
-          label: $localize`:@@nav.admin-documents:Documentation`,
-          route: '/admin/documents',
-          icon: 'folder_copy',
-          roles: ADMIN_ROLES
-        },
-        {
-          // La messagerie de l'organisation (ADR 0127) : l'adresse d'ou partent
-          // ses courriels. Sans reglage, ils partent de celle de la plateforme.
-          label: $localize`:@@nav.admin-mail:Messagerie`,
-          route: '/admin/messagerie',
-          icon: 'alternate_email',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Les seuils de Cpk (ADR 0096) : maîtrisé, à surveiller.
-          label: $localize`:@@nav.admin-spc:Paramètres SPC`,
-          route: '/admin/spc',
-          icon: 'stacked_line_chart',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Le questionnaire de la fiche de résolution DMAIC (ADR 0101), ses défaillances et sévérités.
-          label: $localize`:@@nav.admin-dmaic:Paramètres DMAIC`,
-          route: '/admin/dmaic',
-          icon: 'fact_check',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Les natures d'écart, sous chaque catégorie de NC (ADR 0103).
-          label: $localize`:@@nav.admin-nc:Natures de NC`,
-          route: '/admin/nc',
-          icon: 'category',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Les listes déroulantes de l'application (ADR 0111) : le client en
-          // dit les mots, et ajoute ses propres valeurs là où le code le permet.
-          label: $localize`:@@nav.admin-catalogs:Listes déroulantes`,
-          route: '/admin/listes',
-          icon: 'list_alt',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Les cabinets partenaires et leurs accès (ADR 0106) : l'éditeur
-          // propose, l'administrateur du client accorde et fixe le terme.
-          label: $localize`:@@nav.admin-firms:Cabinets`,
-          route: '/admin/cabinets',
-          icon: 'handshake',
-          roles: ADMIN_ROLES
-        },
-        {
-          // Le fournisseur des appels LLM du tenant (ADR 0102) : local et souverain, ou externe.
-          label: $localize`:@@nav.admin-ai:Fournisseur d'IA`,
-          route: '/admin/ia',
-          icon: 'shield',
-          roles: ADMIN_ROLES
-        },
-        {
-          label: $localize`:@@nav.admin-api-keys:Clés d'API`,
-          route: '/admin/api-keys',
-          icon: 'key',
-          roles: ADMIN_ROLES
-        },
-        {
-          label: $localize`:@@nav.admin-webhooks:Webhooks`,
-          route: '/admin/webhooks',
-          icon: 'webhook',
-          roles: ADMIN_ROLES
-        },
-        {
-          label: $localize`:@@nav.admin-quotas:Quotas d'API`,
-          route: '/admin/quotas',
-          icon: 'speed',
-          roles: ADMIN_ROLES
-        },
-        {
-          label: $localize`:@@nav.admin-audit-log:Journal d'audit`,
-          route: '/admin/audit-log',
-          icon: 'receipt_long',
-          roles: ADMIN_ROLES
-        },
-        {
-          label: $localize`:@@nav.admin-connectors:Connecteurs`,
-          route: '/connectors',
-          icon: 'cable',
-          roles: ADMIN_ROLES
-        }
-      ]
+      // UNE entree, et non dix-huit. L'administration du client est devenue une
+      // console a deux onglets -- « Gestion utilisateurs » et « Parametrage » --
+      // dont le catalogue vit dans `admin-nav.ts`. Dix-huit lignes dans la barre
+      // laterale noyaient le reste du menu et melangeaient des reglages rares
+      // avec le travail quotidien.
+      //
+      // Les dix-neuf ecrans restent trouvables par la RECHERCHE de la barre
+      // superieure, qui indexe `sectionsIndexables` : sans cela, « Messagerie »
+      // ou « Webhooks » auraient exige de savoir d'avance dans quel onglet
+      // regarder.
+      // Les deux memes onglets que la console, dans le meme ordre : la barre
+      // annonce ce qu'on va y trouver, et le clic atterrit deja sur le bon.
+      items: ADMIN_TABS.map(onglet => ({
+        label: onglet.label,
+        route: onglet.route,
+        icon: onglet.icon,
+        roles: ADMIN_ROLES
+      }))
     }
   ];
 
@@ -421,6 +308,21 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * entrées sont masquées disparaît entièrement — pas de titre de groupe orphelin.
    */
   visibleSections$!: Observable<NavSection[]>;
+  /**
+   * Ce que la recherche indexe : les sections visibles, PLUS les ecrans de la
+   * console d'administration, qui ne sont plus dans la barre laterale.
+   *
+   * <p>Le meme filtre que la barre s'y applique — roles, modules, edition —
+   * donc un utilisateur sans droits n'y trouve rien, et la licence reste
+   * invisible en SaaS.</p>
+   */
+  get sectionsIndexables(): NavSection[] {
+    return [
+      ...this.sections,
+      { label: $localize`:@@nav.administration:Administration`, items: adminNavItems() }
+    ];
+  }
+
   /** Dernières sections visibles : la recherche ne propose que ce que le menu montre. */
   private searchable: NavSection[] = [];
   private navigationSub?: Subscription;
@@ -477,8 +379,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
     const edition$ = this.editions.edition().pipe(startWith(null as Edition | null));
 
     this.visibleSections$ = combineLatest([this.user$, modules$, edition$]).pipe(
-      map(([user, modules, edition]) => this.filterSections(user?.roles ?? [], modules, edition)),
-      tap(sections => { this.searchable = sections; })
+      map(([user, modules, edition]) => {
+        const roles = user?.roles ?? [];
+        // Deux filtrages, le meme filtre : la barre montre ses sections, la
+        // recherche indexe en plus les ecrans d'administration.
+        this.searchable =
+          this.filterSections(roles, modules, edition, this.sectionsIndexables);
+        return this.filterSections(roles, modules, edition);
+      })
     );
     this.online$ = this.connectivity.online$;
     this.pendingSync$ = this.offlineQueue.pendingCount$;
@@ -663,7 +571,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * Retient les entrées visibles pour ces rôles, puis élimine les sections vides.
    * La comparaison ignore un éventuel préfixe `ROLE_` : Keycloak le pose, pas nous.
    */
-  filterSections(roles: string[], modules: string[] | null = null, edition: Edition | null = null): NavSection[] {
+  filterSections(
+    roles: string[],
+    modules: string[] | null = null,
+    edition: Edition | null = null,
+    source: NavSection[] = this.sections
+  ): NavSection[] {
     // Normaliser AVANT de retirer le préfixe : Keycloak peut émettre `role_admin`
     // en minuscules, auquel cas un strip sensible à la casse laisserait passer le
     // préfixe et ferait échouer la comparaison.
@@ -671,7 +584,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
     // `null` = modules encore inconnus : on n'ampute rien. Mieux vaut une barre
     // complète pendant le chargement qu'une barre qui se vide puis se remplit.
     const enabled = modules === null ? null : new Set(modules);
-    return this.sections
+    return source
       .map(section => ({
         ...section,
         items: section.items.filter(item =>

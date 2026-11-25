@@ -1,7 +1,7 @@
 # Intégrations — ITSM, ERP, dossier patient FHIR et outils de conversation
 
 [← Retour à l'index](../README.md) · Routes : **`/itsm`** et **`/connectors`** ·
-Menu : *Référentiels › Intégrations* et *Administration › Connecteurs*
+Menu : *Référentiels › Intégrations* et *Administration › Paramétrage › Connecteurs*
 
 ## À quoi servent ces écrans
 
@@ -103,7 +103,7 @@ BI) **ne sont pas livrées** sous forme de connecteur configurable : ne les anno
 client sur la foi d'une plaquette.
 
 Pour une intégration sortante événementielle — « préviens mon système quand une
-non-conformité est créée » — c'est l'écran **Webhooks** (*Administration › Webhooks*) qu'il
+non-conformité est créée » — c'est l'écran **Webhooks** (*Administration › Paramétrage › Webhooks*) qu'il
 faut employer, pas ces connecteurs.
 
 ## Bonnes pratiques

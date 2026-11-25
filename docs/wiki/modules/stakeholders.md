@@ -16,7 +16,7 @@ ouvrir sa propre [CAPA](capa.md).
 
 La lecture est ouverte à toute personne connectée : chacun peut savoir à quoi l'organisme
 s'est engagé. Écrire demande l'habilitation correspondante, réglée par l'administrateur dans
-*Administration › Rôles et droits*.
+*Administration › Gestion utilisateurs › Rôles et droits*.
 
 ## Parcours pas à pas
 

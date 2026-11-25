@@ -153,7 +153,7 @@ ouverte sans que vous l'ayez demandé.
 
 - **Lire** le registre et les fiches : tout membre de l'organisation.
 - **Créer, réviser, supprimer** une étude et changer son plan d'actions : le droit `spc.manage`,
-  réglable par l'administrateur du client dans *Administration › Rôles et droits*.
+  réglable par l'administrateur du client dans *Administration › Gestion utilisateurs › Rôles et droits*.
 - **Faire ouvrir une CAPA** par la carte de contrôle ou la prévision : le droit `capa.create`.
 - Le module **DMAIC** doit être actif : la capabilité relève du pilotage Six Sigma. C'est aussi
   sous ce module que l'écran des rôles range `spc.manage` — il n'existe pas de module « SPC »

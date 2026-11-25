@@ -1,0 +1,48 @@
+<section class="console">
+
+  <!-- Les onglets sont des LIENS : l'adresse de chaque ecran est preservee, et
+       un signet continue d'ouvrir l'ecran qu'il visait. -->
+  <nav mat-tab-nav-bar
+       class="console__onglets"
+       [tabPanel]="panneau"
+       [attr.aria-label]="libelleOnglets">
+    <a mat-tab-link
+       *ngFor="let onglet of onglets$ | async"
+       [routerLink]="onglet.route"
+       [active]="onglet.id === ongletCourant">
+      <mat-icon aria-hidden="true">{{ onglet.icon }}</mat-icon>
+      <span>{{ onglet.label }}</span>
+    </a>
+  </nav>
+
+  <mat-tab-nav-panel #panneau class="console__corps">
+
+    <!-- Le menu de l'onglet : groupe, parce qu'une colonne de dix-sept liens ne
+         se parcourt pas quand on cherche un reglage precis. -->
+    <aside class="console__menu" *ngIf="groupesCourants.length">
+      <div class="groupe" *ngFor="let groupe of groupesCourants">
+        <h2 class="groupe__titre">{{ groupe.label }}</h2>
+        <ul class="groupe__items">
+          <li *ngFor="let item of groupe.items">
+            <a [routerLink]="item.route"
+               class="lien"
+               [class.lien--actif]="estActif(item)"
+               [attr.aria-current]="estActif(item) ? 'page' : null">
+              <mat-icon class="lien__icone" aria-hidden="true">{{ item.icon }}</mat-icon>
+              <span class="lien__libelle">{{ item.label }}</span>
+              <mat-icon *ngIf="item.horsConsole"
+                        class="lien__sortie"
+                        [matTooltip]="libelleHorsConsole"
+                        aria-hidden="true">open_in_new</mat-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="console__ecran">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-tab-nav-panel>
+</section>

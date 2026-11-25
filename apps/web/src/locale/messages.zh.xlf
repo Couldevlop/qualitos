@@ -380,6 +380,46 @@
         <source>Aucun client pour l'instant : créez le premier.</source>
         <target state="translated">暂无客户：创建第一个吧。</target>
       </trans-unit>
+      <trans-unit id="admin.tab.utilisateurs" datatype="html">
+        <source>Gestion utilisateurs</source>
+        <target state="translated">用户管理</target>
+      </trans-unit>
+      <trans-unit id="admin.tab.parametrage" datatype="html">
+        <source>Paramétrage</source>
+        <target state="translated">设置</target>
+      </trans-unit>
+      <trans-unit id="admin.shell.tabs-aria" datatype="html">
+        <source>Sections de l'administration</source>
+        <target state="translated">管理分区</target>
+      </trans-unit>
+      <trans-unit id="admin.shell.hors-console" datatype="html">
+        <source>Cet écran s'ouvre hors de la console d'administration</source>
+        <target state="translated">此页面将在管理控制台之外打开</target>
+      </trans-unit>
+      <trans-unit id="admin.group.equipe" datatype="html">
+        <source>Équipe et habilitations</source>
+        <target state="translated">团队与权限</target>
+      </trans-unit>
+      <trans-unit id="admin.group.externes" datatype="html">
+        <source>Accès externes</source>
+        <target state="translated">外部访问</target>
+      </trans-unit>
+      <trans-unit id="admin.group.organisation" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">组织</target>
+      </trans-unit>
+      <trans-unit id="admin.group.listes" datatype="html">
+        <source>Listes et règles métier</source>
+        <target state="translated">列表与业务规则</target>
+      </trans-unit>
+      <trans-unit id="admin.group.ia" datatype="html">
+        <source>Intelligence artificielle</source>
+        <target state="translated">人工智能</target>
+      </trans-unit>
+      <trans-unit id="admin.group.securite" datatype="html">
+        <source>Sécurité et intégrations</source>
+        <target state="translated">安全与集成</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">取消</target>
@@ -37556,13 +37596,17 @@ Inde (centre de service)</source>
         <source>Journal d'audit</source>
         <target state="translated">审计日志</target>
       </trans-unit>
+      <trans-unit id="nav.admin-competences" datatype="html">
+        <source>Ateliers de compétence</source>
+        <target state="translated">能力工作坊</target>
+      </trans-unit>
       <trans-unit id="nav.admin-connectors" datatype="html">
         <source>Connecteurs</source>
         <target state="translated">连接器</target>
       </trans-unit>
       <trans-unit id="nav.admin-modules" datatype="html">
-        <source>Modules du tenant</source>
-        <target state="translated">租户模块</target>
+        <source>Modules et facturation</source>
+        <target state="translated">模块与计费</target>
       </trans-unit>
       <trans-unit id="nav.admin-quotas" datatype="html">
         <source>Quotas d'API</source>

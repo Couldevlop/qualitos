@@ -232,7 +232,11 @@ describe('MainShellComponent (navigation model)', () => {
     // constate un écart, on le traite, et parfois on demande au client
     // l'autorisation d'expédier quand même -- c'est le même registre d'écarts
     // qui déclenche les trois.
-    expect(labels).toEqual([9, 6, 6, 2, 1, 7, 1, 13, 5, 1, 18]);
+    // Administration retombe de 18 a 2 : les dix-huit ecrans sont devenus une
+    // console a deux onglets, « Gestion utilisateurs » et « Parametrage », et la
+    // barre n'en montre plus que les deux portes. Les ecrans restent trouvables
+    // par la recherche, qui indexe `sectionsIndexables` -- verifie plus bas.
+    expect(labels).toEqual([9, 6, 6, 2, 1, 7, 1, 13, 5, 1, 2]);
   });
 
   it('ne garde aucune entree de prevision dans la barre laterale', () => {
@@ -655,13 +659,52 @@ describe('MainShellComponent (visibilité par rôle)', () => {
     expect(routes).toContain('/compliance');
   });
   it('montre la licence en on-premise seulement (ADR 0082)', () => {
-    const routes = (edition: Edition | null) => make().filterSections(['SUPER_ADMIN', 'ADMIN_TENANT'], null, edition)
-      .flatMap(sec => sec.items.map(i => i.route));
+    // La licence a quitte la barre laterale pour la console d'administration.
+    // L'invariant, lui, ne change pas : elle n'existe qu'en installation sur
+    // site. On l'eprouve donc la ou elle vit maintenant -- l'index de la
+    // RECHERCHE, qui est le seul endroit ou le filtre par edition s'applique
+    // encore a cette entree.
+    const shell = make();
+    const routes = (edition: Edition | null) =>
+      shell.filterSections(['SUPER_ADMIN', 'ADMIN_TENANT'], null, edition, shell.sectionsIndexables)
+        .flatMap(sec => sec.items.map(i => i.route));
     expect(routes('ONPREM')).toContain('/admin/licence');
     expect(routes('SAAS')).not.toContain('/admin/licence');
     // Édition encore inconnue : rien n'est retiré. Mieux vaut une entrée de
     // trop le temps du chargement qu'une barre qui se vide puis se remplit.
     expect(routes(null)).toContain('/admin/licence');
+  });
+
+  it("la barre ne montre de l'administration que ses DEUX portes", () => {
+    const admin = make().sections.find(sec => sec.items.some(i => i.route.startsWith('/admin')))!;
+
+    expect(admin.items.map(i => i.route)).toEqual(['/admin/team', '/admin/modules']);
+  });
+
+  it('les dix-neuf ecrans d administration restent trouvables par la RECHERCHE', () => {
+    // Le defaut que ce banc existe pour empecher : replier dix-huit entrees en
+    // deux les rendait introuvables autrement qu'en sachant d'avance dans quel
+    // onglet regarder. La recherche indexe donc le catalogue complet.
+    const shell = make();
+    const indexees = shell
+      .filterSections(['ADMIN_TENANT'], null, 'ONPREM', shell.sectionsIndexables)
+      .flatMap(sec => sec.items.map(i => i.route));
+
+    ['/admin/messagerie', '/admin/webhooks', '/admin/listes', '/admin/audit-log',
+     '/admin/ia', '/admin/quotas', '/admin/competences', '/connectors']
+      .forEach(r => expect(indexees).withContext(r).toContain(r));
+  });
+
+  it("l index d administration reste ferme a qui n a pas les droits", () => {
+    // Les entrees portent leurs roles POUR la recherche : la barre ne les
+    // montre plus, mais la recherche les proposerait a tout le monde.
+    const shell = make();
+    const vuParUnUtilisateur = shell
+      .filterSections(['USER'], null, 'ONPREM', shell.sectionsIndexables)
+      .flatMap(sec => sec.items.map(i => i.route));
+
+    expect(vuParUnUtilisateur.filter(r => r.startsWith('/admin'))).toEqual([]);
+    expect(vuParUnUtilisateur).not.toContain('/connectors');
   });
 
   it('ne porte plus aucune entrée de la console éditeur (ADR 0105)', () => {
@@ -679,7 +722,7 @@ describe('MainShellComponent (visibilité par rôle)', () => {
     // une édition : l'éprouver dans les DEUX sens, sinon seul le bras ONPREM
     // serait exercé et une régression du bras SAAS passerait inaperçue.
     const shell = make();
-    const avecEntreeSaas = shell.filterSections(['SUPER_ADMIN'], null, 'SAAS')
+    const avecEntreeSaas = shell.filterSections(['SUPER_ADMIN'], null, 'SAAS', shell.sectionsIndexables)
       .flatMap(sec => sec.items.filter(i => i.edition === 'ONPREM'));
     expect(avecEntreeSaas).toEqual([]);
   });
