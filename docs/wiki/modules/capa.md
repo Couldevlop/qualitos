@@ -101,6 +101,21 @@ et propose *Démarrer*, puis *Terminer*.
 La fiche CAPA reste l'endroit de tout le reste : la **preuve** versée à l'action, son historique,
 le verdict d'efficacité, et la clôture du dossier.
 
+## Chercher dans le registre
+
+La liste des dossiers (**/capa**) se filtre sur quatre critères, tous appliqués **par le
+serveur** — qui pagine : trier une colonne ne répondrait que pour la page affichée.
+
+| Filtre | Ce qu'il retient |
+| --- | --- |
+| **Statut** | Les trois étapes du traitement : *Ouvert*, *En cours*, *Résolu*. Un dossier rejeté ou clos après vérification reste **visible** sous « Tous » : le choix se réduit, la liste ne se tronque pas |
+| **Criticité** | Critique, haute, moyenne, basse |
+| **Pilote** | Choisi dans l'annuaire, jamais tapé : deux personnes peuvent porter le même nom |
+| **Échéance avant le** | Les dossiers à échoir à cette date **ou avant**. Un dossier **sans échéance** est écarté : on demande ce qui tombe avant le 15, et un dossier qui ne tombe jamais n'y répond pas |
+
+La croix à droite du calendrier retire le filtre d'échéance ; un calendrier ne se
+désélectionne pas tout seul.
+
 ## Origines d'une CAPA
 
 Une CAPA peut être ouverte manuellement ou déclenchée par un autre module, par exemple :

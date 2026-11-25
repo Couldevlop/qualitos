@@ -6818,6 +6818,18 @@ Portal de clientes</target>
         <source>Référence</source>
         <target state="translated">Referencia</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">Vencimiento hasta el</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Abrir el calendario</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">Quitar el filtro de vencimiento</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">Eficacia de las CAPA</target>

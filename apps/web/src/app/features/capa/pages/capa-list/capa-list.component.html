@@ -29,6 +29,24 @@
         <mat-option *ngFor="let c of criticities" [value]="c">{{ criticityLabel(c) }}</mat-option>
       </mat-select>
     </mat-form-field>
+    <!-- CE QUI TOMBE AVANT UNE DATE. Le filtre part au serveur, qui pagine :
+         trier la colonne Échéance ne répondait que pour la page affichée. -->
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label i18n="@@capa.list.filter-due-before">Échéance avant le</mat-label>
+      <input matInput [matDatepicker]="echeance" [formControl]="dueBeforeFilter"
+             data-test="filtre-echeance">
+      <mat-datepicker-toggle matIconSuffix [for]="echeance"
+                             i18n-aria-label="@@capa.list.filter-due-open"
+                             aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+      <mat-datepicker #echeance></mat-datepicker>
+      <button mat-icon-button matSuffix type="button" *ngIf="dueBeforeFilter.value"
+              data-test="filtre-echeance-effacer" (click)="effacerEcheance()"
+              i18n-aria-label="@@capa.list.filter-due-clear"
+              aria-label="Retirer le filtre d'échéance">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
     <!-- Le pilote se CHOISIT dans l'annuaire : un champ de texte libre aurait
          fait chercher l'orthographe exacte d'un nom, et rendu une liste vide
          pour une lettre de trop. -->

@@ -46,15 +46,23 @@ export class CapaService {
 
   constructor(private readonly http: HttpClient) {}
 
+  /**
+   * Le registre, filtré par le serveur — qui pagine.
+   *
+   * <p>`dueBefore` au format « aaaa-mm-jj » retient ce qui échoit à cette date
+   * ou avant, et écarte les dossiers sans échéance : on demande « ce qui tombe
+   * avant le 15 », et un dossier qui ne tombe jamais n'y répond pas.
+   */
   listCases(page = 0, size = 50, status?: CapaStatus, criticity?: CapaCriticity,
-            ownerId?: string): Observable<CapaPage> {
+            ownerId?: string, dueBefore?: string): Observable<CapaPage> {
     if (environment.useMockApi) {
-      return of(this.mockPage(status, criticity, ownerId)).pipe(delay(150));
+      return of(this.mockPage(status, criticity, ownerId, dueBefore)).pipe(delay(150));
     }
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
     if (criticity) params = params.set('criticity', criticity);
     if (ownerId) params = params.set('ownerId', ownerId);
+    if (dueBefore) params = params.set('dueBefore', dueBefore);
     return this.http.get<CapaPage>(this.endpoint, { params });
   }
 
@@ -456,11 +464,15 @@ export class CapaService {
     return this.http.patch<CapaCaseResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
   }
 
-  private mockPage(status?: CapaStatus, criticity?: CapaCriticity, ownerId?: string): CapaPage {
+  private mockPage(status?: CapaStatus, criticity?: CapaCriticity, ownerId?: string,
+                   dueBefore?: string): CapaPage {
     const filtered = this.mockStore.filter(c =>
       (!status || c.status === status)
       && (!criticity || c.criticity === criticity)
-      && (!ownerId || c.ownerId === ownerId));
+      && (!ownerId || c.ownerId === ownerId)
+      // Un dossier SANS échéance est écarté, comme en base : on demande ce qui
+      // tombe avant une date, et un dossier qui ne tombe jamais n'y répond pas.
+      && (!dueBefore || (!!c.dueDate && c.dueDate <= dueBefore)));
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length

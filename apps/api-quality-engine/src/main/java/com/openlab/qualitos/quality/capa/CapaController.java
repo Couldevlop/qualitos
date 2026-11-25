@@ -6,9 +6,11 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
@@ -22,18 +24,25 @@ public class CapaController {
     }
 
     /**
-     * Le registre, filtré par statut, criticité et pilote.
+     * Le registre, filtré par statut, criticité, pilote et échéance limite.
      *
      * <p>Le pilote arrive par son compte ({@code sub}), jamais par son nom : deux
      * personnes peuvent porter le même, et un nom se réécrit.
+     *
+     * <p>{@code dueBefore} rend ce qui échoit à cette date ou avant : c'est la
+     * question qu'on pose à un registre d'actions — « qu'est-ce qui tombe
+     * cette semaine » — et elle se tranchait jusqu'ici à l'œil, colonne par
+     * colonne, sur une liste paginée.
      */
     @GetMapping("/cases")
     public Page<CapaDto.CaseResponse> list(
             @RequestParam(required = false) CapaStatus status,
             @RequestParam(required = false) CapaCriticity criticity,
             @RequestParam(required = false) UUID ownerId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate dueBefore,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, criticity, ownerId, pageable);
+        return service.findAll(status, criticity, ownerId, dueBefore, pageable);
     }
 
     @PostMapping("/cases")

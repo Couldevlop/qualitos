@@ -6818,6 +6818,18 @@ Portail clients</source>
         <source>Référence</source>
         <target state="translated">编号</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">截止日期不晚于</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">清除截止日期筛选</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">CAPA 有效性</target>

@@ -44,7 +44,28 @@ export class CapaListComponent implements OnInit {
   /** Le nom du pilote des dossiers anciens qui ne l'ont pas recopié, lu dans l'annuaire (ADR 0091). */
   private readonly names = new AccountNames(this.directory);
   readonly statusFilter = new FormControl<CapaStatus | ''>('');
-  readonly statuses: CapaStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'];
+
+  /**
+   * LES TROIS ÉTATS QU'ON FILTRE : ouvert, en cours, clos.
+   *
+   * <p>« Rejeté » quittait le choix : un dossier rejeté n'est pas une étape du
+   * traitement mais une décision de ne pas le traiter, et on ne vient pas au
+   * registre pour en faire la revue. Les dossiers des deux états retirés —
+   * rejetés et clos après vérification — restent VISIBLES, sous « Tous » :
+   * le choix se réduit, la liste ne se tronque pas.
+   */
+  readonly statuses: CapaStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED'];
+
+  /**
+   * L'échéance limite : ce qui tombe à cette date ou avant.
+   *
+   * <p>« Qu'est-ce qui tombe cette semaine » est la question qu'on pose à un
+   * registre d'actions, et elle se tranchait à l'œil, colonne par colonne,
+   * sur une liste paginée. Le filtre part au SERVEUR : retenir la page rendue
+   * n'aurait gardé que les dossiers à échoir présents sur cette page, sous un
+   * compteur qui annonce le total des autres.
+   */
+  readonly dueBeforeFilter = new FormControl<Date | null>(null);
   readonly criticityFilter = new FormControl<CapaCriticity | ''>('');
   readonly criticities: CapaCriticity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 
@@ -85,13 +106,15 @@ export class CapaListComponent implements OnInit {
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.criticityFilter.valueChanges.pipe(startWith(this.criticityFilter.value)),
       this.ownerFilter.valueChanges.pipe(startWith(this.ownerFilter.value)),
+      this.dueBeforeFilter.valueChanges.pipe(startWith(this.dueBeforeFilter.value)),
       this.page$,
       this.refresh$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
-      switchMap(([status, criticity, owner, p]) =>
+      switchMap(([status, criticity, owner, echeance, p]) =>
         this.svc.listCases(p.index, p.size, status || undefined, criticity || undefined,
-                           owner || undefined).pipe(
+                           owner || undefined,
+                           CapaListComponent.enDateIso(echeance) ?? undefined).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[capa-list] listCases failed', err?.status, err?.error?.title);
@@ -111,6 +134,27 @@ export class CapaListComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
+  }
+
+  /**
+   * Un `Date` du calendrier devient « aaaa-mm-jj » sur ses composantes LOCALES.
+   *
+   * <p>Surtout pas `toISOString()`, qui repasse par UTC et recule d'un jour à
+   * l'est de Greenwich : le 15 demandé partirait comme le 14, et la liste
+   * perdrait les dossiers qui échoient justement ce jour-là.
+   */
+  static enDateIso(valeur: Date | null | undefined): string | null {
+    if (!(valeur instanceof Date) || Number.isNaN(valeur.getTime())) {
+      return null;
+    }
+    const mois = String(valeur.getMonth() + 1).padStart(2, '0');
+    const jour = String(valeur.getDate()).padStart(2, '0');
+    return `${valeur.getFullYear()}-${mois}-${jour}`;
+  }
+
+  /** Vide le filtre d'échéance : un calendrier ne se désélectionne pas tout seul. */
+  effacerEcheance(): void {
+    this.dueBeforeFilter.setValue(null);
   }
 
   onPage(e: PageEvent): void {

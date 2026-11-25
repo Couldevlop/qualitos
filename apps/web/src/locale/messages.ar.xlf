@@ -6818,6 +6818,18 @@ Portail clients</source>
         <source>Référence</source>
         <target state="translated">المرجع</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">تاريخ الاستحقاق قبل</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">افتح التقويم</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">إزالة تصفية تاريخ الاستحقاق</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">فعالية الإجراءات التصحيحية</target>

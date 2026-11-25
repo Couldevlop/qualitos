@@ -6818,6 +6818,18 @@ Portail clients</source>
         <source>Référence</source>
         <target state="translated">管理番号</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">期限が次の日以前</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">カレンダーを開く</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">期限の絞り込みを解除</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">CAPA の有効性</target>
