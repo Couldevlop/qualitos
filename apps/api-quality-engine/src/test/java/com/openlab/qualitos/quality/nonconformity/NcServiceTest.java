@@ -453,6 +453,38 @@ class NcServiceTest {
     }
 
     /**
+     * SANS NOTE : l ecart se resout, et rien ne s ecrit dans la note. Une note
+     * blanche n efface pas non plus ce qu une reprise anterieure aurait laisse.
+     */
+    @Test
+    void resolve_sansNote_neTouchePasLaNote() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        n.setResolutionNote("ce qu une reprise anterieure avait ecrit");
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+        when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
+
+        service.resolve(n.getId(), new NcDto.ResolveRequest(null));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+        assertThat(n.getResolutionNote()).isEqualTo("ce qu une reprise anterieure avait ecrit");
+        assertThat(n.getResolvedAt()).isNotNull();
+    }
+
+    /** Une note blanche vaut une absence de note : elle ne s ecrit pas. */
+    @Test
+    void resolve_noteBlanche_neSEcritPas() {
+        NonConformity n = nc(TENANT, NcStatus.ACTION_DEFINED);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(n)).thenReturn(n);
+        when(capaService.hasAnyCaseFor(any(), any())).thenReturn(true);
+
+        service.resolve(n.getId(), new NcDto.ResolveRequest("   "));
+
+        assertThat(n.getResolutionNote()).isNull();
+    }
+
+    /**
      * Resoudre, c est dire « ce qui devait etre fait l a ete ». Un dossier
      * encore en cours dit l inverse sur la fiche voisine : l ecart passait
      * « resolu » au-dessus d actions non executees.

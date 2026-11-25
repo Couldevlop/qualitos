@@ -400,7 +400,13 @@ export interface UpdateNcRequest {
 }
 
 export interface ResolveNcRequest {
-  resolutionNote: string;
+  /**
+   * Ce qui a resolu l'ecart, en texte libre. FACULTATIF : l'ecran ne le
+   * reclame plus -- les actions menees se lisent au D5 et au D7 du traitement
+   * 8D, et les preuves de leur efficacite au D6. Le champ reste pour les
+   * ecarts resolus avant ce jour, et pour l'API publique.
+   */
+  resolutionNote?: string;
 }
 
 /** Le rejet d'une réclamation externe : le motif est obligatoire. */
@@ -525,16 +531,31 @@ export type EightDStatus = 'DRAFT' | 'ISSUED';
  *
  * `sourced` à false veut dire « rien à montrer », et `sourceLabel` dit alors
  * POURQUOI : c'est ce qui distingue un 8D d'un formulaire aux cases vides.
- * `editable` n'est vrai que pour D1, D3 et D8, les trois qui n'ont aucune source
- * dans la plateforme.
+ * `editable` n'est vrai que pour D8, la seule discipline qu'aucun module ne sait
+ * renseigner : l'equipe vient de la fiche, l'endiguement de son dossier CAPA.
  */
 export interface EightDDiscipline {
   code: string;
   title: string;
   sourced: boolean;
+  /** Vide dès que la discipline porte quelque chose : ce qu'elle montre dit d'où il vient. */
   sourceLabel: string;
   lines: string[];
+  /**
+   * Ce que la discipline montre en colonnes, tel que le document émis le porte.
+   *
+   * L'équipe du D1, à ce jour. L'écran le REND, il ne le refabrique pas : une
+   * liste de noms ici et un tableau dans le PDF finiraient par diverger.
+   */
+  tables: EightDTable[];
   editable: boolean;
+}
+
+/** Un tableau d'une discipline : ses colonnes, puis ses lignes de cellules. */
+export interface EightDTable {
+  caption: string;
+  columns: string[];
+  rows: string[][];
 }
 
 /** La preuve d'intégrité d'un rapport émis. */

@@ -103,8 +103,9 @@ public class NcController {
     @PostMapping("/{id}/resolve")
     @RequiresPermission(Permission.NC_PROCESS)
     public NcDto.Response resolve(@PathVariable UUID id,
-                                  @Valid @RequestBody NcDto.ResolveRequest request) {
-        return service.resolve(id, request);
+                                  @Valid @RequestBody(required = false) NcDto.ResolveRequest request) {
+        // Corps absent : l'ecran resout d'un seul geste, sans rien reclamer.
+        return service.resolve(id, request == null ? new NcDto.ResolveRequest(null) : request);
     }
 
     /**

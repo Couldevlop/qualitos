@@ -123,16 +123,31 @@ public class CapaService {
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, CapaCriticity criticity,
                                               UUID ownerId, Pageable pageable) {
+        return findAll(status, criticity, ownerId, null, pageable);
+    }
+
+    /**
+     * Le registre filtré par statut, criticité, pilote et échéance limite.
+     *
+     * <p>{@code dueBefore} retient les dossiers à échoir à cette date ou avant,
+     * et écarte ceux qui n'ont pas d'échéance : on demande « ce qui tombe avant
+     * le 15 », et un dossier qui ne tombe jamais n'y répond pas.
+     */
+    @Transactional(readOnly = true)
+    public Page<CapaDto.CaseResponse> findAll(CapaStatus status, CapaCriticity criticity,
+                                              UUID ownerId, LocalDate dueBefore,
+                                              Pageable pageable) {
         UUID tenantId = requireTenantId();
         Optional<UUID> seulement = CapaScope.restriction(scope);
         if (seulement.isPresent()) {
             return caseRepository
-                    .findConcerning(tenantId, status, criticity, ownerId, seulement.get(), pageable)
+                    .findConcerning(tenantId, status, criticity, ownerId, dueBefore,
+                            seulement.get(), pageable)
                     .map(c -> toResponse(c, false));
         }
         Page<CapaCase> page;
-        if (criticity != null || ownerId != null) {
-            page = caseRepository.search(tenantId, status, criticity, ownerId, pageable);
+        if (criticity != null || ownerId != null || dueBefore != null) {
+            page = caseRepository.search(tenantId, status, criticity, ownerId, dueBefore, pageable);
         } else {
             page = status != null
                     ? caseRepository.findByTenantIdAndStatus(tenantId, status, pageable)

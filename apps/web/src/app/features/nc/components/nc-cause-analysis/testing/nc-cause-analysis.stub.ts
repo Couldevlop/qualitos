@@ -23,6 +23,7 @@ import { IshikawaDiagramResponse } from '../../../../ishikawa/ishikawa.types';
 export class NcCauseAnalysisStubComponent {
   @Input() fiveWhys: FiveWhysAnalysis[] = [];
   @Input() ishikawa: IshikawaDiagramResponse[] = [];
+  @Input() lectureSeule = false;
   @Output() readonly rootCauseConcluded = new EventEmitter<FiveWhysAnalysis>();
 }
 

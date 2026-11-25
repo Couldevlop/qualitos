@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
+import { QosDateAdapter } from '../../shared/date/qos-date-adapter';
 import { SharedModule } from '../../shared/shared.module';
 import { CapaCreateDialogModule } from './capa-create-dialog.module';
 import { CapaVerificationFieldsModule } from './capa-verification-fields.module';
@@ -58,8 +61,17 @@ const routes: Routes = [
   // d'actions à l'intérieur d'une action n'a pas d'objet. Le tableau reste là
   // où il en a un : la fiche d'un écart, qui peut porter plusieurs CAPA, et le
   // rapport 8D.
+  // Selecteur de date : cable ICI seulement, comme dans les modules APQP et
+  // cout de la qualite, pour que son poids ne pese que sur l'ecran qui s'en
+  // sert -- le registre, qui filtre par echeance limite.
   imports: [SharedModule, UiModule, UserPickerModule, MatButtonToggleModule, MatRadioModule,
+            MatDatepickerModule, MatNativeDateModule,
             CapaCreateDialogModule, CapaVerificationFieldsModule,
-            RouterModule.forChild(routes)]
+            RouterModule.forChild(routes)],
+  // L'adaptateur du produit remplace celui de `MatNativeDateModule`, qui ne
+  // sait pas RELIRE ce qu'il affiche : il s'en remet a `Date.parse`, qui ne
+  // connait que l'ordre americain. Chaque module differe ayant son propre
+  // injecteur, la substitution se pose ici.
+  providers: [{ provide: DateAdapter, useClass: QosDateAdapter }]
 })
 export class CapaModule {}

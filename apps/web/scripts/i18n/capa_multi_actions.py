@@ -143,20 +143,6 @@ TRANSLATIONS = {
         '尚未为此不合格编写此类措施。'),
 
     # --- le rapport 8D montre aussi l'etat vivant du dossier ----------------
-    'nc.8d.live-note-table': (
-        "État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.",
-        'Current state of the case. The issued PDF carries this table, frozen at issuance.',
-        'Estado actual del expediente. El PDF emitido incluye esta tabla, congelada en la emisión.',
-        'الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذا الجدول، مجمَّدًا وقت الإصدار.',
-        '案件の現在の状態です。発行された PDF には、発行時点で固定されたこの表が含まれます。',
-        '档案的当前状态。签发的 PDF 包含此表格，在签发时已固化。'),
-    'nc.8d.live-note-evidence': (
-        "État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.",
-        'Current state of the case. The issued PDF carries their count, frozen at issuance.',
-        'Estado actual del expediente. El PDF emitido incluye su recuento, congelado en la emisión.',
-        'الحالة الحالية للملف. يتضمّن ملف PDF الصادر عددها، مجمَّدًا وقت الإصدار.',
-        '案件の現在の状態です。発行された PDF には、発行時点で固定された件数が記載されます。',
-        '档案的当前状态。签发的 PDF 包含其数量，在签发时已固化。'),
     'nc.8d.evidence-empty': (
         "Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur"
         " l'écart : elles s'attachent au dossier.",
@@ -167,13 +153,6 @@ TRANSLATIONS = {
         'ستُرفَق الأدلة هنا بمجرد فتح ملف إجراء تصحيحي على الانحراف؛ فهي تابعة للملف.',
         '不適合に CAPA 案件が開かれ次第、証拠はここに添付されます。証拠は案件に属します。',
         '一旦为该不合格开启 CAPA 档案，证据就可在此处附件：它们属于档案。'),
-    'nc.8d.live-note-figures': (
-        "État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.",
-        'Current state of the case. The issued PDF carries these diagrams, frozen at issuance.',
-        'Estado actual del expediente. El PDF emitido incluye estos esquemas, congelados en la emisión.',
-        'الحالة الحالية للملف. يتضمّن ملف PDF الصادر هذه المخططات، مجمَّدة وقت الإصدار.',
-        '案件の現在の状態です。発行された PDF には、発行時点で固定されたこれらの図が含まれます。',
-        '档案的当前状态。签发的 PDF 包含这些图示，在签发时已固化。'),
     'nc.8d.live-note': (
         "État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.",
         'Current state of the case. The issued PDF carries only the text frozen at issuance.',

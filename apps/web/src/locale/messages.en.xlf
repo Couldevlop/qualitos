@@ -6858,6 +6858,18 @@ Customer portal</target>
         <source>Référence</source>
         <target state="translated">Reference</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">Due on or before</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Open the calendar</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">Remove the due-date filter</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">CAPA effectiveness</target>
@@ -7746,21 +7758,9 @@ Customer portal</target>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">No action of this nature has been written for this nonconformity yet.</target>
       </trans-unit>
-      <trans-unit id="nc.8d.live-note-table" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
-        <target state="translated">Current state of the case. The issued PDF carries this table, frozen at issuance.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
-        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
-        <target state="translated">Current state of the case. The issued PDF carries their count, frozen at issuance.</target>
-      </trans-unit>
       <trans-unit id="nc.8d.evidence-empty" datatype="html">
         <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
         <target state="translated">Evidence will be attached here as soon as a CAPA case is opened on the non-conformity: it belongs to the case.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-figures" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
-        <target state="translated">Current state of the case. The issued PDF carries these diagrams, frozen at issuance.</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
@@ -22754,34 +22754,6 @@ declared income
         <source>Shitsuke (Maintenir)</source>
         <target state="translated">Shitsuke (Sustain)</target>
       </trans-unit>
-      <trans-unit id="nc.resolve.title" datatype="html">
-        <source>Résoudre la non-conformité</source>
-        <target state="translated">Resolve the non-conformance</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
-        <target state="translated">Describe the action taken and the evidence of effectiveness to close the resolution of</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-label" datatype="html">
-        <source>Note de résolution</source>
-        <target state="translated">Resolution note</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
-        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
-        <target state="translated">Corrective action taken, verification, evidence of effectiveness…</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-required" datatype="html">
-        <source>La note de résolution est requise.</source>
-        <target state="translated">The resolution note is required.</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.submit" datatype="html">
-        <source>Résoudre</source>
-        <target state="translated">Resolve</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.success" datatype="html">
-        <source>Non-conformité résolue.</source>
-        <target state="translated">Non-conformance resolved.</target>
-      </trans-unit>
       <trans-unit id="nc.detail.reject" datatype="html">
         <source>Rejeter</source>
         <target state="translated">Reject</target>
@@ -22934,22 +22906,6 @@ declared income
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">Content frozen, signed (Ed25519 + ML-DSA-65) and anchored.</target>
       </trans-unit>
-      <trans-unit id="nc.8d.saisies-title" datatype="html">
-        <source>Les trois disciplines à saisir</source>
-        <target state="translated">The three disciplines to fill in</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
-        <target state="translated">The team, the containment and the recognition have no source in the platform: they are filled in here. The other five disciplines are aggregated from the non-conformity case.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-label" datatype="html">
-        <source>D1 — Équipe</source>
-        <target state="translated">D1 — Team</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-placeholder" datatype="html">
-        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
-        <target state="translated">One person per line, with their role in handling the deviation</target>
-      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">Export</target>
@@ -22965,14 +22921,6 @@ declared income
       <trans-unit id="nc.8d.export-needs-issue" datatype="html">
         <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
         <target state="translated">The PDF exists only once the report is issued: issuing freezes the content, signs its fingerprint and anchors it. Without that, two exports of the same report could differ.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions de sécurisation immédiates</source>
-        <target state="translated">D3 — Immediate containment actions</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
-        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
-        <target state="translated">What protected the customer while the cause was being found: sorting, lot hold, tightened inspection…</target>
       </trans-unit>
       <trans-unit id="nc.8d.recognition-label" datatype="html">
         <source>D8 — Reconnaissance de l'équipe</source>
@@ -23154,14 +23102,6 @@ declared income
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">You are not allowed to close a non-conformity. Ask a quality manager to carry out this step.</target>
       </trans-unit>
-      <trans-unit id="nc.blocker.action-to-do" datatype="html">
-        <source>à mener</source>
-        <target state="translated">to carry out</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
-        <source>faite, son efficacité reste à vérifier</source>
-        <target state="translated">done, its effectiveness still has to be verified</target>
-      </trans-unit>
       <trans-unit id="nc.blocker.actions-count-one" datatype="html">
         <source>1 action le retient</source>
         <target state="translated">1 action is holding it</target>
@@ -23169,10 +23109,6 @@ declared income
       <trans-unit id="nc.blocker.actions-count-many" datatype="html">
         <source><x id="count"/> actions le retiennent</source>
         <target state="translated"><x id="count"/> actions are holding it</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-pending" datatype="html">
-        <source>en attente</source>
-        <target state="translated">pending</target>
       </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>

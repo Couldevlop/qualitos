@@ -1,6 +1,8 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -42,7 +44,10 @@ describe('CapaListComponent', () => {
       declarations: [CapaListComponent],
       // UserPickerModule : le filtre de pilote choisit la personne dans
       // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      // MatDatepicker : le filtre d'échéance ouvre un calendrier, câblé dans
+      // le module du registre et non à la racine (coût par écran).
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
+                MatDatepickerModule, MatNativeDateModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -98,10 +103,6 @@ describe('CapaListComponent', () => {
     expect(el.querySelector('h1')?.textContent).toContain('CAPA');
   });
 
-  it('exposes the canonical CAPA statuses', () => {
-    expect(component.statuses).toEqual(['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED']);
-  });
-
   it('declares the expected displayed columns', () => {
     expect(component.displayedColumns).toEqual(
       ['title', 'type', 'criticity', 'status', 'owner', 'createdAt', 'dueDate']);
@@ -137,9 +138,11 @@ describe('CapaListComponent', () => {
     const sub = component.cases$.subscribe();
     component.statusFilter.setValue('OPEN');
     component.criticityFilter.setValue('HIGH');
-    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', 'HIGH', undefined]);
+    expect(list.calls.mostRecent().args.slice(2))
+      .toEqual(['OPEN', 'HIGH', undefined, undefined]);
     component.criticityFilter.setValue('');
-    expect(list.calls.mostRecent().args.slice(2)).toEqual(['OPEN', undefined, undefined]);
+    expect(list.calls.mostRecent().args.slice(2))
+      .toEqual(['OPEN', undefined, undefined, undefined]);
     sub.unsubscribe();
   });
 
@@ -155,10 +158,56 @@ describe('CapaListComponent', () => {
     fixture.detectChanges();
     const sub = component.cases$.subscribe();
     component.ownerFilter.setValue('kc-1');
-    expect(list.calls.mostRecent().args.slice(2)).toEqual([undefined, undefined, 'kc-1']);
+    expect(list.calls.mostRecent().args.slice(2))
+      .toEqual([undefined, undefined, 'kc-1', undefined]);
     component.ownerFilter.setValue(null);
-    expect(list.calls.mostRecent().args.slice(2)).toEqual([undefined, undefined, undefined]);
+    expect(list.calls.mostRecent().args.slice(2))
+      .toEqual([undefined, undefined, undefined, undefined]);
     sub.unsubscribe();
+  });
+
+  /**
+   * L'ECHEANCE LIMITE PART AU SERVEUR, qui pagine : « qu'est-ce qui tombe
+   * cette semaine » se tranchait a l'oeil, colonne par colonne, et trier la
+   * colonne Echeance ne repondait que pour la page affichee.
+   */
+  it('filtre la liste par échéance limite, côté serveur', async () => {
+    const list = spyOn(TestBed.inject(CapaService), 'listCases').and.returnValue(of({
+      content: [], totalElements: 0, totalPages: 0, number: 0, size: 20
+    }));
+    fixture.detectChanges();
+    const sub = component.cases$.subscribe();
+
+    component.dueBeforeFilter.setValue(new Date(2026, 11, 15));
+    expect(list.calls.mostRecent().args.slice(2))
+      .toEqual([undefined, undefined, undefined, '2026-12-15']);
+
+    component.effacerEcheance();
+    expect(list.calls.mostRecent().args.slice(2))
+      .toEqual([undefined, undefined, undefined, undefined]);
+    sub.unsubscribe();
+  });
+
+  /**
+   * LA DATE SE LIT SUR SES COMPOSANTES LOCALES. `toISOString()` repasse par
+   * UTC et recule d'un jour a l'est de Greenwich : le 15 demande partirait
+   * comme le 14, et la liste perdrait les dossiers qui echoient ce jour-la.
+   */
+  it('envoie le jour choisi, sans décalage de fuseau', () => {
+    // 1er janvier a minuit : le cas ou UTC change l'annee, pas seulement le jour.
+    expect(CapaListComponent.enDateIso(new Date(2027, 0, 1))).toBe('2027-01-01');
+    expect(CapaListComponent.enDateIso(null)).toBeNull();
+    expect(CapaListComponent.enDateIso(new Date('pas-une-date'))).toBeNull();
+  });
+
+  /**
+   * TROIS ETATS AU CHOIX : ouvert, en cours, clos. « Rejete » n'est pas une
+   * etape du traitement mais la decision de ne pas traiter, et on ne vient pas
+   * au registre pour en faire la revue. Les dossiers des etats retires restent
+   * visibles sous « Tous » : le choix se reduit, la liste ne se tronque pas.
+   */
+  it('ne propose au filtre que les trois états du traitement', () => {
+    expect(component.statuses).toEqual(['OPEN', 'IN_PROGRESS', 'RESOLVED']);
   });
 
   it('computes badge classes from status and criticity', () => {
@@ -221,7 +270,8 @@ describe('CapaListComponent (chargement API)', () => {
       declarations: [CapaListComponent],
       // UserPickerModule : le filtre de pilote choisit la personne dans
       // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
+                MatDatepickerModule, MatNativeDateModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -353,7 +403,8 @@ describe('CapaListComponent — création ouverte par un lien', () => {
       declarations: [CapaListComponent],
       // UserPickerModule : le filtre de pilote choisit la personne dans
       // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
+                MatDatepickerModule, MatNativeDateModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -386,7 +437,8 @@ describe('CapaListComponent — création ouverte par un lien', () => {
       declarations: [CapaListComponent],
       // UserPickerModule : le filtre de pilote choisit la personne dans
       // l'annuaire, et sans lui le champ n'a aucun accesseur de valeur.
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule,
+                MatDatepickerModule, MatNativeDateModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

@@ -40,27 +40,6 @@ TRANSLATIONS = {
         'المحتوى مُثبَّت وموقَّع (Ed25519 + ML-DSA-65) ومُرسَّخ.',
         '内容を確定し、署名（Ed25519 + ML-DSA-65）とアンカーを付与しました。',
         '内容已固定、签名（Ed25519 + ML-DSA-65）并锚定。'),
-    'nc.8d.saisies-title': (
-        'Les trois disciplines à saisir', 'The three disciplines to fill in',
-        'Las tres disciplinas que se rellenan', 'المراحل الثلاث التي تُدخَل يدوياً',
-        '手入力する 3 つの規律', '需手工填写的三个步骤'),
-    'nc.8d.saisies-hint': (
-        "L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.",
-        'The team, the containment and the recognition have no source in the platform: they are filled in here. The other five disciplines are aggregated from the non-conformity case.',
-        'El equipo, la contención y el reconocimiento no tienen ninguna fuente en la plataforma: se rellenan aquí. Las otras cinco disciplinas se agregan del expediente de la no conformidad.',
-        'الفريق والاحتواء وتقدير الجهد لا مصدر لها في المنصة: تُدخَل هنا. أما المراحل الخمس الأخرى فتُجمَّع من ملف حالة عدم المطابقة.',
-        'チーム、暫定対策、功績の承認はプラットフォームに情報源がないため、ここで入力します。残る 5 つの規律は不適合の案件から集約されます。',
-        '团队、围堵措施和团队认可在平台中没有数据来源，需在此填写。其余五个步骤从不合格项案卷中汇总。'),
-    'nc.8d.team-label': (
-        'D1 — Équipe', 'D1 — Team', 'D1 — Equipo', 'D1 — الفريق',
-        'D1 — チーム', 'D1 — 团队'),
-    'nc.8d.team-placeholder': (
-        "Une personne par ligne, avec son rôle dans le traitement de l'écart",
-        'One person per line, with their role in handling the deviation',
-        'Una persona por línea, con su función en el tratamiento de la desviación',
-        'شخص واحد في كل سطر، مع دوره في معالجة الانحراف',
-        '1 行に 1 名、逸脱対応における役割を添えて',
-        '每行一人，并注明其在偏差处理中的角色'),
     'nc.8d.export': (
         'Exporter', 'Export', 'Exportar', 'تصدير', 'エクスポート', '导出'),
     'nc.8d.export-tooltip': (
@@ -78,17 +57,6 @@ TRANSLATIONS = {
         'لا يوجد ملف PDF إلا بعد إصدار التقرير: الإصدار يجمّد المحتوى ويوقّع بصمته ويرسّخها. وبدون ذلك قد يختلف تصديران للتقرير نفسه.',
         'PDF はレポートを発行して初めて存在します。発行は内容を確定し、そのフィンガープリントに署名してアンカーします。これがないと、同じレポートの二つのエクスポートが食い違う可能性があります。',
         '只有在报告签发之后才有 PDF：签发会冻结内容、对其指纹签名并锚定。否则同一报告的两次导出可能不一致。'),
-    'nc.8d.containment-label': (
-        "D3 — Actions de sécurisation immédiates", 'D3 — Immediate containment actions',
-        'D3 — Acciones de contención inmediatas', 'D3 — إجراءات الاحتواء الفورية',
-        'D3 — 緊急の暫定対策', 'D3 — 立即围堵措施'),
-    'nc.8d.containment-placeholder': (
-        'Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…',
-        'What protected the customer while the cause was being found: sorting, lot hold, tightened inspection…',
-        'Lo que protegió al cliente mientras se buscaba la causa: selección, bloqueo de lote, control reforzado…',
-        'ما حمى العميل أثناء البحث عن السبب: فرز، حجز دفعة، تفتيش مشدّد…',
-        '原因究明の間に顧客を守った措置：選別、ロット保留、検査強化など',
-        '在查找原因期间保护客户的措施：分选、批次冻结、加严检验……'),
     'nc.8d.recognition-label': (
         "D8 — Reconnaissance de l'équipe", 'D8 — Team recognition',
         'D8 — Reconocimiento del equipo', 'D8 — تقدير جهد الفريق',

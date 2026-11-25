@@ -61,10 +61,6 @@ import {
   NcReopenDialogComponent,
   NcReopenDialogData
 } from '../nc-reopen-dialog/nc-reopen-dialog.component';
-import {
-  NcResolveDialogComponent,
-  NcResolveDialogData
-} from '../nc-resolve-dialog/nc-resolve-dialog.component';
 
 /**
  * Les huit disciplines, par leur code. Un type ferme plutot qu une chaine :
@@ -1323,14 +1319,7 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       this.expliquerEtapeAvantResolution(n);
       return;
     }
-    const data: NcResolveDialogData = { ncId: n.id, reference: n.reference };
-    this.dialog
-      .open(NcResolveDialogComponent, {
-        data, autoFocus: 'first-tabbable', restoreFocus: true,
-        panelClass: 'qos-dialog-panel'
-      })
-      .afterClosed()
-      .subscribe(resolved => { if (resolved) this.reload$.next(); });
+    this.transition('resolve');
   }
 
   /**
@@ -1508,12 +1497,17 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * <p>« Définir l'action » n'en fait plus partie : c'est l'ouverture de la CAPA
    * qui fait avancer l'écart, et le serveur tient les deux d'un seul geste.
    */
-  private transition(action: 'start-analysis' | 'close' | 'cancel',
+  private transition(action: 'start-analysis' | 'resolve' | 'close' | 'cancel',
                      cloture?: CloseNcRequest): void {
     if (this.acting$.value) return;
     this.acting$.next(true);
     const call =
       action === 'start-analysis' ? this.svc.startAnalysis(this.ncId)
+      // La resolution ne reclame plus rien : ce qui a resolu l'ecart est deja
+      // ecrit, et mieux -- les actions menees au D5 et au D7, les preuves de
+      // leur efficacite au D6. La note libre redisait tout cela en travers du
+      // geste, dans une fenetre qu'il fallait remplir pour avancer.
+      : action === 'resolve' ? this.svc.resolve(this.ncId, {})
       : action === 'close' ? this.svc.close(
           this.ncId, cloture ?? { pfmeaImpacted: false, controlPlanImpacted: false })
       : this.svc.cancel(this.ncId);
@@ -2046,24 +2040,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     ligne.scrollIntoView({ behavior: 'smooth', block: 'center' });
     ligne.focus({ preventScroll: true });
-  }
-
-  /**
-   * CE QU'ON ATTEND de cette action-la, en toutes lettres.
-   *
-   * <p>Le serveur rend un code et jamais une phrase : il ne connait pas la
-   * langue du lecteur, et un code se traduit, se teste et survit a une
-   * reformulation. Un code inconnu -- serveur plus recent que l'ecran -- rend
-   * une phrase generique plutot qu'un libelle vide.
-   */
-  attenteDeLAction(action: NcBlockingAction): string {
-    if (action.reason === 'TO_DO') {
-      return $localize`:@@nc.blocker.action-to-do:à mener`;
-    }
-    if (action.reason === 'TO_VERIFY') {
-      return $localize`:@@nc.blocker.action-to-verify:faite, son efficacité reste à vérifier`;
-    }
-    return $localize`:@@nc.blocker.action-pending:en attente`;
   }
 
   /** Le motif lui-meme sert de cle : deux motifs du meme code ne coexistent pas. */

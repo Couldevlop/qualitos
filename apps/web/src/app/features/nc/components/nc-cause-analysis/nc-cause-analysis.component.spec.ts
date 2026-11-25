@@ -48,13 +48,41 @@ describe('NcCauseAnalysisComponent — conclure la cause racine', () => {
     return hote().querySelector(`[data-test="${test}"]`);
   }
 
-  function monter(chaines: FiveWhysAnalysis[]): void {
+  function monter(chaines: FiveWhysAnalysis[], lectureSeule = false): void {
     fixture = TestBed.createComponent(NcCauseAnalysisComponent);
     component = fixture.componentInstance;
     component.fiveWhys = chaines;
     component.ishikawa = [];
+    component.lectureSeule = lectureSeule;
     fixture.detectChanges();
   }
+
+  // ---------- montrer sans laisser travailler ----------
+
+  /**
+   * LE RAPPORT 8D DONNE LA CAUSE A LIRE, il ne la travaille pas. La descente
+   * porte deja sa conclusion dans sa derniere case ; le champ et les deux
+   * boutons y faisaient du document un formulaire de plus, a cote des ecrans
+   * dedies qui sont les leurs.
+   */
+  it('en lecture seule, montre la descente sans rien proposer d\'y ecrire', () => {
+    monter([chaine(3, 'Pas de plan préventif')], true);
+
+    expect(hote().querySelector('qos-five-whys-cascade'))
+      .withContext('la descente se lit toujours').not.toBeNull();
+    expect(un('cause-racine-champ')).toBeNull();
+    expect(un('cause-racine-conclure')).toBeNull();
+    expect(un('cause-racine-retirer')).toBeNull();
+    expect(un('cinq-pourquoi-ouvrir')).toBeNull();
+  });
+
+  /** Sur la fiche de l'ecart, en revanche, tout reste a portee. */
+  it('laisse travailler la cause partout ailleurs', () => {
+    monter([chaine(3, 'Pas de plan préventif')]);
+
+    expect(un('cause-racine-champ')).not.toBeNull();
+    expect(un('cinq-pourquoi-ouvrir')).not.toBeNull();
+  });
 
   beforeEach(async () => {
     analyses = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['setRootCause', 'clearRootCause']);

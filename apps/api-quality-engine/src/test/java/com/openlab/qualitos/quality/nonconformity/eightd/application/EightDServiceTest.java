@@ -77,15 +77,21 @@ class EightDServiceTest {
         assertThat(vue.issuable()).isTrue();
     }
 
+    /**
+     * UNE SEULE SE SAISIT, LA RECONNAISSANCE (ADR 0139). L'equipe vient de la
+     * fiche et l'endiguement de son dossier CAPA : les declarer modifiables
+     * ferait ouvrir un champ par l'ecran pour une donnee qui a deja sa source,
+     * et deux verites sur la meme equipe finiraient par diverger.
+     */
     @Test
-    void seules_d1_d3_et_d8_sont_declarees_modifiables() {
+    void seule_d8_est_declaree_modifiable() {
         EightDDto.ReportView vue = service.consulter(NC);
 
         List<String> modifiables = vue.disciplines().stream()
                 .filter(EightDDto.DisciplineView::editable)
                 .map(EightDDto.DisciplineView::code)
                 .toList();
-        assertThat(modifiables).containsExactly("D1", "D3", "D8");
+        assertThat(modifiables).containsExactly("D8");
     }
 
     @Test
@@ -105,9 +111,13 @@ class EightDServiceTest {
 
         assertThat(depot.findByNc(TENANT, NC)).isPresent();
         assertThat(vue.team()).isEqualTo("Ada, Grace");
-        // Les trois disciplines saisies ne sont plus vides ; le rapport reste
-        // partiel pour les cinq qui n'ont, ici, aucune source a agreger.
-        assertThat(vue.missingCodes()).doesNotContain("D1", "D3", "D8");
+        // CE QUI EST SAISI EST STOCKE, ET CELA NE SUFFIT PLUS A SERVIR UNE
+        // DISCIPLINE : le D3 ne porte que les actions d'endiguement du dossier
+        // CAPA, et un texte tape a la main ne les remplace pas. Le D1 et le D8,
+        // eux, comptent encore leur saisie -- l'equipe de la fiche et la
+        // reconnaissance n'ont pas d'autre source ici.
+        assertThat(vue.missingCodes()).doesNotContain("D1", "D8");
+        assertThat(vue.missingCodes()).contains("D3");
         assertThat(vue.partial()).isTrue();
     }
 
@@ -332,11 +342,13 @@ class EightDServiceTest {
                     null, null, null);
             List<EightDSources.Capa> capas = enrichi
                     ? List.of(new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "OPEN", null, null,
-                            null, null, 0,
+                            null, null, List.of(),
                             List.of(new EightDSources.Action("Remplacer", null, "CORRECTIVE",
-                                    "OPEN", null, null, null, 0))))
+                                    "OPEN", null, null, null, List.of()))))
                     : List.of();
-            return new EightDSources(nc, List.of("Marie Durand"), List.of(), List.of(),
+            return new EightDSources(nc,
+                    List.of(new EightDSources.Member("Marie Durand", "marie@exemple.fr")),
+                    List.of(), List.of(),
                     capas, null, List.of());
         }
     }

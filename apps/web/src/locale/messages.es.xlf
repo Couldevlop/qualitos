@@ -6858,6 +6858,18 @@ Portal de clientes</target>
         <source>Référence</source>
         <target state="translated">Referencia</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">Vencimiento hasta el</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Abrir el calendario</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">Quitar el filtro de vencimiento</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">Eficacia de las CAPA</target>
@@ -7746,21 +7758,9 @@ Portal de clientes</target>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">Todavia no se ha escrito ninguna accion de esta naturaleza para esta desviacion.</target>
       </trans-unit>
-      <trans-unit id="nc.8d.live-note-table" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
-        <target state="translated">Estado actual del expediente. El PDF emitido incluye esta tabla, congelada en la emisión.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
-        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
-        <target state="translated">Estado actual del expediente. El PDF emitido incluye su recuento, congelado en la emisión.</target>
-      </trans-unit>
       <trans-unit id="nc.8d.evidence-empty" datatype="html">
         <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
         <target state="translated">Las pruebas se adjuntarán aquí en cuanto se abra un expediente CAPA sobre la desviación: pertenecen al expediente.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-figures" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
-        <target state="translated">Estado actual del expediente. El PDF emitido incluye estos esquemas, congelados en la emisión.</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
@@ -22754,34 +22754,6 @@ historial de 12 meses</target>
         <source>Shitsuke (Maintenir)</source>
         <target state="translated">Shitsuke (Mantener)</target>
       </trans-unit>
-      <trans-unit id="nc.resolve.title" datatype="html">
-        <source>Résoudre la non-conformité</source>
-        <target state="translated">Resolver la no conformidad</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
-        <target state="translated">Describe la acción realizada y la prueba de eficacia para cerrar la resolución de</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-label" datatype="html">
-        <source>Note de résolution</source>
-        <target state="translated">Nota de resolución</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
-        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
-        <target state="translated">Acción correctiva realizada, verificación, prueba de eficacia…</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-required" datatype="html">
-        <source>La note de résolution est requise.</source>
-        <target state="translated">La nota de resolución es obligatoria.</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.submit" datatype="html">
-        <source>Résoudre</source>
-        <target state="translated">Resolver</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.success" datatype="html">
-        <source>Non-conformité résolue.</source>
-        <target state="translated">No conformidad resuelta.</target>
-      </trans-unit>
       <trans-unit id="nc.detail.reject" datatype="html">
         <source>Rejeter</source>
         <target state="translated">Rechazar</target>
@@ -22934,22 +22906,6 @@ historial de 12 meses</target>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">Contenido congelado, firmado (Ed25519 + ML-DSA-65) y anclado.</target>
       </trans-unit>
-      <trans-unit id="nc.8d.saisies-title" datatype="html">
-        <source>Les trois disciplines à saisir</source>
-        <target state="translated">Las tres disciplinas que se rellenan</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
-        <target state="translated">El equipo, la contención y el reconocimiento no tienen ninguna fuente en la plataforma: se rellenan aquí. Las otras cinco disciplinas se agregan del expediente de la no conformidad.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-label" datatype="html">
-        <source>D1 — Équipe</source>
-        <target state="translated">D1 — Equipo</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-placeholder" datatype="html">
-        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
-        <target state="translated">Una persona por línea, con su función en el tratamiento de la desviación</target>
-      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">Exportar</target>
@@ -22965,14 +22921,6 @@ historial de 12 meses</target>
       <trans-unit id="nc.8d.export-needs-issue" datatype="html">
         <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
         <target state="translated">El PDF solo existe una vez emitido el informe: la emisión congela el contenido, firma su huella y la ancla. Sin eso, dos exportaciones del mismo informe podrían diferir.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions de sécurisation immédiates</source>
-        <target state="translated">D3 — Acciones de contención inmediatas</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
-        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
-        <target state="translated">Lo que protegió al cliente mientras se buscaba la causa: selección, bloqueo de lote, control reforzado…</target>
       </trans-unit>
       <trans-unit id="nc.8d.recognition-label" datatype="html">
         <source>D8 — Reconnaissance de l'équipe</source>
@@ -23154,14 +23102,6 @@ historial de 12 meses</target>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">No tiene permiso para cerrar una no conformidad. Pida a un responsable de calidad que lo haga.</target>
       </trans-unit>
-      <trans-unit id="nc.blocker.action-to-do" datatype="html">
-        <source>à mener</source>
-        <target state="translated">por ejecutar</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
-        <source>faite, son efficacité reste à vérifier</source>
-        <target state="translated">realizada, falta verificar su eficacia</target>
-      </trans-unit>
       <trans-unit id="nc.blocker.actions-count-one" datatype="html">
         <source>1 action le retient</source>
         <target state="translated">1 acción lo retiene</target>
@@ -23169,10 +23109,6 @@ historial de 12 meses</target>
       <trans-unit id="nc.blocker.actions-count-many" datatype="html">
         <source><x id="count"/> actions le retiennent</source>
         <target state="translated"><x id="count"/> acciones lo retienen</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-pending" datatype="html">
-        <source>en attente</source>
-        <target state="translated">pendiente</target>
       </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>

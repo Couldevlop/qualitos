@@ -207,9 +207,21 @@ public final class NcDto {
             String rootCause
     ) {}
 
-    /** Clôture de la résolution : la note de résolution est requise. */
+    /**
+     * Clôture de la résolution.
+     *
+     * <p>La note est FACULTATIVE, et le corps de la requête peut manquer tout
+     * entier. Elle était exigée, et l'écran ouvrait donc une fenêtre pour la
+     * réclamer avant chaque résolution — alors que ce qui a résolu l'écart est
+     * déjà écrit, et mieux : les actions menées figurent au D5 et au D7 du
+     * traitement 8D, et les preuves de leur efficacité au D6. La note ne faisait
+     * que redire tout cela en texte libre, en travers du geste.
+     *
+     * <p>Elle reste au modèle et paraît au D2 du rapport quand elle existe :
+     * les écarts résolus avant ce jour gardent la leur.
+     */
     public record ResolveRequest(
-            @NotBlank String resolutionNote
+            String resolutionNote
     ) {}
 
     /**

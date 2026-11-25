@@ -410,7 +410,12 @@ public class NcService {
                               nc.getCapaCaseId(), nc.getReference())));
         }
         nc.setStatus(NcStatus.RESOLVED);
-        nc.setResolutionNote(request.resolutionNote());
+        // Facultative : une note vide ne s'ecrit pas, pour ne pas remplacer par
+        // une chaine blanche ce qu'une reprise anterieure aurait laisse.
+        String note = request.resolutionNote();
+        if (note != null && !note.isBlank()) {
+            nc.setResolutionNote(note.trim());
+        }
         nc.setResolvedAt(Instant.now());
         // QUI résout : sans cette trace, la règle du second regard n'a pas de
         // prise, et la clôture ne pourrait pas distinguer l'auteur de la

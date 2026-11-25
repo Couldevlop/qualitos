@@ -6858,6 +6858,18 @@ Portail clients</source>
         <source>Référence</source>
         <target state="translated">编号</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">截止日期不晚于</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">清除截止日期筛选</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">CAPA 有效性</target>
@@ -7746,21 +7758,9 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">尚未为此不合格编写此类措施。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.live-note-table" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
-        <target state="translated">档案的当前状态。签发的 PDF 包含此表格，在签发时已固化。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
-        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
-        <target state="translated">档案的当前状态。签发的 PDF 包含其数量，在签发时已固化。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.evidence-empty" datatype="html">
         <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
         <target state="translated">一旦为该不合格开启 CAPA 档案，证据就可在此处附件：它们属于档案。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-figures" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
-        <target state="translated">档案的当前状态。签发的 PDF 包含这些图示，在签发时已固化。</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
@@ -22754,34 +22754,6 @@ historique 12 mois</source>
         <source>Shitsuke (Maintenir)</source>
         <target state="translated">素养（Shitsuke）</target>
       </trans-unit>
-      <trans-unit id="nc.resolve.title" datatype="html">
-        <source>Résoudre la non-conformité</source>
-        <target state="translated">解决不合格项</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
-        <target state="translated">描述已采取的措施及有效性证据，以关闭以下项的解决：</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-label" datatype="html">
-        <source>Note de résolution</source>
-        <target state="translated">解决说明</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
-        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
-        <target state="translated">已采取的纠正措施、验证、有效性证据……</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-required" datatype="html">
-        <source>La note de résolution est requise.</source>
-        <target state="translated">解决说明为必填项。</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.submit" datatype="html">
-        <source>Résoudre</source>
-        <target state="translated">解决</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.success" datatype="html">
-        <source>Non-conformité résolue.</source>
-        <target state="translated">不合格项已解决。</target>
-      </trans-unit>
       <trans-unit id="nc.detail.reject" datatype="html">
         <source>Rejeter</source>
         <target state="translated">驳回</target>
@@ -22934,22 +22906,6 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">内容已固定、签名（Ed25519 + ML-DSA-65）并锚定。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.saisies-title" datatype="html">
-        <source>Les trois disciplines à saisir</source>
-        <target state="translated">需手工填写的三个步骤</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
-        <target state="translated">团队、围堵措施和团队认可在平台中没有数据来源，需在此填写。其余五个步骤从不合格项案卷中汇总。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-label" datatype="html">
-        <source>D1 — Équipe</source>
-        <target state="translated">D1 — 团队</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-placeholder" datatype="html">
-        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
-        <target state="translated">每行一人，并注明其在偏差处理中的角色</target>
-      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">导出</target>
@@ -22965,14 +22921,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.export-needs-issue" datatype="html">
         <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
         <target state="translated">只有在报告签发之后才有 PDF：签发会冻结内容、对其指纹签名并锚定。否则同一报告的两次导出可能不一致。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions de sécurisation immédiates</source>
-        <target state="translated">D3 — 立即围堵措施</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
-        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
-        <target state="translated">在查找原因期间保护客户的措施：分选、批次冻结、加严检验……</target>
       </trans-unit>
       <trans-unit id="nc.8d.recognition-label" datatype="html">
         <source>D8 — Reconnaissance de l'équipe</source>
@@ -23154,14 +23102,6 @@ historique 12 mois</source>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">您没有关闭不合格项的权限，请让质量负责人执行该操作。</target>
       </trans-unit>
-      <trans-unit id="nc.blocker.action-to-do" datatype="html">
-        <source>à mener</source>
-        <target state="translated">待执行</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
-        <source>faite, son efficacité reste à vérifier</source>
-        <target state="translated">已执行，有效性尚待验证</target>
-      </trans-unit>
       <trans-unit id="nc.blocker.actions-count-one" datatype="html">
         <source>1 action le retient</source>
         <target state="translated">1 项措施仍未完成</target>
@@ -23169,10 +23109,6 @@ historique 12 mois</source>
       <trans-unit id="nc.blocker.actions-count-many" datatype="html">
         <source><x id="count"/> actions le retiennent</source>
         <target state="translated"><x id="count"/> 项措施仍未完成</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-pending" datatype="html">
-        <source>en attente</source>
-        <target state="translated">待处理</target>
       </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>

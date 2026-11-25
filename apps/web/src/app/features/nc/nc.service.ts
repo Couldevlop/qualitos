@@ -212,7 +212,9 @@ export class NcService {
       const now = new Date().toISOString();
       if (n) {
         n.status = 'RESOLVED';
-        n.resolutionNote = input.resolutionNote;
+        if (input.resolutionNote) {
+          n.resolutionNote = input.resolutionNote;
+        }
         n.resolvedAt = now;
         n.updatedAt = now;
         return of(n).pipe(delay(120));
@@ -640,10 +642,11 @@ export class NcService {
       code,
       title,
       sourced,
-      sourceLabel: sourced
-        ? 'Agrégé depuis le dossier de la non-conformité'
-        : "Aucune source dans la plateforme — cette discipline se saisit",
+      // SERVIE, ELLE N'ANNONCE PLUS SA PROVENANCE : le serveur ne la met que
+      // sur la discipline vide, où elle dit ce qui manque.
+      sourceLabel: sourced ? '' : "Aucune source dans la plateforme — rien à agréger",
       lines,
+      tables: [],
       editable
     };
   }
@@ -662,9 +665,8 @@ export class NcService {
         ...d,
         sourced: !!texte,
         lines: texte ? texte.split(/\r?\n/).filter(l => l.trim().length > 0) : [],
-        sourceLabel: texte
-          ? "Saisi par l'équipe qualité"
-          : "Aucune source dans la plateforme — cette discipline se saisit"
+        // Servie, elle se tait sur sa provenance : même règle que le serveur.
+        sourceLabel: texte ? '' : "Aucune source dans la plateforme — rien à agréger"
       };
     });
     rapport.missingCodes = rapport.disciplines.filter(d => !d.sourced).map(d => d.code);

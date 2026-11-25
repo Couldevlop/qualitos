@@ -9,7 +9,7 @@
          data-test="ishikawa-bloc">
   <header class="cause-head">
     <h3 i18n="@@nc.detail.ishikawa">Ishikawa</h3>
-    <a mat-stroked-button [routerLink]="['/ishikawa', diagramme.id]"
+    <a mat-stroked-button *ngIf="!lectureSeule" [routerLink]="['/ishikawa', diagramme.id]"
        data-test="ishikawa-ouvrir">
       <mat-icon>open_in_new</mat-icon>
       <span i18n="@@nc.detail.cause-open-ishikawa">Travailler le diagramme</span>
@@ -28,7 +28,7 @@
          data-test="cinq-pourquoi-bloc">
   <header class="cause-head">
     <h3 i18n="@@nc.detail.five-whys">5 Pourquoi</h3>
-    <a mat-stroked-button [routerLink]="['/five-whys', chaine.id]"
+    <a mat-stroked-button *ngIf="!lectureSeule" [routerLink]="['/five-whys', chaine.id]"
        data-test="cinq-pourquoi-ouvrir">
       <mat-icon>open_in_new</mat-icon>
       <span i18n="@@nc.detail.cause-open-whys">Dérouler l’analyse</span>
@@ -47,7 +47,13 @@
        seulement sur l'ecran dedie : on vient de lire la descente, c'est le
        moment d'ecrire ce qu'elle demontre. Meme regle que l'ecran dedie et que
        le serveur, lue au meme endroit. -->
-  <div class="root-cause" *ngIf="chaine.steps?.length" [attr.data-test]="'cause-racine-' + chaine.id">
+  <!-- EN LECTURE SEULE, RIEN DE TOUT CECI : le rapport 8D donne la cause a
+       lire, il ne la travaille pas. La descente, juste au-dessus, porte deja
+       la conclusion dans sa derniere case ; le champ et les deux boutons y
+       faisaient du document un formulaire de plus, a cote des ecrans dedies
+       qui sont les leurs. -->
+  <div class="root-cause" *ngIf="chaine.steps?.length && !lectureSeule"
+       [attr.data-test]="'cause-racine-' + chaine.id">
     <p class="cause-empty" *ngIf="!peutConclure(chaine)"
        data-test="cause-racine-verrouillee"
        i18n="@@fivewhys.root-cause-locked">

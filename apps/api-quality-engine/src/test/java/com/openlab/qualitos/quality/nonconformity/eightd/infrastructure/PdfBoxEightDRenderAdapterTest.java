@@ -51,11 +51,12 @@ class PdfBoxEightDRenderAdapterTest {
 
     @Test
     void une_discipline_sans_source_le_dit_dans_le_pdf() throws IOException {
-        // D1, D3 et D8 vides : le document doit l'annoncer, pas laisser trois blancs.
+        // Le D8 vide : le document doit l'annoncer, pas laisser un blanc. Les
+        // sept autres ont une source (ADR 0139), et ce banc les sert.
         String texte = texteDe(renderer.render(snapshot(false), URL));
 
         assertThat(texte).contains("PARTIAL REPORT");
-        assertThat(texte).contains("D1, D3, D8");
+        assertThat(texte).contains("disciplines with no content: D8");
         assertThat(texte).contains("Not filled in.");
         assertThat(texte).contains("cette discipline se saisit");
     }
@@ -535,6 +536,88 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(renderer.render(snapshot, URL)).isEqualTo(renderer.render(snapshot, URL));
     }
 
+    /**
+     * UN TABLEAU SANS LA COLONNE DES NATURES GARDE L'INTITULE LARGE.
+     *
+     * <p>La nature a quitte les colonnes -- elle est le titre de la
+     * discipline --, et le tableau n'a donc plus que cinq colonnes. Des
+     * colonnes egales donneraient a l'intitule, le seul champ de phrase, le
+     * cinquieme de la largeur : replie sur quatre lignes a cote de colonnes aux
+     * trois quarts vides. On mesure donc ou commence la colonne suivante :
+     * l'intitule doit tenir bien plus que sa part egale.
+     */
+    @Test
+    void un_tableau_sans_la_nature_garde_l_intitule_large() throws IOException {
+        byte[] pdf = renderer.render(avecTableau(tableauSansNatureDeDemo()), URL);
+
+        String texte = texteDe(pdf);
+        assertThat(texte).contains("ACTION").contains("OWNER")
+                .contains("DUE DATE").contains("STATUS").contains("EVIDENCE");
+        assertThat(texte).doesNotContain("KIND");
+
+        float debutIntitule = abscisseDe(pdf, "ACTION");
+        float debutPorteur = abscisseDe(pdf, "OWNER");
+        assertThat(debutIntitule).isGreaterThan(0f);
+        assertThat(debutPorteur).isGreaterThan(debutIntitule);
+        // La part egale vaut environ 95 points ; l'intitule en vaut le double.
+        assertThat(debutPorteur - debutIntitule)
+                .as("l'intitule du D5 ne doit pas se replier faute de place")
+                .isGreaterThan(120f);
+    }
+
+    /**
+     * LE TABLEAU DE L'EQUIPE N'EST PAS UN TABLEAU D'ACTIONS.
+     *
+     * <p>Le D1 porte desormais l'equipe en colonnes -- nom, adresse, role --,
+     * et ce tableau n'a pas de titre : « Actions - » au-dessus d'une liste de
+     * personnes annoncerait ce qu'il ne montre pas.
+     */
+    @Test
+    void le_tableau_sans_titre_ne_s_annonce_pas_comme_des_actions() throws IOException {
+        EightDSnapshot.Table equipe = new EightDSnapshot.Table(
+                "", List.of("Nom et prenom", "Adresse mail", "Role"), List.of(
+                        new EightDSnapshot.Row(List.of(
+                                "Ada Lovelace", "ada.lovelace@exemple.fr", "Pilote"))));
+
+        String texte = texteDe(renderer.render(avecTableau(equipe), URL));
+
+        assertThat(texte).contains("Ada Lovelace").contains("ada.lovelace@exemple.fr")
+                .contains("Pilote");
+        assertThat(texte).contains("NOM ET PRENOM").contains("ADRESSE MAIL").contains("ROLE");
+        assertThat(texte).doesNotContain("Actions -");
+    }
+
+    /**
+     * LE D1 TEL QUE L'ASSEMBLEUR L'ECRIT VRAIMENT : les intitules accentues de
+     * la recette, et une adresse longue dans une colonne de 42 %.
+     *
+     * <p>Les bancs voisins ecrivent « Role » sans accent et des adresses
+     * courtes : ils verifient la geometrie, pas les mots. Ici on rend ce que le
+     * client recevra -- « Rôle et fonction », « Nom et prénom » -- parce que
+     * PDFBox LEVE sur un caractere que la police ne sait pas encoder (ADR 0134),
+     * et qu'une cellule qui deborde se voit a la lecture, jamais au compilateur.
+     */
+    @Test
+    void le_tableau_de_l_equipe_rend_les_intitules_accentues_et_une_adresse_longue()
+            throws IOException {
+        EightDSnapshot.Table equipe = new EightDSnapshot.Table(
+                "", List.of("Nom et prénom", "Adresse mail", "Rôle et fonction"), List.of(
+                        new EightDSnapshot.Row(List.of("Ada Lovelace",
+                                "ada.lovelace.prenom-compose@service-qualite.exemple.fr",
+                                "Pilote")),
+                        new EightDSnapshot.Row(List.of("Grace Hopper", "-", "Membre"))));
+
+        String texte = texteDe(renderer.render(avecTableau(equipe), URL));
+
+        assertThat(texte).contains("NOM ET PRÉNOM").contains("RÔLE ET FONCTION");
+        assertThat(texte).contains("Ada Lovelace").contains("Grace Hopper");
+        // L'ADRESSE RESTE ENTIERE : coupee, elle ne se recopie plus, et une
+        // coordonnee tronquee dans un document opposable vaut une erreur.
+        assertThat(texte).contains("ada.lovelace.prenom-compose@service-qualite.exemple.fr");
+        // Le membre sans adresse connue garde sa case, marquee d'un tiret.
+        assertThat(texte).contains("Membre");
+    }
+
     // ---------- fixtures ----------
 
     /** Un instantane complet dont le D4 porte la figure donnee, et aucune ligne. */
@@ -674,6 +757,31 @@ class PdfBoxEightDRenderAdapterTest {
     private static final List<String> COLONNES =
             List.of("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
 
+    /** Les memes, sans la colonne des natures : celles de toutes les disciplines. */
+    private static final List<String> COLONNES_SANS_NATURE =
+            List.of("Action", "Owner", "Due date", "Status", "Evidence");
+
+    /**
+     * L'abscisse du premier caractere de ce texte, sur la premiere page qui le
+     * porte. Elle dit ou commence une colonne, et donc sa largeur.
+     */
+    private float abscisseDe(byte[] pdf, String recherche) throws IOException {
+        float[] x = {-1f};
+        try (PDDocument doc = Loader.loadPDF(pdf)) {
+            PDFTextStripper releve = new PDFTextStripper() {
+                @Override
+                protected void writeString(String texte, List<TextPosition> positions) {
+                    if (x[0] >= 0f || !texte.trim().equals(recherche) || positions.isEmpty()) {
+                        return;
+                    }
+                    x[0] = positions.get(0).getXDirAdj();
+                }
+            };
+            releve.getText(doc);
+        }
+        return x[0];
+    }
+
     private EightDSnapshot.Table tableauDeDemo() {
         return new EightDSnapshot.Table("Dossier A - fuite presse-etoupe", COLONNES, List.of(
                 new EightDSnapshot.Row(List.of("CONTAINMENT",
@@ -684,6 +792,14 @@ class PdfBoxEightDRenderAdapterTest {
                         "Alan Turing", "30/10/2026", "TODO", "-"))));
     }
 
+    /** Le meme tableau, sans la colonne des natures : celui des disciplines. */
+    private EightDSnapshot.Table tableauSansNatureDeDemo() {
+        return new EightDSnapshot.Table("Dossier A - fuite presse-etoupe",
+                COLONNES_SANS_NATURE, List.of(
+                        new EightDSnapshot.Row(List.of(
+                                "Remplacer le joint du presse-etoupe et reprendre le serrage",
+                                "Ada Lovelace", "14/09/2026", "DONE", "2"))));
+    }
     /** Un instantane dont le D5 porte ce tableau, et rien d'autre. */
     private EightDSnapshot avecTableau(EightDSnapshot.Table tableau) {
         List<EightDSnapshot.Section> sections = new ArrayList<>();

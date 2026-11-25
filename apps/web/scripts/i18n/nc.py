@@ -150,13 +150,6 @@ TRANSLATIONS = {
     'nc.vision.pillar.shitsuke': ('Shitsuke (Maintenir)', 'Shitsuke (Sustain)', 'Shitsuke (Mantener)', 'شيتسوكي (الانضباط)', '躾（Shitsuke）', '素养（Shitsuke）'),
 
     # --- résolution ----------------------------------------------------------
-    'nc.resolve.title': ('Résoudre la non-conformité', 'Resolve the non-conformance', 'Resolver la no conformidad', 'حل عدم المطابقة', '不適合を解決', '解决不合格项'),
-    'nc.resolve.hint': ("Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de", 'Describe the action taken and the evidence of effectiveness to close the resolution of', 'Describe la acción realizada y la prueba de eficacia para cerrar la resolución de', 'صِف الإجراء المُتّخذ ودليل الفعالية لإغلاق حل', '実施した処置と有効性の証拠を記述して解決をクローズします：', '描述已采取的措施及有效性证据，以关闭以下项的解决：'),
-    'nc.resolve.note-label': ('Note de résolution', 'Resolution note', 'Nota de resolución', 'ملاحظة الحل', '解決ノート', '解决说明'),
-    'nc.resolve.note-placeholder': ("Action corrective réalisée, vérification, preuve d'efficacité…", 'Corrective action taken, verification, evidence of effectiveness…', 'Acción correctiva realizada, verificación, prueba de eficacia…', 'الإجراء التصحيحي المُنفَّذ، التحقّق، دليل الفعالية…', '実施した是正処置、検証、有効性の証拠…', '已采取的纠正措施、验证、有效性证据……'),
-    'nc.resolve.note-required': ('La note de résolution est requise.', 'The resolution note is required.', 'La nota de resolución es obligatoria.', 'ملاحظة الحل مطلوبة.', '解決ノートは必須です。', '解决说明为必填项。'),
-    'nc.resolve.submit': ('Résoudre', 'Resolve', 'Resolver', 'حل', '解決', '解决'),
-    'nc.resolve.success': ('Non-conformité résolue.', 'Non-conformance resolved.', 'No conformidad resuelta.', 'تم حل عدم المطابقة.', '不適合を解決しました。', '不合格项已解决。'),
 
     # --- rejet d'une réclamation externe (ADR 0069) ---------------------------
     'nc.detail.reject': ('Rejeter', 'Reject', 'Rechazar', 'رفض', '却下', '驳回'),

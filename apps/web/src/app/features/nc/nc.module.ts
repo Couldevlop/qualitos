@@ -25,7 +25,6 @@ import { NcListComponent } from './pages/nc-list/nc-list.component';
 import { NcRejectDialogComponent } from './pages/nc-reject-dialog/nc-reject-dialog.component';
 import { NcReopenDialogComponent } from './pages/nc-reopen-dialog/nc-reopen-dialog.component';
 import { NcCloseDialogComponent } from './pages/nc-close-dialog/nc-close-dialog.component';
-import { NcResolveDialogComponent } from './pages/nc-resolve-dialog/nc-resolve-dialog.component';
 
 // Deux entrées de navigation, un seul écran : l'origine est portée par la ROUTE
 // (§4.3). Un filtre d'écran ferait converger les deux entrées au premier clic sur
@@ -54,7 +53,6 @@ const routes: Routes = [
     NcCreateDialogComponent,
     NcRejectDialogComponent,
     NcReopenDialogComponent,
-    NcResolveDialogComponent,
     NcCloseDialogComponent,
     NcEightDComponent
   ],

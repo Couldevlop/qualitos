@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +54,7 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
-        when(service.findAll(any(), any(), any(), any(Pageable.class)))
+        when(service.findAll(any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.OPEN))));
         mockMvc.perform(get("/api/v1/capa/cases"))
                 .andExpect(status().isOk())
@@ -131,7 +132,8 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilter() throws Exception {
-        when(service.findAll(eq(CapaStatus.CLOSED), isNull(), isNull(), any(Pageable.class)))
+        when(service.findAll(eq(CapaStatus.CLOSED), isNull(), isNull(), isNull(),
+                             any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
         mockMvc.perform(get("/api/v1/capa/cases").param("status", "CLOSED"))
                 .andExpect(status().isOk())
@@ -140,7 +142,7 @@ class CapaControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withCriticityFilter() throws Exception {
-        when(service.findAll(eq(CapaStatus.CLOSED), eq(CapaCriticity.HIGH), isNull(),
+        when(service.findAll(eq(CapaStatus.CLOSED), eq(CapaCriticity.HIGH), isNull(), isNull(),
                              any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
         mockMvc.perform(get("/api/v1/capa/cases").param("status", "CLOSED").param("criticity", "HIGH"))
@@ -153,11 +155,34 @@ class CapaControllerTest {
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_filtreParPilote_passeLeCompteAuService() throws Exception {
         UUID pilote = UUID.randomUUID();
-        when(service.findAll(isNull(), isNull(), eq(pilote), any(Pageable.class)))
+        when(service.findAll(isNull(), isNull(), eq(pilote), isNull(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.OPEN))));
         mockMvc.perform(get("/api/v1/capa/cases").param("ownerId", pilote.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(CAPA.toString()));
+    }
+
+    /**
+     * L'ECHEANCE LIMITE ARRIVE EN DATE, pas en texte : « qu'est-ce qui tombe
+     * avant le 15 » est la question qu'on pose a un registre d'actions, et elle
+     * se tranchait a l'oeil, colonne par colonne, sur une liste paginee.
+     */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_filtreParEcheanceLimite_passeLaDateAuService() throws Exception {
+        when(service.findAll(isNull(), isNull(), isNull(),
+                             eq(LocalDate.parse("2026-12-15")), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.OPEN))));
+
+        mockMvc.perform(get("/api/v1/capa/cases").param("dueBefore", "2026-12-15"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(CAPA.toString()));
+    }
+
+    /** Une date illisible se refuse : un filtre silencieusement ignore mentirait. */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_echeanceIllisible_est_refusee() throws Exception {
+        mockMvc.perform(get("/api/v1/capa/cases").param("dueBefore", "le-15"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")

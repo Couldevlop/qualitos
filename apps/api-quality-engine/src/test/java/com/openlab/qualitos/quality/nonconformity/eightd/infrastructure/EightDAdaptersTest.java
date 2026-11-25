@@ -23,7 +23,7 @@ class EightDAdaptersTest {
 
         assertThat(relu).isEqualTo(origine);
         assertThat(relu.sections()).hasSize(8);
-        assertThat(relu.missingCodes()).containsExactly("D1", "D3", "D8");
+        assertThat(relu.missingCodes()).containsExactly("D8");
         assertThat(relu.issuedAtText()).isEqualTo("13/09/2026 10:00 UTC");
     }
 

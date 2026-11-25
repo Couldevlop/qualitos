@@ -102,11 +102,30 @@ class CapaServiceTest {
     @Test
     void findAll_byCriticity_filtersInTheDatabase() {
         Pageable p = PageRequest.of(0, 10);
-        when(caseRepo.search(TENANT, CapaStatus.OPEN, CapaCriticity.CRITICAL, null, p))
+        when(caseRepo.search(TENANT, CapaStatus.OPEN, CapaCriticity.CRITICAL, null, null, p))
                 .thenReturn(new PageImpl<>(List.of(capa(TENANT, CapaStatus.OPEN))));
         assertThat(service.findAll(CapaStatus.OPEN, CapaCriticity.CRITICAL, p).getContent()).hasSize(1);
         verify(caseRepo, never()).findByTenantIdAndStatus(any(), any(), any());
         verify(caseRepo, never()).findByTenantId(any(), any());
+    }
+
+    /**
+     * L'ECHEANCE LIMITE FILTRE EN BASE, comme le pilote et la criticite : la
+     * retenir sur la page rendue n'aurait garde que les dossiers a echoir
+     * PRESENTS SUR CETTE PAGE, et le compteur aurait annonce le total de tous
+     * les autres.
+     */
+    @Test
+    void findAll_byDueBefore_filtersInTheDatabase() {
+        Pageable p = PageRequest.of(0, 10);
+        LocalDate limite = LocalDate.parse("2026-12-15");
+        when(caseRepo.search(TENANT, null, null, null, limite, p))
+                .thenReturn(new PageImpl<>(List.of(capa(TENANT, CapaStatus.OPEN))));
+
+        assertThat(service.findAll(null, null, null, limite, p).getContent()).hasSize(1);
+
+        verify(caseRepo, never()).findByTenantId(any(), any());
+        verify(caseRepo, never()).findByTenantIdAndStatus(any(), any(), any());
     }
 
     // --- findById ---

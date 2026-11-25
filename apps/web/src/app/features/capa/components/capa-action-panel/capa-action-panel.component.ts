@@ -103,13 +103,26 @@ export class CapaActionPanelComponent implements OnChanges {
   /**
    * Montre ou non la colonne « Preuve », la pièce de CHAQUE action (ADR 0052).
    *
-   * <p>Vraie par défaut : la fiche CAPA et le D3 du traitement 8D attestent
-   * ainsi que tel geste a bien été fait. Le D5 et le D7 la mettent à faux, non
-   * par économie d'écran, mais parce que ce qu'ils ont à démontrer n'est pas
-   * « l'action a été faite » : c'est « le problème a cessé », et cela se prouve
+   * <p>Vraie par défaut : la fiche CAPA, le D3 et le D7 du traitement 8D
+   * attestent ainsi que tel geste a bien été fait — un endiguement qu'on
+   * montre, une barrière qu'on installe. Le D5 seul la met à faux, non par
+   * économie d'écran, mais parce que ce qu'il a à démontrer n'est pas
+   * « l'action a été faite » : c'est « la cause a disparu », et cela se prouve
    * au D6, sur le dossier, où le modèle de traitement 8D l'attend.
    */
   @Input() colonnePreuve = true;
+
+  /**
+   * Montre ou non la colonne « Nature de l'action ».
+   *
+   * <p>Vraie par défaut : la fiche d'un dossier CAPA mêle les trois natures, et
+   * sans la colonne on ne sait plus laquelle on lit. Le rapport 8D la met à
+   * faux : chacune de ses disciplines ne montre QU'UNE nature — l'endiguement
+   * au D3, le correctif au D5, la prévention au D7 —, et le mot se répétait
+   * donc sur toutes les lignes, en tête de tableau, devant l'intitulé qu'on
+   * vient lire.
+   */
+  @Input() colonneNature = true;
 
   /**
    * Les personnes déjà sur l'écart (l'équipe du D1), proposées en tête du

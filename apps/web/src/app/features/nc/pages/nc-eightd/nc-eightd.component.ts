@@ -20,7 +20,7 @@ import {
   ConfirmDialogData
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { EightDDiscipline, EightDReport, NcCapaCaseRef, NcResponse } from '../../nc.types';
+import { EightDDiscipline, EightDReport, EightDTable, NcCapaCaseRef, NcResponse } from '../../nc.types';
 
 /** OWASP A03 — un identifiant malformé est refusé côté écran, avant tout appel. */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -328,6 +328,23 @@ export class NcEightDComponent implements OnInit {
     return NATURES_PAR_DISCIPLINE[code] ?? AUCUNE_NATURE;
   }
 
+  /**
+   * Vrai pour les disciplines dont le tableau montre la colonne « Preuve ».
+   *
+   * <p>Le D3 et le D7 l'ont, le D5 ne l'a pas, et c'est deliberé : la piece
+   * d'une action atteste que CE geste-la a ete fait -- un endiguement qu'on
+   * montre, une barriere qu'on installe. Le D5 supprime la cause, et ce qu'il
+   * a a demontrer n'est pas « l'action a ete faite » mais « le probleme a
+   * cesse » : cela se prouve au D6, sur le dossier.
+   *
+   * <p>Le rapport ne posait pas cette entree et montrait donc la colonne aux
+   * TROIS disciplines, quand la fiche ne la montrait qu'au D3 : deux ecrans du
+   * meme dossier ne disaient pas la meme chose.
+   */
+  montreLaColonnePreuve(code: string): boolean {
+    return code !== 'D5';
+  }
+
   /** Vrai pour les disciplines qui portent un tableau d'actions. */
   montreLesActions(code: string): boolean {
     return this.naturesDe(code).length > 0;
@@ -337,9 +354,10 @@ export class NcEightDComponent implements OnInit {
    * Vrai pour la discipline qui porte les PREUVES du dossier.
    *
    * <p>Une seule, le D6. Les pieces des actions, elles, restent sur leur ligne
-   * au D3 : une piece d'action atteste que CE geste-la a ete fait, une preuve
-   * du dossier demontre que le probleme a cesse. La fiche de l'ecart fait deja
-   * cette difference ; le rapport ne la faisait pas, et ne deposait rien.
+   * au D3 et au D7 : une piece d'action atteste que CE geste-la a ete fait, une
+   * preuve du dossier demontre que le probleme a cesse. La fiche de l'ecart
+   * fait deja cette difference ; le rapport ne la faisait pas, et ne deposait
+   * rien.
    */
   montreLesPreuves(code: string): boolean {
     return code === 'D6';
@@ -395,6 +413,21 @@ export class NcEightDComponent implements OnInit {
    * un couplage de forme entre un service Java et un gabarit, qui se casse en
    * silence le jour où la phrase change.
    */
+  /**
+   * Les tableaux que l'ÉCRAN rend lui-même, parmi ceux de la discipline.
+   *
+   * <p>Ceux du D1 : l'équipe, que rien d'autre ne montre ici. Les tableaux
+   * d'ACTIONS du D3, du D5 et du D7 sont écartés — le panneau juste en dessous
+   * porte les mêmes actions et, lui, se manœuvre ; les rendre ici les
+   * afficherait deux fois, dont une morte.
+   */
+  tableauxFiges(discipline: EightDDiscipline): EightDTable[] {
+    if (this.montreLesActions(discipline.code)) {
+      return [];
+    }
+    return discipline.tables ?? [];
+  }
+
   lignesVisibles(discipline: EightDDiscipline): string[] {
     return this.montreAuLieuDeDire(discipline.code) ? [] : discipline.lines;
   }
@@ -432,6 +465,10 @@ export class NcEightDComponent implements OnInit {
     }
     this.acting$.next(true);
     const saisies = this.form.getRawValue();
+    // ON RENVOIE CE QU'ON N'AFFICHE PLUS. L'équipe et l'endiguement avaient leur
+    // champ dans le rapport ; ils viennent désormais de la fiche et du dossier
+    // CAPA, mais un brouillon d'avant peut en porter le texte. Taire ces deux
+    // valeurs à l'enregistrement les effacerait au premier mot ajouté au D8.
     this.svc.saveEightDReport(this.ncId, {
       team: saisies.team,
       containment: saisies.containment,

@@ -21,7 +21,8 @@ public final class EightDDto {
      * Une discipline telle que l'écran la montre.
      *
      * @param sourced     faux quand rien n'a été trouvé ni saisi
-     * @param sourceLabel d'où vient le contenu, ou ce qui manque — toujours renseigné
+     * @param sourceLabel ce qui manque — vide dès que la discipline porte quelque chose
+     * @param tables      ce qu'elle montre en colonnes ; l'équipe du D1, à ce jour
      * @param editable    vrai pour D1, D3 et D8, les seules qui se saisissent
      */
     public record DisciplineView(
@@ -30,7 +31,18 @@ public final class EightDDto {
             boolean sourced,
             String sourceLabel,
             List<String> lines,
+            List<TableView> tables,
             boolean editable) {
+    }
+
+    /**
+     * Un tableau d'une discipline, tel que le document émis le porte.
+     *
+     * <p>L'ÉCRAN LE REND LUI-MÊME, et ne le refabrique pas : le D1 montrait une
+     * liste de noms quand le PDF portait déjà un tableau, et deux écritures du
+     * même fait finissent par diverger.
+     */
+    public record TableView(String caption, List<String> columns, List<List<String>> rows) {
     }
 
     /** La preuve d'intégrité d'un rapport émis ; nulle tant qu'il est en brouillon. */

@@ -677,12 +677,6 @@
   }
 }
 
-.blockers-action__attente {
-  &::before {
-    content: ' — ';
-  }
-}
-
 /* Un ecart peut porter PLUSIEURS dossiers CAPA : chacun a son tableau, et il
    faut VOIR ou l'un finit et l'autre commence. Sans separation, deux tableaux
    se lisaient comme un seul, dont les lignes du bas semblaient appartenir au

@@ -9,28 +9,43 @@ Le **8D** (« eight disciplines ») est le format que les clients — l'automobi
 l'IATF 16949 — demandent à la clôture d'un écart. Il raconte, en huit étapes, ce qui s'est passé
 et ce qui fait qu'il ne se reproduira pas.
 
-QualitOS ne vous demande pas de le ressaisir : **six disciplines sur huit sont remplies
-automatiquement** à partir du travail déjà fait dans les autres modules.
+QualitOS ne vous demande pas de le ressaisir : **sept disciplines sur huit sont remplies
+automatiquement** à partir du travail déjà fait dans les autres modules. Une seule se tape, le
+**D8** — personne d'autre que vous ne sait ce que l'équipe mérite qu'on dise.
 
 | Discipline | D'où vient le contenu |
 | --- | --- |
-| **D1 — Équipe** | L'[équipe nommée sur la fiche de l'écart](non-conformites.md), dans l'ordre où elle a été désignée : le premier est annoncé pilote (« Champion »), les suivants « Member ». Vous pouvez compléter à la main ce que l'annuaire ne sait pas : un renfort extérieur, le rôle de chacun |
+| **D1 — Équipe** | L'[équipe nommée sur la fiche de l'écart](non-conformites.md), **en tableau** : *Nom et prénom*, *Adresse mail*, *Rôle et fonction*. L'ordre de désignation porte le rôle — le premier est pilote, les suivants membres — et l'adresse vient de l'annuaire. Un compte sans adresse connue laisse la case vide |
 | **D2 — Description du problème** | La non-conformité : référence, constat, gravité, zone, photos |
-| **D3 — Endiguement immédiat** | À saisir : ce qui a protégé le client pendant l'analyse. S'y ajoute, à côté du texte, le tableau des actions **d'endiguement** du dossier CAPA, où on les lit, on les avance et on en ajoute sans quitter le rapport |
+| **D3 — Actions immédiates** | Le tableau des actions **d'endiguement** du dossier CAPA, où on les lit, on les avance et on en ajoute sans quitter le rapport. Rien d'autre : un récit tapé à côté des gestes tracés faisait lire deux fois le même endiguement, sans dire lequel faisait foi |
 | **D4 — Cause racine** | Les [Ishikawa](ishikawa.md) et [5 Pourquoi](five-whys.md) rattachés à l'écart, et la cause racine saisie sur la NC. Les mêmes figures se lisent, dessinées, sur la [fiche de l'écart](non-conformites.md) : le rapport ne les découvre pas |
-| **D5 — Actions décidées** (*Defined containment, corrective and preventive actions*) | La [CAPA](capa.md) escaladée depuis la NC, et ses actions **des trois natures** — endiguer, corriger, prévenir. C'est la discipline où l'on vient lire ce qui a été décidé : restreinte aux correctives, elle laissait dehors l'endiguement et la prévention écrits dans le dossier. Le tableau s'y lit et s'y avance ; à l'écran il remplace le texte agrégé, que le PDF garde |
-| **D6 — Mise en œuvre et preuves** | Les actions menées à terme et les pièces versées à la CAPA |
-| **D7 — Prévention de la récurrence** | Le mode de défaillance [PFMEA](produit-pfmea-control-plan.md) rattaché et les plans de surveillance du produit |
-| **D8 — Reconnaissance de l'équipe** | À saisir : ce que l'équipe a appris |
+| **D5 — Définition des actions correctives** | Le tableau des actions **correctives** du dossier [CAPA](capa.md) : ce qui supprime la cause de l'écart survenu. L'endiguement est au D3, la prévention au D7 — montrées sous deux disciplines, les mêmes lignes laissaient croire à deux décisions. Pas de colonne *Preuve* : ce que le D5 démontre n'est pas « l'action a été faite » mais « la cause a disparu », et cela se juge au D6 |
+| **D6 — Mise en œuvre et preuves** | Chaque action corrective menée à terme : son titre, le **nom de ses pièces jointes**, et son **verdict d'efficacité** quand elle a été jugée (« efficace », « partiellement efficace », « inefficace », avec la date). Le verdict se prononce dans la [CAPA](capa.md) et remonte ici |
+| **D7 — Prévention de la récurrence** | Le tableau des actions **préventives** du dossier, avec sa colonne *Preuve*. L'[AMDEC procédé](produit-pfmea-control-plan.md) et les plans de surveillance **n'y figurent plus** : c'est l'outillage de l'analyse, pas la prévention, et ils se lisent entiers sur leurs propres écrans |
+| **D8 — Reconnaissance de l'équipe** | **À saisir**, dans la carte du D8 : ce que l'équipe a appris, et ce qui mérite d'être dit. Dès que l'écart et ses actions sont clos, la reconnaissance standard s'y ajoute |
+
+### Où se dépose une preuve, et laquelle
+
+Deux choses distinctes portent le même mot, et elles ne se rangent pas au même endroit.
+
+- **La preuve d'une action** atteste que *ce geste-là* a été fait : une barrière installée, un
+  contrôle ajouté. Elle se joint **sur la ligne de l'action**, dans la colonne *Preuve* du
+  tableau — au **D3** et au **D7**.
+- **La preuve du dossier** démontre que *le problème a cessé* : un relevé, une carte de
+  contrôle, une procédure signée. Elle se dépose au **D6**, sur le dossier.
+
+C'est pourquoi le **D5 n'a pas de colonne *Preuve*** : ce qu'il a à démontrer n'est pas
+« l'action a été faite » mais « la cause a disparu », et cela se juge au D6.
+
 
 ## Parcours pas à pas
 
 1. **Ouvrir la fiche de la non-conformité**, puis **Rapport 8D**. L'écran montre les huit
    disciplines, telles qu'elles sont à cet instant.
-2. **Renseigner D3 et D8**, puis **Enregistrer**. Faites-le au fil du traitement : ces champs se
-   conservent, et les retrouver à la clôture fait gagner du temps. D1 est déjà rempli par l'équipe
-   de la fiche — n'y ajoutez que ce qu'elle ne dit pas (un renfort extérieur, le rôle de chacun) ;
-   votre saisie **vient après** les noms et ne les remplace jamais.
+2. **Renseigner D8**, dans sa carte, puis **Enregistrer**. C'est la seule saisie du rapport.
+   D1 vient de l'équipe de la fiche, D3, D5 et D7 des actions du dossier [CAPA](capa.md) : si une
+   de ces disciplines est vide, ce n'est pas un champ qui manque, c'est un geste à décider — et le
+   bouton **Ajouter une action** est sur place.
 3. **Clôturer la non-conformité** (depuis sa fiche). Tant qu'elle ne l'est pas, le rapport ne
    s'émet pas — un 8D affirme qu'un problème est réglé.
 4. **Émettre**. Confirmation demandée, et **second facteur d'authentification** exigé : l'émission
@@ -46,12 +61,15 @@ C'est volontaire. Un rapport aux cases remplies à la hâte trompe son lecteur ;
 annonce ce qui lui manque reste lisible et honnête devant un auditeur. Vous pouvez émettre un
 rapport partiel : à vous de juger si l'écart le justifie.
 
-Deux absences sont fréquentes et normales :
+Trois absences sont fréquentes et normales :
 
-- **D5/D6 vides** quand aucune CAPA n'a été escaladée depuis la NC ;
-- **D7 vide** quand l'écart n'est rattaché à aucun mode de défaillance PFMEA et que le produit
-  n'a pas de plan de surveillance. Les dispositifs **Poka-Yoke** ne s'y affichent pas : ils se
-  rattachent aujourd'hui à un projet [DMAIC](dmaic.md), jamais à une non-conformité.
+- **D3, D5, D6 et D7 vides** quand aucune CAPA n'a été escaladée depuis la NC : ces quatre
+  disciplines ne lisent que les actions du dossier ;
+- **D3 ou D7 vide** sur un dossier qui existe, quand aucune action de cette nature-là n'y a été
+  décidée. Les dispositifs **Poka-Yoke** ne s'y affichent pas : ils se rattachent aujourd'hui à un
+  projet [DMAIC](dmaic.md), jamais à une non-conformité ;
+- **D1 vide** quand personne n'a été nommé sur la fiche de l'écart — un constat d'audit ou un
+  import système en produit.
 
 ## Un rapport émis ne change plus
 
@@ -71,7 +89,7 @@ ne se réémet pas.
 
 ## Qui peut faire quoi
 
-| Rôle | Lire le rapport et le PDF | Renseigner D1/D3/D8 | Émettre |
+| Rôle | Lire le rapport et le PDF | Renseigner D8 | Émettre |
 | --- | --- | --- | --- |
 | Utilisateur, Auditeur | ✅ | — | — |
 | Manager Qualité | ✅ | ✅ | ✅ (second facteur) |
@@ -82,9 +100,10 @@ donnée.
 
 ## Bonnes pratiques
 
-- **Renseignez D3 le jour même.** L'endiguement est ce qu'un client demande en premier, et il
-  s'oublie vite une fois la cause trouvée.
-- **Reliez l'écart à son mode de défaillance PFMEA** à la saisie de la NC : D7 se remplit alors
-  tout seul, avec l'avant/après du RPN.
+- **Décidez l'endiguement le jour même**, en action du dossier. C'est ce qu'un client demande en
+  premier, et il s'oublie vite une fois la cause trouvée.
+- **Jugez l'efficacité de chaque action corrective** dans la [CAPA](capa.md) : le verdict remonte
+  au D6 du rapport, et c'est ce qu'un client cherche — non pas qu'un geste ait été fait, mais
+  qu'il ait servi.
 - **N'émettez qu'une fois la CAPA avancée.** Un 8D émis trop tôt montre des actions décidées mais
   aucune preuve de mise en œuvre.

@@ -157,7 +157,6 @@
                         <button type="button" class="blockers-action__lien"
                                 [attr.data-test]="'nc-blocker-action-' + a.id"
                                 (click)="allerALAction(a)">{{ a.title }}</button>
-                        <span class="blockers-action__attente">{{ attenteDeLAction(a) }}</span>
                       </li>
                     </ul>
                   </ng-container>
@@ -957,7 +956,6 @@
                                      [source]="sourceDeLEcart(n)"
                                      [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD7"
-                                     [colonnePreuve]="false"
                                      (counted)="compter('D7', $event)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </ng-container>

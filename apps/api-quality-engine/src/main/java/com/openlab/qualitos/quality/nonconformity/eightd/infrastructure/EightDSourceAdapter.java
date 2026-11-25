@@ -4,7 +4,12 @@ import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.capa.CapaAction;
 import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
+import com.openlab.qualitos.quality.capa.CapaEvidence;
 import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
+import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
+import com.openlab.qualitos.quality.derogation.application.DirectoryPort;
+import com.openlab.qualitos.quality.derogation.application.DirectoryUnavailableException;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
@@ -60,6 +65,23 @@ public class EightDSourceAdapter implements EightDSourcePort {
     private final NcPhotoRepository photos;
     /** L'equipe nommee sur la fiche : la source de D1. */
     private final NcTeamMemberRepository teamMembers;
+    /**
+     * L'annuaire, pour l'adresse de chaque membre du D1.
+     *
+     * <p>La fiche ne retient que le nom et le compte : l'adresse se relit ici,
+     * et se fige comme le reste a l'emission. Une panne de l'annuaire ne doit
+     * PAS empecher d'assembler un rapport -- l'adresse est une commodite, le
+     * rapport est une preuve -- d'ou la case laissee vide plutot que l'erreur.
+     */
+    private final DirectoryPort annuaire;
+    /**
+     * Les verdicts d'efficacite portes action par action (ADR 0131).
+     *
+     * <p>Le rapport disait qu'un geste avait ete fait sans dire s'il avait
+     * servi : l'evaluation vivait dans la CAPA et n'arrivait pas jusqu'au
+     * document remis au client.
+     */
+    private final EffectivenessReviewPort efficacite;
     private final IshikawaDiagramRepository ishikawas;
     private final FiveWhysAnalysisRepository fiveWhys;
     private final FiveWhysStepRepository fiveWhysSteps;
@@ -81,6 +103,8 @@ public class EightDSourceAdapter implements EightDSourcePort {
     public EightDSourceAdapter(NonConformityRepository ncs,
                                NcPhotoRepository photos,
                                NcTeamMemberRepository teamMembers,
+                               DirectoryPort annuaire,
+                               EffectivenessReviewPort efficacite,
                                IshikawaDiagramRepository ishikawas,
                                FiveWhysAnalysisRepository fiveWhys,
                                FiveWhysStepRepository fiveWhysSteps,
@@ -93,6 +117,8 @@ public class EightDSourceAdapter implements EightDSourcePort {
         this.ncs = ncs;
         this.photos = photos;
         this.teamMembers = teamMembers;
+        this.annuaire = annuaire;
+        this.efficacite = efficacite;
         this.ishikawas = ishikawas;
         this.fiveWhys = fiveWhys;
         this.fiveWhysSteps = fiveWhysSteps;
@@ -127,10 +153,28 @@ public class EightDSourceAdapter implements EightDSourcePort {
      * <p>Les NOMS figés à la saisie, et non une relecture de l'annuaire : un
      * rapport 8D relu trois ans plus tard porte les noms de l'époque.
      */
-    private List<String> enEquipe(UUID tenantId, UUID ncId) {
-        return teamMembers.findByTenantIdAndNcIdOrderByPositionAsc(tenantId, ncId).stream()
-                .map(NcTeamMember::getDisplayName)
-                .toList();
+    private List<EightDSources.Member> enEquipe(UUID tenantId, UUID ncId) {
+        List<EightDSources.Member> membres = new ArrayList<>();
+        for (NcTeamMember membre : teamMembers.findByTenantIdAndNcIdOrderByPositionAsc(
+                tenantId, ncId)) {
+            membres.add(new EightDSources.Member(
+                    membre.getDisplayName(), adresseDe(membre.getAccountId())));
+        }
+        return membres;
+    }
+
+    /** L'adresse du compte, ou {@code null} : ni l'absence ni la panne ne lèvent ici. */
+    private String adresseDe(String accountId) {
+        if (accountId == null || accountId.isBlank()) {
+            return null;
+        }
+        try {
+            return annuaire.emailOf(UUID.fromString(accountId)).orElse(null);
+        } catch (IllegalArgumentException pasUnUuid) {
+            return null;
+        } catch (DirectoryUnavailableException injoignable) {
+            return null;
+        }
     }
 
     private EightDSources.Nc enNc(UUID tenantId, NonConformity nc) {
@@ -238,20 +282,44 @@ public class EightDSourceAdapter implements EightDSourcePort {
     }
 
     private EightDSources.Capa enCapa(UUID tenantId, CapaCase capa) {
+        // LES PIECES EN UNE PASSE, et non une requete par action : le D6 les
+        // nomme toutes, et un dossier de vingt actions aurait fait vingt
+        // allers-retours pour lire vingt noms de fichiers.
+        Map<UUID, List<String>> parAction = new LinkedHashMap<>();
+        for (CapaEvidence piece : capaEvidences.findActionLevel(tenantId, capa.getId())) {
+            parAction.computeIfAbsent(piece.getActionId(), k -> new ArrayList<>())
+                    .add(nomDe(piece));
+        }
+        List<String> duDossier = new ArrayList<>();
+        for (CapaEvidence piece : capaEvidences.findCaseLevel(tenantId, capa.getId())) {
+            duDossier.add(nomDe(piece));
+        }
+        Map<UUID, EffectivenessReview> verdicts =
+                efficacite.findLastPerActionOfCase(tenantId, capa.getId());
         List<EightDSources.Action> actions = new ArrayList<>();
         for (CapaAction action : capa.getActions()) {
+            List<String> pieces = parAction.getOrDefault(action.getId(), List.of());
+            EffectivenessReview jugement = verdicts.get(action.getId());
             actions.add(new EightDSources.Action(
                     action.getTitle(), action.getDescription(),
                     nom(action.getActionType()), nom(action.getStatus()),
                     action.getAssigneeName(), action.getDueDate(), action.getCompletedAt(),
-                    capaEvidences.countByTenantIdAndActionId(tenantId, action.getId())));
+                    pieces,
+                    jugement == null ? null : jugement.verdict().name(),
+                    jugement == null ? null : jugement.reviewedAt()));
         }
         return new EightDSources.Capa(
                 capa.getTitle(), nom(capa.getType()), nom(capa.getCriticity()), nom(capa.getStatus()),
                 capa.getDueDate(), capa.getClosedAt(),
                 capa.getEffectivenessVerified(), capa.getEffectivenessVerifiedAt(),
-                capaEvidences.countCaseLevel(tenantId, capa.getId()),
+                duDossier,
                 actions);
+    }
+
+    /** Le nom du fichier tel qu'il a ete depose, ou sa cle a defaut. */
+    private static String nomDe(CapaEvidence piece) {
+        String nom = piece.getOriginalFilename();
+        return nom == null || nom.isBlank() ? piece.getObjectKey() : nom;
     }
 
     private EightDSources.Fmea enFmea(UUID tenantId, NonConformity nc) {

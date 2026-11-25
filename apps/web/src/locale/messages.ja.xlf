@@ -6858,6 +6858,18 @@ Portail clients</source>
         <source>Référence</source>
         <target state="translated">管理番号</target>
       </trans-unit>
+      <trans-unit id="capa.list.filter-due-before" datatype="html">
+        <source>Échéance avant le</source>
+        <target state="translated">期限が次の日以前</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">カレンダーを開く</target>
+      </trans-unit>
+      <trans-unit id="capa.list.filter-due-clear" datatype="html">
+        <source>Retirer le filtre d'échéance</source>
+        <target state="translated">期限の絞り込みを解除</target>
+      </trans-unit>
       <trans-unit id="capa.effectiveness.title" datatype="html">
         <source>Efficacité des CAPA</source>
         <target state="translated">CAPA の有効性</target>
@@ -7746,21 +7758,9 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">この不適合について、この種別の対策はまだ記載されていません。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.live-note-table" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
-        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこの表が含まれます。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
-        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
-        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定された件数が記載されます。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.evidence-empty" datatype="html">
         <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
         <target state="translated">不適合に CAPA 案件が開かれ次第、証拠はここに添付されます。証拠は案件に属します。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-figures" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
-        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこれらの図が含まれます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
@@ -22753,34 +22753,6 @@ historique 12 mois</source>
         <source>Shitsuke (Maintenir)</source>
         <target state="translated">躾（Shitsuke）</target>
       </trans-unit>
-      <trans-unit id="nc.resolve.title" datatype="html">
-        <source>Résoudre la non-conformité</source>
-        <target state="translated">不適合を解決</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.hint" datatype="html">
-        <source>Décrivez l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
-        <target state="translated">実施した処置と有効性の証拠を記述して解決をクローズします：</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-label" datatype="html">
-        <source>Note de résolution</source>
-        <target state="translated">解決ノート</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
-        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
-        <target state="translated">実施した是正処置、検証、有効性の証拠…</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.note-required" datatype="html">
-        <source>La note de résolution est requise.</source>
-        <target state="translated">解決ノートは必須です。</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.submit" datatype="html">
-        <source>Résoudre</source>
-        <target state="translated">解決</target>
-      </trans-unit>
-      <trans-unit id="nc.resolve.success" datatype="html">
-        <source>Non-conformité résolue.</source>
-        <target state="translated">不適合を解決しました。</target>
-      </trans-unit>
       <trans-unit id="nc.detail.reject" datatype="html">
         <source>Rejeter</source>
         <target state="translated">却下</target>
@@ -22933,22 +22905,6 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">内容を確定し、署名（Ed25519 + ML-DSA-65）とアンカーを付与しました。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.saisies-title" datatype="html">
-        <source>Les trois disciplines à saisir</source>
-        <target state="translated">手入力する 3 つの規律</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
-        <target state="translated">チーム、暫定対策、功績の承認はプラットフォームに情報源がないため、ここで入力します。残る 5 つの規律は不適合の案件から集約されます。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-label" datatype="html">
-        <source>D1 — Équipe</source>
-        <target state="translated">D1 — チーム</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-placeholder" datatype="html">
-        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
-        <target state="translated">1 行に 1 名、逸脱対応における役割を添えて</target>
-      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">エクスポート</target>
@@ -22964,14 +22920,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.export-needs-issue" datatype="html">
         <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
         <target state="translated">PDF はレポートを発行して初めて存在します。発行は内容を確定し、そのフィンガープリントに署名してアンカーします。これがないと、同じレポートの二つのエクスポートが食い違う可能性があります。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions de sécurisation immédiates</source>
-        <target state="translated">D3 — 緊急の暫定対策</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
-        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
-        <target state="translated">原因究明の間に顧客を守った措置：選別、ロット保留、検査強化など</target>
       </trans-unit>
       <trans-unit id="nc.8d.recognition-label" datatype="html">
         <source>D8 — Reconnaissance de l'équipe</source>
@@ -23153,14 +23101,6 @@ historique 12 mois</source>
         <source>Vous n'avez pas le droit de clôturer un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">不適合を閉じる権限がありません。品質責任者に依頼してください。</target>
       </trans-unit>
-      <trans-unit id="nc.blocker.action-to-do" datatype="html">
-        <source>à mener</source>
-        <target state="translated">未実施</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-to-verify" datatype="html">
-        <source>faite, son efficacité reste à vérifier</source>
-        <target state="translated">実施済み、有効性の検証が未了</target>
-      </trans-unit>
       <trans-unit id="nc.blocker.actions-count-one" datatype="html">
         <source>1 action le retient</source>
         <target state="translated">1 件の処置が保留しています</target>
@@ -23168,10 +23108,6 @@ historique 12 mois</source>
       <trans-unit id="nc.blocker.actions-count-many" datatype="html">
         <source><x id="count"/> actions le retiennent</source>
         <target state="translated"><x id="count"/> 件の処置が保留しています</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.action-pending" datatype="html">
-        <source>en attente</source>
-        <target state="translated">保留中</target>
       </trans-unit>
       <trans-unit id="nc.detail.blockers-resolve" datatype="html">
         <source>Cet écart ne peut pas encore être résolu</source>
