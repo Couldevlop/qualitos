@@ -23,7 +23,7 @@ d'efficacité.
 ## Plusieurs actions par dossier
 
 Un dossier porte **autant d'actions qu'il en faut** : endiguer, corriger la cause, prévenir la
-récidive — ce que le 8D nomme D3, D5 et D6. Elles se lisent en tableau, sur la fiche du dossier
+récidive — ce que le 8D nomme D3, D5 et D7. Elles se lisent en tableau, sur la fiche du dossier
 comme sur la [fiche de l'écart](non-conformites.md).
 
 - *Ajouter une action* ouvre la fenêtre de saisie. Le pilote et l'échéance du dossier y sont
