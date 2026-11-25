@@ -2,8 +2,13 @@
 
   <!-- Les onglets sont des LIENS : l'adresse de chaque ecran est preservee, et
        un signet continue d'ouvrir l'ecran qu'il visait. -->
+  <!-- `mat-stretch-tabs` a false : par defaut Material etire ses onglets sur
+       toute la largeur, et DEUX onglets se retrouvaient aux deux extremites de
+       l'ecran, separes par un vide. Groupes a gauche, ils se lisent comme un
+       choix entre deux. -->
   <nav mat-tab-nav-bar
        class="console__onglets"
+       [mat-stretch-tabs]="false"
        [tabPanel]="panneau"
        [attr.aria-label]="libelleOnglets">
     <a mat-tab-link
