@@ -105,9 +105,13 @@ class EightDServiceTest {
 
         assertThat(depot.findByNc(TENANT, NC)).isPresent();
         assertThat(vue.team()).isEqualTo("Ada, Grace");
-        // Les trois disciplines saisies ne sont plus vides ; le rapport reste
-        // partiel pour les cinq qui n'ont, ici, aucune source a agreger.
-        assertThat(vue.missingCodes()).doesNotContain("D1", "D3", "D8");
+        // CE QUI EST SAISI EST STOCKE, ET CELA NE SUFFIT PLUS A SERVIR UNE
+        // DISCIPLINE : le D3 ne porte que les actions d'endiguement du dossier
+        // CAPA, et un texte tape a la main ne les remplace pas. Le D1 et le D8,
+        // eux, comptent encore leur saisie -- l'equipe de la fiche et la
+        // reconnaissance n'ont pas d'autre source ici.
+        assertThat(vue.missingCodes()).doesNotContain("D1", "D8");
+        assertThat(vue.missingCodes()).contains("D3");
         assertThat(vue.partial()).isTrue();
     }
 

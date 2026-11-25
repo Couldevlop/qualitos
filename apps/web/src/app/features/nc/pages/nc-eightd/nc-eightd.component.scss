@@ -52,7 +52,7 @@
 }
 .state-row.error { color: var(--mat-sys-error, #b3261e); }
 
-.info-card, .saisie-card, .discipline-card { margin-bottom: 16px; }
+.info-card, .discipline-card { margin-bottom: 16px; }
 
 .nc-title {
   margin: 0 0 8px;
@@ -115,12 +115,46 @@
   word-break: break-all;
 }
 
-.saisie-card .hint {
-  margin: 0 0 12px;
-  font-size: 13px;
-  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+/* La reconnaissance se saisit DANS sa discipline, le D8, et non dans un cadre
+   en haut de page, loin de ce qu'il renseignait. */
+.saisie-dans-la-discipline {
+  margin-top: var(--qos-space-3);
 }
-.saisie-card .full { width: 100%; }
+.saisie-dans-la-discipline .full { width: 100%; }
+
+/* Le tableau que la discipline porte elle-meme : l'equipe du D1. Il se lit, il
+   ne se manoeuvre pas -- les tableaux d'actions, eux, sont des panneaux. */
+.table-fige {
+  width: 100%;
+  margin: 0 0 var(--qos-space-3);
+  border-collapse: collapse;
+  font-size: 13.5px;
+
+  caption {
+    text-align: start;
+    padding-bottom: var(--qos-space-1);
+    color: var(--qos-fg-secondary);
+  }
+
+  th {
+    text-align: start;
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  th, td {
+    padding: var(--qos-space-2) var(--qos-space-3) var(--qos-space-2) 0;
+    border-bottom: 1px solid var(--qos-border-subtle);
+    vertical-align: top;
+  }
+
+  /* L'adresse d'un membre ne se coupe pas en deux : elle se lit pour etre
+     recopiee ou cliquee. */
+  td { overflow-wrap: anywhere; }
+}
 
 .discipline-card h3 {
   display: flex;

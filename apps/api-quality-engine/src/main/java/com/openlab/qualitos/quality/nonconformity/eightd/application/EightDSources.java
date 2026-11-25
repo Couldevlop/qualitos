@@ -177,11 +177,30 @@ public record EightDSources(
             LocalDate dueDate,
             Instant completedAt,
             /** Le nom des pièces de CETTE action, dans l'ordre du dépôt. */
-            List<String> evidenceNames) {
+            List<String> evidenceNames,
+            /**
+             * Le VERDICT porté sur l'efficacité de cette action, ou {@code null}.
+             *
+             * <p>{@code EFFECTIVE}, {@code PARTIAL} ou {@code INEFFECTIVE}
+             * (ADR 0108). Une action menée dont l'efficacité a été jugée dans
+             * la CAPA doit porter ce jugement dans le rapport : sans lui, le
+             * document dit qu'un geste a été fait sans dire s'il a servi.
+             */
+            String effectivenessVerdict,
+            /** Quand ce verdict a été porté ; {@code null} sans verdict. */
+            Instant effectivenessReviewedAt) {
 
         public Action {
             evidenceNames = List.copyOf(
                     Objects.requireNonNull(evidenceNames, "evidenceNames"));
+        }
+
+        /** Une action dont l'efficacité n'a pas encore été jugée. */
+        public Action(String title, String description, String actionType, String status,
+                      String assigneeName, LocalDate dueDate, Instant completedAt,
+                      List<String> evidenceNames) {
+            this(title, description, actionType, status, assigneeName, dueDate, completedAt,
+                    evidenceNames, null, null);
         }
 
         /**

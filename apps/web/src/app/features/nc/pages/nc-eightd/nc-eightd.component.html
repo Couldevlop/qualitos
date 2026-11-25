@@ -74,38 +74,6 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- D1, D3, D8 : les trois disciplines qu'aucun module ne sait renseigner. -->
-      <mat-card class="saisie-card" *ngIf="saisieOuverte(rapport)">
-        <mat-card-header>
-          <mat-card-title i18n="@@nc.8d.saisies-title">Les trois disciplines à saisir</mat-card-title>
-        </mat-card-header>
-        <mat-card-content [formGroup]="form">
-          <p class="hint" i18n="@@nc.8d.saisies-hint">
-            L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.
-          </p>
-
-          <mat-form-field appearance="outline" class="full">
-            <mat-label i18n="@@nc.8d.team-label">D1 — Équipe</mat-label>
-            <textarea matInput formControlName="team" rows="3" maxlength="4000"
-                      i18n-placeholder="@@nc.8d.team-placeholder"
-                      placeholder="Une personne par ligne, avec son rôle dans le traitement de l'écart"></textarea>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full">
-            <mat-label i18n="@@nc.8d.containment-label">D3 — Actions de sécurisation immédiates</mat-label>
-            <textarea matInput formControlName="containment" rows="3" maxlength="4000"
-                      i18n-placeholder="@@nc.8d.containment-placeholder"
-                      placeholder="Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…"></textarea>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full">
-            <mat-label i18n="@@nc.8d.recognition-label">D8 — Reconnaissance de l'équipe</mat-label>
-            <textarea matInput formControlName="recognition" rows="2" maxlength="4000"
-                      i18n-placeholder="@@nc.8d.recognition-placeholder"
-                      placeholder="Ce que l'équipe a appris, et ce qui mérite d'être dit"></textarea>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
 
       <mat-card class="discipline-card" *ngFor="let discipline of rapport.disciplines"
                 [class.sans-source]="!discipline.sourced" data-test="discipline">
@@ -114,7 +82,12 @@
             <span class="code">{{ discipline.code }}</span>
             <span class="titre">{{ discipline.title }}</span>
           </h3>
-          <p class="source" [class.manquante]="!discipline.sourced">{{ discipline.sourceLabel }}</p>
+          <!-- IL NE RESTE QU'A LA DISCIPLINE VIDE : servie, elle annoncait
+               « Agrege depuis : 3 dossiers CAPA » au-dessus du tableau de ces
+               memes actions, et repoussait d'une ligne ce qu'on vient lire. -->
+          <p class="source" [class.manquante]="!discipline.sourced"
+             *ngIf="discipline.sourceLabel"
+             data-test="discipline-source">{{ discipline.sourceLabel }}</p>
 
           <!-- Le texte agrege, SAUF la ou une figure le dit en mieux. Le D5
                enumerait le dossier et ses actions juste au-dessus du tableau
@@ -126,11 +99,47 @@
                qui venait en premier. Le document emis, lui, garde tout : il
                trace les schemas du D4 (ADR 0122), mais n'a pas de tableau.
                Un seul appel a `lignesVisibles`, dont le resultat est nomme. -->
+          <!-- CE QUE LA DISCIPLINE MONTRE EN COLONNES, tel que le document
+               emis le porte : l'equipe du D1. L'ecran le REND et ne le
+               refabrique pas -- une liste de noms ici et un tableau dans le PDF
+               finiraient par diverger. Les tableaux d'ACTIONS, eux, se
+               manoeuvrent plus bas : celui-la serait un doublon inerte. -->
+          <table class="table-fige" *ngFor="let tableau of tableauxFiges(discipline)"
+                 [attr.data-test]="'8d-tableau-' + discipline.code">
+            <caption *ngIf="tableau.caption">{{ tableau.caption }}</caption>
+            <thead>
+              <tr><th *ngFor="let colonne of tableau.columns" scope="col">{{ colonne }}</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let rang of tableau.rows">
+                <td *ngFor="let cellule of rang">{{ cellule }}</td>
+              </tr>
+            </tbody>
+          </table>
+
           <ng-container *ngIf="lignesVisibles(discipline) as lignes">
             <ul class="lignes" *ngIf="lignes.length > 0">
               <li *ngFor="let ligne of lignes">{{ ligne }}</li>
             </ul>
           </ng-container>
+
+          <!-- D8 : LA SEULE SAISIE QUI RESTE, et elle est dans sa discipline.
+               Les trois champs vivaient dans un cadre en haut de page, loin de
+               ce qu'ils renseignaient : on ecrivait l'equipe dans un formulaire
+               et on la relisait vingt lignes plus bas. L'equipe et
+               l'endiguement viennent desormais de la fiche et de son dossier ;
+               la reconnaissance, elle, n'a aucune source -- personne d'autre ne
+               sait ce que l'equipe merite qu'on dise. -->
+          <div class="saisie-dans-la-discipline" [formGroup]="form"
+               *ngIf="discipline.code === 'D8' && saisieOuverte(rapport)">
+            <mat-form-field appearance="outline" class="full">
+              <mat-label i18n="@@nc.8d.recognition-label">D8 — Reconnaissance de l'équipe</mat-label>
+              <textarea matInput formControlName="recognition" rows="2" maxlength="4000"
+                        data-test="8d-recognition"
+                        i18n-placeholder="@@nc.8d.recognition-placeholder"
+                        placeholder="Ce que l'équipe a appris, et ce qui mérite d'être dit"></textarea>
+            </mat-form-field>
+          </div>
 
           <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
                dont une figure tient lieu de texte ne la dit pas : le tableau ou
@@ -149,10 +158,14 @@
                    vrai quand elle a ete ecrite. Le document emis trace desormais
                    l'arete et la descente (ADR 0122) : laisser cette phrase
                    dissuadait d'ouvrir le PDF pour y chercher ce qui s'y trouve. -->
-              <p class="vivant-note" i18n="@@nc.8d.live-note-figures">État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</p>
+              <!-- EN LECTURE : la cause se travaille dans l'Ishikawa et les 5
+                   Pourquoi, qui sont leurs propres ecrans. Le rapport la DONNE
+                   A LIRE -- c'est ce qu'un auditeur vient y chercher --, et les
+                   boutons qui ouvraient ou concluaient l'analyse depuis ici
+                   faisaient du document un formulaire de plus. -->
               <qos-nc-cause-analysis [fiveWhys]="(fiveWhys$ | async) ?? []"
                                      [ishikawa]="(ishikawa$ | async) ?? []"
-                                     (rootCauseConcluded)="reload()"></qos-nc-cause-analysis>
+                                     [lectureSeule]="true"></qos-nc-cause-analysis>
               <!-- La note du D4 : l'hypothese ecartee, et pourquoi. Aucune
                    figure ne la dit, et le texte agrege du D4 est masque ici des
                    qu'une figure est chargee -- elle se lirait donc dans le PDF
@@ -174,7 +187,6 @@
           <ng-container *ngIf="montreLesPreuves(discipline.code)">
             <div class="vivant" *ngIf="(dossiersAPreuve$ | async)?.length"
                  data-test="8d-preuves">
-              <p class="vivant-note" i18n="@@nc.8d.live-note-evidence">État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</p>
               <qos-capa-evidence-panel *ngFor="let dossier of (dossiersAPreuve$ | async)"
                                        [capaCaseId]="dossier.id"
                                        [statut]="$any(dossier.status)"></qos-capa-evidence-panel>
@@ -201,7 +213,6 @@
                    disait « le PDF ne porte que le texte » : c'etait vrai, le
                    document emis porte desormais le meme tableau, fige a
                    l'emission (ADR 0124). -->
-              <p class="vivant-note" i18n="@@nc.8d.live-note-table">État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</p>
               <!-- UN SEUL TABLEAU par discipline : un panneau par dossier en
                    donnait autant, empiles, et l'action ecrite depuis la section
                    CAPA -- qui ouvre un nouveau dossier, une CAPA naissant avec
@@ -209,6 +220,7 @@
                    rejoindre ses pareilles. -->
               <qos-capa-action-panel [capaCaseIds]="(idsDesDossiers$ | async) ?? []"
                                      [source]="source"
+                                     [colonneNature]="false"
                                      [colonnePreuve]="montreLaColonnePreuve(discipline.code)"
                                      [ajoutAutorise]="ajoutAutorise"
                                      [natures]="naturesDe(discipline.code)"

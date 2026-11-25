@@ -74,6 +74,7 @@ function dossier(overrides: Partial<CapaCaseResponse> = {}): CapaCaseResponse {
 @Component({
   template: `<qos-capa-action-panel [capaCaseIds]="ids" [natures]="natures" [team]="equipe"
                                     [source]="source" [ajoutAutorise]="ajoutAutorise"
+                                    [colonneNature]="colonneNature"
                                     (changed)="changements = changements + 1"></qos-capa-action-panel>`,
   standalone: false
 })
@@ -86,6 +87,8 @@ class HoteComponent {
   natures: CapaActionType[] = [];
   /** L'équipe du D1 de l'écart, quand l'écran appelant en a une. */
   equipe: { accountId: string }[] = [];
+  /** Vraie : la fiche CAPA mêle les natures. Le rapport 8D la met à faux. */
+  colonneNature = true;
   changements = 0;
 }
 
@@ -369,6 +372,35 @@ describe('CapaActionPanelComponent', () => {
       expect(avancer[0].disabled).toBeTrue();
       expect(avancer[1].disabled).toBeFalse();
     });
+
+  /**
+   * LE RAPPORT 8D N'A PAS BESOIN DE LA COLONNE : chacune de ses disciplines ne
+   * montre QU'UNE nature -- l'endiguement au D3, le correctif au D5, la
+   * prevention au D7 --, et le mot se repetait donc sur toutes les lignes, en
+   * tete de tableau, devant l'intitule qu'on vient lire.
+   */
+  it('retire la colonne des natures quand l\'ecran n’en montre qu’une', async () => {
+    await setup();
+    hote.colonneNature = false;
+    fixture.detectChanges();
+
+    const entetes = Array.from(racine().querySelectorAll('th'))
+      .map(th => (th.textContent ?? '').trim());
+    expect(entetes).not.toContain("Nature de l'action");
+    // L'intitule reste la premiere colonne : c'est ce qu'on vient lire.
+    expect(entetes[0]).toBe("Intitulé de l'action");
+    const premiere = tous('capa-action-ligne')[0];
+    expect(premiere.querySelectorAll('td').length).toBe(entetes.length);
+  });
+
+  /** Par defaut elle reste : la fiche CAPA mele les trois natures. */
+  it('garde la colonne des natures par défaut', async () => {
+    await setup();
+
+    const entetes = Array.from(racine().querySelectorAll('th'))
+      .map(th => (th.textContent ?? '').trim());
+    expect(entetes).toContain("Nature de l'action");
+  });
 
   it('nomme la nature de l’action en clair, jamais son code', async () => {
     await setup();

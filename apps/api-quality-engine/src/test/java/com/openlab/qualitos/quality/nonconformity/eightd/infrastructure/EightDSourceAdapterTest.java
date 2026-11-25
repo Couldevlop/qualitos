@@ -9,7 +9,11 @@ import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
 import com.openlab.qualitos.quality.capa.CapaEvidence;
+import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
 import com.openlab.qualitos.quality.derogation.application.DirectoryPort;
+import com.openlab.qualitos.quality.derogation.application.DirectoryUnavailableException;
 import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
@@ -28,6 +32,7 @@ import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcOrigin;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoRepository;
 import com.openlab.qualitos.quality.nonconformity.NcTeamMemberRepository;
+import com.openlab.qualitos.quality.nonconformity.NcTeamMember;
 import com.openlab.qualitos.quality.nonconformity.NcSeverity;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
 import com.openlab.qualitos.quality.nonconformity.NonConformity;
@@ -40,6 +45,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,6 +85,7 @@ class EightDSourceAdapterTest {
     /** Le referentiel produit, pour nommer le produit vise au D2. */
     private ProductLookup produits;
     private DirectoryPort annuaire;
+    private EffectivenessReviewPort efficacite;
     private EightDSourceAdapter adapter;
 
     @BeforeEach
@@ -96,7 +103,9 @@ class EightDSourceAdapterTest {
         produits = mock(ProductLookup.class);
         annuaire = mock(DirectoryPort.class);
         when(annuaire.emailOf(any())).thenReturn(Optional.empty());
-        adapter = new EightDSourceAdapter(ncs, photos, equipes, annuaire, ishikawas, fiveWhys, etapes,
+        efficacite = mock(EffectivenessReviewPort.class);
+        when(efficacite.findLastPerActionOfCase(any(), any())).thenReturn(Map.of());
+        adapter = new EightDSourceAdapter(ncs, photos, equipes, annuaire, efficacite, ishikawas, fiveWhys, etapes,
                 capas, preuves, fmeaItems, plans, produits, viewAll -> Optional.empty());
 
         when(photos.findByTenantIdAndNcIdOrderByCreatedAtAsc(any(), any())).thenReturn(List.of());
@@ -109,7 +118,7 @@ class EightDSourceAdapterTest {
     @Test
     void le_8d_d_une_nc_hors_de_portee_est_introuvable() {
         // ADR 0081 : sans « voir toutes les NC », celle d'un autre déclarant n'existe pas.
-        adapter = new EightDSourceAdapter(ncs, photos, equipes, annuaire, ishikawas, fiveWhys, etapes,
+        adapter = new EightDSourceAdapter(ncs, photos, equipes, annuaire, efficacite, ishikawas, fiveWhys, etapes,
                 capas, preuves, fmeaItems, plans, produits,
                 viewAll -> Optional.of(UUID.randomUUID()));
         when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
@@ -189,6 +198,144 @@ class EightDSourceAdapterTest {
         assertThat(sources.capas().get(0).actions().get(0).evidenceCount()).isEqualTo(1L);
         assertThat(sources.capas().get(0).actions().get(0).actionType()).isEqualTo("CORRECTIVE");
     }
+
+    // ---------- le D1 : les noms de la fiche, les adresses de l'annuaire ----------
+
+    /**
+     * L'ADRESSE VIENT DE L'ANNUAIRE, le nom de la fiche.
+     *
+     * <p>La fiche ne retient que le nom et le compte ; le tableau du D1 porte
+     * une colonne d'adresse, et c'est l'annuaire qui la connait. Le nom, lui,
+     * reste celui FIGE a la saisie : un compte renomme ne doit pas reecrire un
+     * rapport emis.
+     */
+    @Test
+    void l_equipe_remonte_avec_l_adresse_de_chaque_membre() {
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
+        UUID compte = UUID.randomUUID();
+        when(equipes.findByTenantIdAndNcIdOrderByPositionAsc(TENANT, NC))
+                .thenReturn(List.of(membre("Ada Lovelace", compte.toString()),
+                        membre("Grace Hopper", null)));
+        when(annuaire.emailOf(compte)).thenReturn(Optional.of("ada.lovelace@exemple.fr"));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        assertThat(sources.team()).containsExactly(
+                new EightDSources.Member("Ada Lovelace", "ada.lovelace@exemple.fr"),
+                // SANS COMPTE, PAS D'ADRESSE : la case reste vide plutot que
+                // d'en inventer une.
+                new EightDSources.Member("Grace Hopper", null));
+    }
+
+    /**
+     * UNE PANNE DE L'ANNUAIRE N'EMPECHE PAS D'ASSEMBLER UN RAPPORT.
+     *
+     * <p>L'adresse est une commodite, le rapport est une preuve : refuser de
+     * l'assembler parce qu'api-core ne repond pas priverait le client de son
+     * 8D pour une colonne.
+     */
+    @Test
+    void un_annuaire_injoignable_laisse_l_adresse_vide_sans_rien_casser() {
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
+        UUID compte = UUID.randomUUID();
+        when(equipes.findByTenantIdAndNcIdOrderByPositionAsc(TENANT, NC))
+                .thenReturn(List.of(membre("Ada Lovelace", compte.toString())));
+        when(annuaire.emailOf(compte))
+                .thenThrow(new DirectoryUnavailableException("injoignable", null));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        assertThat(sources.team())
+                .containsExactly(new EightDSources.Member("Ada Lovelace", null));
+    }
+
+    /** Un identifiant de compte qui n'est pas un UUID ne fait pas lever l'assemblage. */
+    @Test
+    void un_compte_illisible_laisse_l_adresse_vide() {
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
+        when(equipes.findByTenantIdAndNcIdOrderByPositionAsc(TENANT, NC))
+                .thenReturn(List.of(membre("Ada Lovelace", "pas-un-uuid")));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        assertThat(sources.team())
+                .containsExactly(new EightDSources.Member("Ada Lovelace", null));
+        verifyNoInteractions(annuaire);
+    }
+
+    /**
+     * LE VERDICT D'EFFICACITE DE CHAQUE ACTION remonte avec elle (ADR 0131) :
+     * le rapport disait qu'un geste avait ete fait sans dire s'il avait servi.
+     */
+    @Test
+    void une_action_jugee_remonte_avec_son_verdict() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase dossier = capa();
+        UUID action = dossier.getActions().get(0).getId();
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(dossier));
+        when(efficacite.findLastPerActionOfCase(TENANT, CAPA)).thenReturn(Map.of(
+                action, jugement(action)));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        EightDSources.Action remontee = sources.capas().get(0).actions().get(0);
+        assertThat(remontee.effectivenessVerdict()).isEqualTo("PARTIAL");
+        assertThat(remontee.effectivenessReviewedAt()).isEqualTo(JUGE_LE);
+    }
+
+    /** Une action que personne n'a jugee ne porte pas de verdict. */
+    @Test
+    void une_action_non_jugee_ne_porte_aucun_verdict() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa()));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        EightDSources.Action remontee = sources.capas().get(0).actions().get(0);
+        assertThat(remontee.effectivenessVerdict()).isNull();
+        assertThat(remontee.effectivenessReviewedAt()).isNull();
+    }
+
+    /** Une piece sans nom d'origine se designe par sa cle : jamais une ligne vide. */
+    @Test
+    void une_piece_sans_nom_d_origine_se_designe_par_sa_cle() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa()));
+        CapaEvidence sansNom = piece(null, null);
+        sansNom.setObjectKey("tenant/capa/2026/piece-17.bin");
+        when(preuves.findCaseLevel(TENANT, CAPA)).thenReturn(List.of(sansNom));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        assertThat(sources.capas().get(0).caseEvidenceNames())
+                .containsExactly("tenant/capa/2026/piece-17.bin");
+    }
+
+    /** Un membre de l'equipe nomme sur la fiche. */
+    private NcTeamMember membre(String nom, String compte) {
+        NcTeamMember membre = new NcTeamMember();
+        membre.setId(UUID.randomUUID());
+        membre.setTenantId(TENANT);
+        membre.setNcId(NC);
+        membre.setDisplayName(nom);
+        membre.setAccountId(compte);
+        return membre;
+    }
+
+    /** Le dernier jugement porte sur une action : partiellement efficace. */
+    private EffectivenessReview jugement(UUID action) {
+        return EffectivenessReview.rehydrateForAction(UUID.randomUUID(), TENANT, CAPA, action,
+                EffectivenessVerdict.PARTIAL, "Rebut sous 2 %", "4,2 %", "2 %", "2,5 %",
+                null, UUID.randomUUID(), "Ada Lovelace", JUGE_LE);
+    }
+
+    private static final Instant JUGE_LE = Instant.parse("2026-10-02T09:00:00Z");
 
     /** Une piece deposee : son nom d'origine est ce que le D6 ecrit. */
     private CapaEvidence piece(UUID actionId, String nom) {

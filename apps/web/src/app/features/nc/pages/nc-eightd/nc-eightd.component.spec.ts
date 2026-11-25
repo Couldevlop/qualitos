@@ -53,8 +53,11 @@ describe('NcEightDComponent', () => {
       code,
       title: 'Discipline ' + code,
       sourced: servi,
-      sourceLabel: servi ? 'Agrégé depuis le dossier' : "Aucune source — cette discipline se saisit",
+      // SERVIE, ELLE SE TAIT SUR SA PROVENANCE : le libellé ne dit plus que ce
+      // qui manque, et la discipline vide est la seule à en porter un.
+      sourceLabel: servi ? '' : "Aucune source — rien à agréger",
       lines: servi ? ['une ligne de contenu'] : [],
+      tables: [],
       editable: saisie
     };
   }
@@ -173,7 +176,109 @@ describe('NcEightDComponent', () => {
 
     const vides = hote().querySelectorAll('[data-test="discipline-vide"]');
     expect(vides.length).toBe(3);
-    expect(hote().textContent).toContain('cette discipline se saisit');
+    // ET ELLE DIT POURQUOI : le libellé de provenance ne survit qu'à la
+    // discipline vide, où il distingue « rien à dire » de « on n'a pas
+    // cherché ». Servie, elle ne le porte plus — et la ligne disparaît avec
+    // lui au lieu de laisser un blanc.
+    expect(hote().textContent).toContain('rien à agréger');
+    expect(hote().querySelectorAll('[data-test="discipline-source"]').length).toBe(3);
+  });
+
+  // ---------- ce que la discipline montre en colonnes ----------
+
+  /**
+   * L'EQUIPE SE LIT EN COLONNES, et l'ecran rend le tableau du serveur au lieu
+   * d'en refabriquer un : une liste de noms ici et un tableau dans le PDF
+   * finiraient par diverger.
+   */
+  it('rend le tableau que porte la discipline, l\'equipe du D1', async () => {
+    await monter(['QUALITY_MANAGER']);
+    const avecEquipe = rapport();
+    avecEquipe.disciplines[0] = {
+      ...avecEquipe.disciplines[0],
+      sourced: true,
+      sourceLabel: '',
+      lines: [],
+      tables: [{
+        caption: '',
+        columns: ['Nom et prénom', 'Adresse mail', 'Rôle'],
+        rows: [['Ada Lovelace', 'ada@exemple.fr', 'Pilote']]
+      }]
+    };
+    svc.getEightDReport.and.returnValue(of(avecEquipe));
+    (component as unknown as { reload$: { next(v: void): void } }).reload$.next();
+    fixture.detectChanges();
+
+    const tableau = hote().querySelector('[data-test="8d-tableau-D1"]');
+    expect(tableau).withContext('le D1 porte le tableau de l\'equipe').not.toBeNull();
+    expect(tableau?.textContent).toContain('Ada Lovelace');
+    expect(tableau?.textContent).toContain('ada@exemple.fr');
+    expect(tableau?.textContent).toContain('Pilote');
+  });
+
+  /**
+   * LES TABLEAUX D'ACTIONS NE SE RENDENT PAS DEUX FOIS. Le serveur les porte
+   * aussi -- le document emis en a besoin --, mais l'ecran a juste en dessous
+   * un panneau qui montre les memes actions ET les fait avancer. Les rendre
+   * ici en donnerait deux, dont un mort.
+   */
+  it('ne redouble pas le tableau des actions sous la discipline qui le manoeuvre', async () => {
+    await monter(['QUALITY_MANAGER']);
+    const avecActions = rapport();
+    avecActions.disciplines[4] = {
+      ...avecActions.disciplines[4],
+      tables: [{
+        caption: 'Dossier A',
+        columns: ['Action', 'Responsable', 'Échéance', 'État'],
+        rows: [['Remplacer le joint', 'Grace', '10/09/2026', 'Faite']]
+      }]
+    };
+    svc.getEightDReport.and.returnValue(of(avecActions));
+    (component as unknown as { reload$: { next(v: void): void } }).reload$.next();
+    fixture.detectChanges();
+
+    expect(hote().querySelector('[data-test="8d-tableau-D5"]')).toBeNull();
+    expect(component.tableauxFiges(avecActions.disciplines[4])).toEqual([]);
+  });
+
+  // ---------- la reconnaissance, seule saisie restante ----------
+
+  /**
+   * ELLE EST DANS SA DISCIPLINE. Les trois champs vivaient dans un cadre en
+   * haut de page : on ecrivait l'equipe dans un formulaire et on la relisait
+   * vingt lignes plus bas. L'equipe et l'endiguement viennent desormais de la
+   * fiche et du dossier CAPA ; la reconnaissance n'a aucune source.
+   */
+  it('saisit la reconnaissance dans la carte du D8, et nulle part ailleurs', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    const champs = hote().querySelectorAll('[data-test="8d-recognition"]');
+    expect(champs.length).toBe(1);
+    const cartes = hote().querySelectorAll('[data-test="discipline"]');
+    expect(cartes[7].querySelector('[data-test="8d-recognition"]'))
+      .withContext('la saisie est sous le D8')
+      .not.toBeNull();
+    expect(hote().textContent).not.toContain('Les trois disciplines à saisir');
+  });
+
+  /**
+   * ON RENVOIE CE QU'ON N'AFFICHE PLUS. Un brouillon d'avant peut porter un D1
+   * et un D3 tapes a la main ; les taire a l'enregistrement les effacerait au
+   * premier mot ajoute au D8.
+   */
+  it('enregistre sans effacer les saisies que l\'ecran ne montre plus', async () => {
+    await monter(['QUALITY_MANAGER']);
+    svc.getEightDReport.and.returnValue(of(rapport({ team: 'Ada\nGrace', containment: 'Tri' })));
+    (component as unknown as { reload$: { next(v: void): void } }).reload$.next();
+    fixture.detectChanges();
+    svc.saveEightDReport.and.returnValue(of(rapport()));
+
+    component.form.patchValue({ recognition: 'Merci a l\'equipe' });
+    component.enregistrer();
+
+    expect(svc.saveEightDReport).toHaveBeenCalledWith(NC_ID, {
+      team: 'Ada\nGrace', containment: 'Tri', recognition: 'Merci a l\'equipe'
+    });
   });
 
   it('signale un rapport partiel et nomme les disciplines manquantes', async () => {
@@ -770,7 +875,7 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER']);
 
     const d5: EightDDiscipline = {
-      code: 'D5', title: 'D5', sourced: true, sourceLabel: '', editable: false,
+      code: 'D5', title: 'D5', sourced: true, sourceLabel: '', editable: false, tables: [],
       lines: [
         'CAPA: Reprendre le presse-\u00e9toupe',
         'Type: CORRECTIVE',
@@ -790,7 +895,7 @@ describe('NcEightDComponent', () => {
     // Le D6 porte des dates d'achevement et des comptes de preuves : rien que
     // le tableau des actions preventives ne montre.
     const d6: EightDDiscipline = {
-      code: 'D6', title: 'D6', sourced: true, sourceLabel: '', editable: false,
+      code: 'D6', title: 'D6', sourced: true, sourceLabel: '', editable: false, tables: [],
       lines: ['Changer le joint \u2014 completed on 02/11/2026 \u2014 2 evidence item(s)']
     };
 
@@ -805,7 +910,7 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER']);
 
     const d4: EightDDiscipline = {
-      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false,
+      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false, tables: [],
       lines: ['Root cause recorded on the non-conformity : Usure du roulement']
     };
 
@@ -820,7 +925,7 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER']);
 
     const d4: EightDDiscipline = {
-      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false,
+      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false, tables: [],
       lines: ['Root cause recorded on the non-conformity : Usure du roulement']
     };
 

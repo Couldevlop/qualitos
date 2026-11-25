@@ -7706,21 +7706,9 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">尚未为此不合格编写此类措施。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.live-note-table" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
-        <target state="translated">档案的当前状态。签发的 PDF 包含此表格，在签发时已固化。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
-        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
-        <target state="translated">档案的当前状态。签发的 PDF 包含其数量，在签发时已固化。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.evidence-empty" datatype="html">
         <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
         <target state="translated">一旦为该不合格开启 CAPA 档案，证据就可在此处附件：它们属于档案。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-figures" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
-        <target state="translated">档案的当前状态。签发的 PDF 包含这些图示，在签发时已固化。</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
@@ -22866,22 +22854,6 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">内容已固定、签名（Ed25519 + ML-DSA-65）并锚定。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.saisies-title" datatype="html">
-        <source>Les trois disciplines à saisir</source>
-        <target state="translated">需手工填写的三个步骤</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
-        <target state="translated">团队、围堵措施和团队认可在平台中没有数据来源，需在此填写。其余五个步骤从不合格项案卷中汇总。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-label" datatype="html">
-        <source>D1 — Équipe</source>
-        <target state="translated">D1 — 团队</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-placeholder" datatype="html">
-        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
-        <target state="translated">每行一人，并注明其在偏差处理中的角色</target>
-      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">导出</target>
@@ -22897,14 +22869,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.export-needs-issue" datatype="html">
         <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
         <target state="translated">只有在报告签发之后才有 PDF：签发会冻结内容、对其指纹签名并锚定。否则同一报告的两次导出可能不一致。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions de sécurisation immédiates</source>
-        <target state="translated">D3 — 立即围堵措施</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
-        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
-        <target state="translated">在查找原因期间保护客户的措施：分选、批次冻结、加严检验……</target>
       </trans-unit>
       <trans-unit id="nc.8d.recognition-label" datatype="html">
         <source>D8 — Reconnaissance de l'équipe</source>

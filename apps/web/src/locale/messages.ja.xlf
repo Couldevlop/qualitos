@@ -7706,21 +7706,9 @@ Portail clients</source>
         <source>Aucune action de cette nature n'a encore été écrite pour cet écart.</source>
         <target state="translated">この不適合について、この種別の対策はまだ記載されていません。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.live-note-table" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ce tableau, figé à l'émission.</source>
-        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこの表が含まれます。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-evidence" datatype="html">
-        <source>État actuel du dossier. Le PDF émis en porte le compte, figé à l'émission.</source>
-        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定された件数が記載されます。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.evidence-empty" datatype="html">
         <source>Les preuves se déposeront ici dès qu'un dossier CAPA sera ouvert sur l'écart : elles s'attachent au dossier.</source>
         <target state="translated">不適合に CAPA 案件が開かれ次第、証拠はここに添付されます。証拠は案件に属します。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.live-note-figures" datatype="html">
-        <source>État actuel du dossier. Le PDF émis porte ces schémas, figés à l'émission.</source>
-        <target state="translated">案件の現在の状態です。発行された PDF には、発行時点で固定されたこれらの図が含まれます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.live-note" datatype="html">
         <source>État actuel du dossier. Le PDF émis, lui, ne porte que le texte figé à l'émission.</source>
@@ -22865,22 +22853,6 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">内容を確定し、署名（Ed25519 + ML-DSA-65）とアンカーを付与しました。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.saisies-title" datatype="html">
-        <source>Les trois disciplines à saisir</source>
-        <target state="translated">手入力する 3 つの規律</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
-        <target state="translated">チーム、暫定対策、功績の承認はプラットフォームに情報源がないため、ここで入力します。残る 5 つの規律は不適合の案件から集約されます。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-label" datatype="html">
-        <source>D1 — Équipe</source>
-        <target state="translated">D1 — チーム</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.team-placeholder" datatype="html">
-        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
-        <target state="translated">1 行に 1 名、逸脱対応における役割を添えて</target>
-      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">エクスポート</target>
@@ -22896,14 +22868,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.export-needs-issue" datatype="html">
         <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
         <target state="translated">PDF はレポートを発行して初めて存在します。発行は内容を確定し、そのフィンガープリントに署名してアンカーします。これがないと、同じレポートの二つのエクスポートが食い違う可能性があります。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions de sécurisation immédiates</source>
-        <target state="translated">D3 — 緊急の暫定対策</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
-        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
-        <target state="translated">原因究明の間に顧客を守った措置：選別、ロット保留、検査強化など</target>
       </trans-unit>
       <trans-unit id="nc.8d.recognition-label" datatype="html">
         <source>D8 — Reconnaissance de l'équipe</source>

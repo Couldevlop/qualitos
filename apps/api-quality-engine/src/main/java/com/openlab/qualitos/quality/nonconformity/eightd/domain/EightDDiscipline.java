@@ -23,7 +23,11 @@ public enum EightDDiscipline {
     D2("D2", "Description du problème", false),
 
     /** Ce qui a protégé le client en attendant la cause. Aucune source : se saisit. */
-    D3("D3", "Actions immédiates d'endiguement", true),
+    // « D'ENDIGUEMENT » EN MOINS : le mot est du jargon de méthode, et cette
+    // discipline se lit par un client. « Actions immédiates » dit la même
+    // chose. Un rapport déjà scellé garde le titre qu'il porte dans son
+    // instantané : son empreinte tient à cela.
+    D3("D3", "Actions immédiates", true),
 
     /** La cause racine. Sources : Ishikawa, 5 pourquoi, cause racine de la NC. */
     D4("D4", "Cause racine", false),

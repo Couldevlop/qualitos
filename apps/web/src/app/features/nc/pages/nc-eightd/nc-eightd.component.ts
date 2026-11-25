@@ -20,7 +20,7 @@ import {
   ConfirmDialogData
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { EightDDiscipline, EightDReport, NcCapaCaseRef, NcResponse } from '../../nc.types';
+import { EightDDiscipline, EightDReport, EightDTable, NcCapaCaseRef, NcResponse } from '../../nc.types';
 
 /** OWASP A03 — un identifiant malformé est refusé côté écran, avant tout appel. */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -413,6 +413,21 @@ export class NcEightDComponent implements OnInit {
    * un couplage de forme entre un service Java et un gabarit, qui se casse en
    * silence le jour où la phrase change.
    */
+  /**
+   * Les tableaux que l'ÉCRAN rend lui-même, parmi ceux de la discipline.
+   *
+   * <p>Ceux du D1 : l'équipe, que rien d'autre ne montre ici. Les tableaux
+   * d'ACTIONS du D3, du D5 et du D7 sont écartés — le panneau juste en dessous
+   * porte les mêmes actions et, lui, se manœuvre ; les rendre ici les
+   * afficherait deux fois, dont une morte.
+   */
+  tableauxFiges(discipline: EightDDiscipline): EightDTable[] {
+    if (this.montreLesActions(discipline.code)) {
+      return [];
+    }
+    return discipline.tables ?? [];
+  }
+
   lignesVisibles(discipline: EightDDiscipline): string[] {
     return this.montreAuLieuDeDire(discipline.code) ? [] : discipline.lines;
   }
@@ -450,6 +465,10 @@ export class NcEightDComponent implements OnInit {
     }
     this.acting$.next(true);
     const saisies = this.form.getRawValue();
+    // ON RENVOIE CE QU'ON N'AFFICHE PLUS. L'équipe et l'endiguement avaient leur
+    // champ dans le rapport ; ils viennent désormais de la fiche et du dossier
+    // CAPA, mais un brouillon d'avant peut en porter le texte. Taire ces deux
+    // valeurs à l'enregistrement les effacerait au premier mot ajouté au D8.
     this.svc.saveEightDReport(this.ncId, {
       team: saisies.team,
       containment: saisies.containment,

@@ -538,9 +538,24 @@ export interface EightDDiscipline {
   code: string;
   title: string;
   sourced: boolean;
+  /** Vide dès que la discipline porte quelque chose : ce qu'elle montre dit d'où il vient. */
   sourceLabel: string;
   lines: string[];
+  /**
+   * Ce que la discipline montre en colonnes, tel que le document émis le porte.
+   *
+   * L'équipe du D1, à ce jour. L'écran le REND, il ne le refabrique pas : une
+   * liste de noms ici et un tableau dans le PDF finiraient par diverger.
+   */
+  tables: EightDTable[];
   editable: boolean;
+}
+
+/** Un tableau d'une discipline : ses colonnes, puis ses lignes de cellules. */
+export interface EightDTable {
+  caption: string;
+  columns: string[];
+  rows: string[][];
 }
 
 /** La preuve d'intégrité d'un rapport émis. */

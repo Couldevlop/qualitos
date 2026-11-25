@@ -77,7 +77,8 @@ public class EightDSnapshotAssembler {
     /**
      * @param sources      ce que les autres modules savent de l'écart
      * @param team         D1, tel que saisi (peut être nul)
-     * @param containment  D3, tel que saisi (peut être nul)
+     * @param containment  D3, tel que saisi autrefois : conservé en base, il ne
+     *                     compose plus le document (le D3 ne porte que ses actions)
      * @param recognition  D8, tel que saisi (peut être nul)
      * @param tenantLabel  l'identifiant du tenant, reporté en pied de page
      * @param issuedAt     l'instant d'émission, ou {@code null} pour un aperçu de brouillon
@@ -89,7 +90,7 @@ public class EightDSnapshotAssembler {
         List<EightDSnapshot.Section> sections = sansProvenanceRedondante(List.of(
                 equipe(sources.team(), team),
                 probleme(sources.nc()),
-                securisation(containment, sources.capas()),
+                securisation(sources.capas()),
                 causeRacine(sources),
                 actionsDecidees(sources.capas()),
                 miseEnOeuvre(sources.capas()),
@@ -170,7 +171,8 @@ public class EightDSnapshotAssembler {
         boolean servi = !rangs.isEmpty() || !lignes.isEmpty();
         return new EightDSnapshot.Section(
                 EightDDiscipline.D1.code(), EightDDiscipline.D1.titre(), servi,
-                servi ? "" : A_SAISIR, lignes, List.of(), tableaux);
+                servi ? "" : "Aucun membre nommé sur la non-conformité",
+                lignes, List.of(), tableaux);
     }
 
     /**
@@ -181,39 +183,45 @@ public class EightDSnapshotAssembler {
      * mêmes données en colonnes se lisent d'un coup d'œil, et le destinataire
      * du rapport sait à qui écrire.
      */
+    /**
+     * Les colonnes du D1, telles que la recette les a nommées.
+     *
+     * <p>La troisième dit « Rôle et fonction » : le rôle dans le traitement de
+     * l'écart -- pilote ou membre, que l'ordre de saisie porte -- et la
+     * fonction dans l'organisation. La plateforme ne STOCKE nulle part la
+     * seconde : l'annuaire donne un nom et une adresse. La colonne porte donc
+     * le rôle seul jusqu'à ce que la fonction existe quelque part.
+     */
     private static final List<String> COLONNES_EQUIPE =
-            List.of("Nom et prénom", "Adresse mail", "Rôle");
+            List.of("Nom et prénom", "Adresse mail", "Rôle et fonction");
 
     // ---------- D3, D8 : ce que personne d'autre ne sait ----------
 
     /**
-     * D3 : ce que le responsable a ecrit, ET les actions d'endiguement du dossier.
+     * D3 : LES ACTIONS D'ENDIGUEMENT DU DOSSIER, et rien d'autre.
      *
-     * <p>Les deux, parce qu'ils ne disent pas la meme chose : le texte raconte
-     * ce qu'on a fait pour arreter l'hemorragie, le tableau porte les gestes
-     * tracables -- qui, pour quand, fait ou non, prouve ou non. C'est aussi ce
-     * que l'ecran montre sous cette discipline.
+     * <p>La discipline portait aussi un texte libre, ecrit par l'equipe
+     * qualite : ce qu'on avait fait pour arreter l'hemorragie. Il DISAIT ce que
+     * le tableau MONTRE -- qui, pour quand, fait ou non -- et le lecteur
+     * rencontrait donc deux fois le meme endiguement, une fois raconte, une
+     * fois trace, sans savoir lequel faisait foi. Les gestes traces font foi ;
+     * le recit s'en va avec le champ de saisie qui le portait.
+     *
+     * <p>Le texte deja tape sur un brouillon reste STOCKE -- il n'est pas
+     * detruit -- mais il ne compose plus le document.
      */
-    private EightDSnapshot.Section securisation(String texte, List<EightDSources.Capa> capas) {
-        List<String> lignes = lignesDe(texte);
+    private EightDSnapshot.Section securisation(List<EightDSources.Capa> capas) {
         List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D3);
-        // La provenance n'est pas la meme des deux cotes, et le libelle de source
-        // ne doit pas mentir : le texte vient de l'equipe qualite, les actions du
-        // dossier CAPA. Dire « rempli par l'equipe qualite » d'un D3 ou seul le
-        // tableau est servi attribuerait a quelqu'un une phrase qu'il n'a pas
-        // ecrite.
-        String label;
-        if (!lignes.isEmpty()) {
-            label = tableaux.isEmpty() ? SAISI : SAISI + " — " + libelleCapas(capas);
-        } else if (!tableaux.isEmpty()) {
-            label = libelleCapas(capas);
-        } else {
-            label = A_SAISIR;
-        }
-        boolean servi = !lignes.isEmpty() || !tableaux.isEmpty();
+        boolean servi = !tableaux.isEmpty();
+        String label = servi
+                ? libelleCapas(capas)
+                // ELLE NE SE SAISIT PLUS : les actions d'endiguement viennent du
+                // dossier CAPA, et dire « se renseigne à la main » enverrait
+                // chercher un champ que l'écran ne montre plus.
+                : "Aucune action immédiate sur les dossiers CAPA de cet écart";
         return new EightDSnapshot.Section(
                 EightDDiscipline.D3.code(), EightDDiscipline.D3.titre(), servi,
-                label, lignes, List.of(), tableaux);
+                label, List.of(), List.of(), tableaux);
     }
 
     private EightDSnapshot.Section saisie(EightDDiscipline discipline, String texte) {
@@ -283,7 +291,12 @@ public class EightDSnapshotAssembler {
         ajouter(lignes, "Catégorie", libelle(CATEGORIES, nc.category()));
         ajouter(lignes, "Gravité", libelle(GRAVITES, nc.severity()));
         ajouter(lignes, "Origine", libelle(ORIGINES, nc.origin()));
-        ajouter(lignes, "Détecté le", horodatage(nc.detectedAt()));
+        // LE MOT DE LA FICHE : un écart EXTERNE se reçoit d'un client, il ne se
+        // détecte pas, et la fiche de l'écart fait déjà cette différence. Le
+        // document émis disait « Détecté le » d'une réclamation reçue.
+        ajouter(lignes,
+                "EXTERNAL".equals(texteOu(nc.origin(), "")) ? "Date de réception" : "Détecté le",
+                horodatage(nc.detectedAt()));
         ajouter(lignes, "Clos le", horodatage(nc.closedAt()));
         ajouter(lignes, "Zone", nc.zone());
         // Le client, le lot, le produit : ce que le destinataire du rapport
@@ -506,6 +519,18 @@ public class EightDSnapshotAssembler {
             "INTERNAL", "Interne",
             "EXTERNAL", "Externe");
 
+    /**
+     * Les trois verdicts d'efficacité, en toutes lettres (ADR 0108).
+     *
+     * <p>« Partiellement efficace » n'est pas une politesse pour « inefficace » :
+     * la cause était la bonne et l'action ne va pas assez loin. Le document émis
+     * doit porter la nuance, sans quoi il ment dans un sens ou dans l'autre.
+     */
+    private static final Map<String, String> VERDICTS = Map.of(
+            "EFFECTIVE", "efficace",
+            "PARTIAL", "partiellement efficace",
+            "INEFFECTIVE", "inefficace");
+
     private static final Map<String, String> ETATS = Map.of(
             "PENDING", "À faire",
             "IN_PROGRESS", "En cours",
@@ -602,6 +627,16 @@ public class EightDSnapshotAssembler {
                 duDossier.add(action.evidenceNames().isEmpty()
                         ? "Aucune pièce jointe"
                         : "Pièces jointes : " + String.join(", ", action.evidenceNames()));
+                // LE VERDICT D'EFFICACITÉ DE CETTE ACTION, quand il a été porté
+                // (ADR 0108, ADR 0131). Le rapport disait qu'un geste avait été
+                // fait sans dire s'il avait servi : l'évaluation vivait dans la
+                // CAPA et n'arrivait pas jusqu'au document remis au client.
+                if (action.effectivenessVerdict() != null) {
+                    duDossier.add("Efficacité : "
+                            + libelle(VERDICTS, action.effectivenessVerdict())
+                            + (action.effectivenessReviewedAt() == null ? ""
+                               : ", jugée le " + horodatage(action.effectivenessReviewedAt())));
+                }
             }
             if (!capa.caseEvidenceNames().isEmpty()) {
                 duDossier.add("Pièces du dossier : "
@@ -642,79 +677,36 @@ public class EightDSnapshotAssembler {
 
     // ---------- D7 : ce qui empêche le retour de l'écart ----------
 
-    private EightDSnapshot.Section prevention(EightDSources sources) {
-        List<String> lignes = new ArrayList<>();
-        EightDSources.Fmea fmea = sources.fmea();
-        if (fmea != null) {
-            lignes.add("AMDEC procédé \u2014 mode de défaillance : "
-                    + texteOu(fmea.failureMode(), "(non décrit)"));
-            ajouter(lignes, "    Effet", fmea.failureEffect());
-            ajouter(lignes, "    Cause", fmea.failureCause());
-            ajouter(lignes, "    Contrôles en place", fmea.currentControls());
-            lignes.add("    IPR : " + fmea.rpn()
-                    + (fmea.rpnAfter() == null
-                       ? "" : " → " + fmea.rpnAfter() + " après actions"));
-            ajouter(lignes, "    Priorité d'action", fmea.actionPriority());
-            ajouter(lignes, "    Action recommandée", fmea.recommendedAction());
-            ajouter(lignes, "    Actions menées", fmea.actionsTaken());
-        }
-        for (EightDSources.Surveillance plan : sources.surveillance()) {
-            lignes.add("Plan de surveillance " + texteOu(plan.code(), "(sans code)")
-                    + " rév. " + plan.revision()
-                    + " — " + texteOu(plan.phase(), "?")
-                    + " — " + texteOu(plan.status(), "?")
-                    + " — " + plan.lineCount() + " ligne(s)"
-                    + (plan.sealSha256() == null ? "" : " \u2014 scellé"));
-        }
-        // LES ACTIONS PRÉVENTIVES SONT LE D7, comme à l'écran. Elles étaient
-        // tabulées sous le D6, et le D7 ne lisait que l'AMDEC et le plan de
-        // surveillance : un écart dont l'équipe avait décidé une prévention —
-        // sans toucher à l'AMDEC ni au plan — sortait un rapport qui se
-        // déclarait « partiel, disciplines sans contenu : D7 » tout en
-        // imprimant cette prévention une page plus haut.
-        List<EightDSnapshot.Table> tableaux = tableauxDesActions(sources.capas(), NATURES_D7);
-        boolean servi = !lignes.isEmpty() || !tableaux.isEmpty();
-        String label = servi
-                ? libelleD7(fmea, sources.surveillance().size(), tableaux, sources.capas())
-                // Dit ce qui manque, et rien de plus. La phrase qui expliquait
-                // pourquoi le Poka-Yoke n'y figurait pas — un dispositif se
-                // rattache à un projet DMAIC, pas à un écart — exposait une
-                // limite d'outillage interne dans un document remis au client,
-                // là où il attend un constat de prévention.
-                : "Aucune action préventive décidée sur cet écart, aucun mode de"
-                  + " défaillance AMDEC rattaché, et aucun plan de surveillance sur le"
-                  + " produit concerné.";
-        return new EightDSnapshot.Section(
-                EightDDiscipline.D7.code(), EightDDiscipline.D7.titre(),
-                servi, label, lignes, List.of(), tableaux);
-    }
-
     /**
-     * D'où vient le D7 : les actions préventives d'abord, puis le référentiel.
+     * D7 : LES ACTIONS PREVENTIVES DECIDEES, et rien d'autre.
      *
-     * <p>L'ordre suit ce que le lecteur voit : le tableau des gestes est en
-     * tête de la discipline, et le libellé de source ne doit pas annoncer
-     * l'AMDEC pour un rapport qui n'en porte pas.
+     * <p>La discipline recopiait aussi l'AMDEC procédé -- mode de défaillance,
+     * effet, cause, contrôles, IPR -- et l'état des plans de surveillance du
+     * produit. C'est l'outillage INTERNE de l'analyse, pas la prévention : le
+     * client vient lire ce qui empêche l'écart de revenir, et il lisait d'abord
+     * une page de référentiel où ce qui a été décidé se perdait. L'AMDEC et le
+     * plan de surveillance restent consultables sur leurs écrans, qui les
+     * montrent en entier.
      */
-    private String libelleD7(EightDSources.Fmea fmea, int plans,
-                             List<EightDSnapshot.Table> tableaux,
-                             List<EightDSources.Capa> capas) {
-        List<String> parts = new ArrayList<>();
+    private EightDSnapshot.Section prevention(EightDSources sources) {
+        List<EightDSnapshot.Table> tableaux = tableauxDesActions(sources.capas(), NATURES_D7);
         int preventives = 0;
         for (EightDSnapshot.Table tableau : tableaux) {
             preventives += tableau.rows().size();
         }
-        if (preventives > 0) {
-            parts.add(libelleCapas(capas) + " — " + preventives
-                      + " action(s) préventive(s)");
-        }
-        if (fmea != null) {
-            parts.add("mode de défaillance AMDEC");
-        }
-        if (plans > 0) {
-            parts.add(plans + " plan(s) de surveillance");
-        }
-        return "Agrégé depuis : " + String.join(", ", parts);
+        boolean servi = preventives > 0;
+        String label = servi
+                ? libelleCapas(sources.capas()) + " — " + preventives
+                  + " action(s) préventive(s)"
+                // Dit ce qui manque, et rien de plus. La phrase qui expliquait
+                // pourquoi le Poka-Yoke n'y figurait pas -- un dispositif se
+                // rattache à un projet DMAIC, pas à un écart -- exposait une
+                // limite d'outillage interne dans un document remis au client,
+                // là où il attend un constat de prévention.
+                : "Aucune action préventive décidée sur cet écart";
+        return new EightDSnapshot.Section(
+                EightDDiscipline.D7.code(), EightDDiscipline.D7.titre(),
+                servi, label, List.of(), List.of(), tableaux);
     }
 
     // ---------- fabrique de lignes ----------

@@ -57,6 +57,17 @@ export class NcCauseAnalysisComponent {
   /** Émis après une conclusion acceptée : l'hôte relit ce qu'il affiche. */
   @Output() readonly rootCauseConcluded = new EventEmitter<FiveWhysAnalysis>();
 
+  /**
+   * Vrai quand l'écran MONTRE la cause sans laisser la travailler.
+   *
+   * <p>Faux par défaut : la fiche de l'écart est l'endroit où l'on instruit la
+   * cause, et c'est elle qui a d'abord porté ce composant. Le rapport 8D, lui,
+   * se lit — c'est ce qu'un auditeur vient y chercher —, et les boutons qui
+   * ouvraient le diagramme, déroulaient l'analyse ou concluaient la cause
+   * depuis ses pages en faisaient un formulaire de plus.
+   */
+  @Input() lectureSeule = false;
+
   /** En deçà, la « cause racine » est encore un symptôme. */
   readonly minWhys = MIN_WHYS_BEFORE_ROOT_CAUSE;
 

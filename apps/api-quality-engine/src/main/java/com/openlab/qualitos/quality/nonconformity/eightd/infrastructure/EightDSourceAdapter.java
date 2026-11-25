@@ -6,6 +6,8 @@ import com.openlab.qualitos.quality.capa.CapaCase;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaEvidence;
 import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
+import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
 import com.openlab.qualitos.quality.derogation.application.DirectoryPort;
 import com.openlab.qualitos.quality.derogation.application.DirectoryUnavailableException;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
@@ -72,6 +74,14 @@ public class EightDSourceAdapter implements EightDSourcePort {
      * rapport est une preuve -- d'ou la case laissee vide plutot que l'erreur.
      */
     private final DirectoryPort annuaire;
+    /**
+     * Les verdicts d'efficacite portes action par action (ADR 0131).
+     *
+     * <p>Le rapport disait qu'un geste avait ete fait sans dire s'il avait
+     * servi : l'evaluation vivait dans la CAPA et n'arrivait pas jusqu'au
+     * document remis au client.
+     */
+    private final EffectivenessReviewPort efficacite;
     private final IshikawaDiagramRepository ishikawas;
     private final FiveWhysAnalysisRepository fiveWhys;
     private final FiveWhysStepRepository fiveWhysSteps;
@@ -94,6 +104,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
                                NcPhotoRepository photos,
                                NcTeamMemberRepository teamMembers,
                                DirectoryPort annuaire,
+                               EffectivenessReviewPort efficacite,
                                IshikawaDiagramRepository ishikawas,
                                FiveWhysAnalysisRepository fiveWhys,
                                FiveWhysStepRepository fiveWhysSteps,
@@ -107,6 +118,7 @@ public class EightDSourceAdapter implements EightDSourcePort {
         this.photos = photos;
         this.teamMembers = teamMembers;
         this.annuaire = annuaire;
+        this.efficacite = efficacite;
         this.ishikawas = ishikawas;
         this.fiveWhys = fiveWhys;
         this.fiveWhysSteps = fiveWhysSteps;
@@ -282,14 +294,19 @@ public class EightDSourceAdapter implements EightDSourcePort {
         for (CapaEvidence piece : capaEvidences.findCaseLevel(tenantId, capa.getId())) {
             duDossier.add(nomDe(piece));
         }
+        Map<UUID, EffectivenessReview> verdicts =
+                efficacite.findLastPerActionOfCase(tenantId, capa.getId());
         List<EightDSources.Action> actions = new ArrayList<>();
         for (CapaAction action : capa.getActions()) {
             List<String> pieces = parAction.getOrDefault(action.getId(), List.of());
+            EffectivenessReview jugement = verdicts.get(action.getId());
             actions.add(new EightDSources.Action(
                     action.getTitle(), action.getDescription(),
                     nom(action.getActionType()), nom(action.getStatus()),
                     action.getAssigneeName(), action.getDueDate(), action.getCompletedAt(),
-                    pieces));
+                    pieces,
+                    jugement == null ? null : jugement.verdict().name(),
+                    jugement == null ? null : jugement.reviewedAt()));
         }
         return new EightDSources.Capa(
                 capa.getTitle(), nom(capa.getType()), nom(capa.getCriticity()), nom(capa.getStatus()),

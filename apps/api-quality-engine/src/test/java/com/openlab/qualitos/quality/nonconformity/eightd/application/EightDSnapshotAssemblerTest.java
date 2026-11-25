@@ -88,8 +88,15 @@ class EightDSnapshotAssemblerTest {
             EightDSnapshot.Section s = section(snapshot, code);
             assertThat(s.sourced()).isFalse();
             assertThat(s.lines()).isEmpty();
-            assertThat(s.sourceLabel()).contains("se renseigne à la main");
+            // ET ELLE DIT CE QUI MANQUE, sans envoyer chercher un champ de
+            // saisie : ces deux disciplines viennent de la fiche et de son
+            // dossier CAPA, elles ne se tapent plus.
+            assertThat(s.sourceLabel()).doesNotContain("se renseigne à la main");
         }
+        assertThat(section(snapshot, "D1").sourceLabel())
+                .isEqualTo("Aucun membre nommé sur la non-conformité");
+        assertThat(section(snapshot, "D3").sourceLabel())
+                .isEqualTo("Aucune action immédiate sur les dossiers CAPA de cet écart");
     }
 
     // ---------- D8 : la reconnaissance de l'equipe ----------
@@ -430,8 +437,17 @@ class EightDSnapshotAssemblerTest {
         assertThat(d7.sourceLabel()).isEmpty();
     }
 
+    /**
+     * LE D7 NE RECOPIE PLUS L'AMDEC NI LES PLANS DE SURVEILLANCE.
+     *
+     * <p>C'est l'outillage INTERNE de l'analyse -- mode de défaillance, effet,
+     * cause, IPR, révisions de plan --, pas la prévention. Le client vient lire
+     * ce qui empêche l'écart de revenir, et il lisait d'abord une page de
+     * référentiel où les gestes décidés se perdaient. Les deux restent entiers
+     * sur leurs écrans.
+     */
     @Test
-    void d7_agrege_le_pfmea_et_les_plans_de_surveillance() {
+    void d7_ne_recopie_plus_l_amdec_ni_les_plans_de_surveillance() {
         EightDSources sources = new EightDSources(
                 nc(null), EQUIPE, List.of(), List.of(), List.of(),
                 new EightDSources.Fmea("Fuite au joint", "Perte de pression", "Usure",
@@ -443,11 +459,12 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d7 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D7");
 
-        assertThat(d7.sourced()).isTrue();
-        assertThat(d7.sourceLabel()).isEmpty();
-        assertThat(d7.lines()).anyMatch(l -> l.contains("IPR : 160 → 40 après actions"));
-        assertThat(d7.lines()).anyMatch(l -> l.contains("CP-4471") && l.contains("rév. 3")
-                && l.contains("12 ligne(s)") && l.contains("scellé"));
+        assertThat(d7.lines()).isEmpty();
+        // Et la discipline le DIT : un AMDEC rattaché ne tient pas lieu d'action
+        // préventive décidée, et un D7 annoncé servi sur ce seul motif laisserait
+        // croire la récidive traitée.
+        assertThat(d7.sourced()).isFalse();
+        assertThat(d7.sourceLabel()).isEqualTo("Aucune action préventive décidée sur cet écart");
     }
 
     @Test
@@ -456,10 +473,10 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sourcesMinimales(), null, null, null, "t", null, null), "D7");
 
         assertThat(d7.sourced()).isFalse();
-        assertThat(d7.sourceLabel())
-                .contains("Aucune action préventive")
-                .contains("aucun mode de défaillance AMDEC")
-                .contains("aucun plan de surveillance");
+        // IL NE PARLE PLUS QUE DES ACTIONS : l'AMDEC et les plans de
+        // surveillance ne composent plus la discipline, et annoncer leur
+        // absence enverrait chercher dans le document ce qu'il ne porte pas.
+        assertThat(d7.sourceLabel()).isEqualTo("Aucune action préventive décidée sur cet écart");
         // La phrase qui expliquait pourquoi le Poka-Yoke n'y figurait pas exposait
         // une limite d'outillage interne dans un document remis au client, là où
         // il attend un constat de prévention.
@@ -475,8 +492,15 @@ class EightDSnapshotAssemblerTest {
                 List.of(),
                 List.of(new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "CLOSED", null, null, null, null,
                         List.of("bilan.pdf"),
-                        List.of(new EightDSources.Action("Action", null, "CORRECTIVE", "DONE", null,
-                                null, Instant.parse("2026-09-09T09:00:00Z"), List.of("constat.pdf"))))),
+                        // UNE ACTION PAR DISCIPLINE : le D3, le D5 et le D7 ne
+                        // sont plus servis par un texte tapé à la main mais par
+                        // les gestes tracés de leur nature.
+                        List.of(new EightDSources.Action("Bloquer le lot", null, "CONTAINMENT", "DONE",
+                                null, null, Instant.parse("2026-09-08T09:00:00Z"), List.of()),
+                                new EightDSources.Action("Action", null, "CORRECTIVE", "DONE", null,
+                                null, Instant.parse("2026-09-09T09:00:00Z"), List.of("constat.pdf")),
+                                new EightDSources.Action("Former les opérateurs", null, "PREVENTIVE",
+                                "DONE", null, null, Instant.parse("2026-09-10T09:00:00Z"), List.of())))),
                 new EightDSources.Fmea("Mode", null, null, null, 100, null, null, null, null),
                 List.of());
 
@@ -688,6 +712,47 @@ class EightDSnapshotAssemblerTest {
         return new EightDSources(nc(null), equipe, List.of(), List.of(), List.of(), null, List.of());
     }
 
+    /**
+     * LE VERDICT D'EFFICACITE REJOINT LE RAPPORT (ADR 0108, ADR 0131).
+     *
+     * <p>L'evaluation se portait dans la CAPA et n'allait pas plus loin : le
+     * document remis au client disait qu'un geste avait ete fait, jamais s'il
+     * avait servi. « Partiellement efficace » n'est pas une politesse pour
+     * « inefficace » -- la cause etait la bonne, l'action ne va pas assez
+     * loin --, et le D6 porte la nuance.
+     */
+    @Test
+    void d6_porte_le_verdict_d_efficacite_de_chaque_action_jugee() {
+        EightDSources.Action jugee = new EightDSources.Action(
+                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace",
+                LocalDate.parse("2026-09-10"), Instant.parse("2026-09-09T09:00:00Z"),
+                List.of("rapport-essai.pdf"), "PARTIAL",
+                Instant.parse("2026-10-02T09:00:00Z"));
+        EightDSources.Action nonJugee = new EightDSources.Action(
+                "Reprendre la gamme", null, "CORRECTIVE", "DONE", "Ada", null,
+                Instant.parse("2026-09-10T09:00:00Z"), List.of());
+        EightDSources sources = new EightDSources(
+                nc(null), EQUIPE, List.of(), List.of(),
+                List.of(new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH",
+                        "OPEN", null, null, null, null, List.of(),
+                        List.of(jugee, nonJugee))),
+                null, List.of());
+
+        EightDSnapshot.Section d6 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D6");
+
+        assertThat(d6.lines()).containsSubsequence(
+                "Remplacer le joint",
+                "Pieces jointes : rapport-essai.pdf".replace("Pieces", "Pièces"),
+                "Efficacite : partiellement efficace, jugee le 02/10/2026 09:00 UTC"
+                        .replace("Efficacite", "Efficacité").replace("jugee", "jugée"));
+        // Celle que personne n'a jugee ne porte pas de verdict : un silence
+        // vaut mieux qu'une efficacite supposee.
+        assertThat(d6.lines()).containsSubsequence("Reprendre la gamme", "Aucune pièce jointe");
+        assertThat(d6.lines()).noneMatch(l -> l.startsWith("Efficacité")
+                && l.contains("Reprendre"));
+    }
+
     // ---------- D1 : l'equipe nommee sur la fiche ----------
 
     // L'equipe se retapait dans le rapport alors que la fiche sait depuis le
@@ -706,7 +771,7 @@ class EightDSnapshotAssemblerTest {
         assertThat(d1.tables()).hasSize(1);
         EightDSnapshot.Table equipe = d1.tables().get(0);
         assertThat(equipe.columns())
-                .containsExactly("Nom et prénom", "Adresse mail", "Rôle");
+                .containsExactly("Nom et prénom", "Adresse mail", "Rôle et fonction");
         assertThat(equipe.rows()).hasSize(2);
         assertThat(equipe.rows().get(0).cells())
                 .containsExactly("Marie Durand", "marie.durand@exemple.fr", "Pilote");
@@ -752,14 +817,14 @@ class EightDSnapshotAssemblerTest {
     // Un ecart ne d'un constat d'audit ou d'un import systeme ne designe
     // personne : le rapport le DIT au lieu de le taire.
     @Test
-    void d1_sans_equipe_ni_saisie_dit_qu_il_reste_a_remplir() {
+    void d1_sans_equipe_ni_saisie_dit_que_personne_n_est_nomme() {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "tenant-1", null, null);
 
         EightDSnapshot.Section d1 = section(snapshot, "D1");
         assertThat(d1.sourced()).isFalse();
         assertThat(d1.lines()).isEmpty();
-        assertThat(d1.sourceLabel()).contains("se renseigne à la main");
+        assertThat(d1.sourceLabel()).isEqualTo("Aucun membre nommé sur la non-conformité");
     }
 
     /**

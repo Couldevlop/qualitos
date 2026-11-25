@@ -44,7 +44,7 @@
       <caption class="sr-only" i18n="@@capa.actions.caption">Actions de ce dossier CAPA</caption>
       <thead>
         <tr>
-          <th scope="col" i18n="@@capa.action.action-type">Nature de l'action</th>
+          <th scope="col" *ngIf="colonneNature" i18n="@@capa.action.action-type">Nature de l'action</th>
           <th scope="col" i18n="@@capa.open.title-label">Intitulé de l'action</th>
           <th scope="col" i18n="@@capa.detail.single-action-assignee">Responsable</th>
           <th scope="col" i18n="@@capa.action.decided-on">Date de début</th>
@@ -63,7 +63,7 @@
             data-test="capa-action-ligne" tabindex="0" role="button"
             [attr.aria-label]="openLabel(a)"
             (click)="openAction(a)" (keydown.enter)="openAction(a)" (keydown.space)="openAction(a)">
-          <td>{{ actionTypeLabel(a.actionType) }}</td>
+          <td *ngIf="colonneNature">{{ actionTypeLabel(a.actionType) }}</td>
           <td class="actions__titre">{{ a.title }}</td>
           <td>{{ a.assigneeName || '—' }}</td>
           <td class="actions__debut">{{ (a.decidedOn | date) || '—' }}</td>
