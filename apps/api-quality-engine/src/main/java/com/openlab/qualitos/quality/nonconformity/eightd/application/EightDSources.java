@@ -30,7 +30,7 @@ public record EightDSources(
          * <p>Vide pour un écart né d'un constat d'audit ou d'un import système :
          * personne n'a encore été désigné, et le rapport le dit.
          */
-        List<String> team,
+        List<Member> team,
         List<CauseTree> ishikawas,
         List<WhysChain> fiveWhys,
         /**
@@ -55,6 +55,21 @@ public record EightDSources(
         fiveWhys = List.copyOf(Objects.requireNonNull(fiveWhys, "fiveWhys"));
         capas = List.copyOf(Objects.requireNonNull(capas, "capas"));
         surveillance = List.copyOf(Objects.requireNonNull(surveillance, "surveillance"));
+    }
+
+    /**
+     * Un membre de l'équipe nommée sur la fiche : son nom, son adresse.
+     *
+     * <p>Le nom est celui FIGÉ à la saisie, et non une relecture de l'annuaire :
+     * un rapport relu trois ans plus tard porte les noms de l'époque. L'adresse,
+     * elle, vient de l'annuaire au moment où le rapport s'assemble — la fiche ne
+     * la connaît pas — et se fige comme le reste à l'émission.
+     *
+     * <p>{@code email} vaut {@code null} quand l'annuaire ne connaît pas le
+     * compte, ou quand il n'a pas répondu : le tableau du D1 laisse alors la
+     * case vide plutôt que d'inventer une adresse.
+     */
+    public record Member(String name, String email) {
     }
 
     /** La non-conformité elle-même — la source de D2, et l'arbitre de la clôture. */
@@ -130,11 +145,25 @@ public record EightDSources(
             Instant closedAt,
             Boolean effectivenessVerified,
             Instant effectivenessVerifiedAt,
-            long caseEvidenceCount,
+            /**
+             * Le nom des pièces déposées sur le DOSSIER, dans l'ordre du dépôt.
+             *
+             * <p>Le D6 ne dit plus « 3 preuve(s) » : il nomme les pièces. Un
+             * compte ne se vérifie pas — le lecteur ne sait pas ce qu'on a
+             * joint —, un nom de fichier se retrouve dans le dossier.
+             */
+            List<String> caseEvidenceNames,
             List<Action> actions) {
 
         public Capa {
+            caseEvidenceNames = List.copyOf(
+                    Objects.requireNonNull(caseEvidenceNames, "caseEvidenceNames"));
             actions = List.copyOf(Objects.requireNonNull(actions, "actions"));
+        }
+
+        /** Combien de pièces le dossier porte : la liste le dit, personne d'autre. */
+        public long caseEvidenceCount() {
+            return caseEvidenceNames.size();
         }
     }
 
@@ -147,7 +176,24 @@ public record EightDSources(
             String assigneeName,
             LocalDate dueDate,
             Instant completedAt,
-            long evidenceCount) {
+            /** Le nom des pièces de CETTE action, dans l'ordre du dépôt. */
+            List<String> evidenceNames) {
+
+        public Action {
+            evidenceNames = List.copyOf(
+                    Objects.requireNonNull(evidenceNames, "evidenceNames"));
+        }
+
+        /**
+         * Combien de pièces l'action porte.
+         *
+         * <p>Déduit de la liste, et non porté à côté d'elle : deux champs pour
+         * le même fait finissent par se contredire, et c'est un document signé
+         * qui en porterait la contradiction.
+         */
+        public long evidenceCount() {
+            return evidenceNames.size();
+        }
     }
 
     /** Le mode de défaillance PFMEA que l'écart a illustré : source de D7. */

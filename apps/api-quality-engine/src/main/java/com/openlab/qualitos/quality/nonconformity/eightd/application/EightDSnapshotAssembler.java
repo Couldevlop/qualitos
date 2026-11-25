@@ -86,7 +86,7 @@ public class EightDSnapshotAssembler {
     public EightDSnapshot assemble(EightDSources sources, String team, String containment,
                                    String recognition, String tenantLabel,
                                    Instant issuedAt, String issuedByName) {
-        List<EightDSnapshot.Section> sections = List.of(
+        List<EightDSnapshot.Section> sections = sansProvenanceRedondante(List.of(
                 equipe(sources.team(), team),
                 probleme(sources.nc()),
                 securisation(containment, sources.capas()),
@@ -94,7 +94,7 @@ public class EightDSnapshotAssembler {
                 actionsDecidees(sources.capas()),
                 miseEnOeuvre(sources.capas()),
                 prevention(sources),
-                reconnaissance(sources, recognition));
+                reconnaissance(sources, recognition)));
 
         boolean partiel = sections.stream().anyMatch(s -> !s.sourced());
         return new EightDSnapshot(
@@ -106,6 +106,31 @@ public class EightDSnapshotAssembler {
                 partiel,
                 sections,
                 LANGUE);
+    }
+
+    /**
+     * LE LIBELLÉ DE PROVENANCE NE SURVIT QU'À LA DISCIPLINE VIDE.
+     *
+     * <p>« Agrégé depuis : 3 dossiers CAPA sur cette non-conformité », au-dessus
+     * du tableau qui porte ces actions ; « Renseignée par l'équipe qualité »,
+     * au-dessus du texte que l'équipe vient d'écrire. Chaque discipline servie
+     * annonçait ainsi d'où venait ce qu'on lisait juste en dessous, et ce
+     * préambule repoussait le contenu d'une ligne sur huit disciplines.
+     *
+     * <p>Une discipline VIDE, elle, garde le sien : sans lui, elle laisserait
+     * croire qu'il n'y avait rien à dire, alors qu'elle dit seulement qu'aucun
+     * dossier n'a été ouvert ou que personne n'a écrit.
+     */
+    private List<EightDSnapshot.Section> sansProvenanceRedondante(
+            List<EightDSnapshot.Section> sections) {
+        List<EightDSnapshot.Section> nettoyees = new ArrayList<>();
+        for (EightDSnapshot.Section section : sections) {
+            nettoyees.add(section.sourced()
+                    ? new EightDSnapshot.Section(section.code(), section.title(), true, "",
+                            section.lines(), section.figures(), section.tables())
+                    : section);
+        }
+        return nettoyees;
     }
 
     // ---------- D1 : l'équipe nommée sur la fiche ----------
@@ -125,23 +150,39 @@ public class EightDSnapshotAssembler {
      * @param nommes l'équipe de la fiche, dans son ordre de saisie
      * @param texte  la saisie libre du rapport, le cas échéant
      */
-    private EightDSnapshot.Section equipe(List<String> nommes, String texte) {
-        List<String> lignes = new ArrayList<>();
+    private EightDSnapshot.Section equipe(List<EightDSources.Member> nommes, String texte) {
+        List<EightDSnapshot.Row> rangs = new ArrayList<>();
         for (int i = 0; i < nommes.size(); i++) {
-            ajouter(lignes, i == 0 ? "Pilote" : "Membre", nommes.get(i));
+            EightDSources.Member membre = nommes.get(i);
+            rangs.add(new EightDSnapshot.Row(List.of(
+                    texteOu(membre.name(), "(sans nom)"),
+                    texteOu(membre.email(), "-"),
+                    i == 0 ? "Pilote" : "Membre")));
         }
-        lignes.addAll(lignesDe(texte));
+        List<EightDSnapshot.Table> tableaux = rangs.isEmpty() ? List.of()
+                : List.of(new EightDSnapshot.Table("", COLONNES_EQUIPE, rangs));
+        List<String> lignes = new ArrayList<>(lignesDe(texte));
         // « Renseignée » veut dire « il y a quelque chose à montrer », comme pour
         // D3 et D8 : une équipe tapée à la main compte, sans quoi un D1 rempli
         // serait annoncé manquant. Seule l'ORIGINE change le libellé.
-        String origine = nommes.isEmpty()
-                // Aucun nom sur la fiche : l'écart est né d'un constat d'audit ou
-                // d'un import système, et D1 se remplit à la main.
-                ? (lignes.isEmpty() ? A_SAISIR : SAISI)
-                : "Équipe nommée sur la non-conformité \u2014 " + nommes.size()
-                  + " membre(s)";
-        return section(EightDDiscipline.D1, !lignes.isEmpty(), origine, lignes);
+        // Aucun nom sur la fiche : l'écart est né d'un constat d'audit ou d'un
+        // import système, et D1 se remplit alors à la main.
+        boolean servi = !rangs.isEmpty() || !lignes.isEmpty();
+        return new EightDSnapshot.Section(
+                EightDDiscipline.D1.code(), EightDDiscipline.D1.titre(), servi,
+                servi ? "" : A_SAISIR, lignes, List.of(), tableaux);
     }
+
+    /**
+     * Les colonnes du D1, dans l'ordre où l'équipe se lit.
+     *
+     * <p>Une liste de noms précédés de « Pilote : » ou « Membre : » se lisait
+     * ligne à ligne ; qui est qui, et comment le joindre, se cherchait. Les
+     * mêmes données en colonnes se lisent d'un coup d'œil, et le destinataire
+     * du rapport sait à qui écrire.
+     */
+    private static final List<String> COLONNES_EQUIPE =
+            List.of("Nom et prénom", "Adresse mail", "Rôle");
 
     // ---------- D3, D8 : ce que personne d'autre ne sait ----------
 
@@ -411,9 +452,16 @@ public class EightDSnapshotAssembler {
     private static final List<String> NATURES_D5 = List.of("CORRECTIVE");
     private static final List<String> NATURES_D7 = List.of("PREVENTIVE");
 
-    /** Les colonnes, dans l'ordre de l'ecran, moins celle des gestes. */
+    /**
+     * Les colonnes d'un tableau d'actions, dans l'ordre de l'écran.
+     *
+     * <p>LA NATURE N'EN EST PAS UNE : elle est le titre de la discipline. Chaque
+     * tableau ne montre qu'une nature — l'endiguement au D3, le correctif au D5,
+     * la prévention au D7 —, et la colonne répétait donc le même mot sur toutes
+     * ses lignes, en tête de page, devant l'intitulé qu'on vient lire.
+     */
     private static final List<String> COLONNES_ACTIONS =
-            List.of("Nature", "Action", "Responsable", "Échéance", "État", "Preuves");
+            List.of("Action", "Responsable", "Échéance", "État", "Preuves");
 
     /**
      * LES MEMES, SANS LA COLONNE DES PREUVES : les colonnes du D5.
@@ -426,6 +474,7 @@ public class EightDSnapshotAssembler {
      */
     private static final List<String> COLONNES_ACTIONS_SANS_PREUVE =
             COLONNES_ACTIONS.subList(0, COLONNES_ACTIONS.size() - 1);
+
 
     /**
      * Les codes du modèle mis en mots, avec les libellés de l'écran.
@@ -456,11 +505,6 @@ public class EightDSnapshotAssembler {
     private static final Map<String, String> ORIGINES = Map.of(
             "INTERNAL", "Interne",
             "EXTERNAL", "Externe");
-
-    private static final Map<String, String> NATURES = Map.of(
-            "CONTAINMENT", "Endiguement",
-            "CORRECTIVE", "Corrective",
-            "PREVENTIVE", "Préventive");
 
     private static final Map<String, String> ETATS = Map.of(
             "PENDING", "À faire",
@@ -500,7 +544,6 @@ public class EightDSnapshotAssembler {
                     continue;
                 }
                 List<String> cellules = new ArrayList<>(List.of(
-                        libelle(NATURES, texteOu(action.actionType(), "?")),
                         texteOu(action.title(), "(sans intitulé)"),
                         texteOu(action.assigneeName(), "-"),
                         action.dueDate() == null ? "-" : jour(action.dueDate()),
@@ -549,18 +592,20 @@ public class EightDSnapshotAssembler {
                     continue;
                 }
                 menees++;
-                duDossier.add(texteOu(action.title(), "(sans intitulé)")
-                        + " \u2014 menée le " + horodatage(action.completedAt())
-                        + " — " + action.evidenceCount() + " preuve(s)");
+                // L'INTITULÉ DE L'ACTION, PUIS LE NOM DE SES PIÈCES. Cette
+                // discipline écrivait « menée le 12/09 — 2 preuve(s) » : une
+                // date que le tableau du D5 porte déjà, et un compte que
+                // personne ne peut vérifier -- le lecteur ne sait pas ce qui a
+                // été joint. Un nom de fichier, lui, se retrouve dans le
+                // dossier, et se réclame quand il manque.
+                duDossier.add(texteOu(action.title(), "(sans intitulé)"));
+                duDossier.add(action.evidenceNames().isEmpty()
+                        ? "Aucune pièce jointe"
+                        : "Pièces jointes : " + String.join(", ", action.evidenceNames()));
             }
-            if (capa.caseEvidenceCount() > 0) {
-                duDossier.add("Preuves déposées sur le dossier CAPA : "
-                        + capa.caseEvidenceCount());
-            }
-            ajouter(duDossier, "Dossier CAPA clos le", horodatage(capa.closedAt()));
-            if (Boolean.TRUE.equals(capa.effectivenessVerified())) {
-                duDossier.add("Efficacité vérifiée le "
-                        + horodatage(capa.effectivenessVerifiedAt()));
+            if (!capa.caseEvidenceNames().isEmpty()) {
+                duDossier.add("Pièces du dossier : "
+                        + String.join(", ", capa.caseEvidenceNames()));
             }
             // Un dossier dont RIEN n'a encore \u00e9t\u00e9 men\u00e9 n'\u00e9crit pas son titre :
             // un intitul\u00e9 seul, sous une discipline de mise en \u0153uvre, se lit
@@ -578,8 +623,7 @@ public class EightDSnapshotAssembler {
         }
         boolean servi = menees > 0 || preuves > 0;
         String label = servi
-                ? libelleCapas(capas) + " \u2014 " + menees + " action(s) menée(s), "
-                  + preuves + " preuve(s)"
+                ? ""
                 : "Aucune action menée et aucune preuve déposée sur le dossier CAPA"
                   + " escaladé";
         // AUCUN TABLEAU D'ACTIONS ICI. Le D6 portait celui des actions

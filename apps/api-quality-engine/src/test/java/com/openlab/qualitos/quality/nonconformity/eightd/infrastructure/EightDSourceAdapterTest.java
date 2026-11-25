@@ -8,6 +8,8 @@ import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.capa.CapaCaseRepository;
 import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.capa.CapaEvidenceRepository;
+import com.openlab.qualitos.quality.capa.CapaEvidence;
+import com.openlab.qualitos.quality.derogation.application.DirectoryPort;
 import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
@@ -76,6 +78,7 @@ class EightDSourceAdapterTest {
     private ControlPlanRepository plans;
     /** Le referentiel produit, pour nommer le produit vise au D2. */
     private ProductLookup produits;
+    private DirectoryPort annuaire;
     private EightDSourceAdapter adapter;
 
     @BeforeEach
@@ -91,7 +94,9 @@ class EightDSourceAdapterTest {
         equipes = mock(NcTeamMemberRepository.class);
         plans = mock(ControlPlanRepository.class);
         produits = mock(ProductLookup.class);
-        adapter = new EightDSourceAdapter(ncs, photos, equipes, ishikawas, fiveWhys, etapes,
+        annuaire = mock(DirectoryPort.class);
+        when(annuaire.emailOf(any())).thenReturn(Optional.empty());
+        adapter = new EightDSourceAdapter(ncs, photos, equipes, annuaire, ishikawas, fiveWhys, etapes,
                 capas, preuves, fmeaItems, plans, produits, viewAll -> Optional.empty());
 
         when(photos.findByTenantIdAndNcIdOrderByCreatedAtAsc(any(), any())).thenReturn(List.of());
@@ -104,7 +109,7 @@ class EightDSourceAdapterTest {
     @Test
     void le_8d_d_une_nc_hors_de_portee_est_introuvable() {
         // ADR 0081 : sans « voir toutes les NC », celle d'un autre déclarant n'existe pas.
-        adapter = new EightDSourceAdapter(ncs, photos, equipes, ishikawas, fiveWhys, etapes,
+        adapter = new EightDSourceAdapter(ncs, photos, equipes, annuaire, ishikawas, fiveWhys, etapes,
                 capas, preuves, fmeaItems, plans, produits,
                 viewAll -> Optional.of(UUID.randomUUID()));
         when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
@@ -160,18 +165,40 @@ class EightDSourceAdapterTest {
     void une_capa_escaladee_remonte_avec_ses_actions_et_leurs_preuves() {
         NonConformity nc = nc();
         nc.setCapaCaseId(CAPA);
+        CapaCase dossier = capa();
+        UUID action = dossier.getActions().get(0).getId();
         when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
-        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa()));
-        when(preuves.countCaseLevel(TENANT, CAPA)).thenReturn(3L);
-        when(preuves.countByTenantIdAndActionId(any(), any())).thenReturn(1L);
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(dossier));
+        when(preuves.findCaseLevel(TENANT, CAPA)).thenReturn(List.of(
+                piece(null, "bilan-efficacite.pdf"), piece(null, "pv-cloture.pdf"),
+                piece(null, "photo-apres.jpg")));
+        when(preuves.findActionLevel(TENANT, CAPA))
+                .thenReturn(List.of(piece(action, "rapport-essai.pdf")));
 
         EightDSources sources = adapter.collect(TENANT, NC);
 
         assertThat(sources.capas()).hasSize(1);
+        // LE NOM DES PIECES, et non leur seul nombre : le D6 les nomme, et un
+        // compte ne se verifie pas.
+        assertThat(sources.capas().get(0).caseEvidenceNames())
+                .containsExactly("bilan-efficacite.pdf", "pv-cloture.pdf", "photo-apres.jpg");
         assertThat(sources.capas().get(0).caseEvidenceCount()).isEqualTo(3L);
         assertThat(sources.capas().get(0).actions()).hasSize(1);
+        assertThat(sources.capas().get(0).actions().get(0).evidenceNames())
+                .containsExactly("rapport-essai.pdf");
         assertThat(sources.capas().get(0).actions().get(0).evidenceCount()).isEqualTo(1L);
         assertThat(sources.capas().get(0).actions().get(0).actionType()).isEqualTo("CORRECTIVE");
+    }
+
+    /** Une piece deposee : son nom d'origine est ce que le D6 ecrit. */
+    private CapaEvidence piece(UUID actionId, String nom) {
+        CapaEvidence piece = new CapaEvidence();
+        piece.setId(UUID.randomUUID());
+        piece.setTenantId(TENANT);
+        piece.setCapaId(CAPA);
+        piece.setActionId(actionId);
+        piece.setOriginalFilename(nom);
+        return piece;
     }
 
     /**

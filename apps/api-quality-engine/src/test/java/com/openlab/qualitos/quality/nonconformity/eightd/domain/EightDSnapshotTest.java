@@ -21,12 +21,15 @@ class EightDSnapshotTest {
     }
 
     @Test
-    void une_section_sans_libelle_de_source_est_refusee() {
-        // Le libellé est obligatoire dans les DEUX cas : il dit d'où vient le contenu,
-        // ou ce qui manque. Une section muette laisse croire qu'il n'y avait rien à dire.
-        assertThatThrownBy(() -> new EightDSnapshot.Section("D1", "Équipe", false, "  ", List.of()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("sourceLabel");
+    void une_section_peut_se_taire_sur_sa_provenance() {
+        // Le libellé ne dit plus QUE ce qui manque : une discipline servie
+        // annonçait d'où venait ce qu'on lisait juste en dessous — « Agrégé
+        // depuis : 3 dossiers CAPA » au-dessus du tableau de ces actions —, et
+        // ce préambule repoussait le contenu d'une ligne sur huit disciplines.
+        EightDSnapshot.Section servie =
+                new EightDSnapshot.Section("D1", "Équipe", true, "  ", List.of("Ada"));
+
+        assertThat(servie.sourceLabel()).isEmpty();
     }
 
     @Test

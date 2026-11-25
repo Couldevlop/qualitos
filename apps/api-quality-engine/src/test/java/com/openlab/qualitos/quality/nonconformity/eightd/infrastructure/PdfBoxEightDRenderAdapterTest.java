@@ -536,22 +536,23 @@ class PdfBoxEightDRenderAdapterTest {
     }
 
     /**
-     * UN TABLEAU DE CINQ COLONNES GARDE L'INTITULE LARGE.
+     * UN TABLEAU SANS LA COLONNE DES NATURES GARDE L'INTITULE LARGE.
      *
-     * <p>Le D5 n'a pas de colonne de preuve : son tableau n'a que cinq
-     * colonnes, et des colonnes egales donnaient a l'intitule -- le seul champ
-     * de phrase -- le cinquieme de la largeur, replie sur quatre lignes a cote
-     * de colonnes aux trois quarts vides. On mesure donc ou commence la colonne
-     * suivante : l'intitule doit tenir bien plus que sa part egale.
+     * <p>La nature a quitte les colonnes -- elle est le titre de la
+     * discipline --, et le tableau n'a donc plus que cinq colonnes. Des
+     * colonnes egales donneraient a l'intitule, le seul champ de phrase, le
+     * cinquieme de la largeur : replie sur quatre lignes a cote de colonnes aux
+     * trois quarts vides. On mesure donc ou commence la colonne suivante :
+     * l'intitule doit tenir bien plus que sa part egale.
      */
     @Test
-    void un_tableau_de_cinq_colonnes_garde_l_intitule_large() throws IOException {
-        byte[] pdf = renderer.render(avecTableau(tableauSansPreuveDeDemo()), URL);
+    void un_tableau_sans_la_nature_garde_l_intitule_large() throws IOException {
+        byte[] pdf = renderer.render(avecTableau(tableauSansNatureDeDemo()), URL);
 
         String texte = texteDe(pdf);
-        assertThat(texte).contains("KIND").contains("ACTION").contains("OWNER")
-                .contains("DUE DATE").contains("STATUS");
-        assertThat(texte).doesNotContain("EVIDENCE");
+        assertThat(texte).contains("ACTION").contains("OWNER")
+                .contains("DUE DATE").contains("STATUS").contains("EVIDENCE");
+        assertThat(texte).doesNotContain("KIND");
 
         float debutIntitule = abscisseDe(pdf, "ACTION");
         float debutPorteur = abscisseDe(pdf, "OWNER");
@@ -561,6 +562,28 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(debutPorteur - debutIntitule)
                 .as("l'intitule du D5 ne doit pas se replier faute de place")
                 .isGreaterThan(120f);
+    }
+
+    /**
+     * LE TABLEAU DE L'EQUIPE N'EST PAS UN TABLEAU D'ACTIONS.
+     *
+     * <p>Le D1 porte desormais l'equipe en colonnes -- nom, adresse, role --,
+     * et ce tableau n'a pas de titre : « Actions - » au-dessus d'une liste de
+     * personnes annoncerait ce qu'il ne montre pas.
+     */
+    @Test
+    void le_tableau_sans_titre_ne_s_annonce_pas_comme_des_actions() throws IOException {
+        EightDSnapshot.Table equipe = new EightDSnapshot.Table(
+                "", List.of("Nom et prenom", "Adresse mail", "Role"), List.of(
+                        new EightDSnapshot.Row(List.of(
+                                "Ada Lovelace", "ada.lovelace@exemple.fr", "Pilote"))));
+
+        String texte = texteDe(renderer.render(avecTableau(equipe), URL));
+
+        assertThat(texte).contains("Ada Lovelace").contains("ada.lovelace@exemple.fr")
+                .contains("Pilote");
+        assertThat(texte).contains("NOM ET PRENOM").contains("ADRESSE MAIL").contains("ROLE");
+        assertThat(texte).doesNotContain("Actions -");
     }
 
     // ---------- fixtures ----------
@@ -702,9 +725,9 @@ class PdfBoxEightDRenderAdapterTest {
     private static final List<String> COLONNES =
             List.of("Kind", "Action", "Owner", "Due date", "Status", "Evidence");
 
-    /** Les memes, sans la colonne des preuves : celles du D5. */
-    private static final List<String> COLONNES_SANS_PREUVE =
-            List.of("Kind", "Action", "Owner", "Due date", "Status");
+    /** Les memes, sans la colonne des natures : celles de toutes les disciplines. */
+    private static final List<String> COLONNES_SANS_NATURE =
+            List.of("Action", "Owner", "Due date", "Status", "Evidence");
 
     /**
      * L'abscisse du premier caractere de ce texte, sur la premiere page qui le
@@ -737,13 +760,13 @@ class PdfBoxEightDRenderAdapterTest {
                         "Alan Turing", "30/10/2026", "TODO", "-"))));
     }
 
-    /** Le meme tableau, sans la colonne des preuves : celui du D5. */
-    private EightDSnapshot.Table tableauSansPreuveDeDemo() {
+    /** Le meme tableau, sans la colonne des natures : celui des disciplines. */
+    private EightDSnapshot.Table tableauSansNatureDeDemo() {
         return new EightDSnapshot.Table("Dossier A - fuite presse-etoupe",
-                COLONNES_SANS_PREUVE, List.of(
-                        new EightDSnapshot.Row(List.of("CORRECTIVE",
+                COLONNES_SANS_NATURE, List.of(
+                        new EightDSnapshot.Row(List.of(
                                 "Remplacer le joint du presse-etoupe et reprendre le serrage",
-                                "Ada Lovelace", "14/09/2026", "DONE"))));
+                                "Ada Lovelace", "14/09/2026", "DONE", "2"))));
     }
     /** Un instantane dont le D5 porte ce tableau, et rien d'autre. */
     private EightDSnapshot avecTableau(EightDSnapshot.Table tableau) {

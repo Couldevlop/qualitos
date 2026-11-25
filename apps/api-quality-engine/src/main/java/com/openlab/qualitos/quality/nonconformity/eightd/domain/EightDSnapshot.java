@@ -75,9 +75,12 @@ public record EightDSnapshot(
      * @param code         « D1 » … « D8 »
      * @param title        le titre de la discipline
      * @param sourced      vrai si du contenu a été trouvé ou saisi
-     * @param sourceLabel  d'où vient le contenu, ou pourquoi il manque — jamais vide :
-     *                     une section vide et silencieuse laisse croire qu'il n'y avait
-     *                     rien à dire, alors qu'elle dit seulement qu'on n'a pas cherché
+     * @param sourceLabel  POURQUOI le contenu manque, et rien d'autre : une section
+     *                     vide et silencieuse laisse croire qu'il n'y avait rien à dire,
+     *                     alors qu'elle dit seulement qu'on n'a pas cherché. Vide dès que
+     *                     la discipline porte quelque chose — le tableau, la figure ou le
+     *                     texte disent alors d'où ils viennent mieux qu'une ligne de
+     *                     provenance au-dessus d'eux, qui répétait le dossier déjà nommé
      * @param lines        le contenu, ligne à ligne, déjà mis en forme
      */
     public record Section(
@@ -118,7 +121,10 @@ public record EightDSnapshot(
         public Section {
             code = requireText(code, "code");
             title = requireText(title, "title");
-            sourceLabel = requireText(sourceLabel, "sourceLabel");
+            // VIDE EST UNE VALEUR : la discipline servie n'annonce pas sa
+            // provenance. Les rapports scellés avant cette règle en portent
+            // une, et se relisent inchangés -- l'empreinte tient à cela.
+            sourceLabel = sourceLabel == null ? "" : sourceLabel.trim();
             lines = List.copyOf(Objects.requireNonNull(lines, "lines"));
             figures = figures == null ? List.of() : List.copyOf(figures);
             tables = tables == null ? List.of() : List.copyOf(tables);

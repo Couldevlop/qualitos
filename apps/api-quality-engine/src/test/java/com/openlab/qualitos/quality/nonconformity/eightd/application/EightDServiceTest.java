@@ -332,11 +332,13 @@ class EightDServiceTest {
                     null, null, null);
             List<EightDSources.Capa> capas = enrichi
                     ? List.of(new EightDSources.Capa("CAPA", "CORRECTIVE", "HIGH", "OPEN", null, null,
-                            null, null, 0,
+                            null, null, List.of(),
                             List.of(new EightDSources.Action("Remplacer", null, "CORRECTIVE",
-                                    "OPEN", null, null, null, 0))))
+                                    "OPEN", null, null, null, List.of()))))
                     : List.of();
-            return new EightDSources(nc, List.of("Marie Durand"), List.of(), List.of(),
+            return new EightDSources(nc,
+                    List.of(new EightDSources.Member("Marie Durand", "marie@exemple.fr")),
+                    List.of(), List.of(),
                     capas, null, List.of());
         }
     }

@@ -238,11 +238,17 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         texte(page.flux, bold, 13, INDIGO, MARGIN, page.y,
                 section.code() + " - " + sanitize(section.title()));
         page.y -= 14;
-        // Le libellé de source est rouge quand il n'y a RIEN : la discipline vide
-        // s'explique au lieu de se taire.
-        texte(page.flux, regular, 8.5f, section.sourced() ? MUTED : ALERT, MARGIN, page.y,
-                sanitize(section.sourceLabel()));
-        page.y -= 14;
+        // LE LIBELLÉ DE PROVENANCE N'APPARAÎT QUE S'IL Y EN A UN, et il n'y en
+        // a plus que pour la discipline VIDE, qui s'explique au lieu de se
+        // taire -- d'où le rouge. Servie, elle le laisse vide : la ligne ne se
+        // réserve alors pas, sans quoi un blanc de 14 points séparerait chaque
+        // titre de son contenu. Les rapports scellés avant cette règle portent
+        // tous un libellé et se rendent donc à l'identique.
+        if (!section.sourceLabel().isBlank()) {
+            texte(page.flux, regular, 8.5f, section.sourced() ? MUTED : ALERT, MARGIN, page.y,
+                    sanitize(section.sourceLabel()));
+            page.y -= 14;
+        }
 
         if (rienAMontrer(section)) {
             page = place(doc, page, 16f);
@@ -300,16 +306,32 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     private static final float[] PARTS_COLONNES = {0.15f, 0.32f, 0.15f, 0.12f, 0.16f, 0.10f};
 
     /**
-     * LES MEMES, SANS LA COLONNE DES PREUVES : les parts du D5.
+     * Les parts d'un tableau d'actions SANS la colonne des natures, qui est
+     * desormais la forme de toutes les disciplines d'actions : intitule,
+     * responsable, echeance, etat, preuves.
      *
-     * <p>La discipline qui supprime la cause ne porte pas de piece par
-     * action -- ce qu'elle a a demontrer se prouve au D6, sur le dossier --,
-     * et son tableau n'a donc que cinq colonnes. Les faire egales repliait
-     * l'intitule sur quatre lignes : la part rendue par la colonne absente
-     * revient aux cinq restantes, au prorata de ce qu'elles valaient.
+     * <p>L'intitule prend les deux cinquiemes : c'est le seul champ de phrase,
+     * et la part de la colonne retiree lui revient d'abord -- elle se repliait
+     * sur quatre lignes a cote de colonnes aux trois quarts vides.
      */
-    private static final float[] PARTS_COLONNES_SANS_PREUVE =
-            {0.17f, 0.35f, 0.17f, 0.13f, 0.18f};
+    private static final float[] PARTS_ACTIONS_SANS_NATURE =
+            {0.40f, 0.20f, 0.15f, 0.15f, 0.10f};
+
+    /**
+     * Les memes, sans la colonne des preuves : les parts du D5.
+     *
+     * <p>Cette discipline ne porte pas de piece par action -- ce qu'elle a a
+     * demontrer se prouve au D6, sur le dossier.
+     */
+    private static final float[] PARTS_ACTIONS_D5 = {0.45f, 0.22f, 0.16f, 0.17f};
+
+    /**
+     * Les parts du tableau de l'equipe, au D1 : nom, adresse, role.
+     *
+     * <p>L'adresse est la plus longue des trois -- un prenom.nom suivi d'un
+     * domaine --, et le role tient en un mot.
+     */
+    private static final float[] PARTS_EQUIPE = {0.35f, 0.42f, 0.23f};
 
     /** La hauteur d'une ligne de tableau, par ligne de texte repliee. */
     private static final float LIGNE_CELLULE = 11f;
@@ -336,9 +358,14 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         // suivante se lirait comme un dossier vide.
         page = place(doc, page, 18f + LIGNE_CELLULE + 2 * LIGNE_CELLULE);
         page.y -= 4;
-        texte(page.flux, bold, 9.5f, INDIGO, MARGIN + 10, page.y,
-                "Actions - " + texteOuVide(tableau.caption()));
-        page.y -= 13;
+        // UN TABLEAU SANS TITRE N'EN PORTE PAS : celui du D1 est l'équipe
+        // elle-même, et « Actions - » au-dessus d'une liste de personnes
+        // annoncerait ce qu'il ne montre pas.
+        if (!texteOuVide(tableau.caption()).isBlank()) {
+            texte(page.flux, bold, 9.5f, INDIGO, MARGIN + 10, page.y,
+                    "Actions - " + texteOuVide(tableau.caption()));
+            page.y -= 13;
+        }
         page = enTete(page, bold, tableau.columns(), largeurs);
 
         boolean alterne = false;
@@ -404,11 +431,27 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * partagent la largeur a egalite -- un tableau d'une autre forme se rendra
      * sobrement plutot que de deborder de la page.
      */
+    /**
+     * Les parts connues pour {@code n} colonnes, ou {@code null}.
+     *
+     * <p>Six : un tableau d'actions scelle AVANT que la nature quitte les
+     * colonnes. Il se rend exactement comme il a ete emis -- son empreinte
+     * tient a cela.
+     */
+    private static float[] partsDe(int n) {
+        return switch (n) {
+            case 6 -> PARTS_COLONNES;
+            case 5 -> PARTS_ACTIONS_SANS_NATURE;
+            case 4 -> PARTS_ACTIONS_D5;
+            case 3 -> PARTS_EQUIPE;
+            default -> null;
+        };
+    }
+
     private static float[] largeursDe(int n) {
         float utile = CONTENT_W - 24f;
         float[] largeurs = new float[n];
-        float[] parts = n == PARTS_COLONNES.length ? PARTS_COLONNES
-                : n == PARTS_COLONNES_SANS_PREUVE.length ? PARTS_COLONNES_SANS_PREUVE : null;
+        float[] parts = partsDe(n);
         if (parts != null) {
             for (int i = 0; i < n; i++) {
                 largeurs[i] = utile * parts[i];

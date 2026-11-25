@@ -243,9 +243,18 @@ public class EightDService {
         }
         for (EightDSnapshot.Section section : snapshot.sections()) {
             EightDDiscipline discipline = parCode.get(section.code());
+            List<EightDDto.TableView> tableaux = new ArrayList<>();
+            for (EightDSnapshot.Table tableau : section.tables()) {
+                List<List<String>> rangs = new ArrayList<>();
+                for (EightDSnapshot.Row rang : tableau.rows()) {
+                    rangs.add(rang.cells());
+                }
+                tableaux.add(new EightDDto.TableView(
+                        tableau.caption(), tableau.columns(), rangs));
+            }
             disciplines.add(new EightDDto.DisciplineView(
                     section.code(), section.title(), section.sourced(), section.sourceLabel(),
-                    section.lines(), discipline != null && discipline.estSaisie()));
+                    section.lines(), tableaux, discipline != null && discipline.estSaisie()));
         }
 
         boolean emis = report != null && report.estEmis();

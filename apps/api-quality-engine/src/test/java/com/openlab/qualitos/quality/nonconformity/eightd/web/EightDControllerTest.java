@@ -73,7 +73,10 @@ class EightDControllerTest {
                 NC, "NC-2026-0007", "Fuite au presse-étoupe", emis ? "ISSUED" : "DRAFT",
                 !emis, true, List.of("D7"), "Ada, Grace", "Tri à 100 %", "Merci",
                 List.of(new EightDDto.DisciplineView("D1", "Équipe", true,
-                        "Saisi par l'équipe qualité", List.of("Ada, Grace"), true)),
+                        "", List.of(), List.of(new EightDDto.TableView("",
+                                List.of("Nom et prénom", "Adresse mail", "Rôle"),
+                                List.of(List.of("Ada Lovelace", "ada@exemple.fr", "Pilote")))),
+                        true)),
                 emis ? new EightDDto.SealView("d".repeat(64), "tx-1", "ABCDEFGHIJKLMNOP",
                         NOW, "Ada Lovelace") : null);
     }
