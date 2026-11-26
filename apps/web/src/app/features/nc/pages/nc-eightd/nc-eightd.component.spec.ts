@@ -115,7 +115,7 @@ describe('NcEightDComponent', () => {
                         }[],
                         statut: NcResponse['status'] = 'ACTION_DEFINED'): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
-      ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
+      ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'downloadEightDDraftPdf', 'getNc']);
     const ecart: NcResponse = {
       id: NC_ID, reference: 'NC-2026-0007', title: 'Fuite au presse-étoupe',
       category: 'PROCESS', severity: 'MAJOR', status: statut, origin: 'INTERNAL',
@@ -731,6 +731,43 @@ describe('NcEightDComponent', () => {
       expect(panneau.lectureSeule).toBeTrue();
       expect(panneau.sansAide).toBeTrue();
     });
+  });
+
+  /**
+   * LE RAPPORT SE RELIT AVANT DE SE FIGER. Le PDF n'existait qu'apres
+   * l'emission, et l'emission exige l'ecart clos ET un second facteur : relire
+   * son 8D sur papier, ou le faire relire, demandait de s'engager avant d'avoir
+   * lu. L'initiateur comme le validateur restaient sans document.
+   */
+  it('enregistre le rapport en PDF sans l’emettre', async () => {
+    await monter(['QUALITY_MANAGER']);
+    const blob = new Blob(['%PDF-'], { type: 'application/pdf' });
+    svc.downloadEightDDraftPdf.and.returnValue(of(new HttpResponse({
+      body: blob,
+      headers: new HttpHeaders({
+        'Content-Disposition': 'attachment; filename="8d-nc-2026-0007-brouillon.pdf"'
+      })
+    })));
+
+    (hote().querySelector('[data-test="enregistrer-pdf"]') as HTMLButtonElement).click();
+
+    expect(svc.downloadEightDDraftPdf).toHaveBeenCalledWith(NC_ID);
+    // AUCUNE EMISSION : rien n'est fige, signe ni ancre pour obtenir ce document.
+    expect(svc.issueEightDReport).not.toHaveBeenCalled();
+  });
+
+  /**
+   * EMIS, LE DOCUMENT SCELLE EST LE SEUL QUI VAILLE : deux documents concurrents
+   * du meme 8D semeraient le doute sur celui qui fait foi.
+   */
+  it('efface le bouton d’enregistrement une fois le rapport emis', async () => {
+    await monter(['QUALITY_MANAGER']);
+    svc.getEightDReport.and.returnValue(of(rapport({ status: 'ISSUED' })));
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(hote().querySelector('[data-test="enregistrer-pdf"]')).toBeNull();
+    expect(hote().querySelector('[data-test="exporter"]')).not.toBeNull();
   });
 
   /**

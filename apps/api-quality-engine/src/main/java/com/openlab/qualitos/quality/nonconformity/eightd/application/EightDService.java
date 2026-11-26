@@ -196,6 +196,41 @@ public class EightDService {
     }
 
     /**
+     * Rend le rapport EN L'ETAT, sans l'émettre.
+     *
+     * <p>Le PDF n'existait qu'après l'émission, et l'émission exige l'écart clos
+     * <b>et</b> un second facteur. Celui qui prépare le rapport ne pouvait donc ni
+     * le relire sur papier, ni le faire relire, ni l'envoyer en revue avant de le
+     * figer — il fallait sceller pour voir, c'est-à-dire s'engager avant d'avoir lu.
+     *
+     * <p>Ce document-ci n'est pas le rapport opposable et ne prétend pas l'être : il
+     * se rend sans code de vérification, et le rendu le marque « brouillon », en tête
+     * comme en pied. Rien n'est écrit en base : préparer un brouillon n'est pas un
+     * acte de pilotage, et deux brouillons du même rapport peuvent légitimement
+     * différer — c'est même leur raison d'être.
+     *
+     * <p>Une fois le rapport ÉMIS, c'est lui qu'on remet : il n'y a plus de version
+     * de travail qui vaille, et deux documents concurrents du même 8D sèmeraient le
+     * doute sur celui qui fait foi.
+     */
+    public EightDDto.PdfResult brouillon(UUID ncId) {
+        UUID tenantId = tenants.requireTenantId();
+        EightDReport report = repository.findByNc(tenantId, ncId).orElse(null);
+        if (report != null && report.estEmis()) {
+            return pdf(ncId);
+        }
+        EightDSources collecte = sources.collect(tenantId, ncId);
+        EightDSnapshot snapshot = assembler.assemble(collecte,
+                report == null ? null : report.getTeam(),
+                report == null ? null : report.getContainment(),
+                report == null ? null : report.getRecognition(),
+                tenantId.toString(), null, null);
+        byte[] pdf = renderer.render(snapshot, null);
+        String fileName = "8d-" + stem(snapshot.ncReference()) + "-brouillon.pdf";
+        return new EightDDto.PdfResult(pdf, fileName, sha256(pdf), null);
+    }
+
+    /**
      * Vérification publique : revalide la signature stockée sur l'empreinte stockée.
      * Un code inconnu répond {@code valid=false} sans détail — pas une erreur, pour
      * que la route ne serve pas à énumérer les tenants (OWASP A01).

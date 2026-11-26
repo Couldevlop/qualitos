@@ -556,11 +556,34 @@ export class NcEightDComponent implements OnInit {
     });
   }
 
+  /**
+   * Enregistre le rapport EN L'ÉTAT, sans l'émettre.
+   *
+   * <p>Préparer un 8D et ne pouvoir le relire qu'à l'écran obligeait à
+   * l'émettre pour le voir sur papier — donc à le figer, le signer et l'ancrer
+   * avant de l'avoir relu, et avant de l'avoir fait relire. Ce document-ci
+   * s'annonce brouillon, en tête comme en pied.
+   */
+  enregistrerEnPdf(): void {
+    this.remettre(this.svc.downloadEightDDraftPdf(this.ncId), 'rapport-8d-brouillon.pdf');
+  }
+
   /** Télécharge le PDF signé, sous le nom que le serveur propose. */
   telecharger(): void {
+    this.remettre(this.svc.downloadEightDPdf(this.ncId), 'rapport-8d.pdf');
+  }
+
+  /**
+   * Remet un document au navigateur, quel qu'il soit.
+   *
+   * <p>Le téléchargement du brouillon et celui du document scellé ne diffèrent
+   * que par leur route : écrire deux fois la lecture du blob, le nom de
+   * fichier et le traitement d'échec les aurait laissés diverger.
+   */
+  private remettre(flux: Observable<HttpResponse<Blob>>, defaut: string): void {
     if (this.acting$.value) { return; }
     this.acting$.next(true);
-    this.svc.downloadEightDPdf(this.ncId)
+    flux
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: reponse => {
@@ -571,7 +594,7 @@ export class NcEightDComponent implements OnInit {
               $localize`:@@common.ok:OK`, { duration: 4000 });
             return;
           }
-          this.enregistrerSous(blob, this.nomDeFichier(reponse) ?? 'rapport-8d.pdf');
+          this.enregistrerSous(blob, this.nomDeFichier(reponse) ?? defaut);
         },
         error: err => this.echec(err, $localize`:@@nc.8d.download-failed:Téléchargement impossible.`)
       });

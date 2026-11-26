@@ -44,13 +44,36 @@ C'est pourquoi le **D5 n'a pas de colonne *Preuve*** : ce qu'il a à démontrer 
    disciplines, telles qu'elles sont à cet instant.
 2. **Renseigner D8**, dans sa carte, puis **Enregistrer**. C'est la seule saisie du rapport.
    D1 vient de l'équipe de la fiche, D3, D5 et D7 des actions du dossier [CAPA](capa.md) : si une
-   de ces disciplines est vide, ce n'est pas un champ qui manque, c'est un geste à décider — et le
-   bouton **Ajouter une action** est sur place.
-3. **Clôturer la non-conformité** (depuis sa fiche). Tant qu'elle ne l'est pas, le rapport ne
+   de ces disciplines est vide, ce n'est pas un champ qui manque, c'est un geste à décider — sur
+   la fiche de l'écart ou dans le dossier CAPA, là où les actions s'inscrivent.
+3. **Enregistrer en PDF** pour se relire, et faire relire. Voir « Relire avant de figer »
+   ci-dessous.
+4. **Clôturer la non-conformité** (depuis sa fiche). Tant qu'elle ne l'est pas, le rapport ne
    s'émet pas — un 8D affirme qu'un problème est réglé.
-4. **Émettre**. Confirmation demandée, et **second facteur d'authentification** exigé : l'émission
+5. **Émettre**. Confirmation demandée, et **second facteur d'authentification** exigé : l'émission
    produit un document opposable.
-5. **Télécharger le PDF** et le transmettre au client.
+6. **Télécharger le PDF** et le transmettre au client.
+
+## Relire avant de figer
+
+**Enregistrer en PDF** remet le rapport **tel qu'il est**, sans l'émettre. Aucune signature,
+aucun ancrage, aucun code de vérification : c'est un document de travail, pour se relire soi-même,
+le faire relire par le pilote, ou l'envoyer en revue avant de l'arrêter.
+
+Il le dit lui-même, en tête comme en pied : « **BROUILLON — document de travail, non émis : ni
+signé, ni ancré** ». La mention est **dans** le document, et non dans le nom du fichier, qu'un
+destinataire peut renommer.
+
+Préparer un brouillon n'écrit rien : deux brouillons du même rapport peuvent différer, c'est leur
+raison d'être. Une fois le rapport **émis**, ce bouton disparaît et **Exporter** remet le document
+scellé — il n'y a alors plus de version de travail qui vaille.
+
+## Le rapport se lit, il ne se saisit pas
+
+Les tableaux d'actions du rapport sont un **résumé** : on y lit l'intitulé, le responsable, les
+dates, le statut, l'efficacité constatée et le nom des pièces. Aucun geste ne s'y décide — ni
+ajouter, ni avancer, ni effacer une action, ni joindre une pièce. Ces gestes vivent là où ils
+s'inscrivent : la **fiche de l'écart** et le **dossier CAPA**.
 
 ## Ce que « partiel » veut dire
 
@@ -89,14 +112,15 @@ ne se réémet pas.
 
 ## Qui peut faire quoi
 
-| Rôle | Lire le rapport et le PDF | Renseigner D8 | Émettre |
+| Rôle | Lire le rapport, le brouillon et le PDF | Renseigner D8 | Émettre |
 | --- | --- | --- | --- |
 | Utilisateur, Auditeur | ✅ | — | — |
 | Manager Qualité | ✅ | ✅ | ✅ (second facteur) |
 | Directeur Qualité, Admin Tenant | ✅ | ✅ | ✅ (second facteur) |
 
 Lire est ouvert à tous : la personne qui a signalé le défaut doit pouvoir lire la suite qu'on y a
-donnée.
+donnée. Le brouillon suit la même règle — c'est la même matière, mise en page ; le refuser à un
+auditeur interne l'obligerait à recopier l'écran.
 
 ## Bonnes pratiques
 

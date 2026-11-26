@@ -24,6 +24,19 @@
                 matTooltip="Figer le contenu, signer son empreinte et l'ancrer">
           <mat-icon>verified</mat-icon> <span i18n="@@nc.8d.issue">Émettre</span>
         </button>
+        <!-- ENREGISTRER SANS EMETTRE. Le PDF n'existait qu'apres l'emission,
+             qui fige, signe et ancre : relire son 8D sur papier, ou le faire
+             relire, demandait de s'engager avant d'avoir lu. Une fois le
+             rapport emis, le document scelle est le seul qui vaille, et ce
+             bouton s'efface devant « Exporter ». -->
+        <button mat-stroked-button *ngIf="rapport.status !== 'ISSUED'"
+                (click)="enregistrerEnPdf()"
+                data-test="enregistrer-pdf" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.8d.save-pdf-tooltip"
+                matTooltip="Le rapport en l'état, marqué brouillon : ni signé, ni ancré">
+          <mat-icon>download</mat-icon>
+          <span i18n="@@nc.8d.save-pdf">Enregistrer en PDF</span>
+        </button>
         <button mat-stroked-button (click)="exporter(rapport)"
                 data-test="exporter" [disabled]="acting$ | async"
                 i18n-matTooltip="@@nc.8d.export-tooltip"

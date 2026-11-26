@@ -439,6 +439,22 @@ export class NcService {
     });
   }
 
+  /**
+   * Télécharge le rapport EN L'ÉTAT, sans l'émettre.
+   *
+   * <p>Le PDF n'existait qu'après l'émission, et l'émission exige l'écart clos
+   * et un second facteur : il fallait sceller pour voir. Ce document-ci porte
+   * la mention « brouillon », n'a pas de code de vérification, et ne prétend
+   * pas faire foi. Une fois le rapport émis, le serveur remet le document
+   * scellé : il n'y a plus de version de travail qui vaille.
+   */
+  downloadEightDDraftPdf(ncId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.endpoint}/${ncId}/8d/draft-pdf`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
+  }
+
   private transition(
     id: string,
     targetStatus: NcStatus,

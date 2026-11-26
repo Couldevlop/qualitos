@@ -22905,6 +22905,14 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">内容を確定し、署名（Ed25519 + ML-DSA-65）とアンカーを付与しました。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.save-pdf" datatype="html">
+        <source>Enregistrer en PDF</source>
+        <target state="translated">PDF で保存</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-pdf-tooltip" datatype="html">
+        <source>Le rapport en l'état, marqué brouillon : ni signé, ni ancré</source>
+        <target state="translated">現状のレポート。下書きとして表示され、署名もアンカーもありません</target>
+      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">エクスポート</target>

@@ -22906,6 +22906,14 @@ declared income
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">Content frozen, signed (Ed25519 + ML-DSA-65) and anchored.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.save-pdf" datatype="html">
+        <source>Enregistrer en PDF</source>
+        <target state="translated">Save as PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-pdf-tooltip" datatype="html">
+        <source>Le rapport en l'état, marqué brouillon : ni signé, ni ancré</source>
+        <target state="translated">The report as it stands, marked draft: neither signed nor anchored</target>
+      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">Export</target>

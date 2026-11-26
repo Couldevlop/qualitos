@@ -22906,6 +22906,14 @@ historial de 12 meses</target>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">Contenido congelado, firmado (Ed25519 + ML-DSA-65) y anclado.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.save-pdf" datatype="html">
+        <source>Enregistrer en PDF</source>
+        <target state="translated">Guardar en PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-pdf-tooltip" datatype="html">
+        <source>Le rapport en l'état, marqué brouillon : ni signé, ni ancré</source>
+        <target state="translated">El informe tal cual, marcado como borrador: ni firmado ni anclado</target>
+      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">Exportar</target>

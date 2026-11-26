@@ -40,6 +40,16 @@ TRANSLATIONS = {
         'المحتوى مُثبَّت وموقَّع (Ed25519 + ML-DSA-65) ومُرسَّخ.',
         '内容を確定し、署名（Ed25519 + ML-DSA-65）とアンカーを付与しました。',
         '内容已固定、签名（Ed25519 + ML-DSA-65）并锚定。'),
+    'nc.8d.save-pdf': (
+        'Enregistrer en PDF', 'Save as PDF', 'Guardar en PDF',
+        'حفظ بصيغة PDF', 'PDF で保存', '保存为 PDF'),
+    'nc.8d.save-pdf-tooltip': (
+        "Le rapport en l'état, marqué brouillon : ni signé, ni ancré",
+        'The report as it stands, marked draft: neither signed nor anchored',
+        'El informe tal cual, marcado como borrador: ni firmado ni anclado',
+        'التقرير كما هو، موسومًا كمسودة: غير موقّع وغير مرسّخ',
+        '現状のレポート。下書きとして表示され、署名もアンカーもありません',
+        '当前状态的报告，标记为草稿：未签名、未锚定'),
     'nc.8d.export': (
         'Exporter', 'Export', 'Exportar', 'تصدير', 'エクスポート', '导出'),
     'nc.8d.export-tooltip': (
