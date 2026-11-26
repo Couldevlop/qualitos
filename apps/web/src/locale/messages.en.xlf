@@ -23702,6 +23702,10 @@ declared income
         <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
         <target state="translated">8D treatment · Team · Problem · Causes · Actions · Evidence</target>
       </trans-unit>
+      <trans-unit id="nc.8d.step-filled" datatype="html">
+        <source>renseignée</source>
+        <target state="translated">filled in</target>
+      </trans-unit>
       <trans-unit id="nc.8d.nav-label" datatype="html">
         <source>Les huit disciplines</source>
         <target state="translated">The eight disciplines</target>

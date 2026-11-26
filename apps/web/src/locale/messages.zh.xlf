@@ -23702,6 +23702,10 @@ historique 12 mois</source>
         <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
         <target state="translated">8D 处理 · 团队 · 问题 · 原因 · 措施 · 证据</target>
       </trans-unit>
+      <trans-unit id="nc.8d.step-filled" datatype="html">
+        <source>renseignée</source>
+        <target state="translated">已填写</target>
+      </trans-unit>
       <trans-unit id="nc.8d.nav-label" datatype="html">
         <source>Les huit disciplines</source>
         <target state="translated">八个步骤</target>

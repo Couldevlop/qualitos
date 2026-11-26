@@ -23702,6 +23702,10 @@ historial de 12 meses</target>
         <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
         <target state="translated">Tratamiento 8D · Equipo · Problema · Causas · Acciones · Pruebas</target>
       </trans-unit>
+      <trans-unit id="nc.8d.step-filled" datatype="html">
+        <source>renseignée</source>
+        <target state="translated">rellenada</target>
+      </trans-unit>
       <trans-unit id="nc.8d.nav-label" datatype="html">
         <source>Les huit disciplines</source>
         <target state="translated">Las ocho disciplinas</target>
