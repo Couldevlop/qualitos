@@ -1,5 +1,10 @@
 package com.openlab.qualitos.iot.infrastructure.config;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -7,6 +12,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -45,8 +53,46 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .anyRequest().authenticated())
-        .oauth2ResourceServer(o -> o.jwt(j -> {}));
+        .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(rolesDuRealm())));
     return http.build();
+  }
+
+  /**
+   * LES ROLES SE LISENT DANS {@code realm_access.roles}, et nulle part ailleurs.
+   *
+   * <p>Sans ce convertisseur, Spring applique le sien : il lit la revendication
+   * {@code scope} et fabrique des autorites {@code SCOPE_*}. Aucune autorite
+   * {@code ROLE_*} n'existait alors, donc AUCUN {@code @PreAuthorize} de ce
+   * service ne pouvait passer -- registre d'equipements, telemetrie, FHIR,
+   * LoRaWAN, Modbus, Sparkplug : tout chemin d'ecriture repondait 403, pour
+   * tout le monde, y compris l'administrateur du client.
+   *
+   * <p>Le defaut a survecu parce que les bancs posaient eux-memes l'autorite
+   * qu'ils verifiaient ({@code .authorities(...)}), ce qui saute le
+   * convertisseur : ils restaient verts sur un service inaccessible. Le banc
+   * {@code rolesDuRealm_*} passe desormais par le jeton.
+   *
+   * <p>Meme lecture que le moteur qualite, pour qu'un jeton ouvre les memes
+   * portes des deux cotes.
+   */
+  @Bean
+  public JwtAuthenticationConverter rolesDuRealm() {
+    JwtAuthenticationConverter converteur = new JwtAuthenticationConverter();
+    converteur.setJwtGrantedAuthoritiesConverter(jwt -> {
+      Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
+      if (realmAccess == null || !(realmAccess.get("roles") instanceof Collection<?> roles)) {
+        return List.of();
+      }
+      List<GrantedAuthority> autorites = new ArrayList<>();
+      for (Object role : roles) {
+        if (role != null) {
+          autorites.add(new SimpleGrantedAuthority(
+              "ROLE_" + role.toString().toUpperCase(Locale.ROOT)));
+        }
+      }
+      return autorites;
+    });
+    return converteur;
   }
 
   /**

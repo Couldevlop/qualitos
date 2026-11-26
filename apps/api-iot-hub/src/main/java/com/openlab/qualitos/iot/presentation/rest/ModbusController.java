@@ -49,7 +49,7 @@ public class ModbusController {
   public record IngestSummary(int ingested, int dropped, List<String> issues) {}
 
   @PostMapping
-  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','TENANT_ADMIN','QUALITY_MANAGER')")
+  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','ADMIN_TENANT','QUALITY_MANAGER')")
   public ResponseEntity<IngestSummary> reading(@RequestBody JsonNode body) {
     ModbusReadingHandler.Outcome outcome = handler.handle(body);
 

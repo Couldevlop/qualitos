@@ -1,6 +1,11 @@
 package com.openlab.qualitos.iot.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.openlab.qualitos.iot.domain.model.DeviceType;
 import com.openlab.qualitos.iot.domain.model.Protocol;
 import com.openlab.qualitos.iot.presentation.dto.DeviceDtos;
@@ -22,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,7 +78,7 @@ class DeviceControllerIntegrationTest {
 
     MvcResult created = mvc().perform(post("/api/v1/iot/devices")
             .with(jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-                .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN")))
+                .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(body)))
         .andExpect(status().isCreated())
@@ -88,6 +94,89 @@ class DeviceControllerIntegrationTest {
         .andExpect(jsonPath("$[0].code").value("PLC-001"));
   }
 
+  /**
+   * LE ROLE SE LIT DANS LE JETON, et il suffit a ouvrir la porte.
+   *
+   * <p>Les autres bancs posent eux-memes l'autorite ({@code .authorities(...)}),
+   * ce qui saute le convertisseur du service : ils restaient verts alors
+   * qu'aucun {@code @PreAuthorize} ne pouvait passer en production, faute de
+   * convertisseur lisant {@code realm_access.roles}. Celui-ci n'annonce AUCUNE
+   * autorite -- il ne presente qu'un jeton, comme Keycloak l'emet.
+   */
+  @Test
+  void leRoleDuRealmOuvreLEnregistrement() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
+        "REALM-1", "Presse", DeviceType.PLC, Protocol.OPC_UA,
+        "ACME", "Bordeaux", "AssemblyLine1", "WC-3", "Press01",
+        null, null);
+
+    mvc().perform(post("/api/v1/iot/devices")
+            .header("Authorization", "Bearer " + jetonDuRealm(tenant, "admin_tenant"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(body)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.code").value("REALM-1"));
+  }
+
+  /** Et le responsable qualite aussi, puisque la regle le nomme. */
+  @Test
+  void leRoleDuRealmOuvreAussiAuResponsableQualite() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
+        "REALM-2", "Visseuse", DeviceType.PLC, Protocol.OPC_UA,
+        "ACME", "Bordeaux", "AssemblyLine1", "WC-4", "Screw01",
+        null, null);
+
+    mvc().perform(post("/api/v1/iot/devices")
+            .header("Authorization", "Bearer " + jetonDuRealm(tenant, "quality_manager"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(body)))
+        .andExpect(status().isCreated());
+  }
+
+  /**
+   * Un jeton sans role de la liste reste dehors : la porte s'ouvre sur le role,
+   * pas sur le seul fait d'etre authentifie.
+   */
+  @Test
+  void unJetonSansRoleHabilitantEstRefuse() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
+        "REALM-3", "Four", DeviceType.PLC, Protocol.OPC_UA,
+        "ACME", "Bordeaux", "AssemblyLine1", "WC-5", "Oven01",
+        null, null);
+
+    mvc().perform(post("/api/v1/iot/devices")
+            .header("Authorization", "Bearer " + jetonDuRealm(tenant, "user"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(body)))
+        .andExpect(status().isForbidden());
+  }
+
+  /**
+   * Un VRAI jeton, signe de la cle du profil de test, presente en en-tete.
+   *
+   * <p>Le post-processeur {@code jwt()} des autres bancs FABRIQUE lui-meme
+   * l'authentification : il n'appelle ni le decodeur ni le convertisseur du
+   * service, et ne peut donc rien dire de ce que la production fera d'un jeton
+   * Keycloak. Presente en en-tete, celui-ci traverse la chaine entiere --
+   * decodage, conversion de {@code realm_access.roles} en autorites,
+   * {@code @PreAuthorize} -- et c'est le seul montage ou l'absence de
+   * convertisseur se serait vue.
+   */
+  private String jetonDuRealm(UUID tenant, String... roles) throws Exception {
+    JWTClaimsSet claims = new JWTClaimsSet.Builder()
+        .subject("recette")
+        .claim("tenant_id", tenant.toString())
+        .claim("realm_access", Map.of("roles", List.of(roles)))
+        .expirationTime(java.util.Date.from(Instant.now().plusSeconds(600)))
+        .build();
+    SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+    jwt.sign(new MACSigner("test-only-symmetric-secret-32bytes!!".getBytes()));
+    return jwt.serialize();
+  }
+
   @Test
   void duplicateCodeReturns409ProblemDetail() throws Exception {
     UUID tenant = UUID.randomUUID();
@@ -95,7 +184,7 @@ class DeviceControllerIntegrationTest {
         "DUP-1", "Dup", DeviceType.SENSOR_TEMPERATURE, Protocol.MQTT,
         null, null, null, null, null, null, null);
     var jwtMutator = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
     mvc().perform(post("/api/v1/iot/devices").with(jwtMutator)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(body)))
@@ -114,7 +203,7 @@ class DeviceControllerIntegrationTest {
     String badJson = "{\"type\":\"PLC\",\"protocol\":\"OPC_UA\"}";
     mvc().perform(post("/api/v1/iot/devices")
             .with(jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-                .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN")))
+                .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(badJson))
         .andExpect(status().isBadRequest())
@@ -139,7 +228,7 @@ class DeviceControllerIntegrationTest {
   void ingestTelemetryHappyPath() throws Exception {
     UUID tenant = UUID.randomUUID();
     var reg = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
 
     DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
         "MQTT-1", "Sensor", DeviceType.SENSOR_TEMPERATURE, Protocol.MQTT,
@@ -163,7 +252,7 @@ class DeviceControllerIntegrationTest {
   void ingestBatchHappyPath() throws Exception {
     UUID tenant = UUID.randomUUID();
     var reg = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
     DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
         "BATCH-1", "Sensor", DeviceType.SENSOR_VIBRATION, Protocol.MQTT,
         null, null, null, null, null, null, null);
@@ -189,7 +278,7 @@ class DeviceControllerIntegrationTest {
   void deviceShadowRoundTripAndReportedState() throws Exception {
     UUID tenant = UUID.randomUUID();
     var reg = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
 
     // Register with an initial twin (desired setpoint) → JSON round-trip must persist it.
     DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
@@ -234,7 +323,7 @@ class DeviceControllerIntegrationTest {
   void telemetryRollupAggregatesByHourBucket() throws Exception {
     UUID tenant = UUID.randomUUID();
     var reg = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
 
     DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
         "ROLLUP-1", "Sensor", DeviceType.SENSOR_TEMPERATURE, Protocol.MQTT,
@@ -300,7 +389,7 @@ class DeviceControllerIntegrationTest {
     UUID alice = UUID.randomUUID();
     UUID bob = UUID.randomUUID();
     var aliceJwt = jwt().jwt(b -> b.claim("tenant_id", alice.toString()))
-        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
     var bobJwt = jwt().jwt(b -> b.claim("tenant_id", bob.toString()));
 
     DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(

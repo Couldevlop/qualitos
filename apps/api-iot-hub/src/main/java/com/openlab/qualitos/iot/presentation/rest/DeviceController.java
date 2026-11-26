@@ -47,7 +47,7 @@ public class DeviceController {
   }
 
   @PostMapping("/devices")
-  @PreAuthorize("hasAnyRole('TENANT_ADMIN','QUALITY_MANAGER','SUPER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN_TENANT','QUALITY_MANAGER','SUPER_ADMIN')")
   public ResponseEntity<DeviceDtos.DeviceResponse> register(
       @Valid @RequestBody DeviceDtos.RegisterDeviceRequest req) {
     UUID tenantId = TenantContext.requireTenantId();
@@ -91,7 +91,7 @@ public class DeviceController {
 
   /** Met à jour la face « desired » (consigne) du twin. Tenant dérivé du JWT (A01). */
   @PatchMapping("/devices/{id}/shadow/desired")
-  @PreAuthorize("hasAnyRole('TENANT_ADMIN','QUALITY_MANAGER','SUPER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ADMIN_TENANT','QUALITY_MANAGER','SUPER_ADMIN')")
   public ResponseEntity<Map<String, Object>> setDesired(
       @PathVariable UUID id, @RequestBody Map<String, Object> desired) {
     UUID tenantId = TenantContext.requireTenantId();
@@ -105,7 +105,7 @@ public class DeviceController {
   }
 
   @PostMapping("/telemetry")
-  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','TENANT_ADMIN','QUALITY_MANAGER')")
+  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','ADMIN_TENANT','QUALITY_MANAGER')")
   @ResponseStatus(HttpStatus.ACCEPTED)
   public TelemetryDtos.TelemetryResponse ingest(@Valid @RequestBody TelemetryDtos.IngestRequest req) {
     UUID tenantId = TenantContext.requireTenantId();
@@ -115,7 +115,7 @@ public class DeviceController {
   }
 
   @PostMapping("/telemetry/batch")
-  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','TENANT_ADMIN','QUALITY_MANAGER')")
+  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','ADMIN_TENANT','QUALITY_MANAGER')")
   @ResponseStatus(HttpStatus.ACCEPTED)
   public List<TelemetryDtos.TelemetryResponse> ingestBatch(
       @Valid @RequestBody TelemetryDtos.BatchIngestRequest req) {

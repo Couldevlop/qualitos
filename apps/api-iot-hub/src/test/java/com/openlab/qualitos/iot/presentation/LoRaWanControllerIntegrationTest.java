@@ -70,7 +70,7 @@ class LoRaWanControllerIntegrationTest {
         "Exploitation", "Parcelle-12", null, null, null, null, null);
     mvc().perform(post("/api/v1/iot/devices")
             .with(jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
-                .authorities(new SimpleGrantedAuthority("ROLE_TENANT_ADMIN")))
+                .authorities(new SimpleGrantedAuthority("ROLE_ADMIN_TENANT")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(body)))
         .andExpect(status().isCreated());

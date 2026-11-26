@@ -49,7 +49,7 @@ public class FhirIngestionController {
   public record IngestSummary(int ingested, int dropped, List<String> issues) {}
 
   @PostMapping(consumes = {APPLICATION_FHIR_JSON, MediaType.APPLICATION_JSON_VALUE})
-  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','TENANT_ADMIN','QUALITY_MANAGER')")
+  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','ADMIN_TENANT','QUALITY_MANAGER')")
   public ResponseEntity<IngestSummary> ingest(@RequestBody JsonNode body) {
     UUID tenantId = TenantContext.requireTenantId();
     FhirIngestionHandler.Outcome outcome = handler.handle(tenantId, body);
