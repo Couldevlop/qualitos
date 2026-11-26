@@ -817,7 +817,15 @@ def huit_disciplines(c):
                 'assigneeId': c.sujet, 'assigneeName': c.nom,
                 'decidedOn': jour(-6), 'dueDate': echeance,
                 'effectivenessCriterion': critere,
+                # UNE VERIFICATION EXIGEE A UN RESPONSABLE, et le moteur le
+                # refuse autrement (400) : promettre qu'on verifiera sans dire
+                # qui laisserait une promesse sans personne pour la tenir.
                 'verificationRequired': critere is not None,
+                'verificationAssigneeId': c.sujet if critere else None,
+                'verificationAssigneeName': c.nom if critere else None,
+                'verificationInstructions':
+                    'Relever trois series consecutives et consigner les cotes.'
+                    if critere else None,
             }, '8D : action %s' % nature.lower())
 
     # --- D8 : la seule discipline qu'aucun module ne sait renseigner -------
@@ -864,13 +872,16 @@ def derogations(c):
 def reclamations(c):
     """Des reclamations client sur plusieurs canaux et plusieurs gravites."""
     print('\nReclamations client')
-    for canal, sujet, gravite, categorie in [
+    # LE CODE EST EXIGE : une reclamation se cite au client par sa reference,
+    # et le moteur refuse de la creer sans (400). Le suffixe le rend rejouable.
+    for rang, (canal, sujet, gravite, categorie) in enumerate([
         ('EMAIL', 'Bruit anormal en charge sur trois pompes', 'HIGH', 'PRODUCT'),
         ('PHONE', 'Retard de livraison de deux semaines', 'MEDIUM', 'DELIVERY'),
         ('WEB_FORM', 'Erreur de facturation sur la commande CMD-2026-4390',
          'LOW', 'BILLING'),
-    ]:
+    ], start=1):
         c.poste('/api/v1/complaints', {
+            'code': 'REC-%s-%d' % (SUFFIXE, rang),
             'channel': canal, 'subject': sujet,
             'customerName': 'Pompes Atlantique',
             'customerEmail': 'qualite@pompes-atlantique.test',
@@ -878,6 +889,11 @@ def reclamations(c):
                            "d un ecart.",
             'severity': gravite, 'category': categorie,
             'assignedToUserId': c.sujet,
+            # SIGNALE : l'auteur est demande DANS LE CORPS alors que le jeton le
+            # porte deja. Un appelant peut donc se declarer quelqu'un d'autre.
+            # On le renseigne ici pour passer la validation ; la correction est
+            # a faire cote moteur, pas ici.
+            'createdBy': c.sujet,
         }, 'reclamation (%s)' % canal.lower())
 
 
