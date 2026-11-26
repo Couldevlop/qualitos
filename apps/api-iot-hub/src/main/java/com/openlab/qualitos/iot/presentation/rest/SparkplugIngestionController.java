@@ -50,7 +50,7 @@ public class SparkplugIngestionController {
   public record IngestSummary(int ingested, int dropped, List<String> issues) {}
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','TENANT_ADMIN','QUALITY_MANAGER')")
+  @PreAuthorize("hasAnyRole('DEVICE','GATEWAY','ADMIN_TENANT','QUALITY_MANAGER')")
   public ResponseEntity<IngestSummary> ingest(@RequestBody JsonNode body) {
     // Pas de TenantContext ici : Sparkplug B (sur MQTT) n'identifie pas de tenant ;
     // le handler le résout depuis le registre device (fail-closed). §18.2 règle 2.
