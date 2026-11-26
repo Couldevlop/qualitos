@@ -412,6 +412,201 @@ class NcSecondRegardTest {
                 .has(Permission.NC_CLOSE);
     }
 
+    // ---------- le renvoi en modification ----------
+
+    /**
+     * LA SECONDE REPONSE DU SECOND REGARD. Clore ou renvoyer : la personne qui
+     * valide n'avait que la premiere, et quand l'action corrective ne repondait
+     * pas a la cause elle n'avait aucun geste pour le dire -- on telephonait au
+     * pilote, et le registre gardait un ecart « resolu » que personne ne
+     * cloturait.
+     */
+    @Test
+    void sendBack_rendLEcartAuPilote_etTraceQuiRenvoie() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        enregistre(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        service.sendBack(n.getId(), new NcDto.SendBackRequest(
+                "L'action ne repond pas a la cause racine."));
+
+        // ACTION_DEFINED et non OPEN : le renvoi dit que le traitement n'est pas
+        // encore bon, pas que l'instruction est a refaire. C'est aussi le seul
+        // etat depuis lequel la resolution se reprend.
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+        assertThat(n.getSentBackAt()).isNotNull();
+        assertThat(n.getSentBackById()).isEqualTo(ALI);
+        assertThat(n.getSentBackByName()).isEqualTo("Ali Benali");
+        assertThat(n.getSentBackReason()).isEqualTo("L'action ne repond pas a la cause racine.");
+    }
+
+    /**
+     * Le message est FACULTATIF : exiger une justification decouragerait le
+     * renvoi lui-meme, et un renvoi sans phrase vaut mieux qu'une cloture de
+     * complaisance.
+     */
+    @Test
+    void sendBack_sansMessage_passe() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        enregistre(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        service.sendBack(n.getId(), new NcDto.SendBackRequest(null));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+        assertThat(n.getSentBackReason()).isNull();
+    }
+
+    /**
+     * Un message BLANC se range comme pas de message : sans quoi un espace
+     * remplacerait par du vide le motif d'un renvoi anterieur.
+     */
+    @Test
+    void sendBack_messageBlanc_neRangeRien() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setSentBackReason("La preuve manquait.");
+        enregistre(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        service.sendBack(n.getId(), new NcDto.SendBackRequest("   "));
+
+        assertThat(n.getSentBackReason()).isNull();
+    }
+
+    /** La MEME porte que la cloture : on ne renvoie pas son propre travail. */
+    @Test
+    void sendBack_parLaPersonneQuiAResolu_refuse() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        enregistre(n);
+        jePuisClore();
+        connecte(MARIE, "Marie Durand");
+
+        assertThatThrownBy(() -> service.sendBack(n.getId(), new NcDto.SendBackRequest(null)))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("second pair of eyes");
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
+    /** Sans role ni designation : 403 muet, comme la cloture. */
+    @Test
+    void sendBack_sansDroitNiDesignation_refuse() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        enregistre(n);
+        when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
+        connecte(ALI, "Ali Benali");
+
+        assertThatThrownBy(() -> service.sendBack(n.getId(), new NcDto.SendBackRequest(null)))
+                .isInstanceOf(AccessDeniedException.class);
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+    }
+
+    /**
+     * QUI PEUT DIRE OUI DOIT POUVOIR DIRE NON. Le valideur designe sans role
+     * cloture ; s'il ne pouvait pas renvoyer, la designation ne lui laisserait
+     * que l'approbation -- un second regard qui ne peut que valider n'en est
+     * pas un.
+     */
+    @Test
+    void sendBack_parLeValideurDesigne_passe_memeSansLeRole() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        n.setValidatorId(ALI);
+        n.setValidatorName("Ali Benali");
+        enregistre(n);
+        lenient().when(authz.has(Permission.NC_CLOSE)).thenReturn(false);
+        connecte(ALI, "Ali Benali");
+
+        service.sendBack(n.getId(), new NcDto.SendBackRequest("Preuve manquante."));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
+    }
+
+    /**
+     * On ne renvoie que ce qui attend une reponse. Un ecart en cours n'a rien a
+     * renvoyer -- personne ne l'a encore declare resolu -- et un ecart clos se
+     * REPREND, ce qui est un autre geste.
+     */
+    @Test
+    void sendBack_dUnEcartQuiNEstPasResolu_refuse() {
+        NonConformity n = ecart(NcStatus.ACTION_DEFINED);
+        enregistre(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        assertThatThrownBy(() -> service.sendBack(n.getId(), new NcDto.SendBackRequest(null)))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("sent back")
+                .hasMessageContaining("ACTION_DEFINED");
+    }
+
+    @Test
+    void sendBack_dUnEcartClos_refuse() {
+        NonConformity n = ecart(NcStatus.CLOSED);
+        enregistre(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        assertThatThrownBy(() -> service.sendBack(n.getId(), new NcDto.SendBackRequest(null)))
+                .isInstanceOf(NcStateException.class);
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+    }
+
+    /**
+     * RIEN N'EST EFFACE. La resolution a eu lieu, elle est datee et signee ; le
+     * renvoi est un fait de plus, pas une gomme. Sans cela, l'auditeur ne
+     * pourrait plus lire ce que le second regard a repris.
+     */
+    @Test
+    void sendBack_nEffacePasLaResolutionNiSaSignature() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(MARIE);
+        n.setResolvedByName("Marie Durand");
+        n.setResolutionNote("Joint remplace.");
+        Instant resolu = Instant.now().minusSeconds(3600);
+        n.setResolvedAt(resolu);
+        enregistre(n);
+        jePuisClore();
+        connecte(ALI, "Ali Benali");
+
+        service.sendBack(n.getId(), new NcDto.SendBackRequest("A revoir."));
+
+        assertThat(n.getResolvedAt()).isEqualTo(resolu);
+        assertThat(n.getResolvedById()).isEqualTo(MARIE);
+        assertThat(n.getResolvedByName()).isEqualTo("Marie Durand");
+        assertThat(n.getResolutionNote()).isEqualTo("Joint remplace.");
+    }
+
+    /**
+     * ET L'ECART SE RESOUT A NOUVEAU. C'est la raison du retour a
+     * ACTION_DEFINED : le pilote corrige, puis redeclare l'ecart resolu sans
+     * retraverser l'analyse de cause.
+     */
+    @Test
+    void apresUnRenvoi_lEcartSeResoutANouveau() {
+        NonConformity n = ecart(NcStatus.RESOLVED);
+        n.setResolvedById(ALI);
+        enregistre(n);
+        jePuisClore();
+        connecte(MARIE, "Marie Durand");
+        service.sendBack(n.getId(), new NcDto.SendBackRequest("A revoir."));
+
+        when(capaService.hasAnyCaseFor(null, n.getReference())).thenReturn(true);
+        when(capaService.unexecutedCasesFor(null, n.getReference())).thenReturn(List.of());
+        connecte(ALI, "Ali Benali");
+
+        service.resolve(n.getId(), new NcDto.ResolveRequest("Action corrigee."));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+        // Le renvoi reste inscrit : c'est la trace de ce que le second regard a
+        // attrape, et elle ne s'efface pas a la resolution suivante.
+        assertThat(n.getSentBackAt()).isNotNull();
+    }
+
     // ---------- outils ----------
 
     private NcDto.CreateRequest declaration(UUID valideur, String nomValideur) {

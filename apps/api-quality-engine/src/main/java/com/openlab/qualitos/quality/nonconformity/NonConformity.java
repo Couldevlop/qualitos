@@ -255,6 +255,32 @@ public class NonConformity {
     @Column(name = "validator_name", length = 255)
     private String validatorName;
 
+    /**
+     * LE RENVOI EN MODIFICATION : ce que le second regard repond quand il ne
+     * clot pas.
+     *
+     * <p>Distinct de la reprise, et pas par souci de nuance. Rouvrir dit « le
+     * probleme est revenu apres la cloture » et ramene l'ecart au DEBUT de
+     * l'instruction ; renvoyer dit « le traitement n'est pas encore bon »,
+     * laisse l'analyse en place et rend l'ecart a son pilote. Les confondre
+     * ferait compter comme recidive un ecart qui n'a jamais ete clos.
+     *
+     * <p>Le nom est COPIE au moment du geste, comme celui de qui clot : le
+     * second regard ne se demontre que signe (ISO 9001 §10.2).
+     */
+    @Column(name = "sent_back_at")
+    private Instant sentBackAt;
+
+    /** Pourquoi le traitement revient au pilote. Facultatif. */
+    @Column(name = "sent_back_reason", columnDefinition = "TEXT")
+    private String sentBackReason;
+
+    @Column(name = "sent_back_by_id")
+    private UUID sentBackById;
+
+    @Column(name = "sent_back_by_name", length = 255)
+    private String sentBackByName;
+
     @Column(name = "reopened_at")
     private Instant reopenedAt;
 

@@ -61,6 +61,37 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).contains("cette discipline se saisit");
     }
 
+    /**
+     * UN BROUILLON LE DIT, EN TETE ET EN PIED. Le document se telecharge
+     * desormais avant l emission, pour se relire et se faire relire ; remis tel
+     * quel a un client, il passerait sans cela pour le rapport opposable.
+     */
+    @Test
+    void le_brouillon_s_annonce_et_ne_porte_aucun_pied_d_integrite() throws IOException {
+        EightDSnapshot brouillon = new EightDSnapshot("NC-2026-0007",
+                "Fuite au presse-étoupe", "tenant-demo", null, null, false,
+                snapshot(true).sections());
+
+        String texte = texteDe(renderer.render(brouillon, null));
+
+        assertThat(texte).contains("DRAFT - work in progress, not issued");
+        assertThat(texte).contains("Draft - no evidentiary value");
+        assertThat(texte).contains("has not been issued");
+        // Le pied d integrite affirmerait une signature et un ancrage que ce
+        // document n a pas, et son QR code menerait a un code inexistant.
+        assertThat(texte).doesNotContain("Integrity & verification");
+        assertThat(texte).doesNotContain("Scannez le QR code");
+    }
+
+    /** Le document EMIS, lui, ne porte aucune mention de brouillon. */
+    @Test
+    void le_rapport_emis_ne_s_annonce_pas_brouillon() throws IOException {
+        String texte = texteDe(renderer.render(snapshot(true), URL));
+
+        assertThat(texte).doesNotContain("DRAFT");
+        assertThat(texte).contains("Integrity & verification");
+    }
+
     @Test
     void le_rapport_complet_ne_porte_aucune_mention_de_partiel() throws IOException {
         String texte = texteDe(renderer.render(snapshot(true), URL));

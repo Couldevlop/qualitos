@@ -169,14 +169,6 @@ export class NcEightDComponent implements OnInit {
    */
   source?: { type: CapaSourceType; reference: string };
 
-  /**
-   * L'écart accepte-t-il encore qu'une discipline ouvre une CAPA de plus ?
-   *
-   * <p>Le droit d'écrire ne suffit pas : un écart CLOS, ANNULÉ ou REJETÉ
-   * n'attend plus d'action, et en décider une le laisserait bloquer une
-   * clôture déjà prononcée. Même règle que la fiche de l'écart.
-   */
-  ajoutAutorise = false;
 
   readonly idsDesDossiers$: Observable<readonly string[]> =
     this.capaCaseIds$.pipe(map(dossiers => (dossiers ?? []).map(d => d.id)));
@@ -286,8 +278,6 @@ export class NcEightDComponent implements OnInit {
               reference: nc.reference
             }
           : undefined;
-        this.ajoutAutorise = this.editable
-          && nc.status !== 'CLOSED' && nc.status !== 'CANCELLED' && nc.status !== 'REJECTED';
       },
       // On laisse `undefined` : l'écart n'a pas répondu, donc on ne SAIT pas
       // s'il porte un dossier. Écrire une liste vide reviendrait à affirmer
@@ -566,11 +556,34 @@ export class NcEightDComponent implements OnInit {
     });
   }
 
+  /**
+   * Enregistre le rapport EN L'ÉTAT, sans l'émettre.
+   *
+   * <p>Préparer un 8D et ne pouvoir le relire qu'à l'écran obligeait à
+   * l'émettre pour le voir sur papier — donc à le figer, le signer et l'ancrer
+   * avant de l'avoir relu, et avant de l'avoir fait relire. Ce document-ci
+   * s'annonce brouillon, en tête comme en pied.
+   */
+  enregistrerEnPdf(): void {
+    this.remettre(this.svc.downloadEightDDraftPdf(this.ncId), 'rapport-8d-brouillon.pdf');
+  }
+
   /** Télécharge le PDF signé, sous le nom que le serveur propose. */
   telecharger(): void {
+    this.remettre(this.svc.downloadEightDPdf(this.ncId), 'rapport-8d.pdf');
+  }
+
+  /**
+   * Remet un document au navigateur, quel qu'il soit.
+   *
+   * <p>Le téléchargement du brouillon et celui du document scellé ne diffèrent
+   * que par leur route : écrire deux fois la lecture du blob, le nom de
+   * fichier et le traitement d'échec les aurait laissés diverger.
+   */
+  private remettre(flux: Observable<HttpResponse<Blob>>, defaut: string): void {
     if (this.acting$.value) { return; }
     this.acting$.next(true);
-    this.svc.downloadEightDPdf(this.ncId)
+    flux
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: reponse => {
@@ -581,7 +594,7 @@ export class NcEightDComponent implements OnInit {
               $localize`:@@common.ok:OK`, { duration: 4000 });
             return;
           }
-          this.enregistrerSous(blob, this.nomDeFichier(reponse) ?? 'rapport-8d.pdf');
+          this.enregistrerSous(blob, this.nomDeFichier(reponse) ?? defaut);
         },
         error: err => this.echec(err, $localize`:@@nc.8d.download-failed:Téléchargement impossible.`)
       });

@@ -111,8 +111,9 @@ public class NcController {
     /**
      * Clôt l'écart, sous le SECOND REGARD.
      *
-     * <p>Seul point d'entrée du module sans {@code @RequiresPermission}, et
-     * c'est volontaire : le droit de clore ne se déduit pas du seul jeton. Il
+     * <p>Avec {@link #sendBack}, l'un des deux points d'entrée du module sans
+     * {@code @RequiresPermission}, et c'est volontaire : le droit de clore ne se
+     * déduit pas du seul jeton. Il
      * appartient aux rôles de pilotage <b>et</b> à la personne désignée sur CET
      * écart — que l'intercepteur ne peut pas connaître, puisqu'il tranche avant
      * d'avoir lu quel écart est visé.
@@ -125,6 +126,25 @@ public class NcController {
     public NcDto.Response close(@PathVariable UUID id,
                                 @Valid @RequestBody NcDto.CloseRequest request) {
         return service.close(id, request);
+    }
+
+    /**
+     * RENVOIE le traitement au pilote, message à l'appui, sous le SECOND REGARD.
+     *
+     * <p>Sans {@code @RequiresPermission}, pour la raison exacte qui vaut à la
+     * clôture : la personne désignée sur CET écart porte le second regard sans
+     * détenir le rôle, et l'intercepteur tranche avant de savoir quel écart est
+     * visé. {@code NcService.sendBack} applique la même porte — clore et
+     * renvoyer sont les deux réponses d'un seul acte, et les ouvrir
+     * différemment laisserait valider sans pouvoir refuser.
+     *
+     * <p>Le corps est facultatif : le renvoi se fait sans phrase.
+     */
+    @PostMapping("/{id}/send-back")
+    public NcDto.Response sendBack(
+            @PathVariable UUID id,
+            @Valid @RequestBody(required = false) NcDto.SendBackRequest request) {
+        return service.sendBack(id, request == null ? new NcDto.SendBackRequest(null) : request);
     }
 
     @PostMapping("/{id}/cancel")

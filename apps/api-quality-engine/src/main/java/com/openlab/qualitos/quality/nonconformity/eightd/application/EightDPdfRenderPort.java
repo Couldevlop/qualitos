@@ -18,7 +18,11 @@ public interface EightDPdfRenderPort {
 
     /**
      * @param snapshot  le contenu figé des huit disciplines
-     * @param verifyUrl l'URL publique encodée dans le QR code
+     * @param verifyUrl l'URL publique encodée dans le QR code, ou {@code null}
+     *                  pour un BROUILLON : le document se rend alors sans QR
+     *                  code et dit qu'il n'est ni signé ni ancré. Un pied
+     *                  d'intégrité sur un document non émis mentirait — c'est
+     *                  l'émission qui signe et qui ancre, pas le rendu.
      * @return les octets du PDF, non vides
      */
     byte[] render(EightDSnapshot snapshot, String verifyUrl);

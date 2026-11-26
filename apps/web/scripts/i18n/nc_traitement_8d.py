@@ -27,6 +27,13 @@ TRANSLATIONS = {
         'معالجة 8D · الفريق · المشكلة · الأسباب · الإجراءات · الأدلة',
         '8D 処理 · チーム · 問題 · 原因 · 対策 · 証拠',
         '8D 处理 · 团队 · 问题 · 原因 · 措施 · 证据'),
+    'nc.8d.step-filled': (
+        'renseignée',
+        'filled in',
+        'rellenada',
+        'مُستوفاة',
+        '入力済み',
+        '已填写'),
     'nc.8d.nav-label': (
         "Les huit disciplines",
         'The eight disciplines',

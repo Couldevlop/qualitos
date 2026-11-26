@@ -113,4 +113,26 @@ public class EightDController {
         entetes.setContentLength(resultat.pdf().length);
         return new ResponseEntity<>(resultat.pdf(), entetes, 200);
     }
+
+    /**
+     * Remet le rapport EN L'ETAT, sans l'émettre.
+     *
+     * <p>Ouvert en lecture, comme le document émis : c'est la même matière, mise en
+     * page. Qui peut lire les huit disciplines à l'écran peut les emporter sur
+     * papier ; refuser le brouillon à un auditeur interne l'obligerait à recopier
+     * l'écran.
+     *
+     * <p>Pas d'en-tête d'empreinte ni de code de vérification : ce document n'en a
+     * pas, et en annoncer un laisserait croire qu'il se vérifie.
+     */
+    @GetMapping(value = "/draft-pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Download the report as it stands, marked as a draft, without issuing it")
+    public ResponseEntity<byte[]> brouillon(@PathVariable UUID ncId) {
+        EightDDto.PdfResult resultat = service.brouillon(ncId);
+        HttpHeaders entetes = new HttpHeaders();
+        entetes.setContentType(MediaType.APPLICATION_PDF);
+        entetes.setContentDispositionFormData("attachment", resultat.fileName());
+        entetes.setContentLength(resultat.pdf().length);
+        return new ResponseEntity<>(resultat.pdf(), entetes, 200);
+    }
 }

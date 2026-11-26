@@ -24,6 +24,19 @@
                 matTooltip="Figer le contenu, signer son empreinte et l'ancrer">
           <mat-icon>verified</mat-icon> <span i18n="@@nc.8d.issue">Émettre</span>
         </button>
+        <!-- ENREGISTRER SANS EMETTRE. Le PDF n'existait qu'apres l'emission,
+             qui fige, signe et ancre : relire son 8D sur papier, ou le faire
+             relire, demandait de s'engager avant d'avoir lu. Une fois le
+             rapport emis, le document scelle est le seul qui vaille, et ce
+             bouton s'efface devant « Exporter ». -->
+        <button mat-stroked-button *ngIf="rapport.status !== 'ISSUED'"
+                (click)="enregistrerEnPdf()"
+                data-test="enregistrer-pdf" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.8d.save-pdf-tooltip"
+                matTooltip="Le rapport en l'état, marqué brouillon : ni signé, ni ancré">
+          <mat-icon>download</mat-icon>
+          <span i18n="@@nc.8d.save-pdf">Enregistrer en PDF</span>
+        </button>
         <button mat-stroked-button (click)="exporter(rapport)"
                 data-test="exporter" [disabled]="acting$ | async"
                 i18n-matTooltip="@@nc.8d.export-tooltip"
@@ -144,7 +157,14 @@
           <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
                dont une figure tient lieu de texte ne la dit pas : le tableau ou
                le schema, juste en dessous, porte deja son propre etat. -->
-          <p class="vide" *ngIf="discipline.lines.length === 0 && !montreAuLieuDeDire(discipline.code)"
+          <!-- Une discipline qui porte un TABLEAU n'est pas vide. Le D1, le D3
+               et le D7 annonçaient « Non renseigné » juste au-dessus du tableau
+               qui les renseigne : le lecteur croyait la discipline manquante et
+               lisait son contenu dans la ligne suivante. -->
+          <p class="vide" *ngIf="discipline.lines.length === 0
+                                 && tableauxFiges(discipline).length === 0
+                                 && !montreLesActions(discipline.code)
+                                 && !montreAuLieuDeDire(discipline.code)"
              data-test="discipline-vide"
              i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
 
@@ -189,6 +209,8 @@
                  data-test="8d-preuves">
               <qos-capa-evidence-panel *ngFor="let dossier of (dossiersAPreuve$ | async)"
                                        [capaCaseId]="dossier.id"
+                                       [sansAide]="true"
+                                       [lectureSeule]="true"
                                        [statut]="$any(dossier.status)"></qos-capa-evidence-panel>
             </div>
             <div class="vivant" *ngIf="(dossiersAPreuve$ | async)?.length === 0"
@@ -222,7 +244,8 @@
                                      [source]="source"
                                      [colonneNature]="false"
                                      [colonnePreuve]="montreLaColonnePreuve(discipline.code)"
-                                     [ajoutAutorise]="ajoutAutorise"
+                                     [ajoutAutorise]="false"
+                                     [lectureSeule]="true"
                                      [natures]="naturesDe(discipline.code)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </div>

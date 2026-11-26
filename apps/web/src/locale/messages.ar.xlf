@@ -22906,6 +22906,14 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">المحتوى مُثبَّت وموقَّع (Ed25519 + ML-DSA-65) ومُرسَّخ.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.save-pdf" datatype="html">
+        <source>Enregistrer en PDF</source>
+        <target state="translated">حفظ بصيغة PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-pdf-tooltip" datatype="html">
+        <source>Le rapport en l'état, marqué brouillon : ni signé, ni ancré</source>
+        <target state="translated">التقرير كما هو، موسومًا كمسودة: غير موقّع وغير مرسّخ</target>
+      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">تصدير</target>
@@ -23478,6 +23486,54 @@ historique 12 mois</source>
         <source>Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.</source>
         <target state="translated">لا يوجد ملف PDF إلا بعد إصدار التقرير، ولا يُصدر التقرير إلا بعد إغلاق الانحراف: فالإغلاق هو ما يثبّت المحتوى. أغلق الانحراف في بطاقته ثم عد لإصدار هذا التقرير.</target>
       </trans-unit>
+      <trans-unit id="nc.detail.send-back" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">إعادة</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.send-back-tooltip" datatype="html">
+        <source>Rendre le traitement à son pilote : l'écart redevient modifiable</source>
+        <target state="translated">إعادة المعالجة إلى مسؤولها: تصبح المخالفة قابلة للتعديل مرة أخرى</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.banner-sent-back" datatype="html">
+        <source>Traitement renvoyé au pilote le</source>
+        <target state="translated">أُعيدت المعالجة إلى مسؤولها في</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.title" datatype="html">
+        <source>Renvoyer en modification</source>
+        <target state="translated">إعادة للتعديل</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.submit" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">إعادة</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.hint" datatype="html">
+        <source>Le traitement de</source>
+        <target state="translated">معالجة</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.hint-end" datatype="html">
+        <source> revient à son pilote, qui pourra tout reprendre — analyse de cause, actions, preuves, rapport 8D — puis déclarer l'écart résolu à nouveau. Rien n'est effacé : la résolution précédente reste datée et signée.</source>
+        <target state="translated"> تعود إلى مسؤولها، الذي يمكنه مراجعة كل شيء — تحليل السبب والإجراءات والأدلة وتقرير 8D — ثم إعلان حل المخالفة من جديد. لا يُمحى شيء: يبقى الحل السابق مؤرخًا وموقعًا.</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-label" datatype="html">
+        <source>Ce qui reste à revoir (facultatif)</source>
+        <target state="translated">ما يجب مراجعته (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-placeholder" datatype="html">
+        <source>L'action corrective ne répond pas à la cause racine, la preuve d'efficacité manque…</source>
+        <target state="translated">الإجراء التصحيحي لا يعالج السبب الجذري، دليل الفعالية مفقود…</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-hint" datatype="html">
+        <source>Sans message, le renvoi reste possible — mais le pilote devra deviner ce qui ne va pas.</source>
+        <target state="translated">بدون رسالة تبقى الإعادة ممكنة — لكن على المسؤول أن يخمّن ما الخطأ.</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.success" datatype="html">
+        <source>Traitement renvoyé au pilote : l'écart redevient modifiable.</source>
+        <target state="translated">أُعيدت المعالجة إلى مسؤولها: أصبحت المخالفة قابلة للتعديل.</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.error" datatype="html">
+        <source>Renvoi impossible.</source>
+        <target state="translated">الإعادة غير ممكنة.</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">أنواع حالات عدم المطابقة</target>
@@ -23645,6 +23701,10 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
         <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
         <target state="translated">معالجة 8D · الفريق · المشكلة · الأسباب · الإجراءات · الأدلة</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.step-filled" datatype="html">
+        <source>renseignée</source>
+        <target state="translated">مُستوفاة</target>
       </trans-unit>
       <trans-unit id="nc.8d.nav-label" datatype="html">
         <source>Les huit disciplines</source>

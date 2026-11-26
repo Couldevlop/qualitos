@@ -767,6 +767,18 @@ nav.steps button.done b {
   border-color: var(--qos-accent-bg);
 }
 
+/* La coche se pose a DROITE, au bout de la ligne : le libelle garde sa place,
+   et le sommaire se lit en diagonale -- ce qui est fait, ce qui reste. */
+nav.steps button .coche {
+  flex: none;
+  margin-left: auto;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  line-height: 18px;
+  color: var(--qos-accent-bg);
+}
+
 nav.steps button.on {
   background: var(--qos-accent-bg-soft);
   color: var(--qos-fg-primary);

@@ -130,6 +130,42 @@ class EightDControllerTest {
         mockMvc.perform(get(URL + "/pdf")).andExpect(status().isConflict());
     }
 
+    /**
+     * LE BROUILLON EST OUVERT EN LECTURE, comme le document emis : c est la
+     * meme matiere, mise en page. Refuser le brouillon a un auditeur interne
+     * l obligerait a recopier l ecran.
+     */
+    @Test
+    @WithMockUser(roles = "USER")
+    void un_utilisateur_simple_peut_telecharger_le_brouillon() throws Exception {
+        when(service.brouillon(NC)).thenReturn(new EightDDto.PdfResult(
+                "%PDF-1.6 factice".getBytes(StandardCharsets.ISO_8859_1),
+                "8d-nc-2026-0007-brouillon.pdf", "d".repeat(64), null));
+
+        mockMvc.perform(get(URL + "/draft-pdf"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(header().string("Content-Disposition",
+                        org.hamcrest.Matchers.containsString("8d-nc-2026-0007-brouillon.pdf")))
+                // NI EMPREINTE NI CODE : ce document n en a pas, et en annoncer
+                // un laisserait croire qu il se verifie.
+                .andExpect(header().doesNotExist("X-EightD-Sha256"))
+                .andExpect(header().doesNotExist("X-EightD-Verification-Code"));
+    }
+
+    /** Le brouillon n exige AUCUN second facteur : il ne scelle rien. */
+    @Test
+    @WithMockUser(roles = "USER")
+    void le_brouillon_ne_demande_pas_de_second_facteur() throws Exception {
+        when(service.brouillon(NC)).thenReturn(new EightDDto.PdfResult(
+                "%PDF-1.6 factice".getBytes(StandardCharsets.ISO_8859_1),
+                "8d-nc-2026-0007-brouillon.pdf", "d".repeat(64), null));
+
+        mockMvc.perform(get(URL + "/draft-pdf")).andExpect(status().isOk());
+
+        verifyNoInteractions(stepUp);
+    }
+
     // ---------- écrire ----------
 
     @Test

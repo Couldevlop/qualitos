@@ -115,7 +115,7 @@ describe('NcEightDComponent', () => {
                         }[],
                         statut: NcResponse['status'] = 'ACTION_DEFINED'): Promise<void> {
     svc = jasmine.createSpyObj<NcService>('NcService',
-      ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'getNc']);
+      ['getEightDReport', 'saveEightDReport', 'issueEightDReport', 'downloadEightDPdf', 'downloadEightDDraftPdf', 'getNc']);
     const ecart: NcResponse = {
       id: NC_ID, reference: 'NC-2026-0007', title: 'Fuite au presse-étoupe',
       category: 'PROCESS', severity: 'MAJOR', status: statut, origin: 'INTERNAL',
@@ -174,8 +174,12 @@ describe('NcEightDComponent', () => {
   it('dit qu\'une discipline n\'a pas de source plutôt que de laisser un bloc vide', async () => {
     await monter(['QUALITY_MANAGER']);
 
+    // D1 et D8 : rien a montrer, et elles le disent. D3 est vide elle aussi,
+     // mais elle PORTE le tableau des actions d'endiguement : annoncer « Non
+     // renseigne » juste au-dessus de son contenu faisait croire la discipline
+     // manquante a qui lisait la ligne suivante.
     const vides = hote().querySelectorAll('[data-test="discipline-vide"]');
-    expect(vides.length).toBe(3);
+    expect(vides.length).toBe(2);
     // ET ELLE DIT POURQUOI : le libellé de provenance ne survit qu'à la
     // discipline vide, où il distingue « rien à dire » de « on n'a pas
     // cherché ». Servie, elle ne le porte plus — et la ligne disparaît avec
@@ -701,30 +705,89 @@ describe('NcEightDComponent', () => {
    * n'apparaissaient nulle part dans le 8D.
    */
   /**
-   * Un ecart termine n'attend plus d'action : le rapport laisse relire ses
-   * disciplines, mais aucune n'ouvre plus de CAPA. Le droit d'ecrire ne
-   * suffisait pas a le dire -- il porte sur le ROLE, pas sur l'etat de
-   * l'ecart -- et une action decidee apres la cloture l'aurait ensuite
-   * bloquee. Meme critere que la fiche de l'ecart.
+   * LE RAPPORT EST UN RESUME, et ses deux panneaux le savent. Il rappelle les
+   * actions du dossier et leurs pieces pour qu'on les relise et qu'on les
+   * remette au client ; il y proposait chaque geste du dossier -- ouvrir une
+   * ligne, avancer une action, l'effacer, joindre ou retirer une piece. Les
+   * gestes se decident la ou ils s'inscrivent : la fiche de l'ecart, le
+   * dossier CAPA.
    */
-  it('ferme l’ajout d’une CAPA quand l’écart est terminé', async () => {
-    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'CLOSED');
+  it('passe ses tableaux et ses preuves en lecture seule', async () => {
+    await monter(['QUALITY_MANAGER'], 'capa-9', [
+      { id: 'capa-9', title: 'Dossier de l’escalade', status: 'IN_PROGRESS' }
+    ]);
 
-    expect(component.ajoutAutorise).toBeFalse();
-    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+    const tableaux = fixture.debugElement.queryAll(
+      By.directive(CapaActionPanelStubComponent));
     expect(tableaux.length).toBeGreaterThan(0);
     tableaux.forEach(t =>
-      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeFalse());
+      expect((t.componentInstance as CapaActionPanelStubComponent).lectureSeule).toBeTrue());
+
+    const preuves = fixture.debugElement.queryAll(
+      By.directive(CapaEvidencePanelStubComponent));
+    expect(preuves.length).toBeGreaterThan(0);
+    preuves.forEach(p => {
+      const panneau = p.componentInstance as CapaEvidencePanelStubComponent;
+      expect(panneau.lectureSeule).toBeTrue();
+      expect(panneau.sansAide).toBeTrue();
+    });
   });
 
-  /** Sur un ecart vivant, la discipline ouvre une CAPA de plus. */
-  it('laisse une discipline ouvrir une CAPA sur un écart vivant', async () => {
-    await monter(['QUALITY_MANAGER'], 'capa-9', undefined, 'ACTION_DEFINED');
+  /**
+   * LE RAPPORT SE RELIT AVANT DE SE FIGER. Le PDF n'existait qu'apres
+   * l'emission, et l'emission exige l'ecart clos ET un second facteur : relire
+   * son 8D sur papier, ou le faire relire, demandait de s'engager avant d'avoir
+   * lu. L'initiateur comme le validateur restaient sans document.
+   */
+  it('enregistre le rapport en PDF sans l’emettre', async () => {
+    await monter(['QUALITY_MANAGER']);
+    const blob = new Blob(['%PDF-'], { type: 'application/pdf' });
+    svc.downloadEightDDraftPdf.and.returnValue(of(new HttpResponse({
+      body: blob,
+      headers: new HttpHeaders({
+        'Content-Disposition': 'attachment; filename="8d-nc-2026-0007-brouillon.pdf"'
+      })
+    })));
 
-    expect(component.ajoutAutorise).toBeTrue();
-    const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
-    tableaux.forEach(t =>
-      expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise).toBeTrue());
+    (hote().querySelector('[data-test="enregistrer-pdf"]') as HTMLButtonElement).click();
+
+    expect(svc.downloadEightDDraftPdf).toHaveBeenCalledWith(NC_ID);
+    // AUCUNE EMISSION : rien n'est fige, signe ni ancre pour obtenir ce document.
+    expect(svc.issueEightDReport).not.toHaveBeenCalled();
+  });
+
+  /**
+   * EMIS, LE DOCUMENT SCELLE EST LE SEUL QUI VAILLE : deux documents concurrents
+   * du meme 8D semeraient le doute sur celui qui fait foi.
+   */
+  it('efface le bouton d’enregistrement une fois le rapport emis', async () => {
+    await monter(['QUALITY_MANAGER']);
+    svc.getEightDReport.and.returnValue(of(rapport({ status: 'ISSUED' })));
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(hote().querySelector('[data-test="enregistrer-pdf"]')).toBeNull();
+    expect(hote().querySelector('[data-test="exporter"]')).not.toBeNull();
+  });
+
+  /**
+   * LE RAPPORT SE LIT, IL NE SE SAISIT PAS. Chaque tableau portait « Ajouter
+   * une action » -- sur un ecart vivant comme sur un ecart clos, ou le bouton
+   * etait seulement eteint : un geste propose et refuse du meme coup, dans un
+   * document destine au client. Les actions s'ajoutent sur la FICHE de l'ecart,
+   * qui est faite pour cela.
+   */
+  it('n’ouvre aucune CAPA depuis le rapport, quel que soit l’état de l’écart',
+     async () => {
+    for (const etat of ['CLOSED', 'ACTION_DEFINED'] as const) {
+      await monter(['QUALITY_MANAGER'], 'capa-9', undefined, etat);
+
+      const tableaux = fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent));
+      expect(tableaux.length).withContext(etat).toBeGreaterThan(0);
+      tableaux.forEach(t =>
+        expect((t.componentInstance as CapaActionPanelStubComponent).ajoutAutorise)
+          .withContext(etat).toBeFalse());
+    }
   });
 
   it('montre les actions de TOUS les dossiers rattaches, pas seulement du premier', async () => {

@@ -22906,6 +22906,14 @@ historique 12 mois</source>
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">内容已固定、签名（Ed25519 + ML-DSA-65）并锚定。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.save-pdf" datatype="html">
+        <source>Enregistrer en PDF</source>
+        <target state="translated">保存为 PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-pdf-tooltip" datatype="html">
+        <source>Le rapport en l'état, marqué brouillon : ni signé, ni ancré</source>
+        <target state="translated">当前状态的报告，标记为草稿：未签名、未锚定</target>
+      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">导出</target>
@@ -23478,6 +23486,54 @@ historique 12 mois</source>
         <source>Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.</source>
         <target state="translated">PDF 仅在报告签发后存在，而报告只能在不合格关闭后签发：关闭才会固定内容。请在不合格单上关闭该不合格，然后回来签发本报告。</target>
       </trans-unit>
+      <trans-unit id="nc.detail.send-back" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">退回</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.send-back-tooltip" datatype="html">
+        <source>Rendre le traitement à son pilote : l'écart redevient modifiable</source>
+        <target state="translated">将处理退回给负责人：该不符合项重新可编辑</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.banner-sent-back" datatype="html">
+        <source>Traitement renvoyé au pilote le</source>
+        <target state="translated">处理退回负责人日期</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.title" datatype="html">
+        <source>Renvoyer en modification</source>
+        <target state="translated">退回修改</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.submit" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">退回</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.hint" datatype="html">
+        <source>Le traitement de</source>
+        <target state="translated">以下的处理</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.hint-end" datatype="html">
+        <source> revient à son pilote, qui pourra tout reprendre — analyse de cause, actions, preuves, rapport 8D — puis déclarer l'écart résolu à nouveau. Rien n'est effacé : la résolution précédente reste datée et signée.</source>
+        <target state="translated">退回给负责人，他可以重新审视全部内容——原因分析、措施、证据、8D 报告——然后再次宣布不符合项已解决。不会删除任何内容：上一次的解决仍保留日期与签署。</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-label" datatype="html">
+        <source>Ce qui reste à revoir (facultatif)</source>
+        <target state="translated">仍需复核的内容（可选）</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-placeholder" datatype="html">
+        <source>L'action corrective ne répond pas à la cause racine, la preuve d'efficacité manque…</source>
+        <target state="translated">纠正措施未针对根本原因，缺少有效性证据……</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-hint" datatype="html">
+        <source>Sans message, le renvoi reste possible — mais le pilote devra deviner ce qui ne va pas.</source>
+        <target state="translated">不填写说明也可退回，但负责人只能自己猜问题在哪。</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.success" datatype="html">
+        <source>Traitement renvoyé au pilote : l'écart redevient modifiable.</source>
+        <target state="translated">处理已退回负责人：该不符合项重新可编辑。</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.error" datatype="html">
+        <source>Renvoi impossible.</source>
+        <target state="translated">无法退回。</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">不符合性质</target>
@@ -23645,6 +23701,10 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
         <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
         <target state="translated">8D 处理 · 团队 · 问题 · 原因 · 措施 · 证据</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.step-filled" datatype="html">
+        <source>renseignée</source>
+        <target state="translated">已填写</target>
       </trans-unit>
       <trans-unit id="nc.8d.nav-label" datatype="html">
         <source>Les huit disciplines</source>

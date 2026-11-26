@@ -575,6 +575,59 @@ class NcControllerTest {
                 .andExpect(status().isConflict());
     }
 
+    // --- le renvoi en modification, par le second regard ---
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void sendBack_passesTheMessageToTheService() throws Exception {
+        when(service.sendBack(eq(NC), any())).thenReturn(resp(NcStatus.ACTION_DEFINED));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/send-back")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"message\":\"L action ne repond pas a la cause.\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTION_DEFINED"));
+    }
+
+    /** Sans corps : le renvoi se fait sans phrase, et l ecran n en reclame pas. */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void sendBack_withoutABody_isAccepted() throws Exception {
+        when(service.sendBack(eq(NC), any())).thenReturn(resp(NcStatus.ACTION_DEFINED));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/send-back").with(csrf()))
+                .andExpect(status().isOk());
+
+        verify(service).sendBack(eq(NC), any());
+    }
+
+    /**
+     * LA PORTE EST CELLE DU SERVICE, pas celle de l intercepteur : le point d
+     * entree n est pas annote, parce que la personne DESIGNEE sur cet ecart
+     * porte le second regard sans detenir le role -- et l intercepteur tranche
+     * avant de savoir quel ecart est vise. Un simple utilisateur n obtient rien
+     * de plus pour autant : le service refuse.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void sendBack_laissePasserLIntercepteur_etLeServiceTranche() throws Exception {
+        when(service.sendBack(eq(NC), any()))
+                .thenThrow(new org.springframework.security.access.AccessDeniedException("Access denied"));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/send-back").with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    /** Un message plus long que la colonne est refuse AVANT d atteindre le service. */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void sendBack_withAnOverlongMessage_isRejected() throws Exception {
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/send-back")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"message\":\"" + "x".repeat(2001) + "\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(service, org.mockito.Mockito.never()).sendBack(eq(NC), any());
+    }
+
     // --- la reprise d un ecart refermé ---
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -643,7 +696,8 @@ class NcControllerTest {
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, null, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Instant.now(), Instant.now(), EQUIPE,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, Instant.now(), Instant.now(), EQUIPE,
                 java.util.List.of(), java.util.List.of(), null);
     }
 

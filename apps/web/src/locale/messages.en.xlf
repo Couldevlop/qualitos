@@ -22906,6 +22906,14 @@ declared income
         <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
         <target state="translated">Content frozen, signed (Ed25519 + ML-DSA-65) and anchored.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.save-pdf" datatype="html">
+        <source>Enregistrer en PDF</source>
+        <target state="translated">Save as PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-pdf-tooltip" datatype="html">
+        <source>Le rapport en l'état, marqué brouillon : ni signé, ni ancré</source>
+        <target state="translated">The report as it stands, marked draft: neither signed nor anchored</target>
+      </trans-unit>
       <trans-unit id="nc.8d.export" datatype="html">
         <source>Exporter</source>
         <target state="translated">Export</target>
@@ -23478,6 +23486,54 @@ declared income
         <source>Le PDF n'existe qu'une fois le rapport émis, et le rapport ne s'émet qu'une fois l'écart clos : c'est la clôture qui arrête le contenu. Clôturez l'écart sur sa fiche, puis revenez émettre ce rapport.</source>
         <target state="translated">The PDF exists only once the report is issued, and the report can only be issued once the deviation is closed: closure is what freezes the content. Close the deviation on its record, then come back to issue this report.</target>
       </trans-unit>
+      <trans-unit id="nc.detail.send-back" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">Send back</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.send-back-tooltip" datatype="html">
+        <source>Rendre le traitement à son pilote : l'écart redevient modifiable</source>
+        <target state="translated">Hand the treatment back to its owner: the finding becomes editable again</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.banner-sent-back" datatype="html">
+        <source>Traitement renvoyé au pilote le</source>
+        <target state="translated">Treatment sent back to its owner on</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.title" datatype="html">
+        <source>Renvoyer en modification</source>
+        <target state="translated">Send back for modification</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.submit" datatype="html">
+        <source>Renvoyer</source>
+        <target state="translated">Send back</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.hint" datatype="html">
+        <source>Le traitement de</source>
+        <target state="translated">The treatment of</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.hint-end" datatype="html">
+        <source> revient à son pilote, qui pourra tout reprendre — analyse de cause, actions, preuves, rapport 8D — puis déclarer l'écart résolu à nouveau. Rien n'est effacé : la résolution précédente reste datée et signée.</source>
+        <target state="translated"> goes back to its owner, who can revisit everything — root-cause analysis, actions, evidence, 8D report — then declare the finding resolved again. Nothing is erased: the previous resolution stays dated and signed.</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-label" datatype="html">
+        <source>Ce qui reste à revoir (facultatif)</source>
+        <target state="translated">What still needs work (optional)</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-placeholder" datatype="html">
+        <source>L'action corrective ne répond pas à la cause racine, la preuve d'efficacité manque…</source>
+        <target state="translated">The corrective action does not address the root cause, the effectiveness evidence is missing…</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.message-hint" datatype="html">
+        <source>Sans message, le renvoi reste possible — mais le pilote devra deviner ce qui ne va pas.</source>
+        <target state="translated">Without a message the send-back still works — but the owner will have to guess what is wrong.</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.success" datatype="html">
+        <source>Traitement renvoyé au pilote : l'écart redevient modifiable.</source>
+        <target state="translated">Treatment sent back to its owner: the finding is editable again.</target>
+      </trans-unit>
+      <trans-unit id="nc.send-back.error" datatype="html">
+        <source>Renvoi impossible.</source>
+        <target state="translated">Send-back failed.</target>
+      </trans-unit>
       <trans-unit id="nav.admin-nc" datatype="html">
         <source>Natures de NC</source>
         <target state="translated">NC natures</target>
@@ -23645,6 +23701,10 @@ declared income
       <trans-unit id="nc.8d.treatment-eyebrow" datatype="html">
         <source>Traitement 8D · Équipe · Problème · Causes · Actions · Preuves</source>
         <target state="translated">8D treatment · Team · Problem · Causes · Actions · Evidence</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.step-filled" datatype="html">
+        <source>renseignée</source>
+        <target state="translated">filled in</target>
       </trans-unit>
       <trans-unit id="nc.8d.nav-label" datatype="html">
         <source>Les huit disciplines</source>

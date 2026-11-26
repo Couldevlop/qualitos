@@ -25,6 +25,7 @@ import {
   ReopenNcRequest,
   ResolveNcRequest,
   SaveEightDRequest,
+  SendBackNcRequest,
   NcSubcategory,
   NcSubcategoryCatalogue,
   StartAnalysisNcRequest,
@@ -267,6 +268,19 @@ export class NcService {
     return this.transition(id, 'OPEN', 'reopen', input);
   }
 
+  /**
+   * RENVOIE le traitement au pilote : la seconde réponse du second regard.
+   *
+   * <p>Vers {@code ACTION_DEFINED} et non {@code OPEN} : renvoyer dit que le
+   * traitement n'est pas encore bon, pas que l'instruction est à refaire —
+   * l'analyse de cause reste valable, et c'est l'état depuis lequel l'écart se
+   * résout à nouveau. La reprise, elle, repart du début, et ne vaut que pour un
+   * écart REFERMÉ. Le serveur tient les deux règles.
+   */
+  sendBack(id: string, input: SendBackNcRequest = {}): Observable<NcResponse> {
+    return this.transition(id, 'ACTION_DEFINED', 'send-back', input);
+  }
+
   escalateToCapa(id: string, input: EscalateCapaNcRequest): Observable<NcResponse> {
     if (environment.useMockApi) {
       const n = this.mockStore.find(x => x.id === id);
@@ -425,10 +439,27 @@ export class NcService {
     });
   }
 
+  /**
+   * Télécharge le rapport EN L'ÉTAT, sans l'émettre.
+   *
+   * <p>Le PDF n'existait qu'après l'émission, et l'émission exige l'écart clos
+   * et un second facteur : il fallait sceller pour voir. Ce document-ci porte
+   * la mention « brouillon », n'a pas de code de vérification, et ne prétend
+   * pas faire foi. Une fois le rapport émis, le serveur remet le document
+   * scellé : il n'y a plus de version de travail qui vaille.
+   */
+  downloadEightDDraftPdf(ncId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.endpoint}/${ncId}/8d/draft-pdf`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
+  }
+
   private transition(
     id: string,
     targetStatus: NcStatus,
-    pathSegment: 'start-analysis' | 'define-action' | 'cancel' | 'reject' | 'reopen',
+    pathSegment: 'start-analysis' | 'define-action' | 'cancel' | 'reject' | 'reopen'
+                 | 'send-back',
     body: unknown
   ): Observable<NcResponse> {
     if (environment.useMockApi) {
@@ -443,6 +474,14 @@ export class NcService {
           const corps = body as { reason?: string } | undefined;
           n.reopenedAt = n.updatedAt;
           n.reopenReason = corps?.reason?.trim() || undefined;
+        }
+        // LE RENVOI, en maquette comme en vrai. Reconnu au chemin et non au
+        // statut visé : « définir l'action » mène au même état sans etre un
+        // renvoi, et poser la date sur son passage inventerait un refus.
+        if (pathSegment === 'send-back') {
+          const corps = body as { message?: string } | undefined;
+          n.sentBackAt = n.updatedAt;
+          n.sentBackReason = corps?.message?.trim() || undefined;
         }
         if (targetStatus === 'REJECTED') {
           // Le motif doit apparaître même en maquette : un rejet sans raison

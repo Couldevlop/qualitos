@@ -587,6 +587,54 @@ public class NcService {
         }
     }
 
+    /**
+     * RENVOIE LE TRAITEMENT AU PILOTE, sous le second regard.
+     *
+     * <p>Le second regard n'avait qu'une réponse : clore. Si l'action corrective
+     * ne répondait pas à la cause, si une preuve manquait, si le rapport se
+     * trompait, la personne qui valide n'avait aucun geste pour le dire — on
+     * téléphonait au pilote, et le registre gardait un écart « résolu » que
+     * personne ne clôturait, sans qu'aucune fiche ne porte la raison de cette
+     * attente.
+     *
+     * <p>MÊME PORTE QUE LA CLÔTURE : {@link #exigerUnSecondRegard} d'abord, et
+     * le même refus. Clore et renvoyer sont les deux réponses d'un seul acte —
+     * qui peut dire oui doit pouvoir dire non, et qui a résolu l'écart ne juge
+     * pas plus son propre travail dans un sens que dans l'autre.
+     *
+     * <p>RETOUR À {@link NcStatus#ACTION_DEFINED}, et non à {@code OPEN} : le
+     * renvoi dit que le traitement n'est pas encore bon, pas que l'instruction
+     * est à refaire. C'est aussi le seul état depuis lequel {@link #resolve} se
+     * reprend, donc celui qui rend l'écart à son pilote sans lui faire
+     * retraverser l'analyse. La reprise ({@link #reopen}), elle, reste ce
+     * qu'elle est : un écart REFERMÉ qui revient, et elle repart du début.
+     *
+     * <p>RIEN n'est effacé — ni {@code resolvedAt}, ni la note de résolution, ni
+     * qui a résolu. Ce sont des faits datés ; le renvoi en est un de plus, et
+     * c'est le plus récent qui dit où en est l'écart.
+     *
+     * @throws NcStateException si l'écart n'est pas résolu, ou si celui qui
+     *                          renvoie est celui qui a résolu
+     */
+    public NcDto.Response sendBack(UUID id, NcDto.SendBackRequest request) {
+        NonConformity nc = load(id);
+        exigerUnSecondRegard(nc);
+        if (nc.getStatus() != NcStatus.RESOLVED) {
+            throw new NcStateException(
+                    "Only a RESOLVED non-conformity can be sent back for modification:"
+                    + " this one is " + nc.getStatus());
+        }
+        nc.setStatus(NcStatus.ACTION_DEFINED);
+        nc.setSentBackAt(Instant.now());
+        // Message facultatif : le FAIT du renvoi est ce qui compte, son
+        // explication est un plus. Une chaîne blanche ne s'écrit pas, pour ne
+        // pas remplacer par du vide le motif d'un renvoi antérieur.
+        nc.setSentBackReason(vide(request == null ? null : request.message()));
+        nc.setSentBackById(CurrentUser.userId().orElse(null));
+        nc.setSentBackByName(CurrentUser.displayName().orElse(null));
+        return toResponse(repository.save(nc));
+    }
+
     public NcDto.Response cancel(UUID id) {
         NonConformity nc = load(id);
         if (nc.getStatus() != NcStatus.OPEN && nc.getStatus() != NcStatus.UNDER_ANALYSIS) {
@@ -1064,6 +1112,8 @@ public class NcService {
                 nc.getResolvedAt(), nc.getClosedAt(),
                 nc.getRejectionReason(), nc.getRejectedAt(),
                 nc.getReopenedAt(), nc.getReopenReason(),
+                nc.getSentBackAt(), nc.getSentBackReason(),
+                nc.getSentBackById(), nc.getSentBackByName(),
                 nc.getResolvedById(), nc.getResolvedByName(),
                 nc.getClosedById(), nc.getClosedByName(),
                 nc.getValidatorId(), nc.getValidatorName(),

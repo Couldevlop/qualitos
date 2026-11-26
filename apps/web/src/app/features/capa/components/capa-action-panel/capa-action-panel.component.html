@@ -23,12 +23,17 @@
       <p *ngIf="natures.length === 0" i18n="@@capa.detail.action-missing">L'action de ce dossier n'a pas encore été définie : sans elle, il ne pourra pas être clôturé.</p>
       <p *ngIf="natures.length > 0" data-test="capa-action-vide-nature"
          i18n="@@capa.actions.none-of-nature">Aucune action de cette nature n'a encore été écrite pour cet écart.</p>
+      <!-- UN AJOUT INTERDIT NE LAISSE PAS DE BOUTON MORT. Le rapport 8D se
+           lit : il montrait « Ajouter une action » eteint sous chaque tableau,
+           un geste propose et refuse du meme coup. -->
+      <ng-container *ngIf="ajoutPropose">
       <button mat-flat-button color="primary" type="button" *qosCan="'capa.action.manage'"
               (click)="addAction()" [disabled]="ajoutFerme"
               data-test="capa-action-definir">
         <mat-icon aria-hidden="true">add</mat-icon>
         <span>{{ libelleAjout }}</span>
       </button>
+      </ng-container>
     </div>
 
     <!-- Le TABLEAU des actions : un ecart se traite rarement d'un seul geste --
@@ -60,8 +65,10 @@
              son lien doit conduire a CETTE ligne-la, pas au tableau. -->
         <tr *ngFor="let a of actions; trackBy: trackById" class="actions__ligne"
             [attr.id]="'capa-action-' + a.id"
-            data-test="capa-action-ligne" tabindex="0" role="button"
-            [attr.aria-label]="openLabel(a)"
+            data-test="capa-action-ligne"
+            [attr.tabindex]="ligneOuvrable ? 0 : null"
+            [attr.role]="ligneOuvrable ? 'button' : null"
+            [attr.aria-label]="ligneOuvrable ? openLabel(a) : null"
             (click)="openAction(a)" (keydown.enter)="openAction(a)" (keydown.space)="openAction(a)">
           <td *ngIf="colonneNature">{{ actionTypeLabel(a.actionType) }}</td>
           <td class="actions__titre">{{ a.title }}</td>
@@ -104,7 +111,7 @@
                 </span>
               </ng-template>
               <button mat-icon-button color="warn" type="button" class="actions__piece-retrait"
-                      *ngIf="!verrouillee(a)"
+                      *ngIf="!verrouillee(a) && !lectureSeule"
                       [disabled]="preuveEnCours === a.id"
                       (click)="retirerPreuve(a, piece)"
                       i18n-matTooltip="@@capa.action-evidence.remove-tooltip"
@@ -115,7 +122,7 @@
             </ng-container>
             <ng-template #sansPreuve>
               <button mat-stroked-button type="button" class="actions__joindre"
-                      *ngIf="peutJoindre(a); else pasDePreuve"
+                      *ngIf="peutJoindre(a) && !lectureSeule; else pasDePreuve"
                       (click)="choisirFichier(selecteurPreuve, a.id)"
                       [attr.aria-label]="joindreAria(a.title)">
                 <mat-icon aria-hidden="true">attach_file</mat-icon>
@@ -128,7 +135,8 @@
             <!-- Le clic sur le bouton ne doit pas ouvrir la ligne : l'avancement
                  d'un cran et la correction de l'action sont deux gestes. -->
             <ng-container *qosCan="'capa.action.update'">
-              <button mat-stroked-button type="button" *ngIf="nextStatus(a.status)"
+              <button mat-stroked-button type="button"
+                      *ngIf="nextStatus(a.status) && !lectureSeule"
                       [disabled]="!canAdvance(a)" (click)="advance(a); $event.stopPropagation()"
                       data-test="capa-action-avancer">
                 <mat-icon aria-hidden="true">{{ a.status === 'PENDING' ? 'play_arrow' : 'check' }}</mat-icon>
@@ -141,7 +149,7 @@
                  pensait, et le dossier attendrait indefiniment (ADR 0132). -->
             <ng-container *qosCan="'capa.verify'">
               <button mat-stroked-button color="primary" type="button"
-                      *ngIf="attendVerification(a) && !verrouillee(a)"
+                      *ngIf="attendVerification(a) && !verrouillee(a) && !lectureSeule"
                       [disabled]="(acting$ | async) ?? false"
                       (click)="verifier(a); $event.stopPropagation()"
                       data-test="capa-action-verifier">
@@ -166,25 +174,29 @@
                  clôture du dossier tant qu'on ne l'avait pas menée. L'étiquette
                  nomme l'action : huit lignes rendraient huit poubelles
                  indiscernables au lecteur d'écran. -->
-            <button mat-icon-button type="button" *qosCan="'capa.action.manage'"
-                    [disabled]="!peutSupprimer(a) || ((acting$ | async) ?? false)"
-                    (click)="supprimerAction(a); $event.stopPropagation()"
-                    [attr.aria-label]="ariaSupprimer(a)"
-                    data-test="capa-action-supprimer">
-              <mat-icon aria-hidden="true">delete</mat-icon>
-            </button>
+            <ng-container *ngIf="!lectureSeule">
+              <button mat-icon-button type="button" *qosCan="'capa.action.manage'"
+                      [disabled]="!peutSupprimer(a) || ((acting$ | async) ?? false)"
+                      (click)="supprimerAction(a); $event.stopPropagation()"
+                      [attr.aria-label]="ariaSupprimer(a)"
+                      data-test="capa-action-supprimer">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </ng-container>
           </td>
         </tr>
       </tbody>
     </table>
 
     <div class="action-panel__pied" *ngIf="actions.length">
+      <ng-container *ngIf="ajoutPropose">
       <button mat-stroked-button color="primary" type="button" *qosCan="'capa.action.manage'"
               (click)="addAction()" [disabled]="ajoutFerme"
               data-test="capa-action-ajouter">
         <mat-icon aria-hidden="true">add</mat-icon>
         <span>{{ libelleAjout }}</span>
       </button>
+      </ng-container>
       <p class="action-panel__aide" *ngIf="!ajoutFerme" i18n="@@capa.actions.row-hint">
         Cliquez une ligne pour corriger l'action, son responsable ou son échéance.
       </p>

@@ -208,6 +208,50 @@ class EightDServiceTest {
                 .isInstanceOf(EightDReportNotFoundException.class);
     }
 
+    /**
+     * LE RAPPORT SE RELIT AVANT DE SE FIGER. Le PDF n existait qu apres
+     * l emission, et l emission exige l ecart clos ET un second facteur : il
+     * fallait sceller pour voir, c est-a-dire s engager avant d avoir lu.
+     */
+    @Test
+    void le_brouillon_se_rend_sans_emission_et_sans_code_de_verification() {
+        service.enregistrer(NC, new EightDDto.SaveCommand("Ada", null, null));
+
+        EightDDto.PdfResult brouillon = service.brouillon(NC);
+
+        assertThat(brouillon.pdf()).isNotEmpty();
+        assertThat(brouillon.fileName()).isEqualTo("8d-nc-2026-0007-brouillon.pdf");
+        assertThat(brouillon.verificationCode()).isNull();
+    }
+
+    /**
+     * PREPARER UN BROUILLON N EST PAS UN ACTE DE PILOTAGE : rien n est ecrit,
+     * rien n est signe, rien n est ancre. Deux brouillons du meme rapport
+     * peuvent legitimement differer -- c est leur raison d etre.
+     */
+    @Test
+    void le_brouillon_n_ecrit_rien_et_ne_scelle_rien() {
+        service.brouillon(NC);
+
+        assertThat(service.consulter(NC).status()).isEqualTo("DRAFT");
+        assertThat(sceaux.derniereEmpreinte).isNull();
+    }
+
+    /**
+     * UNE FOIS EMIS, C EST LUI QU ON REMET. Deux documents concurrents du meme
+     * 8D -- l un scelle, l autre non -- semeraient le doute sur celui qui fait
+     * foi, et le brouillon serait toujours le plus recent.
+     */
+    @Test
+    void apres_emission_le_brouillon_remet_le_document_scelle() {
+        service.emettre(NC);
+
+        EightDDto.PdfResult remis = service.brouillon(NC);
+
+        assertThat(remis.fileName()).isEqualTo("8d-nc-2026-0007-20260913-100000.pdf");
+        assertThat(remis.verificationCode()).isNotNull();
+    }
+
     @Test
     void le_pdf_est_remis_avec_son_empreinte_et_un_nom_de_fichier_parlant() {
         service.emettre(NC);

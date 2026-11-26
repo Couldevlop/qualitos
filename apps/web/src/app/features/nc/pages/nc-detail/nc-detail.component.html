@@ -84,6 +84,18 @@
                 data-test="nc-resolve">
           <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
         </button>
+        <!-- CLORE OU RENVOYER : les deux reponses du second regard. Sans la
+             seconde, qui valide n'avait que l'approbation -- et un ecart dont
+             le traitement ne tenait pas restait « resolu » sans que rien ne
+             dise pourquoi personne ne le cloturait. Le bouton ignore la liste
+             d'obstacles : ce sont eux qui appellent le renvoi. -->
+        <button mat-stroked-button (click)="sendBack(n)" *ngIf="canSendBack(n)"
+                data-test="nc-send-back" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.detail.send-back-tooltip"
+                matTooltip="Rendre le traitement à son pilote : l'écart redevient modifiable">
+          <mat-icon>undo</mat-icon>
+          <span i18n="@@nc.detail.send-back">Renvoyer</span>
+        </button>
         <button mat-flat-button color="primary" (click)="close(n)" *qosCan="'nc.close'"
                 [disabled]="(acting$ | async) || !canClose(n.status) || blocked(n)"
                 [matTooltip]="blocked(n) ? blockersHint(n) : closeTooltip"
@@ -173,6 +185,11 @@
              qui porte quelque chose ; ils n'autorisent ni n'interdisent rien. -->
         <nav class="steps" data-test="sommaire"
              aria-label="Les huit disciplines" i18n-aria-label="@@nc.8d.nav-label">
+          <!-- LA COULEUR NE PORTE PAS SEULE L'INFORMATION (WCAG 2.2 AA
+               1.4.1) : la discipline renseignee se COCHE, et le dit en toutes
+               lettres au lecteur d'ecran. La pastille gardait seulement une
+               teinte differente -- invisible pour qui distingue mal les
+               couleurs, et illisible une fois le sommaire imprime. -->
           <button type="button" *ngFor="let e of etapes"
                   [class.done]="etapeFaite(e.code, n)"
                   [class.on]="etapeActive === e.code"
@@ -180,6 +197,11 @@
                   [attr.aria-current]="etapeActive === e.code ? 'true' : null"
                   (click)="allerA(e.code)">
             <b>{{ e.code }}</b><span>{{ e.libelle }}</span>
+            <ng-container *ngIf="etapeFaite(e.code, n)">
+              <mat-icon class="coche" [attr.data-test]="'etape-coche-' + e.code"
+                        aria-hidden="true">check_circle</mat-icon>
+              <span class="sr-only" i18n="@@nc.8d.step-filled">renseignée</span>
+            </ng-container>
           </button>
         </nav>
 

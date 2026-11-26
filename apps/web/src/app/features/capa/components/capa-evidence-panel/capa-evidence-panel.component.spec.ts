@@ -77,6 +77,35 @@ describe('CapaEvidencePanelComponent', () => {
     expect(fixture.debugElement.query(By.css('[data-test="preuves-dossier-joindre"]'))).toBeNull();
   });
 
+  /**
+   * LE RAPPORT 8D EST UN RESUME. Son D6 rappelle le titre de l'action et celui
+   * de ses pieces -- rien d'autre : il repetait sous chaque dossier ce qu'est
+   * une preuve, ce qu'il advient d'un dossier clos et ce que vaut un dossier
+   * sans piece, et il y proposait le depot. Sur l'ecran du dossier, ou la
+   * preuve se DEPOSE, ces phrases et ce geste restent.
+   */
+  it('se tait et ne propose rien quand le panneau est un resume', () => {
+    capa.listEvidences.and.returnValue(of([piece('e-1')]));
+    fixture = TestBed.createComponent(CapaEvidencePanelComponent);
+    composant = fixture.componentInstance;
+    composant.capaCaseId = 'c-1';
+    composant.statut = 'IN_PROGRESS' as never;
+    composant.sansAide = true;
+    composant.lectureSeule = true;
+    composant.ngOnChanges({ capaCaseId: { currentValue: 'c-1' } } as never);
+    fixture.detectChanges();
+
+    expect(composant.peutDeposer).toBeFalse();
+    expect(fixture.debugElement.query(
+      By.css('[data-test="preuves-dossier-joindre"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('.preuves-dossier__aide'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('.preuves-dossier__verrou'))).toBeNull();
+    // LA PIECE, ELLE, RESTE : c'est ce que le resume doit montrer.
+    expect(fixture.debugElement.queryAll(By.css('.piece')).length).toBe(1);
+    expect((fixture.nativeElement as HTMLElement).textContent)
+      .toContain('releve.pdf');
+  });
+
   it('s\'arrete a dix preuves, en disant pourquoi', () => {
     capa.listEvidences.and.returnValue(of(
       Array.from({ length: 10 }, (_, i) => piece('e-' + i))));

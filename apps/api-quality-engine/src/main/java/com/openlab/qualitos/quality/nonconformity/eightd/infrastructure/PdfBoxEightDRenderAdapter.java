@@ -203,6 +203,17 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
                 "Eight-discipline problem solving - QualitOS"
                 + " (ML-DSA signed + blockchain anchored)"));
         y -= 16;
+        // UN BROUILLON SE RECONNAIT A SA PREMIERE LIGNE. Le document se
+        // telecharge desormais avant l'emission -- pour se relire, se faire
+        // relire, se corriger. Remis tel quel a un client, il passerait pour le
+        // rapport opposable : il le dit donc lui-meme, en tete, avant son
+        // contenu.
+        if (snapshot.issuedAtText() == null) {
+            texte(c, bold, 10, ALERT, MARGIN, y, mot(fr,
+                    "BROUILLON - document de travail, non emis : ni signe, ni ancre",
+                    "DRAFT - work in progress, not issued: neither signed nor anchored"));
+            y -= 16;
+        }
         if (snapshot.partial()) {
             // Dit en tête, pas en note de bas de page : un lecteur doit savoir avant
             // de lire que le document est incomplet, et lesquelles de ses parties
@@ -801,6 +812,29 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         float haut = MARGIN + FOOTER_H;
         ligne(c, MUTED, MARGIN, haut, WIDTH - MARGIN, haut, 0.5f);
         float y = haut - 18;
+        // SANS URL DE VERIFICATION, IL N'Y A RIEN A VERIFIER : le document n'a
+        // pas ete emis. Garder le pied d'integrite tel quel ferait affirmer au
+        // brouillon qu'il est signe et ancre, et le QR code menerait a un code
+        // qui n'existe pas.
+        if (verifyUrl == null) {
+            texte(c, bold, 12, ALERT, MARGIN, y,
+                    mot(fr, "Brouillon - sans valeur probante", "Draft - no evidentiary value"));
+            y -= 15;
+            texte(c, regular, 9, INK, MARGIN, y, mot(fr,
+                    "Ce document n'a pas ete emis : il n'est ni signe, ni ancre,"
+                    + " et son contenu peut encore changer.",
+                    "This document has not been issued: it is neither signed nor anchored,"
+                    + " and its content may still change."));
+            y -= 13;
+            texte(c, regular, 9, INK, MARGIN, y, mot(fr,
+                    "Le rapport opposable s'obtient en emettant le 8D depuis QualitOS.",
+                    "The binding report is obtained by issuing the 8D from QualitOS."));
+            if (snapshot.tenantLabel() != null) {
+                texte(c, mono, 7.5f, MUTED, MARGIN, MARGIN + 16,
+                        "Tenant: " + snapshot.tenantLabel());
+            }
+            return page;
+        }
         texte(c, bold, 12, INDIGO, MARGIN, y,
                 mot(fr, "Intégrité et vérification", "Integrity & verification"));
         y -= 15;

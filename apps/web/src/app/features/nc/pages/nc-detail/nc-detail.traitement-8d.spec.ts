@@ -158,6 +158,24 @@ describe('NcDetailComponent — le traitement 8D', () => {
         .toBeFalse());
   });
 
+  /**
+   * LA COULEUR NE PORTE PAS SEULE L'INFORMATION (WCAG 2.2 AA, 1.4.1). La
+   * pastille de la discipline renseignee changeait seulement de teinte :
+   * invisible pour qui distingue mal les couleurs, et perdue a l'impression.
+   * La liste de recette le demande en un mot -- le sommaire SE COCHE.
+   */
+  it('coche la discipline renseignee, et la dit en toutes lettres', () => {
+    setup(ecart({
+      teamMembers: [{ accountId: 'kc-marie', displayName: 'Marie Durand' }]
+    }));
+
+    expect(un('etape-coche-D1')).not.toBeNull();
+    expect(un('etape-D1')!.textContent).toContain('renseign');
+    // Ce qui n'est pas renseigne ne porte pas de coche : une coche partout
+    // ne dirait plus rien.
+    expect(un('etape-coche-D3')).toBeNull();
+  });
+
   it('marque le D1 dès qu’une équipe est nommée, et le D4 dès qu’une cause l’est', () => {
     setup(ecart({
       teamMembers: [{ accountId: 'kc-marie', displayName: 'Marie Durand' }],

@@ -326,7 +326,8 @@ class EhrConnectorServiceTest {
         return new NcDto.Response(id, TENANT, "NC-2026-0001", "t", "d",
                 NcCategory.SAFETY, null, NcSeverity.CRITICAL, NcStatus.OPEN, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, null, null, null, Instant.now(), Instant.now(), java.util.List.of(),
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, Instant.now(), Instant.now(), java.util.List.of(),
                 java.util.List.of(), java.util.List.of(), null);
     }
 }
