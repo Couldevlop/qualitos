@@ -287,9 +287,14 @@ public class EightDService {
                 tableaux.add(new EightDDto.TableView(
                         tableau.caption(), tableau.columns(), rangs));
             }
+            List<EightDDto.FieldView> fiche = new ArrayList<>();
+            for (EightDSnapshot.Field champ : section.fields()) {
+                fiche.add(new EightDDto.FieldView(champ.label(), champ.value()));
+            }
             disciplines.add(new EightDDto.DisciplineView(
                     section.code(), section.title(), section.sourced(), section.sourceLabel(),
-                    section.lines(), tableaux, discipline != null && discipline.estSaisie()));
+                    section.lines(), tableaux, fiche,
+                    discipline != null && discipline.estSaisie()));
         }
 
         boolean emis = report != null && report.estEmis();

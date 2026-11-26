@@ -36,11 +36,19 @@ class EightDSnapshotAssemblerTest {
         // SERVIE, ELLE N'ANNONCE PLUS SA PROVENANCE : « Non-conformité NC-… »
         // au-dessus d'une fiche qui commence par « Référence : NC-… ».
         assertThat(d2.sourceLabel()).isEmpty();
-        assertThat(d2.lines()).contains("Référence : NC-2026-0007");
-        assertThat(d2.lines()).contains("Gravité : Majeure");
-        // La date est du TEXTE dans l'instantané : c'est ce qui rend le rendu, donc
+        // UNE FICHE, et non des phrases : libellé à gauche, valeur en regard.
+        assertThat(d2.lines()).isEmpty();
+        assertThat(d2.fields()).extracting(EightDSnapshot.Field::label)
+                .containsExactly("Référence", "Intitulé", "Constat", "Catégorie",
+                        "Gravité", "Détecté le");
+        assertThat(d2.fields()).contains(
+                new EightDSnapshot.Field("Référence", "NC-2026-0007"),
+                new EightDSnapshot.Field("Gravité", "Majeure"));
+        // LE JOUR SEUL : « 01/09/2026 08:30 UTC » datait une saisie, là où la
+        // discipline demande quand le problème est apparu. La valeur reste du
+        // TEXTE dans l'instantané : c'est ce qui rend le rendu, donc
         // l'empreinte, recalculables à l'identique des années plus tard.
-        assertThat(d2.lines()).contains("Détecté le : 01/09/2026 08:30 UTC");
+        assertThat(d2.fields()).contains(new EightDSnapshot.Field("Détecté le", "01/09/2026"));
     }
 
     /**
@@ -54,10 +62,10 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "tenant-1", null, null);
 
-        assertThat(section(snapshot, "D2").lines()).noneMatch(l ->
-                l.startsWith("Origine") || l.startsWith("Clos le") || l.startsWith("Zone")
-                        || l.startsWith("Signalé par") || l.startsWith("Photos")
-                        || l.startsWith("Note de résolution"));
+        assertThat(section(snapshot, "D2").fields())
+                .extracting(EightDSnapshot.Field::label)
+                .doesNotContain("Origine", "Clos le", "Zone", "Signalé par", "Photos",
+                        "Note de résolution");
     }
 
     /**
@@ -76,8 +84,10 @@ class EightDSnapshotAssemblerTest {
                 "tenant-1", null, null);
 
         EightDSnapshot.Section d2 = section(snapshot, "D2");
-        assertThat(d2.lines()).contains("Produit : CAR-400 — Carter de pompe");
-        assertThat(d2.lines()).noneMatch(l -> l.startsWith("Client") || l.startsWith("Lot"));
+        assertThat(d2.fields())
+                .contains(new EightDSnapshot.Field("Produit", "CAR-400 — Carter de pompe"));
+        assertThat(d2.fields()).extracting(EightDSnapshot.Field::label)
+                .doesNotContain("Client", "Lot");
     }
 
     /** Un constat sans produit : pas de ligne vide pour autant. */
@@ -86,7 +96,8 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "tenant-1", null, null);
 
-        assertThat(section(snapshot, "D2").lines()).noneMatch(l -> l.startsWith("Produit"));
+        assertThat(section(snapshot, "D2").fields())
+                .extracting(EightDSnapshot.Field::label).doesNotContain("Produit");
     }
 
     @Test
@@ -408,19 +419,21 @@ class EightDSnapshotAssemblerTest {
         assertThat(d5.lines()).isEmpty();
         assertThat(d5.tables()).hasSize(1);
         EightDSnapshot.Table decidees = d5.tables().get(0);
-        assertThat(decidees.caption()).isEqualTo("Fuite presse-étoupe");
+        // SANS LÉGENDE : chaque action ouvre son propre dossier, et le titre du
+        // dossier répétait donc l'intitulé de sa ligne unique.
+        assertThat(decidees.caption()).isEmpty();
         // SANS LA COLONNE DES PREUVES, comme a l'ecran : la piece d'une action
         // atteste que CE geste-la a ete fait, et le D5 n'a pas a prouver qu'une
         // action a ete faite mais que la cause a disparu -- cela se juge au D6,
         // sur le dossier. Le document emis se presente comme la fiche.
         assertThat(decidees.columns())
-                .containsExactly("Action", "Responsable", "Échéance", "État");
+                .containsExactly("Action", "Responsable", "Début", "Échéance", "État");
         assertThat(decidees.rows()).hasSize(1);
         // LA NATURE N'EST PLUS UNE COLONNE : ce tableau ne montre que du
         // correctif, et le mot se répétait sur chacune de ses lignes, en tête
         // de page, devant l'intitulé qu'on vient lire.
         assertThat(decidees.rows().get(0).cells()).containsExactly(
-                "Remplacer le joint", "Grace", "10/09/2026", "Faite");
+                "Remplacer le joint", "Grace", "-", "10/09/2026", "Faite");
 
         // LA PREVENTIVE N'EST PLUS ICI : elle figurait au D5 **en plus** du D7,
         // de sorte que chaque action preventive se lisait deux fois dans le
@@ -438,7 +451,10 @@ class EightDSnapshotAssemblerTest {
         // joint. Un nom de fichier se réclame quand il manque.
         assertThat(d6.lines()).containsSubsequence(
                 "Remplacer le joint",
-                "Pièces jointes : rapport-essai.pdf, photo-joint.jpg");
+                "    Pièces jointes : rapport-essai.pdf, photo-joint.jpg");
+        // ET RIEN D'AUTRE : la liste de recette ne veut ici que l'intitulé de
+        // l'action et le nom de ses pièces.
+        assertThat(d6.lines()).noneMatch(l -> l.startsWith("Efficacité"));
         assertThat(d6.lines()).contains("Pièces du dossier : pv-cloture.pdf");
         assertThat(d6.lines()).noneMatch(l -> l.contains("preuve(s)"));
         // Une action encore en cours n'a pas sa place dans le RÉCIT du D6 : elle
@@ -457,7 +473,7 @@ class EightDSnapshotAssemblerTest {
         assertThat(d7.tables()).hasSize(1);
         assertThat(d7.tables().get(0).rows()).hasSize(1);
         assertThat(d7.tables().get(0).rows().get(0).cells())
-                .containsExactly("Former les opérateurs", "-", "-", "En cours", "-");
+                .containsExactly("Former les opérateurs", "-", "-", "-", "En cours", "-");
         assertThat(d7.sourceLabel()).isEmpty();
     }
 
@@ -555,13 +571,15 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sources, null, null, null, "t", null, null), "D5");
 
         assertThat(d5.sourced()).isTrue();
-        // UN TABLEAU PAR DOSSIER, chacun nommé : les actions du second dossier
-        // retenaient la clôture sans figurer dans le document remis au client.
-        assertThat(d5.tables()).hasSize(2);
-        assertThat(d5.tables()).extracting(EightDSnapshot.Table::caption)
-                .containsExactly("Dossier de la fiche", "Dossier ouvert depuis la liste");
+        // UN SEUL TABLEAU, toutes les actions : les actions du second dossier
+        // retenaient la clôture sans figurer dans le document remis au client,
+        // et un tableau par dossier en donnait deux d'une ligne, chacun titré
+        // du même texte que sa ligne.
+        assertThat(d5.tables()).hasSize(1);
+        assertThat(d5.tables().get(0).caption()).isEmpty();
+        assertThat(d5.tables().get(0).rows()).hasSize(2);
         assertThat(d5.tables().get(0).rows().get(0).cells()).contains("Remplacer le joint");
-        assertThat(d5.tables().get(1).rows().get(0).cells()).contains("Revoir la gamme");
+        assertThat(d5.tables().get(0).rows().get(1).cells()).contains("Revoir la gamme");
         // Le COMPTE, pas le singulier : « Escalated CAPA » mentait d\u00e8s qu'un
         // second dossier citait la r\u00e9f\u00e9rence, et rien ne le disait au lecteur.
         assertThat(d5.sourceLabel()).isEmpty();
@@ -586,12 +604,13 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d5 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D5");
 
-        assertThat(d5.tables()).hasSize(2);
-        assertThat(d5.tables()).extracting(EightDSnapshot.Table::caption)
-                .containsExactly("Premier", "Second");
-        // Et l'action de chacun reste chez lui.
+        // LES DEUX DOSSIERS, DANS L'ORDRE, SANS SE MÊ'LER : ce que le tableau
+        // par dossier garantissait par la séparation, le tableau unique le
+        // garantit par la ligne -- chaque action garde la sienne.
+        assertThat(d5.tables()).hasSize(1);
+        assertThat(d5.tables().get(0).rows()).hasSize(2);
         assertThat(d5.tables().get(0).rows().get(0).cells()).contains("A faire");
-        assertThat(d5.tables().get(1).rows().get(0).cells()).contains("A faire aussi");
+        assertThat(d5.tables().get(0).rows().get(1).cells()).contains("A faire aussi");
     }
 
     /**
@@ -769,17 +788,24 @@ class EightDSnapshotAssemblerTest {
         assertThat(d6.lines()).doesNotContain("Bloquer le lot", "Former les operateurs");
     }
 
-    /** Les trois verdicts s'ecrivent en toutes lettres, et la date est facultative. */
-    @ParameterizedTest
-    @CsvSource({
-            "EFFECTIVE,efficace",
-            "PARTIAL,partiellement efficace",
-            "INEFFECTIVE,inefficace"
-    })
-    void d6_ecrit_chaque_verdict_en_toutes_lettres(String code, String attendu) {
+    /**
+     * LE VERDICT D'EFFICACITE NE S'ECRIT PLUS AU D6.
+     *
+     * <p>La liste de recette ne veut, sous cette discipline, que l'intitule de
+     * l'action et le nom de ses pieces -- « enlever tout le texte ». Le
+     * jugement porte (ADR 0108, ADR 0131) reste lisible sur le dossier CAPA et
+     * sur le tableau d'efficacite ; c'est le document remis au client qui ne le
+     * reprend plus. Ce banc tient la suppression : sans lui, la ligne
+     * reviendrait au premier qui trouverait l'absence anormale.
+     */
+    @Test
+    void d6_ne_reprend_pas_le_verdict_d_efficacite() {
         EightDSources.Action jugee = new EightDSources.Action(
-                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace", null,
-                Instant.parse("2026-09-09T09:00:00Z"), List.of(), code, null);
+                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace",
+                LocalDate.parse("2026-09-01"), LocalDate.parse("2026-09-10"),
+                Instant.parse("2026-09-09T09:00:00Z"),
+                List.of("rapport-essai.pdf"), "PARTIAL",
+                Instant.parse("2026-10-02T09:00:00Z"));
         EightDSources sources = new EightDSources(
                 nc(null), EQUIPE, List.of(), List.of(),
                 List.of(new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH",
@@ -789,50 +815,34 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d6 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D6");
 
-        // SANS DATE, PAS DE DATE INVENTEE : le verdict se lit seul. Un jugement
-        // repris d'un dossier ancien peut n'en porter aucune.
-        assertThat(d6.lines()).contains("Efficacit\u00e9 : " + attendu);
+        assertThat(d6.lines()).containsSubsequence(
+                "Remplacer le joint", "    Pièces jointes : rapport-essai.pdf");
+        assertThat(d6.lines()).noneMatch(l -> l.startsWith("Efficacité"));
     }
 
     /**
-     * LE VERDICT D'EFFICACITE REJOINT LE RAPPORT (ADR 0108, ADR 0131).
+     * L'ABSENCE DE PIECE NE S'ECRIT PAS.
      *
-     * <p>L'evaluation se portait dans la CAPA et n'allait pas plus loin : le
-     * document remis au client disait qu'un geste avait ete fait, jamais s'il
-     * avait servi. « Partiellement efficace » n'est pas une politesse pour
-     * « inefficace » -- la cause etait la bonne, l'action ne va pas assez
-     * loin --, et le D6 porte la nuance.
+     * <p>« Aucune piece jointe » posait une ligne de manque sous chaque action,
+     * et la discipline se lisait comme un releve de ce qui manque la ou elle
+     * doit montrer ce qui a ete produit.
      */
     @Test
-    void d6_porte_le_verdict_d_efficacite_de_chaque_action_jugee() {
-        EightDSources.Action jugee = new EightDSources.Action(
-                "Remplacer le joint", null, "CORRECTIVE", "DONE", "Grace",
-                LocalDate.parse("2026-09-10"), Instant.parse("2026-09-09T09:00:00Z"),
-                List.of("rapport-essai.pdf"), "PARTIAL",
-                Instant.parse("2026-10-02T09:00:00Z"));
-        EightDSources.Action nonJugee = new EightDSources.Action(
+    void d6_ne_dit_pas_l_absence_de_piece() {
+        EightDSources.Action sansPiece = new EightDSources.Action(
                 "Reprendre la gamme", null, "CORRECTIVE", "DONE", "Ada", null,
                 Instant.parse("2026-09-10T09:00:00Z"), List.of());
         EightDSources sources = new EightDSources(
                 nc(null), EQUIPE, List.of(), List.of(),
                 List.of(new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH",
-                        "OPEN", null, null, null, null, List.of(),
-                        List.of(jugee, nonJugee))),
+                        "OPEN", null, null, null, null, List.of(), List.of(sansPiece))),
                 null, List.of());
 
         EightDSnapshot.Section d6 = section(
                 assembler.assemble(sources, null, null, null, "t", null, null), "D6");
 
-        assertThat(d6.lines()).containsSubsequence(
-                "Remplacer le joint",
-                "Pieces jointes : rapport-essai.pdf".replace("Pieces", "Pièces"),
-                "Efficacite : partiellement efficace, jugee le 02/10/2026 09:00 UTC"
-                        .replace("Efficacite", "Efficacité").replace("jugee", "jugée"));
-        // Celle que personne n'a jugee ne porte pas de verdict : un silence
-        // vaut mieux qu'une efficacite supposee.
-        assertThat(d6.lines()).containsSubsequence("Reprendre la gamme", "Aucune pièce jointe");
-        assertThat(d6.lines()).noneMatch(l -> l.startsWith("Efficacité")
-                && l.contains("Reprendre"));
+        assertThat(d6.lines()).contains("Reprendre la gamme");
+        assertThat(d6.lines()).doesNotContain("Aucune pièce jointe");
     }
 
     // ---------- D1 : l'equipe nommee sur la fiche ----------

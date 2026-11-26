@@ -583,7 +583,20 @@ export interface EightDDiscipline {
    * liste de noms ici et un tableau dans le PDF finiraient par diverger.
    */
   tables: EightDTable[];
+  /**
+   * La fiche de la discipline : des libellés et leurs valeurs, alignés — le D2.
+   *
+   * Même règle que `tables` : l'écran la REND, il ne la refabrique pas. Vide
+   * pour les sept autres disciplines, et pour tout rapport émis avant la fiche.
+   */
+  fields: EightDField[];
   editable: boolean;
+}
+
+/** Une ligne de fiche : un libellé et sa valeur. */
+export interface EightDField {
+  label: string;
+  value: string;
 }
 
 /** Un tableau d'une discipline : ses colonnes, puis ses lignes de cellules. */

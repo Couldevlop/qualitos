@@ -40,6 +40,35 @@ class PlatformRolesTest {
         assertThat(PlatformRoles.canonical(null)).isEmpty();
     }
 
+    /**
+     * LA FONCTION D'UNE PERSONNE, EN TOUTES LETTRES.
+     *
+     * <p>Aucun champ « fonction » n'existe à la création d'un utilisateur :
+     * l'invitation ne porte que le prénom, le nom et les rôles. Le rôle dit
+     * donc la fonction, et c'est lui qu'on écrit dans un document remis au
+     * client -- « quality_manager » n'y a pas sa place.
+     */
+    @Test
+    void laFonctionSeLitDuRoleLePlusEleve() {
+        assertThat(PlatformRoles.fonction(List.of("quality_manager")))
+                .contains("Responsable qualité");
+        assertThat(PlatformRoles.fonction(List.of("auditor"))).contains("Audit interne");
+        // PLUSIEURS ROLES, UNE SEULE FONCTION : la plus haute. Une personne qui
+        // dirige la qualite et siege en audit ne s'annonce pas « auditeur ».
+        assertThat(PlatformRoles.fonction(List.of("user", "auditor", "quality_director")))
+                .contains("Direction qualité");
+        // Les formes du jeton sont normalisees comme ailleurs.
+        assertThat(PlatformRoles.fonction(List.of("QUALITY_DIRECTOR"))).contains("Direction qualité");
+    }
+
+    /** Sans role connu, pas de fonction inventee : la colonne reste au role seul. */
+    @Test
+    void sansRoleConnuLaFonctionEstVide() {
+        assertThat(PlatformRoles.fonction(null)).isEmpty();
+        assertThat(PlatformRoles.fonction(List.of())).isEmpty();
+        assertThat(PlatformRoles.fonction(List.of("offline_access", "uma_authorization"))).isEmpty();
+    }
+
     @Test
     void chaqueRoleConnuEstUnRoleDuRealm() {
         assertThat(PlatformRoles.KNOWN).containsExactlyInAnyOrderElementsOf(Set.of(

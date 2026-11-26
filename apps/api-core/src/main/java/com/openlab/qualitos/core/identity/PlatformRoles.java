@@ -1,6 +1,7 @@
 package com.openlab.qualitos.core.identity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +56,54 @@ public final class PlatformRoles {
     private static final Map<String, String> ALIASES = Map.of(
             "admin", TENANT_ADMIN,
             "director_quality", "quality_director");
+
+    /**
+     * Les roles en toutes lettres, du plus significatif au moins : la FONCTION
+     * du membre dans l'organisation, telle qu'elle a ete renseignee a son
+     * invitation.
+     *
+     * <p>C'est la seule donnee de fonction que la plateforme detienne. Un champ
+     * libre « metier » n'existe nulle part : l'invitation porte un prenom, un
+     * nom et des roles, et rien d'autre. Un rapport qui doit nommer la fonction
+     * d'un membre lit donc ici.
+     *
+     * <p>ORDONNEE, et non une carte : un membre en porte souvent plusieurs, et
+     * « Responsable qualite, Utilisateur » ne nomme pas une fonction. On garde
+     * le plus significatif -- celui qui dit ce que la personne fait.
+     */
+    private static final List<Map.Entry<String, String>> FONCTIONS = List.of(
+            Map.entry(SUPER_ADMIN, "Éditeur"),
+            Map.entry(CONSULTANT, "Conseil"),
+            Map.entry("quality_director", "Direction qualité"),
+            Map.entry("quality_manager", "Responsable qualité"),
+            Map.entry(TENANT_ADMIN, "Administration"),
+            Map.entry("auditor", "Audit interne"),
+            Map.entry("external_auditor", "Audit externe"),
+            Map.entry("user", "Utilisateur"));
+
+    /**
+     * La fonction d'un membre, d'apres ses roles ; vide s'il n'en porte aucun
+     * que le realm connaisse.
+     *
+     * <p>Rend {@code Optional} et non une chaine par defaut : « Utilisateur »
+     * ecrit sous un membre sans role dirait une fonction que personne n'a
+     * renseignee, dans un document remis au client.
+     */
+    public static Optional<String> fonction(Collection<String> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return Optional.empty();
+        }
+        Set<String> normalises = new TreeSet<>();
+        for (String role : roles) {
+            canonical(role).ifPresent(normalises::add);
+        }
+        for (Map.Entry<String, String> candidat : FONCTIONS) {
+            if (normalises.contains(candidat.getKey())) {
+                return Optional.of(candidat.getValue());
+            }
+        }
+        return Optional.empty();
+    }
 
     private PlatformRoles() {}
 

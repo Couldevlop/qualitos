@@ -69,7 +69,19 @@ public record EightDSources(
      * compte, ou quand il n'a pas répondu : le tableau du D1 laisse alors la
      * case vide plutôt que d'inventer une adresse.
      */
-    public record Member(String name, String email) {
+    /**
+     * Un membre de l'equipe 8D.
+     *
+     * @param name     son nom, tel que le D1 doit l'ecrire -- jamais une adresse
+     * @param email    son adresse professionnelle
+     * @param function sa fonction dans l'organisation, ou {@code null}
+     */
+    public record Member(String name, String email, String function) {
+
+        /** Un membre sans fonction connue : la forme d'avant, pour les bancs. */
+        public Member(String name, String email) {
+            this(name, email, null);
+        }
     }
 
     /** La non-conformité elle-même — la source de D2, et l'arbitre de la clôture. */
@@ -174,6 +186,8 @@ public record EightDSources(
             String actionType,
             String status,
             String assigneeName,
+            /** Le jour ou l'action a ete lancee -- la colonne « Debut » de l'ecran. */
+            LocalDate startedOn,
             LocalDate dueDate,
             Instant completedAt,
             /** Le nom des pièces de CETTE action, dans l'ordre du dépôt. */
@@ -195,12 +209,12 @@ public record EightDSources(
                     Objects.requireNonNull(evidenceNames, "evidenceNames"));
         }
 
-        /** Une action dont l'efficacité n'a pas encore été jugée. */
+        /** Une action dont l'efficacité n'a pas encore été jugée, et sans début connu. */
         public Action(String title, String description, String actionType, String status,
                       String assigneeName, LocalDate dueDate, Instant completedAt,
                       List<String> evidenceNames) {
-            this(title, description, actionType, status, assigneeName, dueDate, completedAt,
-                    evidenceNames, null, null);
+            this(title, description, actionType, status, assigneeName, null, dueDate,
+                    completedAt, evidenceNames, null, null);
         }
 
         /**

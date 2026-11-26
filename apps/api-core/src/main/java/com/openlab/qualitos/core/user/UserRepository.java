@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -19,6 +20,29 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<AppUser, UUID> {
 
     Optional<AppUser> findByKeycloakId(String keycloakId);
+
+    /**
+     * Les roles d'un membre par son compte de connexion, pour en nommer la
+     * fonction.
+     *
+     * <p>Une requete a part, et non une colonne de {@link DirectoryRow} : les
+     * roles sont une collection, et une projection par constructeur JPQL n'en
+     * porte pas. La rendre a plat ici evite de charger l'entite entiere la ou
+     * l'annuaire ne doit montrer que ce qui le concerne.
+     */
+    @Query("""
+            select r from AppUser u join u.roles r
+            where u.keycloakId = :accountId and u.tenantId = :tenantId
+            """)
+    Set<String> findRolesByAccount(@Param("tenantId") UUID tenantId,
+                                   @Param("accountId") String accountId);
+
+    /** Les memes, par identifiant d'annuaire. */
+    @Query("""
+            select r from AppUser u join u.roles r
+            where u.id = :id and u.tenantId = :tenantId
+            """)
+    Set<String> findRolesById(@Param("tenantId") UUID tenantId, @Param("id") UUID id);
 
     Optional<AppUser> findByTenantIdAndEmail(UUID tenantId, String email);
 

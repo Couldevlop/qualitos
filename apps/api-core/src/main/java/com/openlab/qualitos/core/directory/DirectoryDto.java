@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.directory;
 
+import com.openlab.qualitos.core.identity.PlatformRoles;
 import com.openlab.qualitos.core.user.DirectoryRow;
 
 import java.util.List;
@@ -32,13 +33,25 @@ public final class DirectoryDto {
      * @param active      faux pour un ancien membre, lu par son identifiant afin
      *                    d'afficher le responsable d'un dossier passé ; la
      *                    recherche ne rend que des membres actifs
+     * @param function    la fonction du membre, en toutes lettres, tiree de ses
+     *                    roles de plateforme ({@link PlatformRoles#fonction}) ;
+     *                    {@code null} quand il n'en porte aucun, et vide dans
+     *                    une recherche -- la liste des resultats n'en a que
+     *                    faire, et la charger pour chaque ligne couterait une
+     *                    requete par resultat
      */
-    public record Entry(UUID id, String accountId, String displayName, String email, boolean active) {
+    public record Entry(UUID id, String accountId, String displayName, String email,
+                        boolean active, String function) {
 
         static Entry from(DirectoryRow row) {
+            return from(row, null);
+        }
+
+        static Entry from(DirectoryRow row, String function) {
             String name = row.displayName() == null || row.displayName().isBlank()
                     ? row.email() : row.displayName();
-            return new Entry(row.id(), row.accountId(), name, row.email(), row.active());
+            return new Entry(row.id(), row.accountId(), name, row.email(), row.active(),
+                    function);
         }
     }
 

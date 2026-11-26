@@ -101,7 +101,11 @@ public class EightDSnapshotAssembler {
                 issuedByName,
                 partiel,
                 sections,
-                LANGUE);
+                LANGUE,
+                // TOUT RAPPORT NEUF PORTE LE DESSIN COURANT. Les anciens n'en
+                // portent aucun et se re-rendent par le chemin d'origine : c'est
+                // ce qui laisse leur empreinte tomber juste.
+                EightDSnapshot.MISE_EN_PAGE_COURANTE);
     }
 
     /**
@@ -122,8 +126,13 @@ public class EightDSnapshotAssembler {
         List<EightDSnapshot.Section> nettoyees = new ArrayList<>();
         for (EightDSnapshot.Section section : sections) {
             nettoyees.add(section.sourced()
+                    // LA FICHE SUIT, comme les lignes, les figures et les
+                    // tableaux : ce passage ne retire que la provenance. Oublie
+                    // ici, le D2 perdait sa fiche entiere en sortie
+                    // d'assemblage, sans qu'aucune ligne ne soit fausse.
                     ? new EightDSnapshot.Section(section.code(), section.title(), true, "",
-                            section.lines(), section.figures(), section.tables())
+                            section.lines(), section.figures(), section.tables(),
+                            section.fields())
                     : section);
         }
         return nettoyees;
@@ -153,7 +162,7 @@ public class EightDSnapshotAssembler {
             rangs.add(new EightDSnapshot.Row(List.of(
                     texteOu(membre.name(), "(sans nom)"),
                     texteOu(membre.email(), "-"),
-                    i == 0 ? "Pilote" : "Membre")));
+                    roleEtFonction(i == 0 ? "Pilote" : "Membre", membre.function()))));
         }
         List<EightDSnapshot.Table> tableaux = rangs.isEmpty() ? List.of()
                 : List.of(new EightDSnapshot.Table("", COLONNES_EQUIPE, rangs));
@@ -187,8 +196,37 @@ public class EightDSnapshotAssembler {
      * seconde : l'annuaire donne un nom et une adresse. La colonne porte donc
      * le rôle seul jusqu'à ce que la fonction existe quelque part.
      */
+    /**
+     * Les six arêtes de l'Ishikawa, dans la langue du document.
+     *
+     * <p>Le PDF titrait « ENVIRONMENT », « MANPOWER », « MEASUREMENTS » : les
+     * noms du modèle, lâchés tels quels dans un rapport français, sous un
+     * écran qui dit « Milieu », « Main-d'œuvre », « Mesures ». Le lecteur
+     * cherchait à quelle branche de son diagramme correspondait laquelle.
+     */
+    private static final Map<String, String> ARETES = Map.of(
+            "METHODS", "Méthodes",
+            "MANPOWER", "Main-d'œuvre",
+            "MACHINES", "Machines",
+            "MATERIALS", "Matières",
+            "MEASUREMENTS", "Mesures",
+            "ENVIRONMENT", "Milieu");
+
     private static final List<String> COLONNES_EQUIPE =
             List.of("Nom et prénom", "Adresse mail", "Rôle et fonction");
+
+    /**
+     * « Pilote, Responsable qualité » : le rôle dans le traitement de l'écart,
+     * puis la fonction dans l'organisation.
+     *
+     * <p>Le rôle vient de l'ordre de saisie — le premier nommé pilote —, la
+     * fonction de l'annuaire. Quand l'annuaire n'en connaît pas, la colonne
+     * porte le rôle seul : écrire une fonction par défaut nommerait, dans un
+     * document remis au client, un poste que personne n'a renseigné.
+     */
+    private static String roleEtFonction(String role, String fonction) {
+        return fonction == null || fonction.isBlank() ? role : role + ", " + fonction;
+    }
 
     // ---------- D3, D8 : ce que personne d'autre ne sait ----------
 
@@ -208,8 +246,12 @@ public class EightDSnapshotAssembler {
     private EightDSnapshot.Section securisation(List<EightDSources.Capa> capas) {
         List<EightDSnapshot.Table> tableaux = tableauxDesActions(capas, NATURES_D3);
         boolean servi = !tableaux.isEmpty();
+        // SERVIE, ELLE SE TAIT. « 3 dossiers CAPA sur cette non-conformité »
+        // annonçait d'où venait le tableau, au-dessus du tableau : une
+        // provenance d'outil, dans un document où le lecteur vient lire ce qui
+        // a été fait. Vide, la discipline dit ce qui manque -- et seulement là.
         String label = servi
-                ? libelleCapas(capas)
+                ? ""
                 // ELLE NE SE SAISIT PLUS : les actions d'endiguement viennent du
                 // dossier CAPA, et dire « se renseigne à la main » enverrait
                 // chercher un champ que l'écran ne montre plus.
@@ -287,23 +329,40 @@ public class EightDSnapshotAssembler {
      * rapport n'est pas le seul endroit où on les lit.
      */
     private EightDSnapshot.Section probleme(EightDSources.Nc nc) {
-        List<String> lignes = new ArrayList<>();
-        ajouter(lignes, "Référence", nc.reference());
-        ajouter(lignes, "Intitulé", nc.title());
-        ajouter(lignes, "Constat", nc.description());
-        ajouter(lignes, "Catégorie", libelle(CATEGORIES, nc.category()));
-        ajouter(lignes, "Gravité", libelle(GRAVITES, nc.severity()));
-        ajouter(lignes, "Produit", nc.productLabel());
+        // UNE FICHE, et non sept phrases. Les mêmes sept données en deux
+        // colonnes : les libellés s'alignent, les valeurs se lisent les unes
+        // sous les autres, et l'oeil retrouve celle qu'il cherche.
+        List<EightDSnapshot.Field> fiche = new ArrayList<>();
+        champ(fiche, "Référence", nc.reference());
+        champ(fiche, "Intitulé", nc.title());
+        champ(fiche, "Constat", nc.description());
+        champ(fiche, "Catégorie", libelle(CATEGORIES, nc.category()));
+        champ(fiche, "Gravité", libelle(GRAVITES, nc.severity()));
+        champ(fiche, "Produit", nc.productLabel());
         // LE MOT DE LA FICHE : un écart EXTERNE se reçoit d'un client, il ne se
         // détecte pas, et la fiche de l'écart fait déjà cette différence. Le
         // document émis disait « Détecté le » d'une réclamation reçue.
-        ajouter(lignes,
+        //
+        // LE JOUR SEUL, sans l'heure ni le fuseau : « 26/11/2026 09:02 UTC »
+        // datait une saisie, là où la discipline demande quand le problème est
+        // apparu. L'heure exacte se lit sur la fiche de l'écart.
+        champ(fiche,
                 "EXTERNAL".equals(texteOu(nc.origin(), "")) ? "Date de réception" : "Détecté le",
-                horodatage(nc.detectedAt()));
+                nc.detectedAt() == null ? null : jour(nc.detectedAt()));
         // D2 est toujours servi : la non-conformité existe, sinon rien de tout ceci
-        // n'aurait été demandé.
-        return section(EightDDiscipline.D2, true,
-                "Non-conformité " + nc.reference(), lignes);
+        // n'aurait été demandé. Et servi, il se tait sur sa provenance : la
+        // référence qu'une ligne « Non-conformité … » annonçait est la première
+        // ligne de la fiche.
+        return new EightDSnapshot.Section(
+                EightDDiscipline.D2.code(), EightDDiscipline.D2.titre(), true, "",
+                List.of(), List.of(), List.of(), List.copyOf(fiche));
+    }
+
+    /** Une ligne de fiche, posée seulement si la valeur existe. */
+    private static void champ(List<EightDSnapshot.Field> fiche, String libelle, String valeur) {
+        if (valeur != null && !valeur.isBlank()) {
+            fiche.add(new EightDSnapshot.Field(libelle, valeur.strip()));
+        }
     }
 
     // ---------- D4 : Ishikawa, 5 pourquoi, cause racine de la NC ----------
@@ -360,7 +419,7 @@ public class EightDSnapshotAssembler {
         List<EightDSnapshot.Node> noeuds = new ArrayList<>();
         for (EightDSources.Cause cause : arbre.causes()) {
             noeuds.add(new EightDSnapshot.Node(
-                    texteOu(cause.category(), "?"),
+                    libelle(ARETES, texteOu(cause.category(), "?")),
                     texteOu(cause.label(), "(sans intitulé)"),
                     1));
         }
@@ -428,9 +487,9 @@ public class EightDSnapshotAssembler {
             decidees += tableau.rows().size();
         }
         boolean servi = decidees > 0;
-        String label = libelleCapas(capas) + (servi
-                ? " \u2014 " + decidees + " action(s) décidée(s)"
-                : " \u2014 aucune action décidée à ce jour");
+        String label = servi
+                ? ""
+                : libelleCapas(capas) + " \u2014 aucune action décidée à ce jour";
         return new EightDSnapshot.Section(EightDDiscipline.D5.code(), EightDDiscipline.D5.titre(),
                 servi, label, List.of(), List.of(), tableaux);
     }
@@ -461,7 +520,7 @@ public class EightDSnapshotAssembler {
      * ses lignes, en tête de page, devant l'intitulé qu'on vient lire.
      */
     private static final List<String> COLONNES_ACTIONS =
-            List.of("Action", "Responsable", "Échéance", "État", "Preuves");
+            List.of("Action", "Responsable", "Début", "Échéance", "État", "Preuves");
 
     /**
      * LES MEMES, SANS LA COLONNE DES PREUVES : les colonnes du D5.
@@ -506,18 +565,6 @@ public class EightDSnapshotAssembler {
             "INTERNAL", "Interne",
             "EXTERNAL", "Externe");
 
-    /**
-     * Les trois verdicts d'efficacité, en toutes lettres (ADR 0108).
-     *
-     * <p>« Partiellement efficace » n'est pas une politesse pour « inefficace » :
-     * la cause était la bonne et l'action ne va pas assez loin. Le document émis
-     * doit porter la nuance, sans quoi il ment dans un sens ou dans l'autre.
-     */
-    private static final Map<String, String> VERDICTS = Map.of(
-            "EFFECTIVE", "efficace",
-            "PARTIAL", "partiellement efficace",
-            "INEFFECTIVE", "inefficace");
-
     private static final Map<String, String> ETATS = Map.of(
             "PENDING", "À faire",
             "IN_PROGRESS", "En cours",
@@ -544,13 +591,26 @@ public class EightDSnapshotAssembler {
         return tableauxDesActions(capas, natures, true);
     }
 
+    /**
+     * UN SEUL TABLEAU PAR DISCIPLINE, sans légende de dossier.
+     *
+     * <p>Le document en dressait un par dossier CAPA, coiffé de son intitulé.
+     * Or chaque action ouvre son propre dossier : une discipline de trois
+     * actions donnait trois tableaux d'une ligne, chacun titré du même texte
+     * que sa ligne unique. On ne comparait plus rien — ce qu'un tableau sert
+     * précisément à faire —, et on lisait deux fois chaque intitulé.
+     *
+     * <p>Les actions se suivent donc dans l'ordre des dossiers, puis dans celui
+     * du dossier. Ce qu'on perd — de quel dossier relève telle ligne — ne
+     * manquait à personne : la discipline dit déjà la nature du geste, et le
+     * dossier se retrouve sur l'écran de la CAPA.
+     */
     private List<EightDSnapshot.Table> tableauxDesActions(List<EightDSources.Capa> capas,
                                                           List<String> natures,
                                                           boolean colonnePreuve) {
         List<String> colonnes = colonnePreuve ? COLONNES_ACTIONS : COLONNES_ACTIONS_SANS_PREUVE;
-        List<EightDSnapshot.Table> tableaux = new ArrayList<>();
+        List<EightDSnapshot.Row> lignes = new ArrayList<>();
         for (EightDSources.Capa capa : capas) {
-            List<EightDSnapshot.Row> lignes = new ArrayList<>();
             for (EightDSources.Action action : capa.actions()) {
                 if (!natures.contains(texteOu(action.actionType(), "?"))) {
                     continue;
@@ -558,6 +618,7 @@ public class EightDSnapshotAssembler {
                 List<String> cellules = new ArrayList<>(List.of(
                         texteOu(action.title(), "(sans intitulé)"),
                         texteOu(action.assigneeName(), "-"),
+                        action.startedOn() == null ? "-" : jour(action.startedOn()),
                         action.dueDate() == null ? "-" : jour(action.dueDate()),
                         libelle(ETATS, texteOu(action.status(), "?"))));
                 if (colonnePreuve) {
@@ -566,12 +627,9 @@ public class EightDSnapshotAssembler {
                 }
                 lignes.add(new EightDSnapshot.Row(List.copyOf(cellules)));
             }
-            if (!lignes.isEmpty()) {
-                tableaux.add(new EightDSnapshot.Table(
-                        texteOu(capa.title(), "(sans intitulé)"), colonnes, lignes));
-            }
         }
-        return tableaux;
+        return lignes.isEmpty() ? List.of()
+                : List.of(new EightDSnapshot.Table("", colonnes, List.copyOf(lignes)));
     }
 
     /**
@@ -617,19 +675,26 @@ public class EightDSnapshotAssembler {
                 // été joint. Un nom de fichier, lui, se retrouve dans le
                 // dossier, et se réclame quand il manque.
                 duDossier.add(texteOu(action.title(), "(sans intitulé)"));
-                duDossier.add(action.evidenceNames().isEmpty()
-                        ? "Aucune pièce jointe"
-                        : "Pièces jointes : " + String.join(", ", action.evidenceNames()));
-                // LE VERDICT D'EFFICACITÉ DE CETTE ACTION, quand il a été porté
-                // (ADR 0108, ADR 0131). Le rapport disait qu'un geste avait été
-                // fait sans dire s'il avait servi : l'évaluation vivait dans la
-                // CAPA et n'arrivait pas jusqu'au document remis au client.
-                if (action.effectivenessVerdict() != null) {
-                    duDossier.add("Efficacité : "
-                            + libelle(VERDICTS, action.effectivenessVerdict())
-                            + (action.effectivenessReviewedAt() == null ? ""
-                               : ", jugée le " + horodatage(action.effectivenessReviewedAt())));
+                // LE NOM DES PIÈCES, ET RIEN QUAND IL N'Y EN A PAS. « Aucune
+                // pièce jointe » écrivait une absence sous chaque action, et la
+                // discipline se lisait comme un relevé de manques là où elle
+                // doit montrer ce qui a été produit. Ce qui manque se voit à
+                // l'absence de ligne, et se réclame sur l'écran du dossier.
+                if (!action.evidenceNames().isEmpty()) {
+                    // EN RETRAIT SOUS SON ACTION : au même fer, la ligne des
+                    // pièces se lisait comme une action de plus, et avec
+                    // plusieurs actions on ne savait plus à laquelle elle se
+                    // rattachait. Le retrait est porté par le texte lui-même,
+                    // que le rendu conserve, PDF comme écran.
+                    duDossier.add("    Pièces jointes : "
+                            + String.join(", ", action.evidenceNames()));
                 }
+                // LE VERDICT D'EFFICACITÉ NE S'ÉCRIT PLUS ICI. La liste de
+                // recette ne veut, sous cette discipline, que l'intitulé de
+                // l'action et le nom de ses pièces -- « enlever tout le texte ».
+                // Le jugement porté (ADR 0108, ADR 0131) reste lisible sur le
+                // dossier CAPA et sur le tableau d'efficacité ; c'est le
+                // document remis au client qui ne le reprend plus.
             }
             if (!capa.caseEvidenceNames().isEmpty()) {
                 duDossier.add("Pièces du dossier : "
@@ -644,9 +709,9 @@ public class EightDSnapshotAssembler {
             if (!lignes.isEmpty()) {
                 lignes.add("");
             }
-            if (capas.size() > 1) {
-                lignes.add(texteOu(capa.title(), "(sans intitulé)") + " :");
-            }
+            // PLUS D'INTITULÉ DE DOSSIER. Chaque action ouvre le sien, et son
+            // titre est celui de l'action : le document écrivait donc deux fois
+            // le même texte, l'un annonçant l'autre.
             lignes.addAll(duDossier);
         }
         boolean servi = menees > 0 || preuves > 0;
@@ -689,8 +754,7 @@ public class EightDSnapshotAssembler {
         }
         boolean servi = preventives > 0;
         String label = servi
-                ? libelleCapas(sources.capas()) + " — " + preventives
-                  + " action(s) préventive(s)"
+                ? ""
                 // Dit ce qui manque, et rien de plus. La phrase qui expliquait
                 // pourquoi le Poka-Yoke n'y figurait pas -- un dispositif se
                 // rattache à un projet DMAIC, pas à un écart -- exposait une
@@ -738,6 +802,20 @@ public class EightDSnapshotAssembler {
 
     private String jour(LocalDate date) {
         return date == null ? null : JOUR.format(date);
+    }
+
+    /**
+     * Le JOUR d'un instant, sans l'heure ni le fuseau.
+     *
+     * <p>Au fuseau du serveur : une date de detection n'est pas un horodatage
+     * d'audit, et « le 26 » doit se lire « le 26 » pour qui tient le dossier.
+     */
+    private String jour(Instant instant) {
+        return instant == null ? null
+                // EN UTC, comme l'horodatage complet : le jour fige dans un
+                // document scelle ne doit pas dependre du reglage du serveur qui
+                // l'a rendu, sans quoi deux machines scellent deux dates.
+                : JOUR.format(instant.atZone(ZoneOffset.UTC).toLocalDate());
     }
 
     private String texteOu(String valeur, String defaut) {

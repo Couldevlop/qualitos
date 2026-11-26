@@ -44,7 +44,7 @@ public enum EightDDiscipline {
     D5("D5", "CAPA définies", false),
 
     /** Leur mise en œuvre et ses preuves. Source : la CAPA escaladée. */
-    D6("D6", "Mise en oeuvre et preuves", false),
+    D6("D6", "Mise en œuvre et preuves", false),
 
     /** Ce qui empêche le retour de l'écart. Sources : PFMEA, plan de surveillance. */
     D7("D7", "Prévention de la récidive", false),

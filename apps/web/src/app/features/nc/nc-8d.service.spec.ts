@@ -71,7 +71,7 @@ describe('NcService — rapport 8D (API réelle)', () => {
       team: null, containment: null, recognition: null,
       disciplines: [{
         code: 'D1', title: 'Équipe', sourced: false, sourceLabel: 'Aucune source',
-        lines: [], editable: true
+        lines: [], fields: [], editable: true
       }],
       seal: null
     });

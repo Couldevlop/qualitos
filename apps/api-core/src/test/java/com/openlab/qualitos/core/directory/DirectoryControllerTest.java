@@ -57,7 +57,7 @@ class DirectoryControllerTest {
 
     private static DirectoryDto.Page onePage() {
         return new DirectoryDto.Page(
-                List.of(new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", true)), 0, 20, 1, 1);
+                List.of(new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", true, null)), 0, 20, 1, 1);
     }
 
     @Test
@@ -168,7 +168,7 @@ class DirectoryControllerTest {
     @Test
     @DisplayName("lit le nom d'une personne par son identifiant")
     void getsOneEntry() throws Exception {
-        given(directory.get(ALICE)).willReturn(new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", false));
+        given(directory.get(ALICE)).willReturn(new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", false, "Responsable qualité"));
 
         mockMvc.perform(get("/api/v1/directory/users/{id}", ALICE).with(plainUser()))
                 .andExpect(status().isOk())
@@ -209,7 +209,7 @@ class DirectoryControllerTest {
     @DisplayName("lit une personne par son compte de connexion, ancien membre compris")
     void getsByAccount() throws Exception {
         given(directory.getByAccount(KC_ALICE)).willReturn(
-                new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", false));
+                new DirectoryDto.Entry(ALICE, KC_ALICE.toString(), "Alice Durand", "alice@acme.com", false, "Responsable qualité"));
 
         mockMvc.perform(get("/api/v1/directory/accounts/{accountId}", KC_ALICE).with(plainUser()))
                 .andExpect(status().isOk())

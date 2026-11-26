@@ -177,6 +177,71 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).doesNotContain("≤");
     }
 
+    /** Le meme instantane, en brouillon : sans date d'emission. */
+    private EightDSnapshot brouillon(EightDSnapshot snapshot, String dessin) {
+        return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),
+                snapshot.tenantLabel(), null, null,
+                snapshot.partial(), snapshot.sections(), snapshot.langue(), dessin);
+    }
+
+    /** Le meme instantane, scelle sous la mise en page remaniee. */
+    private EightDSnapshot remanie(EightDSnapshot snapshot) {
+        return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),
+                snapshot.tenantLabel(), snapshot.issuedAtText(), snapshot.issuedByName(),
+                snapshot.partial(), snapshot.sections(), "fr",
+                EightDSnapshot.MISE_EN_PAGE_COURANTE);
+    }
+
+    // ---------- la mise en page remaniee, et SEULEMENT pour qui la porte ----------
+
+    /**
+     * UN RAPPORT SCELLE SOUS L'ANCIEN DESSIN SE REDESSINE A L'IDENTIQUE.
+     *
+     * <p>C'est la garantie qui tient tout le reste : un rapport emis est
+     * re-rendu depuis son instantane et son empreinte comparee au sceau. Si un
+     * seul trait du dessin bougeait pour lui -- un numero de page, un pied, une
+     * largeur de colonne --, il deviendrait indelivrable des le deploiement
+     * suivant, et la panne serait muette.
+     *
+     * <p>Ce banc interroge donc chaque garde, une par une, du cote ancien. Il
+     * tombe au premier changement de dessin pose hors d'une garde.
+     */
+    @Test
+    void un_rapport_sans_marqueur_garde_le_dessin_d_origine() throws IOException {
+        // UN BROUILLON : c'est la ou le dessin d'origine porte le plus de
+        // traits -- la mention de brouillon, le pied sans valeur probante.
+        EightDSnapshot ancien = brouillon(enFrancais(snapshot(true)), null);
+
+        String texte = texteDe(renderer.render(ancien, null));
+
+        // la reference collee au titre, telle qu elle a ete scellee
+        assertThat(texte).contains("Rapport 8DNC-2026-0007");
+        // la promesse de preuve dans le sous-titre, meme en brouillon
+        assertThat(texte).contains("(signé ML-DSA + ancré blockchain)");
+        // les phrases sans accents, telles qu'elles ont ete scellees
+        assertThat(texte).contains("non emis : ni signe, ni ancre");
+        // l'identifiant de client en pied de page
+        assertThat(texte).contains("Tenant: tenant-demo");
+        // et AUCUNE pagination
+        assertThat(texte).doesNotContain("Page 1 /");
+    }
+
+    /** Et le rapport neuf, lui, porte le dessin remanie. */
+    @Test
+    void un_rapport_marque_porte_le_dessin_remanie() throws IOException {
+        EightDSnapshot neuf = brouillon(remanie(snapshot(true)),
+                EightDSnapshot.MISE_EN_PAGE_COURANTE);
+
+        String texte = texteDe(renderer.render(neuf, null));
+
+        assertThat(texte).contains("non émis : ni signé, ni ancré");
+        assertThat(texte).doesNotContain("Tenant:");
+        assertThat(texte).contains("Page 1 /");
+        // LE BROUILLON NE SE DIT PAS SIGNE. Le sous-titre promettait la
+        // signature et l'ancrage une ligne au-dessus de « ni signe, ni ancre ».
+        assertThat(texte).doesNotContain("ML-DSA + ancr");
+    }
+
     /** Le meme instantane, avec la langue du document neuf. */
     private EightDSnapshot enFrancais(EightDSnapshot snapshot) {
         return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),

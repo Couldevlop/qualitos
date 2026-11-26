@@ -52,7 +52,7 @@ class DirectoryServiceTest {
 
         DirectoryDto.Page page = directory.search(new DirectoryQuery("%al%", 1, 10));
 
-        assertThat(page.content()).containsExactly(new DirectoryDto.Entry(ID, KC, "Alice", "alice@acme.com", true));
+        assertThat(page.content()).containsExactly(new DirectoryDto.Entry(ID, KC, "Alice", "alice@acme.com", true, null));
         assertThat(page.page()).isEqualTo(1);
         assertThat(page.size()).isEqualTo(10);
         assertThat(page.totalElements()).isEqualTo(11);

@@ -23,6 +23,7 @@ public final class EightDDto {
      * @param sourced     faux quand rien n'a été trouvé ni saisi
      * @param sourceLabel ce qui manque — vide dès que la discipline porte quelque chose
      * @param tables      ce qu'elle montre en colonnes ; l'équipe du D1, à ce jour
+     * @param fields      sa fiche : des libellés et leurs valeurs, alignés ; le D2
      * @param editable    vrai pour D1, D3 et D8, les seules qui se saisissent
      */
     public record DisciplineView(
@@ -32,7 +33,18 @@ public final class EightDDto {
             String sourceLabel,
             List<String> lines,
             List<TableView> tables,
+            List<FieldView> fields,
             boolean editable) {
+    }
+
+    /**
+     * Une ligne de fiche, telle que le document émis la porte.
+     *
+     * <p>L'ÉCRAN LA REND LUI-MÊME, pour la même raison que le tableau : deux
+     * écritures du même fait finissent par diverger, et c'est le document
+     * signé qui porterait la divergence.
+     */
+    public record FieldView(String label, String value) {
     }
 
     /**

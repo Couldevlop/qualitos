@@ -124,21 +124,51 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             figerMetadonnees(doc, snapshot, fr);
 
             Page page = nouvellePage(doc);
-            page.y = entete(page.flux, bold, regular, snapshot, page.y, fr);
+            boolean remanie = snapshot.dessinRemanie();
+            page.y = entete(page.flux, bold, regular, snapshot, page.y, fr, remanie);
             page.y = encadreNc(page.flux, bold, regular, snapshot, page.y, fr);
 
             for (EightDSnapshot.Section section : snapshot.sections()) {
-                page = discipline(doc, page, bold, regular, section, fr);
+                page = discipline(doc, page, bold, regular, section, fr, remanie);
             }
 
-            page = piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl, fr);
+            page = piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl, fr,
+                    remanie);
             page.flux.close();
+            if (remanie) {
+                numeroterLesPages(doc, regular, fr);
+            }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             doc.save(out);
             return out.toByteArray();
         } catch (IOException e) {
             throw new UncheckedIOException("rendu du rapport 8D impossible", e);
+        }
+    }
+
+    /**
+     * NUMEROTE LES PAGES, une fois le document complet.
+     *
+     * <p>Un rapport de plusieurs pages remis a un client se pagine : sans
+     * numero, un tirage papier qui se melange ou auquel il manque une feuille
+     * ne se detecte pas -- et c'est un document qui sert de preuve. Le compte
+     * total ne se connait qu'a la fin : la pagination se pose donc en seconde
+     * passe, en ajout au flux de chaque page, jamais en reecriture.
+     *
+     * <p>Deterministe : le texte ne depend que du rang de la page et de leur
+     * nombre. L'empreinte scellee reste donc recalculable.
+     */
+    private void numeroterLesPages(PDDocument doc, PDType1Font regular, boolean fr)
+            throws IOException {
+        int total = doc.getNumberOfPages();
+        for (int i = 0; i < total; i++) {
+            String mention = mot(fr, "Page ", "Page ") + (i + 1) + " / " + total;
+            float largeur = regular.getStringWidth(mention) / 1000f * 8f;
+            try (PDPageContentStream c = new PDPageContentStream(doc, doc.getPage(i),
+                    PDPageContentStream.AppendMode.APPEND, true, true)) {
+                texte(c, regular, 8, MUTED, (WIDTH - largeur) / 2f, MARGIN - 6f, mention);
+            }
         }
     }
 
@@ -190,18 +220,35 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private float entete(PDPageContentStream c, PDType1Font bold, PDType1Font regular,
-                         EightDSnapshot snapshot, float y, boolean fr) throws IOException {
+                         EightDSnapshot snapshot, float y, boolean fr, boolean remanie)
+            throws IOException {
         texte(c, bold, 22, INDIGO, MARGIN, y, mot(fr, "Rapport 8D", "8D Report"));
-        texte(c, regular, 11, MUTED, MARGIN + 120, y,
-                sanitize(snapshot.ncReference()));
+        // LA REFERENCE NE SE REPETE PLUS ICI. Posee a 120 points du bord, elle
+        // se collait au titre -- « Rapport 8DInt-NC-2026-0005 » -- parce que le
+        // titre est plus large que cette laisse des que la police le rend. Et
+        // elle se lisait deja deux lignes plus bas, en tete du cadre, puis une
+        // troisieme fois en tete du D2 : trois fois la meme chaine sur le meme
+        // ecran. Le cadre la porte, c'est sa place.
+        if (!remanie) {
+            texte(c, regular, 11, MUTED, MARGIN + 120, y,
+                    sanitize(snapshot.ncReference()));
+        }
         y -= 8;
         ligne(c, INDIGO, MARGIN, y, WIDTH - MARGIN, y, 2f);
         y -= 18;
+        // LE SOUS-TITRE NE PROMET PAS CE QUE LE DOCUMENT N'A PAS. « signé
+        // ML-DSA + ancré blockchain » s'imprimait une ligne au-dessus de
+        // « BROUILLON [...] ni signé, ni ancré » : le document se contredisait
+        // sur deux lignes voisines, et c'est la première chose qu'un client
+        // lisait. La mention de la preuve appartient au rapport émis.
+        boolean emis = snapshot.issuedAtText() != null;
+        String preuve = !remanie || emis
+                ? mot(fr, " (signé ML-DSA + ancré blockchain)",
+                      " (ML-DSA signed + blockchain anchored)")
+                : "";
         texte(c, regular, 10, MUTED, MARGIN, y, mot(fr,
-                "Résolution de problème en huit disciplines - QualitOS"
-                + " (signé ML-DSA + ancré blockchain)",
-                "Eight-discipline problem solving - QualitOS"
-                + " (ML-DSA signed + blockchain anchored)"));
+                "Résolution de problème en huit disciplines - QualitOS",
+                "Eight-discipline problem solving - QualitOS") + preuve);
         y -= 16;
         // UN BROUILLON SE RECONNAIT A SA PREMIERE LIGNE. Le document se
         // telecharge desormais avant l'emission -- pour se relire, se faire
@@ -209,9 +256,17 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         // rapport opposable : il le dit donc lui-meme, en tete, avant son
         // contenu.
         if (snapshot.issuedAtText() == null) {
-            texte(c, bold, 10, ALERT, MARGIN, y, mot(fr,
-                    "BROUILLON - document de travail, non emis : ni signe, ni ancre",
-                    "DRAFT - work in progress, not issued: neither signed nor anchored"));
+            // LES ACCENTS : un document français remis à un client ne peut pas
+            // écrire « non emis : ni signe, ni ancre ». Le texte était écrit
+            // sans accents du temps où la police de rendu n'en portait pas ;
+            // elle les porte, et ces phrases étaient restées en arrière.
+            texte(c, bold, 10, ALERT, MARGIN, y, remanie
+                    ? mot(fr,
+                        "BROUILLON - document de travail, non émis : ni signé, ni ancré",
+                        "DRAFT - work in progress, not issued: neither signed nor anchored")
+                    : mot(fr,
+                        "BROUILLON - document de travail, non emis : ni signe, ni ancre",
+                        "DRAFT - work in progress, not issued: neither signed nor anchored"));
             y -= 16;
         }
         if (snapshot.partial()) {
@@ -244,7 +299,8 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private Page discipline(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                            EightDSnapshot.Section section, boolean fr) throws IOException {
+                            EightDSnapshot.Section section, boolean fr, boolean remanie)
+            throws IOException {
         page = place(doc, page, 46f);
         texte(page.flux, bold, 13, INDIGO, MARGIN, page.y,
                 section.code() + " - " + sanitize(section.title()));
@@ -268,6 +324,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             page.y -= 14;
             return page;
         }
+        page = fiche(doc, page, bold, regular, section);
         for (String brute : section.lines()) {
             for (String morceau : couper(brute)) {
                 page = place(doc, page, 13f);
@@ -277,9 +334,15 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         }
         for (EightDSnapshot.Figure figure : section.figures()) {
             page = figure(doc, page, bold, regular, figure, fr);
+            // LES NOMS DES ARÊTES BASSES TOUCHAIENT LE TITRE SUIVANT : « Méthodes »
+            // et « D5 - CAPA définies » se lisaient sur deux lignes jointives,
+            // et le dernier libellé du schéma passait pour un sous-titre.
+            if (remanie) {
+                page.y -= 10;
+            }
         }
         for (EightDSnapshot.Table actions : section.tables()) {
-            page = tableau(doc, page, bold, regular, actions);
+            page = tableau(doc, page, bold, regular, actions, remanie);
         }
         page.y -= 8;
         return page;
@@ -294,8 +357,59 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      */
     private static boolean rienAMontrer(EightDSnapshot.Section section) {
         return section.lines().isEmpty() && section.figures().isEmpty()
-                && section.tables().isEmpty();
+                && section.tables().isEmpty() && section.fields().isEmpty();
     }
+
+    /**
+     * LA FICHE : un libelle a gauche, sa valeur en regard, une ligne par fait.
+     *
+     * <p>Le libelle est une colonne, pas un prefixe : ecrits « Reference :
+     * Int-NC-2026-0005 » au fil du texte, les sept faits du D2 se lisaient
+     * comme sept phrases, et la valeur cherchee ne se trouvait qu'en lisant
+     * chaque debut de ligne. Alignes, les libelles se survolent et les valeurs
+     * se comparent.
+     *
+     * <p>La valeur se replie sous elle-meme, pas sous le libelle : un constat
+     * de trois lignes garde sa colonne, et la fiche reste lisible comme un
+     * tableau.
+     *
+     * <p>Vide pour tout rapport scelle avant la fiche -- rien n'est dessine, et
+     * leur empreinte continue de tomber juste.
+     */
+    private Page fiche(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
+                       EightDSnapshot.Section section) throws IOException {
+        if (section.fields().isEmpty()) {
+            return page;
+        }
+        for (EightDSnapshot.Field champ : section.fields()) {
+            List<String> morceaux = couperA(champ.value(), VALEUR_FICHE);
+            for (int i = 0; i < morceaux.size(); i++) {
+                page = place(doc, page, 13f);
+                if (i == 0) {
+                    texte(page.flux, bold, 9f, MUTED, MARGIN + 10, page.y,
+                            sanitize(champ.label()));
+                }
+                texte(page.flux, regular, 9.5f, INK, MARGIN + 10 + LIBELLE_FICHE, page.y,
+                        morceaux.get(i));
+                page.y -= 12.5f;
+            }
+        }
+        page.y -= 4;
+        return page;
+    }
+
+    /** La largeur de la colonne des libelles, en points. */
+    private static final float LIBELLE_FICHE = 96f;
+
+    /**
+     * La largeur de la colonne des valeurs, en caracteres.
+     *
+     * <p>En caracteres et non en points parce que {@link #couperA} compte des
+     * caracteres : la police du corps est a chasse variable, mais le compte
+     * suffit a tenir la colonne, et une mesure exacte ferait dependre la
+     * coupure du moteur de police -- donc l'empreinte scellee avec elle.
+     */
+    private static final int VALEUR_FICHE = 92;
 
 
     // ---------- les tableaux ----------
@@ -362,8 +476,8 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * et pire, elle se lit de travers.
      */
     private Page tableau(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                         EightDSnapshot.Table tableau) throws IOException {
-        float[] largeurs = largeursDe(tableau.columns().size());
+                         EightDSnapshot.Table tableau, boolean remanie) throws IOException {
+        float[] largeurs = largeursDe(tableau.columns().size(), remanie);
         // Le titre et l'en-tete tiennent ensemble, avec au moins une ligne :
         // un dossier annonce en bas de page dont le tableau commence a la
         // suivante se lirait comme un dossier vide.
@@ -449,7 +563,16 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
      * colonnes. Il se rend exactement comme il a ete emis -- son empreinte
      * tient a cela.
      */
-    private static float[] partsDe(int n) {
+    private static float[] partsDe(int n, boolean remanie) {
+        if (remanie) {
+            return switch (n) {
+                case 6 -> PARTS_ACTIONS_AVEC_DEBUT;
+                case 5 -> PARTS_ACTIONS_SANS_PREUVE;
+                case 4 -> PARTS_ACTIONS_D5;
+                case 3 -> PARTS_EQUIPE;
+                default -> null;
+            };
+        }
         return switch (n) {
             case 6 -> PARTS_COLONNES;
             case 5 -> PARTS_ACTIONS_SANS_NATURE;
@@ -459,10 +582,29 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         };
     }
 
-    private static float[] largeursDe(int n) {
+    /**
+     * Les parts d'un tableau d'actions REMANIE : intitule, responsable, debut,
+     * echeance, etat, preuves.
+     *
+     * <p>Les six parts d'avant donnaient 15 % a l'intitule, parce que la
+     * deuxieme colonne etait alors la NATURE de l'action, large de 32 %. La
+     * nature a quitte le tableau, la date de debut l'a remplacee, et les parts
+     * sont restees : « Trier et isoler le stock de boitiers du lot en cours »
+     * se repliait sur trois lignes dans une colonne etroite, pendant que trois
+     * dates flottaient au milieu d'un blanc. L'intitule est ce que le lecteur
+     * vient lire : il prend le tiers de la laisse.
+     */
+    private static final float[] PARTS_ACTIONS_AVEC_DEBUT =
+            {0.34f, 0.18f, 0.12f, 0.12f, 0.11f, 0.13f};
+
+    /** Les memes, sans la colonne des preuves : le D5 (regle de recette). */
+    private static final float[] PARTS_ACTIONS_SANS_PREUVE =
+            {0.38f, 0.20f, 0.14f, 0.14f, 0.14f};
+
+    private static float[] largeursDe(int n, boolean remanie) {
         float utile = CONTENT_W - 24f;
         float[] largeurs = new float[n];
-        float[] parts = partsDe(n);
+        float[] parts = partsDe(n, remanie);
         if (parts != null) {
             for (int i = 0; i < n; i++) {
                 largeurs[i] = utile * parts[i];
@@ -799,7 +941,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
 
     private Page piedIntegrite(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
                                PDType1Font mono, EightDSnapshot snapshot, String verifyUrl,
-                               boolean fr) throws IOException {
+                               boolean fr, boolean remanie) throws IOException {
         // Le pied s'écrit au BAS de la dernière page, à une hauteur fixe. Le
         // contenu, lui, descend désormais jusqu'à la marge : s'il atteint cette
         // bande, le pied prend une page à lui. L'écrire par-dessus le texte
@@ -820,16 +962,30 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             texte(c, bold, 12, ALERT, MARGIN, y,
                     mot(fr, "Brouillon - sans valeur probante", "Draft - no evidentiary value"));
             y -= 15;
-            texte(c, regular, 9, INK, MARGIN, y, mot(fr,
-                    "Ce document n'a pas ete emis : il n'est ni signe, ni ancre,"
-                    + " et son contenu peut encore changer.",
-                    "This document has not been issued: it is neither signed nor anchored,"
-                    + " and its content may still change."));
+            texte(c, regular, 9, INK, MARGIN, y, remanie
+                    ? mot(fr,
+                        "Ce document n'a pas été émis : il n'est ni signé, ni ancré,"
+                        + " et son contenu peut encore changer.",
+                        "This document has not been issued: it is neither signed nor anchored,"
+                        + " and its content may still change.")
+                    : mot(fr,
+                        "Ce document n'a pas ete emis : il n'est ni signe, ni ancre,"
+                        + " et son contenu peut encore changer.",
+                        "This document has not been issued: it is neither signed nor anchored,"
+                        + " and its content may still change."));
             y -= 13;
-            texte(c, regular, 9, INK, MARGIN, y, mot(fr,
-                    "Le rapport opposable s'obtient en emettant le 8D depuis QualitOS.",
-                    "The binding report is obtained by issuing the 8D from QualitOS."));
-            if (snapshot.tenantLabel() != null) {
+            texte(c, regular, 9, INK, MARGIN, y, remanie
+                    ? mot(fr,
+                        "Le rapport opposable s'obtient en émettant le 8D depuis QualitOS.",
+                        "The binding report is obtained by issuing the 8D from QualitOS.")
+                    : mot(fr,
+                        "Le rapport opposable s'obtient en emettant le 8D depuis QualitOS.",
+                        "The binding report is obtained by issuing the 8D from QualitOS."));
+            // PLUS D'IDENTIFIANT DE CLIENT EN PIED DE PAGE. « Tenant:
+            // fd3c738c-e111-... » ne dit rien à son lecteur, occupe la place
+            // où l'œil cherche la pagination, et fait voyager un identifiant
+            // interne dans un document qui sort de la maison.
+            if (!remanie && snapshot.tenantLabel() != null) {
                 texte(c, mono, 7.5f, MUTED, MARGIN, MARGIN + 16,
                         "Tenant: " + snapshot.tenantLabel());
             }
@@ -838,8 +994,11 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         texte(c, bold, 12, INDIGO, MARGIN, y,
                 mot(fr, "Intégrité et vérification", "Integrity & verification"));
         y -= 15;
-        texte(c, regular, 9, INK, MARGIN, y,
-                "Ce rapport est signe (Ed25519 + ML-DSA-65) et son empreinte est ancree.");
+        texte(c, regular, 9, INK, MARGIN, y, remanie
+                ? mot(fr,
+                    "Ce rapport est signé (Ed25519 + ML-DSA-65) et son empreinte est ancrée.",
+                    "This report is signed (Ed25519 + ML-DSA-65) and its digest is anchored.")
+                : "Ce rapport est signe (Ed25519 + ML-DSA-65) et son empreinte est ancree.");
         y -= 13;
         texte(c, regular, 9, INK, MARGIN, y,
                 mot(fr, "Son contenu est figé : il dit ce qu'il disait le jour de son"
@@ -850,9 +1009,13 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             texte(c, regular, 9, MUTED, MARGIN, y, mot(fr, "Émis par : ", "Issued by: ")
                     + sanitize(snapshot.issuedByName()));
         }
-        texte(c, regular, 8, MUTED, MARGIN, MARGIN + 30,
-                "Scannez le QR code pour verifier l'authenticite de ce document sur QualitOS.");
-        if (snapshot.tenantLabel() != null) {
+        texte(c, regular, 8, MUTED, MARGIN, MARGIN + 30, remanie
+                ? mot(fr,
+                    "Scannez le QR code pour vérifier l'authenticité de ce document"
+                    + " sur QualitOS.",
+                    "Scan the QR code to verify this document on QualitOS.")
+                : "Scannez le QR code pour verifier l'authenticite de ce document sur QualitOS.");
+        if (!remanie && snapshot.tenantLabel() != null) {
             texte(c, mono, 7.5f, MUTED, MARGIN, MARGIN + 16, "Tenant: " + snapshot.tenantLabel());
         }
 
