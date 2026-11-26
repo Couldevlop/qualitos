@@ -699,6 +699,10 @@ export class NcService {
       sourceLabel: sourced ? '' : "Aucune source dans la plateforme — rien à agréger",
       lines,
       tables: [],
+      // LE REPLI HORS LIGNE NE PORTE PAS DE FICHE : elle est assemblee par le
+      // serveur depuis la fiche de l'ecart, et l'inventer ici ferait lire au
+      // terrain des valeurs que personne n'a saisies.
+      fields: [],
       editable
     };
   }

@@ -30,7 +30,7 @@ voient qu'une fois le document imprimé :
 - le **pied de page** imprimait `Tenant: fd3c738c-e111-…`, identifiant interne
   sans valeur pour son lecteur ;
 - la **référence** s'écrivait trois fois sur le même écran, dont une collée au
-  titre (« Rapport 8DInt-NC-2026-0005ue ») ;
+  titre (« Rapport 8DInt-NC-2026-0005 ») ;
 - plusieurs phrases fixes étaient restées **sans accents** (« non emis », « ni
   signe, ni ancre ») ;
 - le document n'était **pas paginé**, alors qu'il sert de preuve et circule
