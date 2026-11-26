@@ -17,4 +17,14 @@ public interface DirectoryPort {
 
     /** L'adresse du compte, si l'annuaire en connaît une. */
     Optional<String> emailOf(UUID accountId);
+
+    /**
+     * La fonction du compte dans l'organisation, en toutes lettres.
+     *
+     * <p>« Responsable qualité », « Audit interne » : ce que la personne FAIT,
+     * tiré des rôles qu'on lui a donnés à son invitation. Vide quand elle n'en
+     * porte aucun — une fonction par défaut nommerait, dans un document remis
+     * au client, un poste que personne n'a renseigné.
+     */
+    Optional<String> fonctionOf(UUID accountId);
 }

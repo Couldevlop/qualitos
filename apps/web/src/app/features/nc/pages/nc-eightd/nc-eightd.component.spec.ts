@@ -58,6 +58,7 @@ describe('NcEightDComponent', () => {
       sourceLabel: servi ? '' : "Aucune source — rien à agréger",
       lines: servi ? ['une ligne de contenu'] : [],
       tables: [],
+      fields: [],
       editable: saisie
     };
   }
@@ -203,6 +204,7 @@ describe('NcEightDComponent', () => {
       sourced: true,
       sourceLabel: '',
       lines: [],
+      fields: [],
       tables: [{
         caption: '',
         columns: ['Nom et prénom', 'Adresse mail', 'Rôle'],
@@ -938,7 +940,7 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER']);
 
     const d5: EightDDiscipline = {
-      code: 'D5', title: 'D5', sourced: true, sourceLabel: '', editable: false, tables: [],
+      code: 'D5', title: 'D5', sourced: true, sourceLabel: '', editable: false, fields: [], tables: [],
       lines: [
         'CAPA: Reprendre le presse-\u00e9toupe',
         'Type: CORRECTIVE',
@@ -958,7 +960,7 @@ describe('NcEightDComponent', () => {
     // Le D6 porte des dates d'achevement et des comptes de preuves : rien que
     // le tableau des actions preventives ne montre.
     const d6: EightDDiscipline = {
-      code: 'D6', title: 'D6', sourced: true, sourceLabel: '', editable: false, tables: [],
+      code: 'D6', title: 'D6', sourced: true, sourceLabel: '', editable: false, fields: [], tables: [],
       lines: ['Changer le joint \u2014 completed on 02/11/2026 \u2014 2 evidence item(s)']
     };
 
@@ -973,7 +975,7 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER']);
 
     const d4: EightDDiscipline = {
-      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false, tables: [],
+      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false, fields: [], tables: [],
       lines: ['Root cause recorded on the non-conformity : Usure du roulement']
     };
 
@@ -988,7 +990,7 @@ describe('NcEightDComponent', () => {
     await monter(['QUALITY_MANAGER']);
 
     const d4: EightDDiscipline = {
-      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false, tables: [],
+      code: 'D4', title: 'D4', sourced: true, sourceLabel: '', editable: false, fields: [], tables: [],
       lines: ['Root cause recorded on the non-conformity : Usure du roulement']
     };
 

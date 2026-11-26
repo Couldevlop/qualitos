@@ -124,6 +124,36 @@
 
 /* Le tableau que la discipline porte elle-meme : l'equipe du D1. Il se lit, il
    ne se manoeuvre pas -- les tableaux d'actions, eux, sont des panneaux. */
+.fiche {
+  display: grid;
+  // Une colonne de libelles a largeur FIXE : c'est ce qui aligne les valeurs
+  // les unes sous les autres. En « auto », chaque libelle poussait sa valeur
+  // d'une largeur differente, et la fiche redevenait une suite de phrases.
+  grid-template-columns: 11rem 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0 0 1rem;
+
+  dt {
+    color: var(--qos-text-muted, #5b6472);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  // Sous 600 px la colonne fixe ne tient plus : le libelle passe au-dessus de
+  // sa valeur plutot que de la comprimer a trois caracteres.
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 0 0;
+
+    dd { margin-bottom: 0.5rem; }
+  }
+}
+
 .table-fige {
   width: 100%;
   margin: 0 0 var(--qos-space-3);

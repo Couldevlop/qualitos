@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +29,22 @@ public class NcController {
 
     @GetMapping
     public Page<NcDto.Response> list(
-            @RequestParam(required = false) NcStatus status,
+            /**
+             * Un statut, PLUSIEURS, ou aucun.
+             *
+             * <p>« Ouvertes » n'est pas un statut mais un ensemble : un ecart
+             * qu'on instruit passe par UNDER_ANALYSIS, ACTION_DEFINED puis
+             * RESOLVED sans avoir quitte le travail en cours. Le filtre
+             * repetait `status=OPEN` et ne rendait que le premier de ces
+             * quatre : l'ecart sur lequel on venait de definir une action
+             * disparaissait de la liste des ouvertes, alors que c'est
+             * precisement celui qu'on suit.
+             *
+             * <p>Repete dans l'URL -- `status=OPEN&status=RESOLVED` -- et non
+             * joint par des virgules : c'est la forme que Spring lie seul, et
+             * celle qu'un client HTTP ecrit sans convention a connaitre.
+             */
+            @RequestParam(required = false) List<NcStatus> status,
             @RequestParam(required = false) NcSeverity severity,
             @RequestParam(required = false) NcCategory category,
             /** La nature fine de l'écart, par son code de catalogue. */

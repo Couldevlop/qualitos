@@ -1,6 +1,7 @@
 package com.openlab.qualitos.core.directory;
 
 import com.openlab.qualitos.core.common.MissingTenantContextException;
+import com.openlab.qualitos.core.identity.PlatformRoles;
 import com.openlab.qualitos.core.security.TenantContext;
 import com.openlab.qualitos.core.user.DirectoryRow;
 import com.openlab.qualitos.core.user.UserRepository;
@@ -41,7 +42,8 @@ public class DirectoryService {
     public DirectoryDto.Entry get(UUID id) {
         UUID tenant = currentTenant();
         return users.findDirectoryRow(tenant, id)
-                .map(DirectoryDto.Entry::from)
+                .map(row -> DirectoryDto.Entry.from(
+                        row, PlatformRoles.fonction(users.findRolesById(tenant, id)).orElse(null)))
                 .orElseThrow(DirectoryEntryNotFoundException::new);
     }
 
@@ -51,8 +53,15 @@ public class DirectoryService {
      */
     public DirectoryDto.Entry getByAccount(UUID accountId) {
         UUID tenant = currentTenant();
+        // LA FONCTION N'EST LUE QUE SUR UNE PERSONNE NOMMEE, jamais sur une
+        // liste : une requete de roles par ligne de resultat ferait payer la
+        // recherche de tout l'annuaire pour une colonne qu'elle n'affiche pas.
         return users.findDirectoryRowByAccount(tenant, accountId.toString())
-                .map(DirectoryDto.Entry::from)
+                .map(row -> DirectoryDto.Entry.from(
+                        row,
+                        PlatformRoles.fonction(
+                                users.findRolesByAccount(tenant, accountId.toString()))
+                                .orElse(null)))
                 .orElseThrow(DirectoryEntryNotFoundException::new);
     }
 

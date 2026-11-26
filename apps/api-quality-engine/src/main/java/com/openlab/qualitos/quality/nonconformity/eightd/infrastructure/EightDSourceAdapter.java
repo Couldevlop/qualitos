@@ -150,17 +150,79 @@ public class EightDSourceAdapter implements EightDSourcePort {
     /**
      * L'équipe nommée sur la fiche, dans son ordre de saisie (D1).
      *
-     * <p>Les NOMS figés à la saisie, et non une relecture de l'annuaire : un
-     * rapport 8D relu trois ans plus tard porte les noms de l'époque.
+     * <p>LE NOM FIGE D'ABORD, l'annuaire ENSUITE. Le nom retenu à la saisie
+     * prime : un rapport 8D relu trois ans plus tard porte les noms de
+     * l'époque, et un membre renommé depuis ne réécrit pas un document émis.
+     *
+     * <p>Mais ce qui a été figé n'est pas toujours un nom : les écarts ouverts
+     * avant que le pilote soit amorcé depuis l'annuaire portent l'ADRESSE de
+     * celui qui les a saisis, et le D1 affichait donc
+     * « waopron.coulibaly@qualitos.fr » sous « Nom et prénom ». Quand le nom
+     * figé est une adresse — ou manque —, on va donc chercher le vrai nom dans
+     * l'annuaire : mieux vaut le nom d'aujourd'hui que l'adresse de toujours.
+     *
+     * <p>La FONCTION, elle, se relit toujours : elle n'est figée nulle part, et
+     * c'est une coordonnée d'organisation, pas une trace de décision.
      */
     private List<EightDSources.Member> enEquipe(UUID tenantId, UUID ncId) {
         List<EightDSources.Member> membres = new ArrayList<>();
         for (NcTeamMember membre : teamMembers.findByTenantIdAndNcIdOrderByPositionAsc(
                 tenantId, ncId)) {
+            UUID compte = compteDe(membre.getAccountId());
+            String fige = membre.getDisplayName();
+            String nom = estUnNom(fige) ? fige : nomAnnuaire(compte, fige);
             membres.add(new EightDSources.Member(
-                    membre.getDisplayName(), adresseDe(membre.getAccountId())));
+                    nom, adresseDe(membre.getAccountId()), fonctionDe(compte)));
         }
         return membres;
+    }
+
+    /**
+     * Vrai quand ce qu'on a figé ressemble à un nom, et non à une adresse.
+     *
+     * <p>L'arobase suffit à les distinguer : aucun nom de personne n'en porte,
+     * et toute adresse en porte une. Une règle plus savante se tromperait plus
+     * souvent qu'elle ne rattraperait de cas.
+     */
+    private static boolean estUnNom(String fige) {
+        return fige != null && !fige.isBlank() && !fige.contains("@");
+    }
+
+    /** Le nom de l'annuaire, ou ce qu'on avait figé si l'annuaire ne sait rien. */
+    private String nomAnnuaire(UUID compte, String defaut) {
+        if (compte == null) {
+            return defaut;
+        }
+        try {
+            return annuaire.displayNameOf(compte).filter(EightDSourceAdapter::estUnNom)
+                    .orElse(defaut);
+        } catch (DirectoryUnavailableException injoignable) {
+            return defaut;
+        }
+    }
+
+    /** La fonction du compte, ou {@code null} : ni l'absence ni la panne ne lèvent ici. */
+    private String fonctionDe(UUID compte) {
+        if (compte == null) {
+            return null;
+        }
+        try {
+            return annuaire.fonctionOf(compte).orElse(null);
+        } catch (DirectoryUnavailableException injoignable) {
+            return null;
+        }
+    }
+
+    /** L'identifiant de compte, ou {@code null} quand ce n'en est pas un. */
+    private static UUID compteDe(String accountId) {
+        if (accountId == null || accountId.isBlank()) {
+            return null;
+        }
+        try {
+            return UUID.fromString(accountId);
+        } catch (IllegalArgumentException pasUnUuid) {
+            return null;
+        }
     }
 
     /** L'adresse du compte, ou {@code null} : ni l'absence ni la panne ne lèvent ici. */
@@ -303,7 +365,15 @@ public class EightDSourceAdapter implements EightDSourcePort {
             actions.add(new EightDSources.Action(
                     action.getTitle(), action.getDescription(),
                     nom(action.getActionType()), nom(action.getStatus()),
-                    action.getAssigneeName(), action.getDueDate(), action.getCompletedAt(),
+                    // LE RESPONSABLE SE NOMME. La colonne portait l'adresse
+                    // de courriel figee a l'affectation : une adresse
+                    // personnelle dans un document remis au client, la ou le
+                    // lecteur attend un nom. L'annuaire le sait ; le nom fige
+                    // ne sert que s'il en est un, ou si l'annuaire se tait.
+                    nomAnnuaire(action.getAssigneeId(),
+                            estUnNom(action.getAssigneeName()) ? action.getAssigneeName() : null),
+                    action.getDecidedOn(), action.getDueDate(),
+                    action.getCompletedAt(),
                     pieces,
                     jugement == null ? null : jugement.verdict().name(),
                     jugement == null ? null : jugement.reviewedAt()));

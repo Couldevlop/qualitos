@@ -720,6 +720,195 @@ def nc_et_ishikawa(c):
 # L'ordre de ce dictionnaire EST l'ordre d'execution quand on demande « tout » :
 # certaines sections s'appuient sur les activations de modules posees par la
 # premiere. Les cles sont les noms que `--sections` accepte.
+def huit_disciplines(c):
+    """UN ECART MENE JUSQU'AU BOUT : c'est le seul moyen de voir un 8D complet.
+
+    Les autres sections posent un ecart, une analyse, un dossier -- chacun
+    isolement. Le rapport 8D, lui, agrege les huit disciplines depuis ces
+    pieces : sans equipe nommee, sans 5 pourquoi acheve, sans arete de poisson,
+    sans action d'endiguement NI corrective NI preventive, il se rend partiel et
+    ne montre rien de ce qu'on vient verifier. Cette section fabrique donc la
+    chaine entiere, dans l'ordre ou un pilote la parcourt.
+    """
+    print('\nHuit disciplines : un ecart mene de bout en bout')
+    nc = c.poste('/api/v1/nc', {
+        'title': 'Cote hors tolerance sur la boite ABS001',
+        'description': "Au controle final, la cote de la boite depasse la tolerance "
+                       "superieure de 0,08 mm sur onze pieces du lot L-2411.",
+        'category': 'PRODUCT', 'severity': 'MAJOR', 'origin': 'INTERNAL',
+        'detectedAt': maintenant(-5), 'zone': 'Poste 3 - vissage',
+        'batchNumber': 'L-2411',
+        'teamMembers': equipe(c),
+    }, '8D : ecart')
+    if not nc:
+        return None
+
+    nc_id = nc['id']
+    c.poste('/api/v1/nc/%s/start-analysis' % nc_id,
+            {'rootCause': "Derive de la butee mecanique du poste 3"},
+            '8D : passage en analyse')
+
+    # --- D4 : les cinq pourquoi, menes jusqu'a la cause racine --------------
+    analyse = c.poste('/api/v1/five-whys',
+                      {'ncId': nc_id,
+                       'problem': 'Cote de la boite hors tolerance superieure'},
+                      '8D : analyse 5 pourquoi')
+    if analyse:
+        for reponse in [
+            "La cote de la boite depasse la tolerance superieure.",
+            "Le couple de serrage applique au poste 3 est trop eleve en fin de serie.",
+            "La butee mecanique de la visseuse se deplace sous les vibrations.",
+            "Le plan de maintenance ne prevoit aucune reprise periodique de cette butee.",
+            "L AMDEC procede n avait pas retenu la derive de butee comme mode de "
+            "defaillance, donc aucune surveillance n en decoulait.",
+        ]:
+            c.poste('/api/v1/five-whys/%s/steps' % analyse['id'],
+                    {'answer': reponse}, '8D : pourquoi')
+        c.met('/api/v1/five-whys/%s/root-cause' % analyse['id'],
+              {'rootCause': "La derive de la butee mecanique du poste 3 n est ni "
+                            "surveillee ni reprise, faute d avoir ete retenue comme "
+                            "mode de defaillance a l AMDEC procede."},
+              '8D : cause racine')
+
+    # --- D4 : l'arete de poisson, une cause par arete ----------------------
+    diagramme = c.poste('/api/v1/ishikawa/diagrams', {
+        'problemStatement': 'Cote de la boite hors tolerance superieure',
+        'ownerId': c.sujet, 'ncId': nc_id,
+    }, '8D : diagramme Ishikawa')
+    if diagramme:
+        for categorie, cause in [
+            ('MACHINES', 'Butee mecanique du poste 3 qui derive apres 400 cycles'),
+            ('METHODS', 'Gamme de controle sans controle dimensionnel intermediaire'),
+            ('MANPOWER', 'Operateurs non formes a la reprise de butee'),
+            ('MATERIALS', 'Lot de vis a tolerance de tete elargie'),
+            ('MEASUREMENTS', 'Aucun releve de couple en cours de serie'),
+            ('ENVIRONMENT', 'Vibrations de la ligne voisine transmises au bati'),
+        ]:
+            c.poste('/api/v1/ishikawa/diagrams/%s/causes' % diagramme['id'],
+                    {'category': categorie, 'label': cause},
+                    '8D : cause %s' % categorie.lower())
+
+    # --- D3, D5, D7 : les trois natures d'action ---------------------------
+    # TROIS NATURES, ET C'EST LE POINT : le D3 montre l'endiguement, le D5 le
+    # correctif, le D7 le preventif. Un dossier qui n'en porterait qu'une
+    # laisserait deux disciplines vides dans le rapport.
+    dossier = c.poste('/api/v1/capa/cases', {
+        'title': 'Recaler la butee du poste 3 et surveiller la derive',
+        'type': 'CORRECTIVE', 'criticity': 'HIGH', 'sourceType': 'NON_CONFORMITY',
+        'sourceRef': nc.get('reference'), 'ownerId': c.sujet, 'dueDate': jour(25),
+        'description': "Remettre la butee en position, puis la faire entrer au plan "
+                       "de maintenance et a l AMDEC procede.",
+    }, '8D : dossier CAPA')
+    if dossier:
+        for titre, nature, etat, echeance, critere in [
+            ('Trier et isoler le stock de boitiers du lot en cours',
+             'CONTAINMENT', 'DONE', jour(-3), None),
+            ('Recaler le montage de vissage au poste 3',
+             'CORRECTIVE', 'DONE', jour(-1),
+             'Aucune cote hors tolerance sur trois series consecutives'),
+            ('Reprendre la gamme de controle dimensionnel',
+             'CORRECTIVE', 'DONE', jour(2),
+             'Un controle intermediaire tous les cinquante serrages'),
+            ('Etendre la reprise de butee aux cinq postes de vissage du site',
+             'PREVENTIVE', 'IN_PROGRESS', jour(20), None),
+        ]:
+            c.poste('/api/v1/capa/cases/%s/actions' % dossier['id'], {
+                'title': titre, 'actionType': nature, 'status': etat,
+                'assigneeId': c.sujet, 'assigneeName': c.nom,
+                'decidedOn': jour(-6), 'dueDate': echeance,
+                'effectivenessCriterion': critere,
+                'verificationRequired': critere is not None,
+            }, '8D : action %s' % nature.lower())
+
+    # --- D8 : la seule discipline qu'aucun module ne sait renseigner -------
+    c.met('/api/v1/nc/%s/8d' % nc_id, {
+        'recognition': "Merci a l equipe du poste 3 et au service methodes : la "
+                       "derive a ete isolee en deux jours, le stock client protege, "
+                       "et la gamme de controle remise a niveau sans arret de ligne.",
+    }, '8D : reconnaissance de l equipe')
+    return nc
+
+
+def derogations(c):
+    """Une derogation, menee jusqu'a la demande de validation.
+
+    <p>Elle s'arrete la : la validation demande un second facteur, et le
+    deuxieme regard ne peut pas etre le premier. Un jeu de donnees ne franchit
+    pas une garde -- il l'amene a son seuil.
+    """
+    print('\nDerogations')
+    brouillon = c.poste('/api/v1/derogations', {
+        'customerName': 'Pompes Atlantique',
+        'customerQualityContact': 'Service qualite fournisseurs',
+        'customerOrderNo': 'CMD-2026-4417',
+        'partReference': 'ABS001', 'partIndex': 'C',
+        'batchNumber': 'L-2411', 'quantity': 11,
+        'requestDate': jour(0),
+        'shipmentStage': 'TO_SHIP', 'deviationOrigin': 'PRODUCT',
+        'occurrence': 'FIRST', 'durationKind': 'TEMPORARY',
+        'durationDetail': 'Le temps de recaler la butee et de valider trois series.',
+        'lines': [{'specification': 'Cote 42,00 +0,05',
+                   'actualValue': 'Mesure 42,13 maxi',
+                   'nonConformingQty': 11}],
+        'justification': "L ecart ne touche aucune fonction d assemblage : la cote "
+                         "concernee est une portee libre, hors chaine de cotes.",
+        'rootCause': "Derive de la butee mecanique du poste 3.",
+        'containment': "Lot isole et trie a 100 %.",
+        'correctiveAction': "Butee recalee, controle intermediaire ajoute a la gamme.",
+    }, 'derogation (brouillon)')
+    if brouillon:
+        c.poste('/api/v1/derogations/%s/request-approval' % brouillon['id'],
+                {'managerAccountId': c.sujet}, 'derogation : demande de validation')
+
+
+def reclamations(c):
+    """Des reclamations client sur plusieurs canaux et plusieurs gravites."""
+    print('\nReclamations client')
+    for canal, sujet, gravite, categorie in [
+        ('EMAIL', 'Bruit anormal en charge sur trois pompes', 'HIGH', 'PRODUCT'),
+        ('PHONE', 'Retard de livraison de deux semaines', 'MEDIUM', 'DELIVERY'),
+        ('WEB_FORM', 'Erreur de facturation sur la commande CMD-2026-4390',
+         'LOW', 'BILLING'),
+    ]:
+        c.poste('/api/v1/complaints', {
+            'channel': canal, 'subject': sujet,
+            'customerName': 'Pompes Atlantique',
+            'customerEmail': 'qualite@pompes-atlantique.test',
+            'description': "Signale par le client ; a qualifier avant ouverture "
+                           "d un ecart.",
+            'severity': gravite, 'category': categorie,
+            'assignedToUserId': c.sujet,
+        }, 'reclamation (%s)' % canal.lower())
+
+
+def cout_de_la_qualite(c):
+    """Les quatre familles de cout, et une imputation sur chacune.
+
+    <p>Les QUATRE, et pas une seule : le tableau du cout de la qualite se lit
+    par comparaison -- ce qu'on depense a prevenir contre ce que coute la
+    defaillance. Une seule famille renseignee ne montre rien.
+    """
+    print('\nCout de la qualite')
+    c.met('/api/v1/cost-of-quality/currency', {'currency': 'EUR'}, 'devise du client')
+    for categorie, nom, montant in [
+        ('PREVENTION', 'Formation au reglage des visseuses', 1850.00),
+        ('APPRAISAL', 'Controle dimensionnel intermediaire', 920.50),
+        ('INTERNAL_FAILURE', 'Tri a 100 pour cent du lot L-2411', 3400.00),
+        ('EXTERNAL_FAILURE', 'Retour client et remplacement', 7250.75),
+    ]:
+        etiquette = c.poste('/api/v1/cost-of-quality/labels',
+                            {'category': categorie, 'name': nom},
+                            'etiquette de cout (%s)' % categorie.lower())
+        if etiquette:
+            c.poste('/api/v1/cost-of-quality/entries', {
+                'labelId': etiquette['id'], 'amount': montant,
+                'responsible': c.nom, 'responsibleUserId': c.sujet,
+                'imputationDate': jour(-4),
+                'partReference': 'ABS001', 'partQuantity': 11, 'lot': 'L-2411',
+                'comment': 'Impute depuis le jeu de recette.',
+            }, 'imputation de cout (%s)' % categorie.lower())
+
+
 SECTIONS = {
     'modules': modules,
     'produits-amdec': produits_et_amdec,
@@ -727,6 +916,10 @@ SECTIONS = {
     'pdca': cycle_pdca,
     'audits-5s': audits_5s,
     'nc-ishikawa': nc_et_ishikawa,
+    'huit-disciplines': huit_disciplines,
+    'derogations': derogations,
+    'reclamations': reclamations,
+    'cout-qualite': cout_de_la_qualite,
     'audits': audits,
     'documents': documents,
     'fournisseurs': fournisseurs,

@@ -609,6 +609,11 @@ class DerogationServiceTest {
         public Optional<String> emailOf(UUID compte) {
             return Optional.of("compte@test.fr");
         }
+
+        @Override
+        public Optional<String> fonctionOf(UUID compte) {
+            return Optional.empty();
+        }
     }
 
     private static final class ActeurFixe implements ActorProvider {

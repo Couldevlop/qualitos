@@ -117,6 +117,18 @@
                refabrique pas -- une liste de noms ici et un tableau dans le PDF
                finiraient par diverger. Les tableaux d'ACTIONS, eux, se
                manoeuvrent plus bas : celui-la serait un doublon inerte. -->
+          <!-- LA FICHE : un libelle a gauche, sa valeur en regard. Le D2
+               alignait sept phrases « Reference : … », « Gravite : … », et la
+               valeur cherchee ne se trouvait qu'en lisant chaque debut de
+               ligne. En deux colonnes, les libelles se survolent. -->
+          <dl class="fiche" *ngIf="discipline.fields.length > 0"
+              [attr.data-test]="'8d-fiche-' + discipline.code">
+            <ng-container *ngFor="let champ of discipline.fields">
+              <dt>{{ champ.label }}</dt>
+              <dd>{{ champ.value }}</dd>
+            </ng-container>
+          </dl>
+
           <table class="table-fige" *ngFor="let tableau of tableauxFiges(discipline)"
                  [attr.data-test]="'8d-tableau-' + discipline.code">
             <caption *ngIf="tableau.caption">{{ tableau.caption }}</caption>
@@ -162,6 +174,7 @@
                qui les renseigne : le lecteur croyait la discipline manquante et
                lisait son contenu dans la ligne suivante. -->
           <p class="vide" *ngIf="discipline.lines.length === 0
+                                 && discipline.fields.length === 0
                                  && tableauxFiges(discipline).length === 0
                                  && !montreLesActions(discipline.code)
                                  && !montreAuLieuDeDire(discipline.code)"

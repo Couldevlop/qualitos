@@ -43,7 +43,46 @@ public record EightDSnapshot(
          * en silence. Le rapport se relit donc exactement comme il a été émis,
          * et seul un rapport neuf parle la nouvelle langue.
          */
-        String langue) {
+        String langue,
+        /**
+         * LA MISE EN PAGE SOUS LAQUELLE CE RAPPORT A ETE SCELLE.
+         *
+         * <p>Un rapport emis est re-rendu depuis son instantane et son empreinte
+         * comparee au sceau : changer un trait du dessin -- une largeur de
+         * colonne, un pied de page, un numero de page -- rendrait indelivrable
+         * tout rapport deja emis, sans qu'aucune donnee n'ait bouge. Les
+         * changements de CONTENU echappent a cela (une liste vide se rend comme
+         * avant) ; ceux de DESSIN, non.
+         *
+         * <p>D'ou ce marqueur : {@code null} designe le dessin d'origine, et le
+         * moteur de rendu garde ce chemin intact pour toujours. Toute refonte
+         * prend un nom, et seuls les rapports scelles sous ce nom la recoivent.
+         *
+         * <p>Un champ a n'ecrire qu'une fois : on en ajoute un, on ne modifie
+         * jamais le sens d'un existant.
+         */
+        String layout) {
+
+    /** Le nom du dessin en vigueur, ecrit par l'assembleur sur tout rapport neuf. */
+    public static final String MISE_EN_PAGE_COURANTE = "2026-11";
+
+    /** Vrai quand ce rapport se dessine selon la mise en page remaniee. */
+    public boolean dessinRemanie() {
+        return MISE_EN_PAGE_COURANTE.equals(layout);
+    }
+
+    /**
+     * Un instantane sans marqueur de mise en page : le dessin d'origine.
+     *
+     * <p>Jackson relit par ce chemin les rapports scelles avant le marqueur, et
+     * les bancs anterieurs aussi.
+     */
+    public EightDSnapshot(String ncReference, String ncTitle, String tenantLabel,
+                          String issuedAtText, String issuedByName, boolean partial,
+                          List<Section> sections, String langue) {
+        this(ncReference, ncTitle, tenantLabel, issuedAtText, issuedByName, partial,
+                sections, langue, null);
+    }
 
     /**
      * Un instantané sans langue : celle d'avant, pour relire l'existant.
@@ -55,7 +94,7 @@ public record EightDSnapshot(
                           String issuedAtText, String issuedByName, boolean partial,
                           List<Section> sections) {
         this(ncReference, ncTitle, tenantLabel, issuedAtText, issuedByName, partial,
-                sections, null);
+                sections, null, null);
     }
 
     public EightDSnapshot {
@@ -116,7 +155,25 @@ public record EightDSnapshot(
              * <p>{@code null} à la relecture d'un rapport émis AVANT les
              * tableaux : il se relit alors exactement comme il a été scellé.
              */
-            List<Table> tables) {
+            List<Table> tables,
+            /**
+             * La FICHE de la discipline : des libelles et leurs valeurs, en
+             * deux colonnes alignees.
+             *
+             * <p>« Reference : Int-NC-2026-0005 », « Gravite : Majeure » :
+             * ecrites en lignes de texte, ces sept donnees se lisaient comme
+             * une phrase par ligne, et l'oeil ne retrouvait pas la valeur qu'il
+             * cherchait. En deux colonnes, les libelles s'alignent et les
+             * valeurs se lisent les unes sous les autres -- c'est la forme que
+             * la liste de recette montre.
+             *
+             * <p>Vide a la relecture d'un rapport emis AVANT la fiche : il se
+             * relit alors exactement comme il a ete scelle, en lignes de texte,
+             * et son empreinte continue de tomber juste. C'est pourquoi la
+             * fiche S'AJOUTE aux lignes au lieu de les remplacer dans le
+             * modele : une discipline porte l'une ou l'autre, selon son age.
+             */
+            List<Field> fields) {
 
         public Section {
             code = requireText(code, "code");
@@ -128,18 +185,42 @@ public record EightDSnapshot(
             lines = List.copyOf(Objects.requireNonNull(lines, "lines"));
             figures = figures == null ? List.of() : List.copyOf(figures);
             tables = tables == null ? List.of() : List.copyOf(tables);
+            fields = fields == null ? List.of() : List.copyOf(fields);
         }
 
         /** Une discipline qui ne porte que du texte — le cas de quatre d'entre elles. */
         public Section(String code, String title, boolean sourced, String sourceLabel,
                        List<String> lines) {
-            this(code, title, sourced, sourceLabel, lines, List.of(), List.of());
+            this(code, title, sourced, sourceLabel, lines, List.of(), List.of(), List.of());
         }
 
         /** Une discipline qui trace mais ne tabule pas — le D4. */
         public Section(String code, String title, boolean sourced, String sourceLabel,
                        List<String> lines, List<Figure> figures) {
-            this(code, title, sourced, sourceLabel, lines, figures, List.of());
+            this(code, title, sourced, sourceLabel, lines, figures, List.of(), List.of());
+        }
+
+        /**
+         * Une discipline qui tabule — D1, D3, D5, D7 — et les rapports scelles
+         * avant la fiche, que Jackson relit par ce chemin.
+         */
+        public Section(String code, String title, boolean sourced, String sourceLabel,
+                       List<String> lines, List<Figure> figures, List<Table> tables) {
+            this(code, title, sourced, sourceLabel, lines, figures, tables, List.of());
+        }
+    }
+
+    /**
+     * Une ligne de fiche : un libelle et sa valeur.
+     *
+     * @param label le libelle, sans son deux-points -- c'est le rendu qui le pose
+     * @param value la valeur, deja mise en forme
+     */
+    public record Field(String label, String value) {
+
+        public Field {
+            label = requireText(label, "label");
+            value = value == null ? "" : value;
         }
     }
 

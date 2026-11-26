@@ -76,6 +76,7 @@ class EightDControllerTest {
                         "", List.of(), List.of(new EightDDto.TableView("",
                                 List.of("Nom et prénom", "Adresse mail", "Rôle"),
                                 List.of(List.of("Ada Lovelace", "ada@exemple.fr", "Pilote")))),
+                        List.of(),
                         true)),
                 emis ? new EightDDto.SealView("d".repeat(64), "tx-1", "ABCDEFGHIJKLMNOP",
                         NOW, "Ada Lovelace") : null);

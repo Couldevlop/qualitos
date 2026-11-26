@@ -62,6 +62,19 @@ export interface NcSubcategoryCatalogue {
  */
 export type NcOrigin = 'INTERNAL' | 'EXTERNAL';
 
+/**
+ * LES STATUTS D'UN ECART QUI COURT ENCORE.
+ *
+ * <p>Nomme ici, et une seule fois : « ouvertes » se lit sur le filtre, sur la
+ * tuile et dans la requete, et trois definitions qui divergent donneraient un
+ * compteur en desaccord avec la liste qu'il surmonte.
+ *
+ * <p>C'est le complement exact des trois issues -- cloturee, annulee, rejetee.
+ * Un ecart resolu EN FAIT PARTIE : il reste a verifier et a clore, et c'est
+ * justement celui qu'on suit de plus pres.
+ */
+export const NC_OUVERTS = ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED'] as const;
+
 export type NcStatus =
   | 'OPEN'
   | 'UNDER_ANALYSIS'
@@ -570,7 +583,20 @@ export interface EightDDiscipline {
    * liste de noms ici et un tableau dans le PDF finiraient par diverger.
    */
   tables: EightDTable[];
+  /**
+   * La fiche de la discipline : des libellés et leurs valeurs, alignés — le D2.
+   *
+   * Même règle que `tables` : l'écran la REND, il ne la refabrique pas. Vide
+   * pour les sept autres disciplines, et pour tout rapport émis avant la fiche.
+   */
+  fields: EightDField[];
   editable: boolean;
+}
+
+/** Une ligne de fiche : un libellé et sa valeur. */
+export interface EightDField {
+  label: string;
+  value: string;
 }
 
 /** Un tableau d'une discipline : ses colonnes, puis ses lignes de cellules. */

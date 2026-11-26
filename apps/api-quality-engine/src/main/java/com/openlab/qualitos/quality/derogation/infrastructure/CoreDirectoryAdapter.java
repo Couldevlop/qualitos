@@ -36,7 +36,8 @@ public class CoreDirectoryAdapter implements DirectoryPort {
     }
 
     /** Ce que l'annuaire rend. On ne lit que ce dont on se sert. */
-    record Entry(UUID id, String accountId, String displayName, String email, boolean active) {}
+    record Entry(UUID id, String accountId, String displayName, String email, boolean active,
+                 String function) {}
 
     @Override
     public Optional<String> displayNameOf(UUID accountId) {
@@ -46,6 +47,11 @@ public class CoreDirectoryAdapter implements DirectoryPort {
     @Override
     public Optional<String> emailOf(UUID accountId) {
         return lire(accountId).map(Entry::email).filter(a -> a != null && !a.isBlank());
+    }
+
+    @Override
+    public Optional<String> fonctionOf(UUID accountId) {
+        return lire(accountId).map(Entry::function).filter(f -> f != null && !f.isBlank());
     }
 
     private Optional<Entry> lire(UUID accountId) {
