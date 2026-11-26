@@ -11,6 +11,11 @@ possibilité d'y joindre des **photos**.
 ## Parcours pas à pas
 
 1. **Ouvrir** `/nc` : la liste des non-conformités et leur statut.
+   Le filtre **Ouvertes** rassemble tout ce qui court — *ouverte*, *en analyse*,
+   *action définie* et *résolue* — et non le seul premier de ces quatre états. Un écart ne
+   quitte pas le travail en cours parce qu'on vient d'y définir une action ; un écart
+   *résolu* attend encore sa vérification d'efficacité et sa clôture. Les issues —
+   *clôturée*, *annulée*, *rejetée* — se demandent une par une.
 2. **Déclarer une NC** : décrire l'écart (quoi, où, quand), sa gravité et le périmètre concerné.
    Vous choisissez sa **nature** dans une liste unique, où les natures sont rangées sous leur
    famille (produit, processus, documentaire…) : la famille se déduit de la nature retenue, il n'y

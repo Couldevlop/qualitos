@@ -34,7 +34,14 @@ import {
 } from './nc.types';
 
 export interface NcListFilters {
-  status?: NcStatus;
+  /**
+   * Un statut, ou PLUSIEURS : « ouvertes » en designe quatre.
+   *
+   * <p>L'ensemble est passe tel quel plutot que devine ici : un service qui
+   * traduirait tout seul `OPEN` en quatre statuts cacherait a l'appelant ce
+   * qu'il demande vraiment.
+   */
+  status?: NcStatus | readonly NcStatus[];
   severity?: NcSeverity;
   category?: NcCategory;
   /** La nature fine, par son code de catalogue. */
@@ -90,7 +97,13 @@ export class NcService {
       return of(this.mockPage(filters)).pipe(delay(150));
     }
     let params = new HttpParams().set('page', page).set('size', size);
-    if (filters.status) params = params.set('status', filters.status);
+    // Repete, et non joint par des virgules : `status=OPEN&status=RESOLVED`
+    // est la forme que le serveur lie sans convention a partager.
+    if (filters.status) {
+      for (const statut of [filters.status].flat()) {
+        params = params.append('status', statut);
+      }
+    }
     if (filters.severity) params = params.set('severity', filters.severity);
     if (filters.category) params = params.set('category', filters.category);
     if (filters.subcategoryCode) params = params.set('subcategoryCode', filters.subcategoryCode);
@@ -589,7 +602,7 @@ export class NcService {
 
   private mockPage(filters: NcListFilters): NcPage {
     const filtered = this.mockStore.filter(n =>
-      (!filters.status || n.status === filters.status) &&
+      (!filters.status || [filters.status].flat().includes(n.status)) &&
       (!filters.severity || n.severity === filters.severity) &&
       (!filters.category || n.category === filters.category) &&
       (!filters.origin || n.origin === filters.origin) &&

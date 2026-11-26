@@ -41,17 +41,8 @@ describe('NcListComponent', () => {
     expect(el.querySelector('h1')?.textContent).toContain('Non-conformités');
   });
 
-  it('ne propose au filtre que les quatre issues d\'un ecart', () => {
+  it('propose le travail en cours, puis les trois issues', () => {
     expect(component.statuses).toEqual(['OPEN', 'CLOSED', 'CANCELLED', 'REJECTED']);
-  });
-
-  it('ne propose aucun etat de passage au filtre', () => {
-    // RESOLVED, UNDER_ANALYSIS et ACTION_DEFINED sont traverses le temps
-    // d'instruire l'ecart : filtrer dessus demande qui travaille a l'instant,
-    // et non ou en sont les ecarts. Un ecart en cours se lit sous OPEN.
-    expect(component.statuses).not.toContain('RESOLVED');
-    expect(component.statuses).not.toContain('UNDER_ANALYSIS');
-    expect(component.statuses).not.toContain('ACTION_DEFINED');
   });
 
   it('affiche la colonne Detecte par apres le statut, puis la date de creation', () => {
@@ -242,18 +233,67 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     expect(el.querySelector('.empty')).toBeTruthy();
   }));
 
+  /**
+   * « OUVERTES » DESIGNE TOUT CE QUI COURT, et pas le seul statut OPEN.
+   *
+   * <p>Un ecart sur lequel on vient de definir une action, ou qu'on vient de
+   * declarer resolu, n'a pas quitte le travail en cours -- il disparaissait
+   * pourtant de la liste des ouvertes a cet instant meme.
+   */
+  it('demande les quatre statuts du travail en cours sous « ouvertes »', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+
+    component.statusFilter.setValue('OPEN');
+    const req = http.expectOne(r => r.url === endpoint);
+
+    expect(req.request.params.getAll('status')).toEqual(['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED']);
+    req.flush(page([]));
+  });
+
+  /** Une issue reste UNE issue : cloturee ne se demande pas en groupe. */
+  it('ne demande qu\'un statut sous une issue', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+
+    component.statusFilter.setValue('CLOSED');
+    const req = http.expectOne(r => r.url === endpoint);
+
+    expect(req.request.params.getAll('status')).toEqual(['CLOSED']);
+    req.flush(page([]));
+  });
+
+  /**
+   * LE CHIFFRE DE LA TUILE COMPTE CE QUE LA TUILE OUVRE. Un compteur en
+   * desaccord avec la liste qu'il surmonte fait douter du compteur.
+   */
+  it('compte sous « Ouvertes » les quatre statuts qu\'elle filtre', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+
+    let tuiles: { value: number; status: string }[] = [];
+    const vu = component.tiles$.subscribe(t => { tuiles = t; });
+    http.expectOne(r => r.url === `${endpoint}/statistics`).flush({
+      ...stats(), total: 12,
+      open: 2, underAnalysis: 3, actionDefined: 4, resolved: 1, closed: 2
+    });
+
+    expect(tuiles.find(t => t.status === 'OPEN')!.value).toBe(10);
+    vu.unsubscribe();
+  });
+
   it('relance une requête filtrée à chaque changement de filtre', () => {
     start();
     http.expectOne(r => r.url === endpoint).flush(page([]));
 
     component.statusFilter.setValue('OPEN');
     let req = http.expectOne(r => r.url === endpoint);
-    expect(req.request.params.get('status')).toBe('OPEN');
+    expect(req.request.params.getAll('status')).toEqual(['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED']);
     req.flush(page([nc()]));
 
     component.severityFilter.setValue('CRITICAL');
     req = http.expectOne(r => r.url === endpoint);
-    expect(req.request.params.get('status')).toBe('OPEN');
+    expect(req.request.params.getAll('status')).toEqual(['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED']);
     expect(req.request.params.get('severity')).toBe('CRITICAL');
     req.flush(page([]));
 

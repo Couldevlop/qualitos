@@ -115,7 +115,7 @@ public class NcService {
      * en aurait demandé seize. Chaque critère nul est simplement ignoré.
      */
     @Transactional(readOnly = true)
-    public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
+    public Page<NcDto.Response> findAll(List<NcStatus> status, NcSeverity severity, NcCategory category,
                                         String subcategoryCode, NcOrigin origin, UUID productId,
                                         String recherche, Pageable pageable) {
         UUID tenantId = requireTenantId();
@@ -124,7 +124,12 @@ public class NcService {
             List<Predicate> predicates = new ArrayList<>();
             // Le tenant vient du jeton et n'est jamais optionnel (§18.2 #2).
             predicates.add(cb.equal(root.get("tenantId"), tenantId));
-            if (status != null)   predicates.add(cb.equal(root.get("status"), status));
+            // Une LISTE de statuts, pas un seul : « ouvertes » en vaut quatre.
+            // Vide vaut absent -- un `in` sur rien ne rendrait aucun ecart, et
+            // une liste vide signifie « pas de filtre », jamais « aucun ».
+            if (status != null && !status.isEmpty()) {
+                predicates.add(root.get("status").in(status));
+            }
             if (severity != null) predicates.add(cb.equal(root.get("severity"), severity));
             if (category != null) predicates.add(cb.equal(root.get("category"), category));
             if (subcategoryCode != null && !subcategoryCode.isBlank()) {

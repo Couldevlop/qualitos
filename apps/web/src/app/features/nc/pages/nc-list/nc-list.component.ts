@@ -19,6 +19,7 @@ import {
   NcSeverity,
   NcStatistics,
   NcStatus,
+  NC_OUVERTS,
   NcSubcategory,
   NcSubcategoryGroup
 } from '../../nc.types';
@@ -74,19 +75,37 @@ export class NcListComponent implements OnInit {
   subcategories: NcSubcategory[] = [];
 
   /**
-   * Statuts proposés au filtre : les quatre ISSUES d'un écart.
+   * Statuts proposés au filtre : l'ensemble de CE QUI COURT, puis les issues.
    *
-   * <p>`RESOLVED`, `UNDER_ANALYSIS` et `ACTION_DEFINED` en sont absents : ce
-   * sont des états de passage, traversés le temps d'instruire l'écart. Filtrer
-   * dessus revient à demander « qui est en train de travailler à l'instant »,
-   * et non « où en sont mes écarts » : la réponse changeait d'un jour à
-   * l'autre sans qu'aucune décision n'ait été prise. Un écart en cours
-   * d'instruction se lit sous `OPEN`, qu'il n'a pas quitté.
+   * <p>`OPEN` y désigne les quatre statuts d'un écart encore en jeu
+   * ({@link NC_OUVERTS}) — ouvert, en analyse, action définie, résolu — et non
+   * le seul premier d'entre eux. Un écart ne quitte pas le travail en cours
+   * parce qu'on vient d'y définir une action : il disparaissait pourtant de la
+   * liste des ouvertes à cet instant précis, c'est-à-dire au moment où il
+   * commence à mériter un suivi.
    *
-   * <p>Le serveur, lui, accepte toujours les six : le filtre restreint ce
-   * qu'on PROPOSE, il ne retire rien à ce qu'on peut demander.
+   * <p>Résolu en fait partie, et c'est le cas qui tranche : un écart résolu
+   * attend encore sa vérification d'efficacité et sa clôture. Le ranger avec
+   * les dossiers terminés laisserait ce travail sans liste où le retrouver.
+   *
+   * <p>Le serveur, lui, accepte toujours les six, un ou plusieurs à la fois :
+   * le filtre restreint ce qu'on PROPOSE, il ne retire rien à ce qu'on peut
+   * demander.
    */
   readonly statuses: NcStatus[] = ['OPEN', 'CLOSED', 'CANCELLED', 'REJECTED'];
+
+  /**
+   * Ce que le filtre demande vraiment au serveur.
+   *
+   * <p>Un seul endroit traduit « ouvertes » en ses quatre statuts, et c'est
+   * celui-ci : la tuile s'en sert pour son compte, la requête pour son filtre.
+   */
+  private statutsDemandes(choix: NcStatus | '' | null): NcStatus | readonly NcStatus[] | undefined {
+    if (!choix) {
+      return undefined;
+    }
+    return choix === 'OPEN' ? NC_OUVERTS : choix;
+  }
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
 
@@ -258,7 +277,7 @@ export class NcListComponent implements OnInit {
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status, severity, category, subcategoryCode, recherche, p]) =>
         this.svc.listNcs(recherche ? 0 : p.index, p.size, {
-          status: status || undefined,
+          status: this.statutsDemandes(status),
           severity: severity || undefined,
           category: category || undefined,
           subcategoryCode: subcategoryCode || undefined,
@@ -358,7 +377,13 @@ export class NcListComponent implements OnInit {
   private toTiles(s: NcStatistics): NcTile[] {
     const tuiles: NcTile[] = [
       { label: $localize`:@@nc.list.tile-total:Total`, value: s.total, tone: 'neutral', status: '' },
-      { label: $localize`:@@nc.list.tile-open:Ouvertes`, value: s.open, tone: 'info', status: 'OPEN' },
+      // LE CHIFFRE COMPTE CE QUE LA TUILE OUVRE. Elle affichait le seul
+      // statut OPEN tout en filtrant, au clic, sur les quatre : le nombre
+      // annonce ne correspondait pas aux lignes obtenues, et c'est la tuile
+      // qu'on croyait fausse.
+      { label: $localize`:@@nc.list.tile-open:Ouvertes`,
+        value: s.open + s.underAnalysis + s.actionDefined + s.resolved,
+        tone: 'info', status: 'OPEN' },
       { label: $localize`:@@nc.list.tile-analysis:En analyse`, value: s.underAnalysis, tone: 'warn', status: 'UNDER_ANALYSIS' },
       { label: $localize`:@@nc.list.tile-action:Action définie`, value: s.actionDefined, tone: 'warn', status: 'ACTION_DEFINED' },
       { label: $localize`:@@nc.list.tile-closed:Clôturées`, value: s.closed, tone: 'success', status: 'CLOSED' }

@@ -62,6 +62,19 @@ export interface NcSubcategoryCatalogue {
  */
 export type NcOrigin = 'INTERNAL' | 'EXTERNAL';
 
+/**
+ * LES STATUTS D'UN ECART QUI COURT ENCORE.
+ *
+ * <p>Nomme ici, et une seule fois : « ouvertes » se lit sur le filtre, sur la
+ * tuile et dans la requete, et trois definitions qui divergent donneraient un
+ * compteur en desaccord avec la liste qu'il surmonte.
+ *
+ * <p>C'est le complement exact des trois issues -- cloturee, annulee, rejetee.
+ * Un ecart resolu EN FAIT PARTIE : il reste a verifier et a clore, et c'est
+ * justement celui qu'on suit de plus pres.
+ */
+export const NC_OUVERTS = ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED'] as const;
+
 export type NcStatus =
   | 'OPEN'
   | 'UNDER_ANALYSIS'

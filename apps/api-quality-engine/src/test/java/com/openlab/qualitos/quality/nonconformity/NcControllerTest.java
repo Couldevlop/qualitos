@@ -62,12 +62,37 @@ class NcControllerTest {
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilters() throws Exception {
-        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(), any(), any(Pageable.class)))
+        when(service.findAll(eq(List.of(NcStatus.OPEN)), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc")
                         .param("status", "OPEN").param("severity", "MAJOR").param("category", "PRODUCT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].status").value("OPEN"));
+    }
+
+    /**
+     * « OUVERTES » N'EST PAS UN STATUT MAIS UN ENSEMBLE.
+     *
+     * <p>Un ecart qu'on instruit passe par UNDER_ANALYSIS, ACTION_DEFINED puis
+     * RESOLVED sans avoir quitte le travail en cours. Le parametre se REPETE
+     * pour les demander ensemble : un seul statut ne rendait que le premier des
+     * quatre, et l'ecart sur lequel on venait de definir une action quittait la
+     * liste des ouvertes au moment ou il commence a meriter un suivi.
+     */
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void list_acceptsSeveralStatuses() throws Exception {
+        List<NcStatus> ouverts = List.of(NcStatus.OPEN, NcStatus.UNDER_ANALYSIS,
+                NcStatus.ACTION_DEFINED, NcStatus.RESOLVED);
+        when(service.findAll(eq(ouverts), any(), any(), any(), any(), any(), any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(resp(NcStatus.ACTION_DEFINED))));
+
+        mockMvc.perform(get("/api/v1/nc")
+                        .param("status", "OPEN")
+                        .param("status", "UNDER_ANALYSIS")
+                        .param("status", "ACTION_DEFINED")
+                        .param("status", "RESOLVED"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].status").value("ACTION_DEFINED"));
     }
 
     /**
