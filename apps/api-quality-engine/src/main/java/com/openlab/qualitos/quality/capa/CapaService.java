@@ -1168,6 +1168,17 @@ public class CapaService {
         a.setTitle(requireUsableTitle(request.title()));
         a.setDescription(request.description());
         a.setStatus(request.status() != null ? request.status() : CapaActionStatus.PENDING);
+        // UNE ACTION NEE FAITE EST FAITE A CET INSTANT. La date d'achevement
+        // n'etait posee qu'a la mise a jour : une action creee directement
+        // « Faite » -- une reprise consignee apres coup, un geste deja mene
+        // quand on ouvre le dossier -- portait donc l'etat sans la date. Les
+        // deux champs du meme fait se contredisaient dans le meme
+        // enregistrement, et tout ce qui se fie a la date l'ignorait : le D6
+        // du rapport 8D la declarait jamais menee sous un D5 qui l'affichait
+        // faite. La regle est celle de la mise a jour, a l'identique.
+        if (a.getStatus() == CapaActionStatus.DONE) {
+            a.setCompletedAt(Instant.now());
+        }
         // Corrective par défaut : c'est le cas de loin le plus fréquent, et
         // supposer l'endiguement obligerait à qualifier chaque action pour
         // écrire ce que tout le monde entend déjà par « action d'une CAPA ».

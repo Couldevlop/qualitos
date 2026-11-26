@@ -631,6 +631,44 @@ class CapaServiceTest {
     }
 
     /**
+     * UNE ACTION NEE FAITE EST FAITE A CET INSTANT.
+     *
+     * <p>La date d'achevement n'etait posee qu'a la mise a jour. Une action
+     * creee directement « Faite » -- une reprise consignee apres coup, un geste
+     * deja mene quand on ouvre le dossier -- portait donc l'etat sans la date,
+     * et les deux champs du meme fait se contredisaient dans le meme
+     * enregistrement. Tout ce qui se fie a la date l'ignorait : le D6 du
+     * rapport 8D la declarait jamais menee sous un D5 qui l'affichait faite.
+     */
+    @Test
+    void addAction_creeeFaite_porteSaDateDAchevement() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse faite = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Trier le lot", null, CapaActionStatus.DONE, CapaActionType.CONTAINMENT,
+                null, null, null, null, null, null, null, null, null));
+
+        assertThat(faite.status()).isEqualTo(CapaActionStatus.DONE);
+        assertThat(faite.completedAt()).isNotNull();
+    }
+
+    /** Et une action qui reste a faire n'en porte aucune. */
+    @Test
+    void addAction_creeeAFaire_nAPasDeDateDAchevement() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse aFaire = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Reprendre la gamme", null, null, null,
+                null, null, null, null, null, null, null, null, null));
+
+        assertThat(aFaire.completedAt()).isNull();
+    }
+
+    /**
      * Un dossier porte PLUSIEURS actions (ADR 0115, qui revise l'ADR 0088 sur
      * ce seul point), quelle que soit sa source.
      *
