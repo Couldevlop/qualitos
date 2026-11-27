@@ -91,8 +91,16 @@ seulement :
 Le catalogue des droits n'est **pas** élargi : `tous()` aurait ouvert le jugement
 à chacun, alors que c'est la désignation, et non le rôle, qui ouvre ce chemin.
 L'appelant est lu dans le `sub` du jeton, jamais dans le corps (CLAUDE.md
-§18.2 #2). Un appelant qui n'est ni l'un ni l'autre reçoit 403 ; le verdict du
-**dossier** et la clôture directe gardent leur `@RequiresPermission` intact.
+§18.2 #2). Un appelant qui n'est ni l'un ni l'autre reçoit 403.
+
+**La même règle aux deux échelles.** Le verdict du **dossier** — ce que l'écran
+d'efficacité envoie — passe par la même garde : son vérificateur, et ceux que ses
+actions désignent. Les secondes comptent parce que la question se tranche action
+par action depuis l'ADR 0131 : un dossier dont seule l'action nomme un
+vérificateur aurait sinon offert à cette personne l'écran, la ligne à juger, le
+formulaire — puis un refus à l'envoi. La **clôture directe**, elle, garde son
+`@RequiresPermission` : un dossier qui n'a promis aucune vérification ne désigne
+personne, et il n'y a donc personne à qui ce chemin devrait s'ouvrir.
 
 La portée du registre CAPA (ADR 0081) compte désormais le vérificateur d'une
 **action** parmi ceux qu'un dossier concerne : `CapaScope.concerns` et les trois
@@ -107,6 +115,16 @@ actions » : l'action, sa nature, le verdict, le jour du jugement. Une ligne par
 action **jugée**, et aucune pour celles qui ne l'ont pas été : ce qui reste à
 juger se lit sur l'écran d'efficacité, dont c'est le métier, et une ligne « non
 jugée » ferait de la discipline un relevé de manques.
+
+**Le verdict du dossier y entre aussi, sur un dossier d'une seule action.** Un
+jugement porté depuis l'écran d'efficacité est une évaluation **du dossier**, et
+le rapport ne lisait que celles des actions : le verdict n'atteignait donc aucune
+discipline, et le document taisait un jugement pourtant rendu. Sur un dossier
+d'une action — le cas général depuis l'ADR 0135 —, c'est le **dernier** jugement
+du dossier qui vaut, action comprise : prendre celui de l'action aurait affiché un
+« partiellement » dépassé sous un « efficace » rendu depuis. Le repli s'arrête là :
+sur un dossier ancien qui porte plusieurs actions, le verdict du dossier se
+répéterait sur chaque ligne en prétendant juger chacune.
 
 Des **données**, comme les autres tableaux du rapport : le rendu reste une
 fonction pure de ce qu'on stocke, donc l'empreinte d'un rapport scellé reste
@@ -144,8 +162,15 @@ nommée, sur l'action où elle l'est.
 - **Le critère reste lu sur le dossier** par le plan de travail des évaluations.
   Un dossier dont le critère ne vit que sur l'action — repris après coup, hors du
   chemin d'ouverture qui le recopie — s'y affiche encore « sans critère ».
-- **Rien ne change pour le verdict du dossier** : son droit, ses refus et ses
-  obstacles sont ceux de l'ADR 0108 et de l'ADR 0137.
+- **Les refus opposés au verdict du dossier ne changent pas** : ceux de
+  l'ADR 0108 et de l'ADR 0137, obstacle par obstacle. En particulier, un dossier
+  dont l'ACTION a promis une vérification refuse le verdict du dossier tant que
+  cette action n'a pas conclu (ADR 0132) : sur un dossier d'une seule action, le
+  formulaire de l'écran d'efficacité n'a donc rien à y faire — le jugement se
+  porte sur la ligne de l'action, et le dossier suit. Faire compter le verdict du
+  dossier POUR son action unique est une suite possible, non tranchée ici.
+- **Les dossiers déjà jugés avant ce lot** restent en attente d'évaluation : la
+  clôture se décide à l'instant du verdict, et rien ne repasse derrière.
 
 ## Conséquences
 

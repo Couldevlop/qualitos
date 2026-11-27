@@ -846,6 +846,7 @@ public class CapaService {
      */
     public CapaDto.CaseResponse verifyEffectiveness(UUID id, CapaDto.EffectivenessRequest request) {
         CapaCase c = loadCase(id);
+        exigerLeDroitDeJugerLeDossier(c);
         EffectivenessVerdict verdict = resolveVerdict(request);
         if (c.getStatus() != CapaStatus.RESOLVED) {
             throw new CapaStateException("Effectiveness check requires status RESOLVED");
@@ -1305,7 +1306,7 @@ public class CapaService {
         }
         CapaAction a = actionRepository.findByIdAndCapaId(actionId, capaId)
                 .orElseThrow(() -> new CapaActionNotFoundException(actionId));
-        exigerLeDroitDeJuger(c, a);
+        exigerLeDroitDeJugerLAction(c, a);
 
         if (!Boolean.TRUE.equals(a.getVerificationRequired())) {
             throw new CapaValidationException(
@@ -1361,23 +1362,53 @@ public class CapaService {
      * cette action-la, et sur aucune autre : c'est a elle que la verification a
      * ete confiee, et un role qui ne porte pas l'action du catalogue ne doit pas
      * lui retirer ce qu'on lui a demande de faire.
+     */
+    private void exigerLeDroitDeJugerLAction(CapaCase c, CapaAction a) {
+        UUID designe = a.getVerificationAssigneeId() != null
+                ? a.getVerificationAssigneeId()
+                : c.getVerificationAssigneeId();
+        refuserSaufDesigne(designe == null ? List.of() : List.of(designe),
+                "Only the designated verifier of this action may judge its effectiveness");
+    }
+
+    /**
+     * QUI PEUT PORTER LE VERDICT DU DOSSIER (ADR 0143).
+     *
+     * <p>Meme regle, a l'echelle du dossier : son vérificateur, et ceux que ses
+     * actions designent. Les secondes comptent parce que depuis l'ADR 0131 la
+     * question se tranche action par action : un dossier dont seule l'action
+     * nomme un verificateur aurait sinon offert a cette personne l'ecran
+     * d'efficacite, la ligne a juger, le formulaire — puis un refus a l'envoi.
+     */
+    private void exigerLeDroitDeJugerLeDossier(CapaCase c) {
+        List<UUID> designes = new ArrayList<>();
+        if (c.getVerificationAssigneeId() != null) {
+            designes.add(c.getVerificationAssigneeId());
+        }
+        for (CapaAction a : c.getActions()) {
+            if (a.getVerificationAssigneeId() != null) {
+                designes.add(a.getVerificationAssigneeId());
+            }
+        }
+        refuserSaufDesigne(designes,
+                "Only the designated verifier of this CAPA may judge its effectiveness");
+    }
+
+    /**
+     * Le refus commun aux deux echelles.
      *
      * <p>La portee est lue avec {@code capa.verify} elle-meme : vide, l'appelant
      * a le droit ; presente, elle designe l'appelant du jeton, et c'est a lui
      * que la designation doit correspondre. Le {@code sub} du jeton, jamais un
      * champ du corps (CLAUDE.md §18.2 #2).
      */
-    private void exigerLeDroitDeJuger(CapaCase c, CapaAction a) {
+    private void refuserSaufDesigne(List<UUID> designes, String motif) {
         Optional<UUID> restreinteA = scope.restrictTo(Permission.CAPA_VERIFY);
         if (restreinteA.isEmpty()) {
             return;
         }
-        UUID designe = a.getVerificationAssigneeId() != null
-                ? a.getVerificationAssigneeId()
-                : c.getVerificationAssigneeId();
-        if (designe == null || !designe.equals(restreinteA.get())) {
-            throw new AccessDeniedException(
-                    "Only the designated verifier of this action may judge its effectiveness");
+        if (!designes.contains(restreinteA.get())) {
+            throw new AccessDeniedException(motif);
         }
     }
 

@@ -88,8 +88,17 @@ public class CapaController {
     // refusait déjà d'aboutir tant qu'une action restait à faire, et /start ne
     // faisait qu'annoncer un travail dont la première action témoigne mieux.
 
+    /**
+     * Le verdict d'efficacite du dossier (ADR 0108).
+     *
+     * <p>Meme droit qu'avant — {@code capa.verify} —, mais la garde est portee
+     * par le SERVICE (ADR 0143) : la PERSONNE DESIGNEE sur le dossier, ou sur
+     * une de ses actions, porte son verdict sans detenir ce droit, et nul autre
+     * ne le peut. Un refus pose ici, avant de connaitre le dossier visé, ne
+     * savait pas qui en etait le verificateur et refusait donc a celui-la meme
+     * a qui la verification avait ete confiee.
+     */
     @PatchMapping("/cases/{id}/effectiveness")
-    @RequiresPermission(Permission.CAPA_VERIFY)
     public CapaDto.CaseResponse verifyEffectiveness(
             @PathVariable UUID id,
             @Valid @RequestBody CapaDto.EffectivenessRequest request) {
