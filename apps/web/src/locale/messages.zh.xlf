@@ -7986,6 +7986,14 @@ Portail clients</source>
         <source>Risque</source>
         <target state="translated">风险</target>
       </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target state="translated">质量目标</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target state="translated">必须进行有效性验证，其判定标准由规则设定</target>
+      </trans-unit>
       <trans-unit id="capa.detail.legacy-actions" datatype="html">
         <source>Actions (<x id="INTERPOLATION"/>)</source>
         <target state="translated">措施（<x id="INTERPOLATION"/>）</target>
@@ -24502,6 +24510,50 @@ historique 12 mois</source>
         <source>Le retrait du suivi n'a pas abouti.</source>
         <target state="translated">未能将该目标移出跟踪。</target>
       </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">添加措施</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target state="translated">不采取措施 — 说明理由</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target state="translated">当前周期</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target state="translated">KPI 代码</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>La source de données de l'objectif. Ses seuils descendent dans les trois champs ci-dessous.</source>
+        <target state="translated">本目标的数据来源。其阈值会填入下方三个字段。</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces seuils diffèrent de ceux du KPI. À l'enregistrement, la fenêtre proposera de les y reporter.</source>
+        <target state="translated">这些阈值与 KPI 的阈值不同。保存时窗口会询问是否同步到 KPI。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces seuils sur le KPI ?</source>
+        <target state="translated">要将这些阈值同步到 KPI 吗？</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI « <x id="kpi"/> » (<x id="code"/>) porte d'autres seuils. Les remplacer par ceux de cet objectif évite de les saisir deux fois — mais un autre objectif adossé au même indicateur garde les siens.</source>
+        <target state="translated">KPI“<x id="kpi"/>”（<x id="code"/>）的阈值不同。用本目标的阈值替换可避免重复录入，但依托同一指标的其他目标仍保留各自的阈值。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter sur le KPI</source>
+        <target state="translated">同步到 KPI</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target state="translated">保持 KPI 不变</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">离线队列</target>
@@ -37679,58 +37731,6 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">无法加载图编辑器。</target>
-      </trans-unit>
-      <trans-unit id="capa.source.quality-objective" datatype="html">
-        <source>Objectif qualité</source>
-        <target>质量目标</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.imposed" datatype="html">
-        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
-        <target>必须进行有效性验证，其判定标准由规则设定</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.action" datatype="html">
-        <source>Action</source>
-        <target>措施</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.add" datatype="html">
-        <source>Ajouter une action</source>
-        <target>添加措施</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.decline" datatype="html">
-        <source>Aucune action — justifier</source>
-        <target>不采取措施 — 说明理由</target>
-      </trans-unit>
-      <trans-unit id="objectives.filter.as-of-current" datatype="html">
-        <source>Période courante</source>
-        <target>当前周期</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-code" datatype="html">
-        <source>Code du KPI</source>
-        <target>KPI 代码</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-hint" datatype="html">
-        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
-        <target>目标值与阈值取自 KPI，可以修改。</target>
-      </trans-unit>
-      <trans-unit id="objectives.thresholds.differ" datatype="html">
-        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
-        <target>这些数值与 KPI 的数值不同。保存时将询问是否同步到 KPI。</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.title" datatype="html">
-        <source>Reporter ces valeurs sur le KPI ?</source>
-        <target>要将这些数值同步到 KPI 吗？</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.message" datatype="html">
-        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
-        <target>KPI 当前的目标值与阈值不同。替换后，它将对所有人按本目标对齐。</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
-        <source>Reporter</source>
-        <target>同步</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
-        <source>Laisser le KPI tel quel</source>
-        <target>保持 KPI 不变</target>
       </trans-unit>
     </body>
   </file>

@@ -7986,6 +7986,14 @@ Portal de clientes</target>
         <source>Risque</source>
         <target state="translated">Riesgo</target>
       </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target state="translated">Objetivo de calidad</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target state="translated">Se exige la verificación de eficacia, y la regla fija su criterio</target>
+      </trans-unit>
       <trans-unit id="capa.detail.legacy-actions" datatype="html">
         <source>Actions (<x id="INTERPOLATION"/>)</source>
         <target state="translated">Acciones (<x id="INTERPOLATION"/>)</target>
@@ -24502,6 +24510,50 @@ historial de 12 meses</target>
         <source>Le retrait du suivi n'a pas abouti.</source>
         <target state="translated">No se ha podido retirar el objetivo del seguimiento.</target>
       </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">Añadir una acción</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target state="translated">Ninguna acción: justificar</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target state="translated">Periodo actual</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target state="translated">Código del KPI</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>La source de données de l'objectif. Ses seuils descendent dans les trois champs ci-dessous.</source>
+        <target state="translated">La fuente de datos del objetivo. Sus umbrales bajan a los tres campos de abajo.</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces seuils diffèrent de ceux du KPI. À l'enregistrement, la fenêtre proposera de les y reporter.</source>
+        <target state="translated">Estos umbrales difieren de los del KPI. Al guardar, la ventana propondrá trasladarlos a él.</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces seuils sur le KPI ?</source>
+        <target state="translated">¿Trasladar estos umbrales al KPI?</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI « <x id="kpi"/> » (<x id="code"/>) porte d'autres seuils. Les remplacer par ceux de cet objectif évite de les saisir deux fois — mais un autre objectif adossé au même indicateur garde les siens.</source>
+        <target state="translated">El KPI «<x id="kpi"/>» (<x id="code"/>) tiene otros umbrales. Sustituirlos por los de este objetivo evita introducirlos dos veces, pero otro objetivo apoyado en el mismo indicador conserva los suyos.</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter sur le KPI</source>
+        <target state="translated">Trasladar al KPI</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target state="translated">Dejar el KPI como está</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">Cola sin conexión</target>
@@ -37679,58 +37731,6 @@ India (centro de servicio)</target>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">No se puede cargar el editor de diagramas.</target>
-      </trans-unit>
-      <trans-unit id="capa.source.quality-objective" datatype="html">
-        <source>Objectif qualité</source>
-        <target>Objetivo de calidad</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.imposed" datatype="html">
-        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
-        <target>Se exige la verificación de eficacia, y la regla fija su criterio</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.action" datatype="html">
-        <source>Action</source>
-        <target>Acción</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.add" datatype="html">
-        <source>Ajouter une action</source>
-        <target>Añadir una acción</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.decline" datatype="html">
-        <source>Aucune action — justifier</source>
-        <target>Ninguna acción: justificar</target>
-      </trans-unit>
-      <trans-unit id="objectives.filter.as-of-current" datatype="html">
-        <source>Période courante</source>
-        <target>Periodo actual</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-code" datatype="html">
-        <source>Code du KPI</source>
-        <target>Código del KPI</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-hint" datatype="html">
-        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
-        <target>El objetivo y los umbrales se toman del KPI y pueden modificarse.</target>
-      </trans-unit>
-      <trans-unit id="objectives.thresholds.differ" datatype="html">
-        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
-        <target>Estos valores difieren de los del KPI. Al guardar, se le propondrá trasladarlos a él.</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.title" datatype="html">
-        <source>Reporter ces valeurs sur le KPI ?</source>
-        <target>¿Trasladar estos valores al KPI?</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.message" datatype="html">
-        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
-        <target>El KPI tiene otro objetivo y otros umbrales. Sustituirlos lo alineará con este objetivo, para todos.</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
-        <source>Reporter</source>
-        <target>Trasladar</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
-        <source>Laisser le KPI tel quel</source>
-        <target>Dejar el KPI como está</target>
       </trans-unit>
     </body>
   </file>

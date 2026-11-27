@@ -7986,6 +7986,14 @@ Portail clients</source>
         <source>Risque</source>
         <target state="translated">リスク</target>
       </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target state="translated">品質目標</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target state="translated">有効性の検証は必須で、その基準は規則が定めます</target>
+      </trans-unit>
       <trans-unit id="capa.detail.legacy-actions" datatype="html">
         <source>Actions (<x id="INTERPOLATION"/>)</source>
         <target state="translated">対策（<x id="INTERPOLATION"/>）</target>
@@ -24501,6 +24509,50 @@ historique 12 mois</source>
         <source>Le retrait du suivi n'a pas abouti.</source>
         <target state="translated">目標を追跡対象から外せませんでした。</target>
       </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">アクションを追加</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target state="translated">アクションなし — 理由を記載</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target state="translated">現在の期間</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target state="translated">KPI コード</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>La source de données de l'objectif. Ses seuils descendent dans les trois champs ci-dessous.</source>
+        <target state="translated">目標のデータ源です。そのしきい値が下の 3 つの項目に入ります。</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces seuils diffèrent de ceux du KPI. À l'enregistrement, la fenêtre proposera de les y reporter.</source>
+        <target state="translated">これらのしきい値は KPI のものと異なります。保存時に KPI へ反映するか確認します。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces seuils sur le KPI ?</source>
+        <target state="translated">これらのしきい値を KPI に反映しますか？</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI « <x id="kpi"/> » (<x id="code"/>) porte d'autres seuils. Les remplacer par ceux de cet objectif évite de les saisir deux fois — mais un autre objectif adossé au même indicateur garde les siens.</source>
+        <target state="translated">KPI「<x id="kpi"/>」（<x id="code"/>）には別のしきい値が設定されています。この目標の値に 置き換えれば二重入力を避けられますが、同じ指標に紐づく別の目標は自身の値を保ちます。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter sur le KPI</source>
+        <target state="translated">KPI に反映する</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target state="translated">KPI はそのままにする</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">オフラインキュー</target>
@@ -37678,58 +37730,6 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">ダイアグラムエディターを読み込めません。</target>
-      </trans-unit>
-      <trans-unit id="capa.source.quality-objective" datatype="html">
-        <source>Objectif qualité</source>
-        <target>品質目標</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.imposed" datatype="html">
-        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
-        <target>有効性の検証は必須で、その基準は規則が定めます</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.action" datatype="html">
-        <source>Action</source>
-        <target>アクション</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.add" datatype="html">
-        <source>Ajouter une action</source>
-        <target>アクションを追加</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.decline" datatype="html">
-        <source>Aucune action — justifier</source>
-        <target>アクションなし — 理由を記載</target>
-      </trans-unit>
-      <trans-unit id="objectives.filter.as-of-current" datatype="html">
-        <source>Période courante</source>
-        <target>現在の期間</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-code" datatype="html">
-        <source>Code du KPI</source>
-        <target>KPI コード</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-hint" datatype="html">
-        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
-        <target>目標値としきい値は KPI から取り込まれ、変更できます。</target>
-      </trans-unit>
-      <trans-unit id="objectives.thresholds.differ" datatype="html">
-        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
-        <target>これらの値は KPI の値と異なります。保存時に KPI へ反映するか確認します。</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.title" datatype="html">
-        <source>Reporter ces valeurs sur le KPI ?</source>
-        <target>これらの値を KPI に反映しますか？</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.message" datatype="html">
-        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
-        <target>KPI には別の目標値としきい値が設定されています。置き換えると、全員に対して この目標に合わせられます。</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
-        <source>Reporter</source>
-        <target>反映する</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
-        <source>Laisser le KPI tel quel</source>
-        <target>KPI はそのままにする</target>
       </trans-unit>
     </body>
   </file>

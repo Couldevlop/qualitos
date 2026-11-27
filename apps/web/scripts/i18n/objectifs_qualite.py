@@ -61,9 +61,6 @@ TRANSLATIONS = {
 
     # --- filtres ------------------------------------------------------------
     'objectives.filter.as-of': ('Période', 'Period', 'Periodo', 'الفترة', '期間', '期间'),
-    'objectives.filter.as-of-hint': (
-        'Vide = état courant', 'Empty = current state', 'Vacío = estado actual',
-        'فارغ = الحالة الراهنة', '空欄 = 現在の状態', '留空 = 当前状态'),
     'objectives.filter.process': (
         'Processus', 'Process', 'Proceso', 'العملية', 'プロセス', '过程'),
     'objectives.filter.process-all': ('Tous', 'All', 'Todos', 'الكل', 'すべて', '全部'),
@@ -86,7 +83,6 @@ TRANSLATIONS = {
     'objectives.column.actual': ('Réel', 'Actual', 'Real', 'الفعلي', '実績', '实际值'),
     'objectives.column.deviation': ('Écart', 'Deviation', 'Desviación', 'الفارق', '乖離', '偏差'),
     'objectives.column.status': ('Statut', 'Status', 'Estado', 'الحالة', '状態', '状态'),
-    'objectives.column.capa': ('CAPA', 'CAPA', 'CAPA', 'CAPA', 'CAPA', 'CAPA'),
 
     # --- statuts et niveaux -------------------------------------------------
     'objectives.status.not-evaluated': (
@@ -111,17 +107,6 @@ TRANSLATIONS = {
     'objectives.period.12': ('12 mois', '12 months', '12 meses', '12 شهرًا', '12 か月', '12 个月'),
 
     # --- colonne CAPA -------------------------------------------------------
-    'objectives.capa.proposed': (
-        'Proposée · à valider par le pilote', 'Proposed · owner to confirm',
-        'Propuesta · a validar por el responsable', 'مقترحة · بانتظار موافقة المسؤول',
-        '提案済み · 責任者の承認待ち', '已提议 · 待负责人确认'),
-    'objectives.capa.proposed-periods': (
-        'Proposée · {$count} périodes consécutives',
-        'Proposed · {$count} consecutive periods',
-        'Propuesta · {$count} periodos consecutivos',
-        'مقترحة · {$count} فترات متتالية',
-        '提案済み · 連続 {$count} 期間',
-        '已提议 · 连续 {$count} 个期间'),
     'objectives.capa.open': (
         'CAPA en cours · retour sous la cible attendu',
         'CAPA in progress · awaiting return to target',
@@ -143,49 +128,8 @@ TRANSLATIONS = {
         '{$exigees} 个期间中已有 {$tenues} 个达标 — 还差 {$reste} 个'),
 
     # --- panneau de la CAPA préremplie -------------------------------------
-    'objectives.panel.title': (
-        'CAPA préremplie', 'Pre-filled CAPA', 'CAPA precargada',
-        'إجراء CAPA مُعدّ مسبقًا', '自動入力された CAPA', '预填的 CAPA'),
-    'objectives.panel.objective': (
-        'Objectif', 'Objective', 'Objetivo', 'الهدف', '目標', '目标'),
-    'objectives.panel.observed': (
-        'Écart constaté', 'Observed value', 'Valor observado',
-        'القيمة المرصودة', '実測値', '观测值'),
-    'objectives.panel.periods': (
-        'Périodes consécutives', 'Consecutive periods', 'Periodos consecutivos',
-        'الفترات المتتالية', '連続期間数', '连续期间数'),
-    'objectives.panel.criterion': (
-        "Vérification d'efficacité — obligatoire", 'Effectiveness verification — mandatory',
-        'Verificación de eficacia — obligatoria', 'التحقّق من الفعالية — إلزامي',
-        '有効性の検証 — 必須', '有效性验证 — 必填'),
-    'objectives.panel.links': (
-        'Liens générés', 'Generated links', 'Enlaces generados',
-        'الروابط المُنشأة', '生成されたリンク', '生成的关联'),
-    'objectives.panel.links-list': (
-        'NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3',
-        'Customer NCs of the month · Complaints · PFMEA · Control plan · Management review 9.3',
-        'NC de clientes del mes · Reclamaciones · PFMEA · Plan de control · Revisión por la dirección 9.3',
-        'حالات عدم المطابقة لدى العملاء هذا الشهر · الشكاوى · PFMEA · خطة التحكّم · مراجعة الإدارة 9.3',
-        '当月の顧客不適合 · 苦情 · PFMEA · コントロールプラン · マネジメントレビュー 9.3',
-        '本月客户不合格 · 投诉 · PFMEA · 控制计划 · 管理评审 9.3'),
-    'objectives.panel.accept': (
-        'Accepter et enregistrer la CAPA', 'Accept and record the CAPA',
-        'Aceptar y registrar la CAPA', 'قبول وتسجيل إجراء CAPA',
-        '承認して CAPA を登録', '接受并登记 CAPA'),
-    'objectives.panel.add-action': (
-        'Accepter et ajouter une action', 'Accept and add an action',
-        'Aceptar y añadir una acción', 'قبول وإضافة إجراء',
-        '承認して処置を追加', '接受并添加措施'),
-    'objectives.panel.reject': (
-        'Rejeter avec justification', 'Reject with justification',
-        'Rechazar con justificación', 'الرفض مع التبرير',
-        '理由を付けて却下', '拒绝并说明理由'),
 
     # --- retours ------------------------------------------------------------
-    'objectives.accepted': (
-        'CAPA enregistrée.', 'CAPA recorded.', 'CAPA registrada.',
-        'تم تسجيل إجراء CAPA.', 'CAPA を登録しました。', 'CAPA 已登记。'),
-    'objectives.open-capa': ('Ouvrir', 'Open', 'Abrir', 'فتح', '開く', '打开'),
     'objectives.rejected': (
         'Proposition rejetée, avec son motif.', 'Proposal rejected, with its reason.',
         'Propuesta rechazada, con su motivo.', 'رُفض الاقتراح مع بيان سببه.',
@@ -275,9 +219,6 @@ TRANSLATIONS = {
     'objectives.field.iso-clause': (
         'Clause ISO 9001', 'ISO 9001 clause', 'Cláusula ISO 9001',
         'بند ISO 9001', 'ISO 9001 箇条', 'ISO 9001 条款'),
-    'objectives.field.kpi': (
-        'Source de données', 'Data source', 'Fuente de datos',
-        'مصدر البيانات', 'データ元', '数据来源'),
     'objectives.field.kpi-locked': (
         "Le KPI d'un objectif ne change pas : son historique cesserait d'être comparable.",
         "An objective's KPI does not change: its history would stop being comparable.",
@@ -385,16 +326,6 @@ TRANSLATIONS = {
     'objectives.rule.periods-aria': (
         'Nombre de périodes', 'Number of periods', 'Número de periodos',
         'عدد الفترات', '期間数', '期间数'),
-    'objectives.field.capa-owner': (
-        'Responsable de la CAPA', 'CAPA owner', 'Responsable de la CAPA',
-        'المسؤول عن إجراء CAPA', 'CAPA 責任者', 'CAPA 负责人'),
-    'objectives.field.due-days': (
-        "Délai d'analyse de cause racine", 'Root-cause analysis deadline',
-        'Plazo de análisis de causa raíz', 'مهلة تحليل السبب الجذري',
-        '根本原因分析の期限', '根本原因分析期限'),
-    'objectives.field.working-days': (
-        'jours ouvrés', 'working days', 'días laborables',
-        'أيام عمل', '営業日', '个工作日'),
     'objectives.field.recovery': (
         'Retour à « atteint » après', 'Back to “on target” after',
         'Vuelta a «alcanzado» tras', 'العودة إلى «محقَّق» بعد',
@@ -467,11 +398,6 @@ TRANSLATIONS = {
         'لم تكتمل المقارنة مع القياسات.',
         '実測値との照合を完了できませんでした。',
         '与实测值的比对未能完成。'),
-    'objectives.error.accept': (
-        "La CAPA n'a pas pu être enregistrée.", 'The CAPA could not be saved.',
-        'No se ha podido guardar la CAPA.',
-        'لم يتمكن النظام من حفظ إجراء CAPA.',
-        'CAPA を保存できませんでした。', '未能保存 CAPA。'),
     'objectives.error.reject': (
         "Le rejet n'a pas pu être enregistré.", 'The rejection could not be saved.',
         'No se ha podido guardar el rechazo.',
@@ -483,4 +409,72 @@ TRANSLATIONS = {
         'لم ينجح سحب الهدف من المتابعة.',
         '目標を追跡対象から外せませんでした。',
         '未能将该目标移出跟踪。'),
+    # --- la colonne « Action » : rien n'est prérédigé (recette 27/11, ADR 0143)
+    'objectives.column.action': (
+        'Action', 'Action', 'Acción', 'إجراء', 'アクション', '措施'),
+    'objectives.action.add': (
+        'Ajouter une action', 'Add an action', 'Añadir una acción',
+        'إضافة إجراء', 'アクションを追加', '添加措施'),
+    'objectives.action.decline': (
+        'Aucune action — justifier', 'No action — give a reason',
+        'Ninguna acción: justificar', 'لا إجراء — مع التبرير',
+        'アクションなし — 理由を記載', '不采取措施 — 说明理由'),
+
+    # --- le filtre de période en mm/aaaa (recette, diapo 5) -----------------
+    'objectives.filter.as-of-current': (
+        'Période courante', 'Current period', 'Periodo actual',
+        'الفترة الحالية', '現在の期間', '当前周期'),
+
+    # --- le code du KPI, et la reprise de ses seuils (recette, diapo 3) -----
+    'objectives.field.kpi-code': (
+        'Code du KPI', 'KPI code', 'Código del KPI',
+        'رمز مؤشر الأداء', 'KPI コード', 'KPI 代码'),
+    'objectives.field.kpi-hint': (
+        "La source de données de l'objectif. Ses seuils descendent dans les "
+        'trois champs ci-dessous.',
+        "The objective's data source. Its thresholds drop into the three "
+        'fields below.',
+        'La fuente de datos del objetivo. Sus umbrales bajan a los tres campos '
+        'de abajo.',
+        'مصدر بيانات الهدف. تنتقل حدوده إلى الحقول الثلاثة أدناه.',
+        '目標のデータ源です。そのしきい値が下の 3 つの項目に入ります。',
+        '本目标的数据来源。其阈值会填入下方三个字段。'),
+    'objectives.thresholds.differ': (
+        "Ces seuils diffèrent de ceux du KPI. À l'enregistrement, la fenêtre "
+        'proposera de les y reporter.',
+        "These thresholds differ from the KPI's. On saving, the dialog will "
+        'offer to carry them over to it.',
+        'Estos umbrales difieren de los del KPI. Al guardar, la ventana '
+        'propondrá trasladarlos a él.',
+        'تختلف هذه الحدود عن حدود مؤشر الأداء. عند الحفظ، ستقترح النافذة نقلها إليه.',
+        'これらのしきい値は KPI のものと異なります。保存時に KPI へ反映するか確認します。',
+        '这些阈值与 KPI 的阈值不同。保存时窗口会询问是否同步到 KPI。'),
+    'objectives.kpi-sync.title': (
+        'Reporter ces seuils sur le KPI ?', 'Carry these thresholds over to the KPI?',
+        '¿Trasladar estos umbrales al KPI?', 'هل تريد نقل هذه الحدود إلى مؤشر الأداء؟',
+        'これらのしきい値を KPI に反映しますか？', '要将这些阈值同步到 KPI 吗？'),
+    'objectives.kpi-sync.message': (
+        "Le KPI « {$kpi} » ({$code}) porte d'autres seuils. Les remplacer par "
+        'ceux de cet objectif évite de les saisir deux fois — mais un autre '
+        'objectif adossé au même indicateur garde les siens.',
+        'The KPI "{$kpi}" ({$code}) holds different thresholds. Replacing them '
+        'with this objective\'s avoids entering them twice — but another '
+        'objective backed by the same indicator keeps its own.',
+        'El KPI «{$kpi}» ({$code}) tiene otros umbrales. Sustituirlos por los de '
+        'este objetivo evita introducirlos dos veces, pero otro objetivo '
+        'apoyado en el mismo indicador conserva los suyos.',
+        'يحمل مؤشر الأداء «{$kpi}» ({$code}) حدودًا مختلفة. استبدالها بحدود هذا '
+        'الهدف يغنيك عن إدخالها مرتين، لكن هدفًا آخر يستند إلى المؤشر نفسه '
+        'يحتفظ بحدوده.',
+        'KPI「{$kpi}」（{$code}）には別のしきい値が設定されています。この目標の値に '
+        '置き換えれば二重入力を避けられますが、同じ指標に紐づく別の目標は自身の値を保ちます。',
+        'KPI“{$kpi}”（{$code}）的阈值不同。用本目标的阈值替换可避免重复录入，'
+        '但依托同一指标的其他目标仍保留各自的阈值。'),
+    'objectives.kpi-sync.confirm': (
+        'Reporter sur le KPI', 'Carry over to the KPI', 'Trasladar al KPI',
+        'نقل إلى مؤشر الأداء', 'KPI に反映する', '同步到 KPI'),
+    'objectives.kpi-sync.cancel': (
+        'Laisser le KPI tel quel', 'Leave the KPI as it is',
+        'Dejar el KPI como está', 'إبقاء مؤشر الأداء كما هو',
+        'KPI はそのままにする', '保持 KPI 不变'),
 }

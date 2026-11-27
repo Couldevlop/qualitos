@@ -7986,6 +7986,14 @@ Portail clients</source>
         <source>Risque</source>
         <target state="translated">خطر</target>
       </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target state="translated">هدف الجودة</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target state="translated">التحقق من الفعالية مطلوب، والقاعدة تحدد معياره</target>
+      </trans-unit>
       <trans-unit id="capa.detail.legacy-actions" datatype="html">
         <source>Actions (<x id="INTERPOLATION"/>)</source>
         <target state="translated">الإجراءات (<x id="INTERPOLATION"/>)</target>
@@ -24502,6 +24510,50 @@ historique 12 mois</source>
         <source>Le retrait du suivi n'a pas abouti.</source>
         <target state="translated">لم ينجح سحب الهدف من المتابعة.</target>
       </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">إجراء</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">إضافة إجراء</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target state="translated">لا إجراء — مع التبرير</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target state="translated">الفترة الحالية</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target state="translated">رمز مؤشر الأداء</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>La source de données de l'objectif. Ses seuils descendent dans les trois champs ci-dessous.</source>
+        <target state="translated">مصدر بيانات الهدف. تنتقل حدوده إلى الحقول الثلاثة أدناه.</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces seuils diffèrent de ceux du KPI. À l'enregistrement, la fenêtre proposera de les y reporter.</source>
+        <target state="translated">تختلف هذه الحدود عن حدود مؤشر الأداء. عند الحفظ، ستقترح النافذة نقلها إليه.</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces seuils sur le KPI ?</source>
+        <target state="translated">هل تريد نقل هذه الحدود إلى مؤشر الأداء؟</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI « <x id="kpi"/> » (<x id="code"/>) porte d'autres seuils. Les remplacer par ceux de cet objectif évite de les saisir deux fois — mais un autre objectif adossé au même indicateur garde les siens.</source>
+        <target state="translated">يحمل مؤشر الأداء «<x id="kpi"/>» (<x id="code"/>) حدودًا مختلفة. استبدالها بحدود هذا الهدف يغنيك عن إدخالها مرتين، لكن هدفًا آخر يستند إلى المؤشر نفسه يحتفظ بحدوده.</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter sur le KPI</source>
+        <target state="translated">نقل إلى مؤشر الأداء</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target state="translated">إبقاء مؤشر الأداء كما هو</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">قائمة الانتظار دون اتصال</target>
@@ -37679,58 +37731,6 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">تعذّر تحميل محرّر المخطط.</target>
-      </trans-unit>
-      <trans-unit id="capa.source.quality-objective" datatype="html">
-        <source>Objectif qualité</source>
-        <target>هدف الجودة</target>
-      </trans-unit>
-      <trans-unit id="capa.verification.imposed" datatype="html">
-        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
-        <target>التحقق من الفعالية مطلوب، والقاعدة تحدد معياره</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.action" datatype="html">
-        <source>Action</source>
-        <target>إجراء</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.add" datatype="html">
-        <source>Ajouter une action</source>
-        <target>إضافة إجراء</target>
-      </trans-unit>
-      <trans-unit id="objectives.action.decline" datatype="html">
-        <source>Aucune action — justifier</source>
-        <target>لا إجراء — مع التبرير</target>
-      </trans-unit>
-      <trans-unit id="objectives.filter.as-of-current" datatype="html">
-        <source>Période courante</source>
-        <target>الفترة الحالية</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-code" datatype="html">
-        <source>Code du KPI</source>
-        <target>رمز مؤشر الأداء</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi-hint" datatype="html">
-        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
-        <target>يُستمد الهدف والحدود من مؤشر الأداء، ويمكن تعديلها.</target>
-      </trans-unit>
-      <trans-unit id="objectives.thresholds.differ" datatype="html">
-        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
-        <target>تختلف هذه القيم عن قيم مؤشر الأداء. عند الحفظ، سيُقترح عليك نقلها إليه.</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.title" datatype="html">
-        <source>Reporter ces valeurs sur le KPI ?</source>
-        <target>هل تريد نقل هذه القيم إلى مؤشر الأداء؟</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.message" datatype="html">
-        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
-        <target>يحمل مؤشر الأداء هدفًا وحدودًا مختلفة. استبدالها سيوائمه مع هذا الهدف، للجميع.</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
-        <source>Reporter</source>
-        <target>نقل</target>
-      </trans-unit>
-      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
-        <source>Laisser le KPI tel quel</source>
-        <target>إبقاء مؤشر الأداء كما هو</target>
       </trans-unit>
     </body>
   </file>
