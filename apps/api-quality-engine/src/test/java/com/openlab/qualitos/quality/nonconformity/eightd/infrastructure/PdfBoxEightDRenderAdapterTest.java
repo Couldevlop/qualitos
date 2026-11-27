@@ -242,6 +242,81 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).doesNotContain("ML-DSA + ancr");
     }
 
+    /**
+     * UNE RUBRIQUE VIDE SE LAISSE VIDE dans le document neuf.
+     *
+     * <p>« Non renseignée. » s'inscrivait sous chaque discipline sans contenu :
+     * un constat de manque, repete, dans le document qui part chez le client.
+     * Ce qui manque reste dit la ou c'est utile -- le bandeau de rapport
+     * partiel nomme les disciplines vides, et le libelle de provenance de
+     * chacune distingue « rien a dire » de « on n'a pas cherche ».
+     */
+    @Test
+    void le_document_neuf_laisse_une_discipline_vide_sans_l_annoncer() throws IOException {
+        String texte = texteDe(renderer.render(remanie(snapshot(false)), URL));
+
+        assertThat(texte).doesNotContain("Non renseignée.");
+        assertThat(texte).doesNotContain("Not filled in.");
+        // Ce qui MANQUE reste dit, et mieux : nomme en tete, explique sur place.
+        assertThat(texte).contains("RAPPORT PARTIEL - disciplines sans contenu :");
+        assertThat(texte).contains("cette discipline se saisit");
+    }
+
+    /**
+     * ET LE RAPPORT DEJA SCELLE L'ECRIT TOUJOURS. Son empreinte porte sur les
+     * octets du PDF, re-rendu a chaque telechargement et compare au sceau :
+     * retirer cette ligne pour lui le rendrait indelivrable sans qu'aucune
+     * donnee n'ait bouge.
+     */
+    @Test
+    void un_rapport_scelle_sous_un_dessin_anterieur_annonce_toujours_ses_vides()
+            throws IOException {
+        String texte = texteDe(renderer.render(snapshot(false), URL));
+
+        assertThat(texte).contains("Not filled in.");
+    }
+
+    /**
+     * ET CELUI DE NOVEMBRE 2026 AUSSI, qui est le dessin sous lequel les
+     * rapports les plus recents ont ete scelles -- ce sont eux que ce
+     * changement pouvait rendre indelivrables.
+     *
+     * <p>Il garde ses deux traits : le dessin remanie (pagination, pied sans
+     * identifiant de client) ET la ligne qui annonce la discipline vide.
+     */
+    @Test
+    void un_rapport_scelle_en_novembre_garde_son_dessin_et_annonce_ses_vides()
+            throws IOException {
+        EightDSnapshot novembre = new EightDSnapshot("NC-2026-0007",
+                "Fuite au presse-étoupe", "tenant-demo", "13/09/2026 10:00 UTC",
+                "Ada Lovelace", true, snapshot(false).sections(), "fr", "2026-11");
+
+        String texte = texteDe(renderer.render(novembre, URL));
+
+        assertThat(texte).contains("Non renseignée.");
+        assertThat(texte).contains("Page 1 /");
+        assertThat(texte).doesNotContain("Tenant:");
+    }
+
+    /**
+     * ET UN DESSIN POSTERIEUR NE REVEILLE PAS LA LIGNE. Les dessins qui
+     * l'ecrivent sont nommes un par un : deduits par negation du dessin
+     * courant, « 2026-12 » recommencerait a l'ecrire le jour ou une refonte
+     * ulterieure prendra la place de courant, et tous les sceaux de cette
+     * periode casseraient d'un coup. Ce banc tient ce nommage.
+     */
+    @Test
+    void un_dessin_ulterieur_ne_reannonce_pas_les_vides() throws IOException {
+        EightDSnapshot futur = new EightDSnapshot("NC-2026-0007",
+                "Fuite au presse-étoupe", "tenant-demo", "13/09/2026 10:00 UTC",
+                "Ada Lovelace", true, snapshot(false).sections(), "fr", "2027-06");
+
+        String texte = texteDe(renderer.render(futur, URL));
+
+        assertThat(texte).doesNotContain("Non renseignée.");
+        assertThat(texte).doesNotContain("Not filled in.");
+    }
+
     /** Le meme instantane, avec la langue du document neuf. */
     private EightDSnapshot enFrancais(EightDSnapshot snapshot) {
         return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),

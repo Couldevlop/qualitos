@@ -472,8 +472,6 @@ TRANSLATIONS = {
         'لم يتم حفظ المُصادِق.',
         '承認者を保存できませんでした。',
         '审核人未能保存。'),
-    'nc.8d.resolved-by': (
-        "Résolu par", 'Resolved by', 'Resuelta por', 'حلّه', '解決者', '解决人'),
     'nc.8d.closed-by': (
         "Clôturé par", 'Closed by', 'Cerrada por', 'أغلقه', '完了者', '关闭人'),
     'nc.blocker.second-look': (

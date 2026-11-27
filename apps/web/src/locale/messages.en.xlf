@@ -22946,10 +22946,6 @@ declared income
         <source>Ce que l'équipe a appris, et ce qui mérite d'être dit</source>
         <target state="translated">What the team learned, and what deserves to be said</target>
       </trans-unit>
-      <trans-unit id="nc.8d.discipline-empty" datatype="html">
-        <source>Non renseigné.</source>
-        <target state="translated">Not filled in.</target>
-      </trans-unit>
       <trans-unit id="nc.8d.issue" datatype="html">
         <source>Émettre</source>
         <target state="translated">Issue</target>
@@ -23973,10 +23969,6 @@ declared income
       <trans-unit id="nc.8d.validator-failed" datatype="html">
         <source>Le valideur n'a pas pu être enregistré.</source>
         <target state="translated">The validator could not be saved.</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.resolved-by" datatype="html">
-        <source>Résolu par</source>
-        <target state="translated">Resolved by</target>
       </trans-unit>
       <trans-unit id="nc.8d.closed-by" datatype="html">
         <source>Clôturé par</source>

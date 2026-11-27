@@ -77,12 +77,15 @@ s'inscrivent : la **fiche de l'écart** et le **dossier CAPA**.
 
 ## Ce que « partiel » veut dire
 
-Une discipline sans contenu **le dit** — à l'écran comme dans le PDF — et le rapport porte alors
-la mention **Partiel**, suivie de la liste des disciplines concernées.
+Une discipline sans contenu **se laisse vide** : elle n'écrit pas qu'elle l'est. Ce qui manque est
+dit une fois, en tête du rapport — la mention **Partiel**, suivie de la liste des disciplines
+concernées — et, sous le titre de chaque discipline vide, le **libellé de provenance** qui
+distingue « rien à dire » de « on n'a pas cherché ».
 
 C'est volontaire. Un rapport aux cases remplies à la hâte trompe son lecteur ; un rapport qui
-annonce ce qui lui manque reste lisible et honnête devant un auditeur. Vous pouvez émettre un
-rapport partiel : à vous de juger si l'écart le justifie.
+annonce ce qui lui manque reste lisible et honnête devant un auditeur — mais il l'annonce une
+fois, pas sous chaque titre. Vous pouvez émettre un rapport partiel : à vous de juger si l'écart
+le justifie.
 
 Trois absences sont fréquentes et normales :
 

@@ -959,6 +959,41 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(panneau.capaCaseIds).toEqual(['99999999-9999-9999-9999-999999999999']);
   });
 
+  /**
+   * UNE SEULE LIGNE PAR ACTION. Les trois tableaux portaient la colonne
+   * « Nature de l'action » alors que chacun ne montre qu'une nature : le mot se
+   * répétait sur toutes les lignes, et la place qu'il prenait manquait à
+   * l'intitulé, qui se repliait — chaque action tenait deux lignes.
+   */
+  it('ne demande la colonne « Nature » à aucun des trois tableaux d’actions', () => {
+    setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
+    fixture.detectChanges();
+    const panneaux = fixture.debugElement
+      .queryAll(By.directive(CapaActionPanelStubComponent))
+      .map(d => d.componentInstance as CapaActionPanelStubComponent);
+
+    expect(panneaux.length).toBe(3);
+    panneaux.forEach(p => expect(p.colonneNature).toBeFalse());
+  });
+
+  /**
+   * LA PREUVE D'UNE ACTION atteste que CE geste-là a été fait : elle se joint
+   * au D3 et au D7. Le D5 n'a pas à prouver qu'une action a été faite mais que
+   * la cause a disparu, ce qui se démontre au D6, sur le dossier.
+   */
+  it('montre la colonne « Preuve » au D3 et au D7, jamais au D5', () => {
+    setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
+    fixture.detectChanges();
+    const parNature = new Map<string, CapaActionPanelStubComponent>();
+    fixture.debugElement.queryAll(By.directive(CapaActionPanelStubComponent))
+      .map(d => d.componentInstance as CapaActionPanelStubComponent)
+      .forEach(p => parNature.set(p.natures[0], p));
+
+    expect(parNature.get('CONTAINMENT')!.colonnePreuve).toBeTrue();
+    expect(parNature.get('PREVENTIVE')!.colonnePreuve).toBeTrue();
+    expect(parNature.get('CORRECTIVE')!.colonnePreuve).toBeFalse();
+  });
+
   // Faire avancer l'action depuis la fiche change son statut ET celui de l'écart
   // côté serveur : une fiche qui ne se relit pas afficherait l'état d'avant.
   it('relit la fiche quand le panneau annonce un changement', () => {

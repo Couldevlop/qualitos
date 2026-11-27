@@ -471,6 +471,11 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot.Section d7 = section(snapshot, "D7");
         assertThat(d7.sourced()).isTrue();
         assertThat(d7.tables()).hasSize(1);
+        // AVEC LA COLONNE DES PREUVES, comme le D3 et contrairement au D5 : une
+        // barrière de prévention s'installe et se montre, et la pièce atteste
+        // que CE geste-là a été fait.
+        assertThat(d7.tables().get(0).columns())
+                .containsExactly("Action", "Responsable", "Début", "Échéance", "État", "Preuves");
         assertThat(d7.tables().get(0).rows()).hasSize(1);
         assertThat(d7.tables().get(0).rows().get(0).cells())
                 .containsExactly("Former les opérateurs", "-", "-", "-", "En cours", "-");

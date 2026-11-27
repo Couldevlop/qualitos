@@ -166,20 +166,13 @@
             </mat-form-field>
           </div>
 
-          <!-- Jamais un bloc vide : l'absence de contenu est dite. La discipline
-               dont une figure tient lieu de texte ne la dit pas : le tableau ou
-               le schema, juste en dessous, porte deja son propre etat. -->
-          <!-- Une discipline qui porte un TABLEAU n'est pas vide. Le D1, le D3
-               et le D7 annonçaient « Non renseigné » juste au-dessus du tableau
-               qui les renseigne : le lecteur croyait la discipline manquante et
-               lisait son contenu dans la ligne suivante. -->
-          <p class="vide" *ngIf="discipline.lines.length === 0
-                                 && discipline.fields.length === 0
-                                 && tableauxFiges(discipline).length === 0
-                                 && !montreLesActions(discipline.code)
-                                 && !montreAuLieuDeDire(discipline.code)"
-             data-test="discipline-vide"
-             i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
+          <!-- UNE RUBRIQUE VIDE SE LAISSE VIDE. « Non renseigné. » s'inscrivait
+               sous chaque discipline sans contenu : un constat de manque, répété,
+               dans un document qu'on relit avant de le remettre. L'absence se
+               voit ; l'annoncer n'ajoute rien et fait lire un rapport comme un
+               formulaire à trous. Ce qui MANQUE VRAIMENT reste dit là où c'est
+               utile : le bandeau « Partiel » nomme les disciplines sans contenu,
+               et chaque discipline garde son libellé de provenance. -->
 
           <!-- D4 : le RAISONNEMENT, et non sa seule conclusion. C'est ce qu'un
                auditeur vient regarder (ADR 0115), et c'est pourquoi le schema

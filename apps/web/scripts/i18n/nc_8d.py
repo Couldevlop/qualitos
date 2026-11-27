@@ -78,9 +78,6 @@ TRANSLATIONS = {
         'ما تعلَّمه الفريق، وما يستحق أن يُقال',
         'チームが学んだこと、そして伝える価値のあること',
         '团队学到了什么，以及值得说明的内容'),
-    'nc.8d.discipline-empty': (
-        'Non renseigné.', 'Not filled in.', 'Sin rellenar.', 'غير مُدخَل.',
-        '未記入です。', '未填写。'),
     'nc.8d.issue': (
         'Émettre', 'Issue', 'Emitir', 'إصدار', '発行', '发布'),
     'nc.8d.issue-tooltip': (
