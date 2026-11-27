@@ -300,6 +300,34 @@ class EightDSourceAdapterTest {
         assertThat(remontee.effectivenessReviewedAt()).isNull();
     }
 
+    /**
+     * LE VERDICT DU DOSSIER VAUT POUR SON ACTION UNIQUE (ADR 0143).
+     *
+     * <p>Un jugement porte depuis l'ecran d'efficacite est une evaluation DU
+     * DOSSIER : le rapport ne lisait que celles des actions, et taisait donc un
+     * verdict pourtant rendu. Depuis l'ADR 0135 un dossier porte une action et
+     * une seule : le juger, c'est la juger.
+     */
+    @Test
+    void le_verdict_du_dossier_remonte_sur_son_action_unique() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase dossier = capa();
+        assertThat(dossier.getActions()).hasSize(1);
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(dossier));
+        when(efficacite.findLastByCase(TENANT, CAPA)).thenReturn(Optional.of(
+                EffectivenessReview.rehydrate(UUID.randomUUID(), TENANT, CAPA,
+                        EffectivenessVerdict.EFFECTIVE, "Rebut sous 2 %", "4,2 %", "2 %", "0 %",
+                        null, UUID.randomUUID(), "Vera Verificatrice", JUGE_LE)));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        EightDSources.Action remontee = sources.capas().get(0).actions().get(0);
+        assertThat(remontee.effectivenessVerdict()).isEqualTo("EFFECTIVE");
+        assertThat(remontee.effectivenessReviewedAt()).isEqualTo(JUGE_LE);
+    }
+
     /** Une piece sans nom d'origine se designe par sa cle : jamais une ligne vide. */
     @Test
     void une_piece_sans_nom_d_origine_se_designe_par_sa_cle() {
