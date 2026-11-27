@@ -724,10 +724,16 @@
                    par dossier donnait un second tableau sous le premier -- comme
                    si l'action refusait de rejoindre ses pareilles. La discipline
                    rassemble les actions de sa nature, d'où qu'elles viennent. -->
+              <!-- PAS DE COLONNE « NATURE » : la discipline n'en montre qu'une,
+                   et le mot se répétait donc sur toutes les lignes, devant
+                   l'intitulé qu'on vient lire. La place qu'il prenait manquait
+                   à cet intitulé, qui se repliait : chaque action tenait deux
+                   lignes. Le rapport 8D fait déjà cette économie. -->
               <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
                                      [source]="sourceDeLEcart(n)"
                                      [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD3"
+                                     [colonneNature]="false"
                                      (counted)="compter('D3', $event)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </ng-container>
@@ -854,6 +860,7 @@
                                      [source]="sourceDeLEcart(n)"
                                      [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD5"
+                                     [colonneNature]="false"
                                      [colonnePreuve]="false"
                                      (counted)="compter('D5', $event)"
                                      (changed)="reload()"></qos-capa-action-panel>
@@ -947,17 +954,14 @@
               <p data-test="note-resolution">{{ n.resolutionNote }}</p>
             </div>
 
-            <!-- LES DEUX SIGNATURES. C'est ce qu'un auditeur vient lire
-                 devant une fiche close : la résolution et sa validation ne
-                 portent pas le même nom (ISO 9001 §10.2). Les écarts d'avant la
-                 règle n'ont pas ces noms, et la fiche n'en invente pas. -->
-            <div class="info-grid" *ngIf="n.resolvedByName || n.closedByName"
+            <!-- LA SIGNATURE DE LA CLOTURE, et elle seule. « Résolu par » se
+                 lisait ici au-dessus : le D6 démontre que le problème a cessé,
+                 et le nom de qui a déclaré l'écart résolu n'en fait pas partie.
+                 Il reste porté par la fiche en base et par la piste d'audit ;
+                 c'est cette discipline qui cesse de le redire. -->
+            <div class="info-grid" *ngIf="n.closedByName"
                  data-test="second-regard">
-              <div class="info-item" *ngIf="n.resolvedByName">
-                <span class="info-label" i18n="@@nc.8d.resolved-by">Résolu par</span>
-                <span class="info-value">{{ n.resolvedByName }}</span>
-              </div>
-              <div class="info-item" *ngIf="n.closedByName">
+              <div class="info-item">
                 <span class="info-label" i18n="@@nc.8d.closed-by">Clôturé par</span>
                 <span class="info-value">{{ n.closedByName }}</span>
               </div>
@@ -978,6 +982,7 @@
                                      [source]="sourceDeLEcart(n)"
                                      [ajoutAutorise]="accepteUneCapaDePlus(n)"
                                      [natures]="naturesD7"
+                                     [colonneNature]="false"
                                      (counted)="compter('D7', $event)"
                                      (changed)="reload()"></qos-capa-action-panel>
             </ng-container>

@@ -374,15 +374,31 @@ describe('NcDetailComponent — le traitement 8D', () => {
     expect(un('nc-blockers')!.textContent).toContain('second regard');
   });
 
-  it('montre les deux signatures sur un écart clos', () => {
+  /**
+   * LA SIGNATURE DE LA CLÔTURE, et elle seule. « Résolu par » se lisait ici
+   * au-dessus : le D6 démontre que le problème a cessé, et le nom de qui a
+   * déclaré l'écart résolu n'en fait pas partie. Le champ reste au modèle.
+   */
+  it('montre la signature de la clôture, et tait celle de la résolution', () => {
     setup(ecart({
       status: 'CLOSED', closedAt: '2026-11-17T00:00:00Z',
       resolvedByName: 'Marie Durand', closedByName: 'Ali Benali'
     }));
 
     const trace = un('second-regard')!.textContent ?? '';
-    expect(trace).toContain('Marie Durand');
     expect(trace).toContain('Ali Benali');
+    expect(trace).not.toContain('Marie Durand');
+    expect(texte()).not.toContain('Résolu par');
+  });
+
+  /** Résolu mais pas encore clos : plus rien à signer, donc plus de bloc. */
+  it('ne montre aucune signature tant que l’écart n’est pas clos', () => {
+    setup(ecart({
+      status: 'RESOLVED', resolvedAt: '2026-11-16T00:00:00Z',
+      resolvedByName: 'Marie Durand'
+    }));
+
+    expect(un('second-regard')).toBeNull();
   });
 
   it('n’invente aucune signature sur un écart d’avant la règle', () => {
