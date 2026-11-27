@@ -90,9 +90,15 @@ public record EightDSnapshot(
      * la raison d'etre du marqueur : leur empreinte porte sur les octets du PDF,
      * re-rendu a chaque telechargement et compare au sceau. Retirer cette ligne
      * pour eux les rendrait indelivrables sans qu'aucune donnee n'ait bouge.
+     *
+     * <p>Les dessins qui l'ecrivent sont donc NOMMES un par un, et non deduits
+     * par negation du dessin courant : nie, « 2026-12 » recommencerait a
+     * l'ecrire le jour ou une refonte ulterieure prendra la place de courant,
+     * et les sceaux de cette periode casseraient tous. Un dessin neuf ne
+     * l'ecrit pas, sauf a figurer ici.
      */
     public boolean annonceLesDisciplinesVides() {
-        return !MISE_EN_PAGE_COURANTE.equals(layout);
+        return layout == null || MISE_EN_PAGE_2026_11.equals(layout);
     }
 
     /**

@@ -298,6 +298,25 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).doesNotContain("Tenant:");
     }
 
+    /**
+     * ET UN DESSIN POSTERIEUR NE REVEILLE PAS LA LIGNE. Les dessins qui
+     * l'ecrivent sont nommes un par un : deduits par negation du dessin
+     * courant, « 2026-12 » recommencerait a l'ecrire le jour ou une refonte
+     * ulterieure prendra la place de courant, et tous les sceaux de cette
+     * periode casseraient d'un coup. Ce banc tient ce nommage.
+     */
+    @Test
+    void un_dessin_ulterieur_ne_reannonce_pas_les_vides() throws IOException {
+        EightDSnapshot futur = new EightDSnapshot("NC-2026-0007",
+                "Fuite au presse-étoupe", "tenant-demo", "13/09/2026 10:00 UTC",
+                "Ada Lovelace", true, snapshot(false).sections(), "fr", "2027-06");
+
+        String texte = texteDe(renderer.render(futur, URL));
+
+        assertThat(texte).doesNotContain("Non renseignée.");
+        assertThat(texte).doesNotContain("Not filled in.");
+    }
+
     /** Le meme instantane, avec la langue du document neuf. */
     private EightDSnapshot enFrancais(EightDSnapshot snapshot) {
         return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),
