@@ -541,6 +541,10 @@ a[href^='tel:'] {
   font-size: var(--t-xs);
   color: var(--bleu);
 }
+/* Le mono est reserve aux nombres et aux references de clause (CLAUDE.md
+   §15.1). « Modele PAF » n'est ni l'un ni l'autre : c'est un nom de modele,
+   et il se compose dans la police de texte. */
+.module__clause--mot { font-family: var(--police-texte); font-weight: 600; }
 
 /* ---------- normes ---------- */
 .normes-grille { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); }
