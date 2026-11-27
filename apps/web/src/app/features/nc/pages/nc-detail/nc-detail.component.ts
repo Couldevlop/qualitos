@@ -2056,6 +2056,27 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
+   * Les actions de CE dossier que CE motif-la retient.
+   *
+   * <p>Au motif de la CLOTURE, toutes : une action faite dont la verification
+   * promise n'a pas conclu retient le dossier, et donc l'ecart (ADR 0132).
+   *
+   * <p>Au motif de la RESOLUTION, les seules qui restent A FAIRE. Une action
+   * terminee depuis le 8D y figurait, sous une phrase qui demandait de la
+   * terminer alors qu'elle l'etait, et le decompte de la ligne contredisait
+   * celui du motif. La verification, elle, se dit au moment de clore.
+   *
+   * <p>Le dossier n'est pas recopie pour autant : un clone par passe de
+   * detection recreerait le bloc entier et lui ferait perdre le focus.
+   */
+  actionsQuiRetiennent(motif: MotifDeBlocage, dossier: NcCapaCaseRef): NcBlockingAction[] {
+    const actions = dossier.blockingActions ?? [];
+    return motif.code === 'CAPA_ACTIONS_TO_CARRY_OUT'
+      ? actions.filter(a => a.reason === 'TO_DO')
+      : actions;
+  }
+
+  /**
    * COMBIEN d'actions retiennent ce dossier.
    *
    * <p>Le decompte du motif compte les DOSSIERS ; celui-ci compte ce qu'il
@@ -2065,8 +2086,8 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * <p>Deux phrases plutot qu'un pluriel calcule : « 1 actions » est une faute
    * que personne ne pardonne a un logiciel de qualite.
    */
-  compteDesActionsQuiBloquent(dossier: NcCapaCaseRef): string {
-    const nb = dossier.blockingActions?.length ?? 0;
+  compteDesActionsQuiBloquent(retenues: NcBlockingAction[]): string {
+    const nb = retenues.length;
     return nb === 1
       ? $localize`:@@nc.blocker.actions-count-one:1 action le retient`
       : $localize`:@@nc.blocker.actions-count-many:${nb}:count: actions le retiennent`;

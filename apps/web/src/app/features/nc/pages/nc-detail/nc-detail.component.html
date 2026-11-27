@@ -156,13 +156,17 @@
                 <li *ngFor="let d of m.dossiers">
                   <a [routerLink]="['/capa', d.id]"
                      [attr.data-test]="'nc-blocker-lien-' + d.id">{{ d.title }}</a>
-                  <ng-container *ngIf="d.blockingActions?.length">
-                    <span class="blockers-cases__compte"
+                  <!-- SOUS LE MOTIF DE LA RESOLUTION, les actions nommees sont
+                       celles qui restent A FAIRE : une action terminee depuis
+                       le 8D qui attend sa verification retient la CLOTURE du
+                       dossier, pas la resolution de l'ecart (ADR 0132). -->
+                  <ng-container *ngIf="actionsQuiRetiennent(m, d) as retenues">
+                    <span class="blockers-cases__compte" *ngIf="retenues.length"
                           [attr.data-test]="'nc-blocker-compte-' + d.id">
-                      {{ compteDesActionsQuiBloquent(d) }}
+                      {{ compteDesActionsQuiBloquent(retenues) }}
                     </span>
-                    <ul class="blockers-actions">
-                      <li *ngFor="let a of d.blockingActions">
+                    <ul class="blockers-actions" *ngIf="retenues.length">
+                      <li *ngFor="let a of retenues">
                         <!-- LE LIEN MENE A L'ACTION, et non a son dossier : elle
                              se traite dans le tableau de sa discipline, plus bas
                              sur cette meme fiche. -->

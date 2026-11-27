@@ -2671,6 +2671,72 @@ class CapaServiceTest {
         assertThat(service.unexecutedCasesFor(clos.getId(), "Int-NC-2026-0007")).isEmpty();
     }
 
+    /**
+     * UNE ACTION TERMINEE DEPUIS LE 8D NE RETIENT PLUS LA RESOLUTION, meme
+     * quand la verification qu'elle a promise n'a pas encore conclu.
+     *
+     * <p>L'ADR 0132 borne son verrou a la cloture et l'ecrit : « la resolution
+     * n'est pas concernee » — une verification d'efficacite se mesure sur des
+     * semaines. Ce decompte lisait pourtant le predicat de la cloture : l'ecart
+     * refusait sa resolution sous un motif qui demandait de TERMINER une action
+     * deja terminee, et n'avancait qu'au prix d'un verdict rendu seance tenante.
+     */
+    @Test
+    void unexecutedActionCountFor_ignoreUneActionFaiteQuiAttendSaVerification() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThat(service.unexecutedActionCountFor(c.getId(), null)).isZero();
+    }
+
+    /** Ce qui n'est pas fait, lui, reste compte — dossier par dossier. */
+    @Test
+    void unexecutedActionCountFor_compteLesSeulesActionsPasEncoreFaites() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        action(c, CapaActionStatus.PENDING);
+        action(c, CapaActionStatus.IN_PROGRESS);
+        actionPromise(c);
+        CapaCase autre = capa(TENANT, CapaStatus.OPEN);
+        action(autre, CapaActionStatus.PENDING);
+
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+                eq(TENANT), any(), eq("Int-NC-2026-0007")))
+                .thenReturn(List.of(autre));
+
+        assertThat(service.unexecutedActionCountFor(c.getId(), "Int-NC-2026-0007")).isEqualTo(3);
+    }
+
+    /** Clos ou ecarte : ce qui est clos l'a ete sur l'etat d'alors. */
+    @Test
+    void unexecutedActionCountFor_ignoreLesDossiersClosOuEcartes() {
+        CapaCase clos = capa(TENANT, CapaStatus.CLOSED);
+        action(clos, CapaActionStatus.PENDING);
+        when(caseRepo.findByIdAndTenantId(clos.getId(), TENANT)).thenReturn(Optional.of(clos));
+
+        assertThat(service.unexecutedActionCountFor(clos.getId(), null)).isZero();
+    }
+
+    /**
+     * LA CLOTURE, ELLE, ATTEND TOUJOURS LA VERIFICATION PROMISE (ADR 0132) : la
+     * meme action qui ne retient plus la resolution retient encore la cloture,
+     * et sous son propre motif.
+     */
+    @Test
+    void closureBlockers_retientEncoreUneActionFaiteQuiAttendSaVerification() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        CapaDto.CaseResponse r = service.findById(c.getId());
+
+        assertThat(r.closureBlockers())
+                .extracting(CapaDto.ClosureBlocker::code, CapaDto.ClosureBlocker::count)
+                .contains(tuple(ClosureBlockerCode.ACTION_VERIFICATIONS_PENDING, 1L))
+                .doesNotContain(tuple(ClosureBlockerCode.ACTIONS_NOT_DONE, 1L));
+    }
+
     /** L ecart sous verrou d ecriture, et sa reference lue sans ses espaces. */
     private void stubEcart(NonConformity ecart) {
         when(ncRepo.findByTenantIdAndReference(TENANT, ecart.getReference()))
