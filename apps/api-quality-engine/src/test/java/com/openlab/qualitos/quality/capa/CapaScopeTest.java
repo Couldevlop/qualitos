@@ -47,6 +47,33 @@ class CapaScopeTest {
         assertThat(CapaScope.sees(seulement, dossier())).isFalse();
     }
 
+    /**
+     * LE VERIFICATEUR D'UNE ACTION VOIT LE DOSSIER (ADR 0143).
+     *
+     * <p>La vérification se confie action par action (ADR 0131). La personne
+     * désignée là ne voyait pas le dossier qu'on lui demandait de juger : son
+     * écran d'efficacité était vide de la seule ligne qui l'attendait, et la
+     * fiche répondait 404.
+     */
+    @Test
+    void verifierUneActionConcerne() {
+        CapaCase aVerifier = dossier();
+        CapaAction a = new CapaAction();
+        a.setAssigneeId(UUID.randomUUID());
+        a.setVerificationAssigneeId(moi);
+        aVerifier.getActions().add(a);
+
+        CapaCase verifieParUnAutre = dossier();
+        CapaAction autre = new CapaAction();
+        autre.setAssigneeId(UUID.randomUUID());
+        autre.setVerificationAssigneeId(UUID.randomUUID());
+        verifieParUnAutre.getActions().add(autre);
+
+        Optional<UUID> seulement = Optional.of(moi);
+        assertThat(CapaScope.sees(seulement, aVerifier)).isTrue();
+        assertThat(CapaScope.sees(seulement, verifieParUnAutre)).isFalse();
+    }
+
     @Test
     void laPorteeSeDemandeAvecVoirTousLesDossiers() {
         Permission[] demande = new Permission[1];

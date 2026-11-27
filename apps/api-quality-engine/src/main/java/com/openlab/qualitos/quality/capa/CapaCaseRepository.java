@@ -22,8 +22,9 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
 
     /**
      * Les dossiers qui concernent un utilisateur (ADR 0081) : il les pilote, il en
-     * vérifie l'efficacité, ou une de leurs actions lui est confiée. Filtré en
-     * base, pour que la pagination reste juste. Un statut nul ne filtre pas.
+     * vérifie l'efficacité, ou une de leurs actions lui est confiée — à mener ou
+     * à vérifier (ADR 0143). Filtré en base, pour que la pagination reste juste.
+     * Un statut nul ne filtre pas.
      */
     @Query("""
             select c from CapaCase c
@@ -34,7 +35,9 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
               and (:dueBefore is null or (c.dueDate is not null and c.dueDate <= :dueBefore))
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
-                   or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
+                   or exists (select a.id from CapaAction a
+                              where a.capa = c
+                                and (a.assigneeId = :user or a.verificationAssigneeId = :user)))
             """)
     Page<CapaCase> findConcerning(@Param("tenantId") UUID tenantId, @Param("status") CapaStatus status,
                                   @Param("criticity") CapaCriticity criticity,
@@ -179,7 +182,9 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
                                      and a.actionType <> com.openlab.qualitos.quality.capa.CapaActionType.CONTAINMENT)))
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
-                   or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
+                   or exists (select a.id from CapaAction a
+                              where a.capa = c
+                                and (a.assigneeId = :user or a.verificationAssigneeId = :user)))
             """)
     List<CapaCase> findForEffectivenessBoardConcerning(
             @Param("tenantId") UUID tenantId,
@@ -206,7 +211,9 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
               and c.tenantId = :tenantId
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
-                   or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
+                   or exists (select a.id from CapaAction a
+                              where a.capa = c
+                                and (a.assigneeId = :user or a.verificationAssigneeId = :user)))
             """)
     boolean existsConcerning(@Param("id") UUID id, @Param("tenantId") UUID tenantId,
                              @Param("user") UUID user);
