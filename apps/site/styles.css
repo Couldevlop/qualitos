@@ -275,10 +275,13 @@ img { max-width: 100%; height: auto; }
 
 .heros__contenu { position: relative; }
 
+/* PLUS DE FILET AU-DESSUS. Il fermait l'accroche par le haut, juste sous
+   l'en-tete, et faisait du premier mot de la page le contenu d'une boite
+   plutot que son ouverture. Celui du bas reste : il ne ferme rien, il
+   separe ce qu'on affirme de ce qu'on montre. */
 .bande {
   position: relative;
-  padding-block: clamp(1.5rem, 2.6vw, 2.25rem);
-  border-top: 1px solid var(--filet-fort);
+  padding-block: 0 clamp(1.5rem, 2.6vw, 2.25rem);
   border-bottom: 1px solid var(--filet-fort);
 }
 
