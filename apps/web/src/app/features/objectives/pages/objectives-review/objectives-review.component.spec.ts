@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { EMPTY, of, throwError } from 'rxjs';
 
@@ -24,7 +23,8 @@ import { ObjectivesReviewComponent } from './objectives-review.component';
  *
  * <p>Ce qui est vérifié ici, c'est ce que l'écran DIT : la cible écrite dans le
  * sens du KPI, l'écart signé, pourquoi un objectif reste en alerte, et le fait
- * que les trois gestes du panneau appellent bien trois choses différentes.
+ * que la colonne « Action » ouvre la fenêtre CAPA sans rien avoir prérédigé
+ * (recette du 27/11/2026, ADR 0143).
  */
 describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () => {
 
@@ -35,7 +35,7 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
       processId: 'p-1', processName: 'Production', isoClause: '6.2',
       periodMonths: 1, targetValue: 500, thresholdWarning: 600, thresholdCritical: 800,
       warningPeriods: 2, criticalPeriods: 1, recoveryPeriods: 3,
-      capaOwnerId: 'u-1', capaOwnerName: 'Awa Diallo', rootCauseDueDays: 5,
+      effectivenessCriterion: 'Le KPI « NC client » revient à ou sous 500 ppm…',
       lifecycle: 'ACTIVE',
       assessment: {
         status: 'CRITICAL', observedValue: 900, deviationAbsolute: 400,
@@ -80,9 +80,9 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
 
   async function build(r: ObjectiveReview = revue(), canManage = true): Promise<void> {
     svc = jasmine.createSpyObj<ObjectivesService>('ObjectivesService',
-      ['review', 'accept', 'reject', 'archive', 'evaluateAll']);
+      ['review', 'openCapa', 'reject', 'archive', 'evaluateAll']);
     svc.review.and.returnValue(of(r));
-    svc.accept.and.returnValue(of(proposition({ status: 'ACCEPTED', capaCaseId: 'c-9' })));
+    svc.openCapa.and.returnValue(of({ capaId: 'c-9', proposalId: 'pr-1' }));
     svc.reject.and.returnValue(of(proposition({ status: 'REJECTED' })));
     svc.archive.and.returnValue(of(undefined));
     svc.evaluateAll.and.returnValue(of([]));
@@ -114,10 +114,10 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     fixture.detectChanges();
   }
 
-  it('charge la revue et ouvre la première proposition en attente', async () => {
+  it('charge la revue', async () => {
     await build();
     expect(component.review?.objectives.length).toBe(1);
-    expect(component.selected?.id).toBe('pr-1');
+    expect(component.failed).toBeFalse();
   });
 
   it('signale l\'échec sans laisser une revue à moitié affichée', async () => {
@@ -193,21 +193,6 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
   });
 
   /**
-   * Le fait du panneau doit porter l'unité comme la porte la description du
-   * dossier. « 900 » seul, quand la description dit « 900 ppm », se lit comme
-   * deux chiffres différents.
-   */
-  it('cite l\'écart du panneau avec l\'unité du KPI de l\'objectif', async () => {
-    await build();
-    expect(component.proposalObservedLabel(proposition())).toBe('900 ppm');
-  });
-
-  it('n\'invente pas d\'unité dans le panneau quand le KPI n\'en a pas', async () => {
-    await build(revue({ objectives: [objectif({ kpiUnit: null })] }));
-    expect(component.proposalObservedLabel(proposition())).toBe('900');
-  });
-
-  /**
    * Un objectif retenu par une CAPA ouverte doit DIRE ce qu'il attend. Sans
    * cela, l'utilisateur voit un KPI revenu sous la cible et un statut en alerte,
    * et conclut à un défaut d'affichage.
@@ -232,11 +217,13 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     expect(component.recoveryLabel(o)).toContain('0');
   });
 
-  it('distingue la CAPA proposée, celle en cours, et l\'absence de dossier', async () => {
+  /**
+   * La colonne ne dit plus « Proposée » : la proposition n'est plus un objet que
+   * l'utilisateur accepte, elle est devenue le signal qui fait apparaître le
+   * bouton. Reste à dire les deux états où il n'y a rien à ouvrir.
+   */
+  it('distingue le dossier en cours de l\'absence de dossier', async () => {
     await build();
-    expect(component.capaLabel(objectif())).toContain('Proposée');
-
-    await build(revue({ pendingProposals: [] }));
     expect(component.capaLabel(objectif())).toBe('Aucune');
 
     const retenu = objectif({
@@ -245,34 +232,77 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     expect(component.capaLabel(retenu)).toContain('en cours');
   });
 
-  it('compte les périodes consécutives quand il y en a plus d\'une', async () => {
-    await build(revue({ pendingProposals: [proposition({ breachPeriods: 3 })] }));
-    expect(component.capaLabel(objectif())).toContain('3');
+  /**
+   * La colonne « Action » n'ouvre plus un dossier prérédigé : elle ouvre la
+   * fenêtre CAPA, où l'utilisateur écrit l'action qu'il va vraiment faire. Un
+   * texte écrit par la règle se signait sans être lu (recette, diapo 5).
+   */
+  it('ouvre la fenêtre CAPA, sans rien avoir prérédigé', async () => {
+    await build();
+    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
+    component.addAction(objectif());
+    expect(dialog.open).toHaveBeenCalled();
+    const data = dialog.open.calls.mostRecent().args[1]?.data as Record<string, unknown>;
+    expect(data['prefill']).toEqual({ criticity: 'CRITICAL' });
+    expect(data['source']).toEqual({ type: 'QUALITY_OBJECTIVE', reference: 'Taux de NC client' });
+    expect(data['lockCriticity']).toBeTrue();
   });
 
-  it('accepte la proposition et recharge la revue', async () => {
+  /**
+   * Le critère d'efficacité descend VERROUILLÉ dans la fenêtre : le laisser
+   * saisir reviendrait à clore sur une cible plus facile que l'engagement pris.
+   */
+  it('impose le critère d\'efficacité de l\'objectif à la fenêtre', async () => {
     await build();
-    // Une fois la CAPA enregistree, le serveur ne rend plus la proposition
-    // tranchee : la revue rechargee referme le panneau.
-    svc.review.and.returnValue(of(revue({ pendingProposals: [] })));
-    component.accept(proposition());
-    expect(svc.accept).toHaveBeenCalledWith('pr-1');
-    expect(component.selected).toBeUndefined();
+    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
+    component.addAction(objectif());
+    const data = dialog.open.calls.mostRecent().args[1]?.data as Record<string, unknown>;
+    expect(data['imposedVerification'])
+      .toEqual({ criterion: 'Le KPI « NC client » revient à ou sous 500 ppm…' });
+  });
+
+  /** Le dossier naît sur la route de l'objectif, qui solde la proposition. */
+  it('crée le dossier par la route de l\'objectif, et recharge la revue', async () => {
+    await build();
+    let recu: { capaId: string } | undefined;
+    dialog.open.and.returnValue({ afterClosed: () => of({ capaId: 'c-9' }) } as never);
+    component.addAction(objectif());
+    const data = dialog.open.calls.mostRecent().args[1]?.data as Record<string, unknown>;
+    const open = data['open'] as (r: Record<string, unknown>) => { subscribe: (f: (v: never) => void) => void };
+    open({
+      title: 'Recaler la presse 3', ownerId: 'u-1', ownerName: 'Awa Diallo',
+      dueDate: '2026-12-10'
+    }).subscribe(v => (recu = v));
+    expect(svc.openCapa).toHaveBeenCalled();
+    expect(svc.openCapa.calls.mostRecent().args[0]).toBe('o-1');
+    expect(recu?.capaId).toBe('c-9');
     expect(svc.review).toHaveBeenCalledTimes(2);
   });
 
   /**
-   * « Accepter et ajouter une action » enregistre le dossier ET y mène. Rejeter
-   * en bloc laisserait l'écart sans traitement alors que le désaccord ne porte
-   * que sur le geste à faire.
+   * Le bouton n'apparaît que sur un écart à traiter : un objectif atteint n'a
+   * rien à corriger, et un écart déjà tenu par un dossier ouvert en aurait deux.
    */
-  it('accepte puis navigue vers le dossier pour y ajouter une action', async () => {
+  it('ne propose d\'agir que sur un écart non encore traité', async () => {
     await build();
-    const router = TestBed.inject(Router);
-    const nav = spyOn(router, 'navigate').and.resolveTo(true);
-    component.acceptAndAddAction(proposition());
-    expect(svc.accept).toHaveBeenCalledWith('pr-1');
-    expect(nav).toHaveBeenCalledWith(['/capa', 'c-9']);
+    expect(component.aTraiter(objectif())).toBeTrue();
+    expect(component.aTraiter(objectif({
+      assessment: { ...objectif().assessment, status: 'ON_TARGET' }
+    }))).toBeFalse();
+    expect(component.aTraiter(objectif({
+      assessment: { ...objectif().assessment, heldByOpenCapa: true }
+    }))).toBeFalse();
+  });
+
+  /** Sur une alerte, la criticité descend à MEDIUM : elle n'est pas critique. */
+  it('fait suivre la criticité du niveau atteint', async () => {
+    await build();
+    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
+    component.addAction(objectif({
+      assessment: { ...objectif().assessment, status: 'WARNING' }
+    }));
+    const data = dialog.open.calls.mostRecent().args[1]?.data as Record<string, unknown>;
+    expect(data['prefill']).toEqual({ criticity: 'MEDIUM' });
   });
 
   it('ne rejette RIEN si la fenêtre de motif est annulée', async () => {
@@ -316,24 +346,17 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
   });
 
   /**
-   * La proposition tranchée par quelqu'un d'autre entre deux chargements ne doit
-   * pas rester ouverte : le panneau proposerait de décider d'un écart déjà
-   * décidé.
+   * La recette veut une liste déroulante mm/aaaa, pas un champ de date libre :
+   * la revue se lit par période, et une date au hasard dans le mois ne dit rien
+   * de plus que le mois.
    */
-  it('referme le panneau si la proposition a disparu de la revue', async () => {
+  it('offre les mois en liste déroulante, le plus récent en tête', async () => {
     await build();
-    svc.review.and.returnValue(of(revue({ pendingProposals: [] })));
-    component.load();
-    expect(component.selected).toBeUndefined();
-  });
-
-  it('garde ouverte la proposition qu\'on regardait si elle est toujours là', async () => {
-    await build();
-    svc.review.and.returnValue(of(revue({
-      pendingProposals: [proposition({ id: 'pr-2' }), proposition()]
-    })));
-    component.load();
-    expect(component.selected?.id).toBe('pr-1');
+    expect(component.mois.length).toBe(24);
+    expect(component.mois[0].value.endsWith('-01')).toBeTrue();
+    expect(component.mois[0].label).toMatch(/^\d{2}\/\d{4}$/);
+    const html = fixture.nativeElement as HTMLElement;
+    expect(html.querySelector('[data-test="objectifs-filtre-periode"]')).not.toBeNull();
   });
 
   it('ne montre les gestes d\'écriture qu\'à qui peut les faire', async () => {
@@ -341,7 +364,7 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     expect(component.canManage).toBeFalse();
     const html = fixture.nativeElement as HTMLElement;
     expect(html.querySelector('[data-test="objectifs-nouveau"]')).toBeNull();
-    expect(html.querySelector('[data-test="objectifs-accepter"]')).toBeNull();
+    expect(html.querySelector('[data-test="objectif-ajouter-action-o-1"]')).toBeNull();
   });
 
   it('affiche les quatre tuiles et la ligne de l\'objectif', async () => {
@@ -349,37 +372,17 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     const html = fixture.nativeElement as HTMLElement;
     expect(html.querySelectorAll('[data-test="objectifs-tuiles"] .tuile').length).toBe(4);
     expect(html.querySelector('[data-test="objectif-o-1"]')).not.toBeNull();
-    expect(html.querySelector('[data-test="objectifs-critere"]')?.textContent)
-      .toContain('NC client');
   });
 
   /**
-   * La ligne « Liens générés » de la maquette annotée. Elle nomme ce que le
-   * dossier rapproche, et le panneau la porte en texte, comme la maquette.
+   * Le bouton de la colonne « Action », présent sur l'écart à traiter. La diapo
+   * 5 de la recette l'exige nommé « Action », et non « CAPA » : ce qu'on ouvre
+   * est une action, le dossier n'en est que le support.
    */
-  it('porte la ligne « Liens générés » de la maquette', async () => {
+  it('porte le bouton d\'action sur la ligne en écart', async () => {
     await build();
-    const liens = (fixture.nativeElement as HTMLElement)
-      .querySelector('[data-test="objectifs-liens"]');
-    expect(liens).not.toBeNull();
-    expect(liens?.textContent).toContain('Liens générés');
-    expect(liens?.textContent).toContain('NC clients du mois');
-    expect(liens?.textContent).toContain('Réclamations');
-    expect(liens?.textContent).toContain('PFMEA');
-    expect(liens?.textContent).toContain('Control plan');
-    expect(liens?.textContent).toContain('Revue de direction 9.3');
-  });
-
-  /**
-   * Elle est hors du garde de `canManage` : c'est un renseignement, pas un
-   * geste. Un auditeur en lecture seule doit voir ce que le dossier rapproche,
-   * alors que les trois boutons de décision, eux, restent réservés.
-   */
-  it('montre les liens à qui ne peut pas décider, mais pas les boutons', async () => {
-    await build(revue(), false);
     const html = fixture.nativeElement as HTMLElement;
-    expect(html.querySelector('[data-test="objectifs-liens"]')).not.toBeNull();
-    expect(html.querySelector('[data-test="objectifs-accepter"]')).toBeNull();
+    expect(html.querySelector('[data-test="objectif-ajouter-action-o-1"]')).not.toBeNull();
   });
 
   it('annonce le vide plutôt que de laisser un tableau nu', async () => {

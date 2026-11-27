@@ -23,6 +23,10 @@ import java.util.UUID;
  * maquette demande — pas d'unité en dur sur les champs de cible et de seuils,
  * puisqu'elle change d'un indicateur à l'autre.
  *
+ * <p><b>Ni pilote ni échéance.</b> Qui mène l'action et pour quand se saisit
+ * dans la fenêtre d'ouverture de la CAPA, au moment où l'on décide d'agir —
+ * pas des mois plus tôt, en réglant l'objectif. Voir l'ADR 0143.
+ *
  * <p>Voir l'ADR 0133.
  */
 @Entity
@@ -95,20 +99,6 @@ public class QualityObjective {
     @Column(name = "recovery_periods", nullable = false)
     private int recoveryPeriods;
 
-    /**
-     * Le pilote à qui la CAPA sera proposée ; choisi dans l'annuaire, son nom
-     * recopié à la saisie (ADR 0052) — une fiche de revue n'affiche pas un UUID.
-     */
-    @Column(name = "capa_owner_id", nullable = false)
-    private UUID capaOwnerId;
-
-    @Column(name = "capa_owner_name", length = 255)
-    private String capaOwnerName;
-
-    /** Délai d'analyse de cause racine, en jours ouvrés ; échéance de la CAPA proposée. */
-    @Column(name = "root_cause_due_days", nullable = false)
-    private int rootCauseDueDays;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
     private ObjectiveLifecycle status;
@@ -132,7 +122,6 @@ public class QualityObjective {
         if (warningPeriods == 0) warningPeriods = 2;
         if (criticalPeriods == 0) criticalPeriods = 1;
         if (recoveryPeriods == 0) recoveryPeriods = 1;
-        if (rootCauseDueDays == 0) rootCauseDueDays = 5;
     }
 
     @PreUpdate
@@ -169,12 +158,6 @@ public class QualityObjective {
     public void setCriticalPeriods(int criticalPeriods) { this.criticalPeriods = criticalPeriods; }
     public int getRecoveryPeriods() { return recoveryPeriods; }
     public void setRecoveryPeriods(int recoveryPeriods) { this.recoveryPeriods = recoveryPeriods; }
-    public UUID getCapaOwnerId() { return capaOwnerId; }
-    public void setCapaOwnerId(UUID capaOwnerId) { this.capaOwnerId = capaOwnerId; }
-    public String getCapaOwnerName() { return capaOwnerName; }
-    public void setCapaOwnerName(String capaOwnerName) { this.capaOwnerName = capaOwnerName; }
-    public int getRootCauseDueDays() { return rootCauseDueDays; }
-    public void setRootCauseDueDays(int d) { this.rootCauseDueDays = d; }
     public ObjectiveLifecycle getStatus() { return status; }
     public void setStatus(ObjectiveLifecycle status) { this.status = status; }
     public UUID getCreatedBy() { return createdBy; }

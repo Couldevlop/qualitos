@@ -24166,10 +24166,6 @@ historial de 12 meses</target>
         <source>Période</source>
         <target state="translated">Periodo</target>
       </trans-unit>
-      <trans-unit id="objectives.filter.as-of-hint" datatype="html">
-        <source>Vide = état courant</source>
-        <target state="translated">Vacío = estado actual</target>
-      </trans-unit>
       <trans-unit id="objectives.filter.process" datatype="html">
         <source>Processus</source>
         <target state="translated">Proceso</target>
@@ -24213,10 +24209,6 @@ historial de 12 meses</target>
       <trans-unit id="objectives.column.status" datatype="html">
         <source>Statut</source>
         <target state="translated">Estado</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.capa" datatype="html">
-        <source>CAPA</source>
-        <target state="translated">CAPA</target>
       </trans-unit>
       <trans-unit id="objectives.status.not-evaluated" datatype="html">
         <source>Non mesuré</source>
@@ -24270,14 +24262,6 @@ historial de 12 meses</target>
         <source>12 mois</source>
         <target state="translated">12 meses</target>
       </trans-unit>
-      <trans-unit id="objectives.capa.proposed" datatype="html">
-        <source>Proposée · à valider par le pilote</source>
-        <target state="translated">Propuesta · a validar por el responsable</target>
-      </trans-unit>
-      <trans-unit id="objectives.capa.proposed-periods" datatype="html">
-        <source>Proposée · <x id="count"/> périodes consécutives</source>
-        <target state="translated">Propuesta · <x id="count"/> periodos consecutivos</target>
-      </trans-unit>
       <trans-unit id="objectives.capa.open" datatype="html">
         <source>CAPA en cours · retour sous la cible attendu</source>
         <target state="translated">CAPA en curso · se espera el regreso a la meta</target>
@@ -24289,54 +24273,6 @@ historial de 12 meses</target>
       <trans-unit id="objectives.recovery.remaining" datatype="html">
         <source><x id="tenues"/> période(s) sous la cible sur <x id="exigees"/> — il en reste <x id="reste"/></source>
         <target state="translated"><x id="tenues"/> periodo(s) en la meta de <x id="exigees"/> — faltan <x id="reste"/></target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.title" datatype="html">
-        <source>CAPA préremplie</source>
-        <target state="translated">CAPA precargada</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.objective" datatype="html">
-        <source>Objectif</source>
-        <target state="translated">Objetivo</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.observed" datatype="html">
-        <source>Écart constaté</source>
-        <target state="translated">Valor observado</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.periods" datatype="html">
-        <source>Périodes consécutives</source>
-        <target state="translated">Periodos consecutivos</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.criterion" datatype="html">
-        <source>Vérification d'efficacité — obligatoire</source>
-        <target state="translated">Verificación de eficacia — obligatoria</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.links" datatype="html">
-        <source>Liens générés</source>
-        <target state="translated">Enlaces generados</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.links-list" datatype="html">
-        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
-        <target state="translated">NC de clientes del mes · Reclamaciones · PFMEA · Plan de control · Revisión por la dirección 9.3</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.accept" datatype="html">
-        <source>Accepter et enregistrer la CAPA</source>
-        <target state="translated">Aceptar y registrar la CAPA</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.add-action" datatype="html">
-        <source>Accepter et ajouter une action</source>
-        <target state="translated">Aceptar y añadir una acción</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.reject" datatype="html">
-        <source>Rejeter avec justification</source>
-        <target state="translated">Rechazar con justificación</target>
-      </trans-unit>
-      <trans-unit id="objectives.accepted" datatype="html">
-        <source>CAPA enregistrée.</source>
-        <target state="translated">CAPA registrada.</target>
-      </trans-unit>
-      <trans-unit id="objectives.open-capa" datatype="html">
-        <source>Ouvrir</source>
-        <target state="translated">Abrir</target>
       </trans-unit>
       <trans-unit id="objectives.rejected" datatype="html">
         <source>Proposition rejetée, avec son motif.</source>
@@ -24417,10 +24353,6 @@ historial de 12 meses</target>
       <trans-unit id="objectives.field.iso-clause" datatype="html">
         <source>Clause ISO 9001</source>
         <target state="translated">Cláusula ISO 9001</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi" datatype="html">
-        <source>Source de données</source>
-        <target state="translated">Fuente de datos</target>
       </trans-unit>
       <trans-unit id="objectives.field.kpi-locked" datatype="html">
         <source>Le KPI d'un objectif ne change pas : son historique cesserait d'être comparable.</source>
@@ -24518,18 +24450,6 @@ historial de 12 meses</target>
         <source>Nombre de périodes</source>
         <target state="translated">Número de periodos</target>
       </trans-unit>
-      <trans-unit id="objectives.field.capa-owner" datatype="html">
-        <source>Responsable de la CAPA</source>
-        <target state="translated">Responsable de la CAPA</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.due-days" datatype="html">
-        <source>Délai d'analyse de cause racine</source>
-        <target state="translated">Plazo de análisis de causa raíz</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.working-days" datatype="html">
-        <source>jours ouvrés</source>
-        <target state="translated">días laborables</target>
-      </trans-unit>
       <trans-unit id="objectives.field.recovery" datatype="html">
         <source>Retour à « atteint » après</source>
         <target state="translated">Vuelta a «alcanzado» tras</target>
@@ -24573,10 +24493,6 @@ historial de 12 meses</target>
       <trans-unit id="objectives.error.evaluate" datatype="html">
         <source>La confrontation aux mesures n'a pas abouti.</source>
         <target state="translated">La comparación con las mediciones no ha podido completarse.</target>
-      </trans-unit>
-      <trans-unit id="objectives.error.accept" datatype="html">
-        <source>La CAPA n'a pas pu être enregistrée.</source>
-        <target state="translated">No se ha podido guardar la CAPA.</target>
       </trans-unit>
       <trans-unit id="objectives.error.reject" datatype="html">
         <source>Le rejet n'a pas pu être enregistré.</source>
@@ -25707,8 +25623,8 @@ historial de 12 meses</target>
         <target state="translated">Categoría:</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-critical" datatype="html">
-        <source>Critical</source>
-        <target state="translated">Critical</target>
+        <source>Seuil critique</source>
+        <target state="translated">Umbral crítico</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-health" datatype="html">
         <source>Santé</source>
@@ -25739,8 +25655,8 @@ historial de 12 meses</target>
         <target state="translated">Valor</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-warning" datatype="html">
-        <source>Warning</source>
-        <target state="translated">Warning</target>
+        <source>Seuil d'alerte</source>
+        <target state="translated">Umbral de alerta</target>
       </trans-unit>
       <trans-unit id="kpis.detail.delete-measurement-title" datatype="html">
         <source>Supprimer cette mesure ?</source>
@@ -37763,6 +37679,58 @@ India (centro de servicio)</target>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">No se puede cargar el editor de diagramas.</target>
+      </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target>Objetivo de calidad</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target>Se exige la verificación de eficacia, y la regla fija su criterio</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target>Acción</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target>Añadir una acción</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target>Ninguna acción: justificar</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target>Periodo actual</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target>Código del KPI</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
+        <target>El objetivo y los umbrales se toman del KPI y pueden modificarse.</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
+        <target>Estos valores difieren de los del KPI. Al guardar, se le propondrá trasladarlos a él.</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces valeurs sur le KPI ?</source>
+        <target>¿Trasladar estos valores al KPI?</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
+        <target>El KPI tiene otro objetivo y otros umbrales. Sustituirlos lo alineará con este objetivo, para todos.</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter</source>
+        <target>Trasladar</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target>Dejar el KPI como está</target>
       </trans-unit>
     </body>
   </file>

@@ -123,9 +123,6 @@ class QualityObjectiveServiceTest {
         o.setWarningPeriods(2);
         o.setCriticalPeriods(1);
         o.setRecoveryPeriods(2);
-        o.setCapaOwnerId(PILOTE);
-        o.setCapaOwnerName("Awa Diallo");
-        o.setRootCauseDueDays(5);
         o.setStatus(ObjectiveLifecycle.ACTIVE);
         o.setCreatedBy(ACTOR);
         o.setCreatedAt(Instant.now());
@@ -146,7 +143,7 @@ class QualityObjectiveServiceTest {
     static ObjectiveDto.CreateRequest creation(String target, String warning, String critical) {
         return new ObjectiveDto.CreateRequest("Taux de NC client", KPI, null, "Production",
                 "6.2", 1, new BigDecimal(target), new BigDecimal(warning),
-                new BigDecimal(critical), 2, 1, 2, PILOTE, "Awa Diallo", 5);
+                new BigDecimal(critical), 2, 1, 2);
     }
 
     private void releves(String... moisEtValeurs) {
@@ -196,7 +193,7 @@ class QualityObjectiveServiceTest {
             when(kpis.findById(inconnu)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> service.create(new ObjectiveDto.CreateRequest(
                     "x", inconnu, null, null, null, 1, BigDecimal.ONE, BigDecimal.TWO,
-                    new BigDecimal("3"), 2, 1, 1, PILOTE, null, 5)))
+                    new BigDecimal("3"), 2, 1, 1)))
                     .isInstanceOf(ObjectiveValidationException.class)
                     .hasMessageContaining("Unknown KPI");
         }
@@ -224,7 +221,7 @@ class QualityObjectiveServiceTest {
         void unePeriodeHorsDe1_3_6_12_estRefusee() {
             assertThatThrownBy(() -> service.create(new ObjectiveDto.CreateRequest(
                     "x", KPI, null, null, null, 7, new BigDecimal("500"),
-                    new BigDecimal("600"), new BigDecimal("800"), 2, 1, 1, PILOTE, null, 5)))
+                    new BigDecimal("600"), new BigDecimal("800"), 2, 1, 1)))
                     .isInstanceOf(ObjectiveValidationException.class)
                     .hasMessageContaining("1, 3, 6 or 12");
         }
@@ -259,8 +256,7 @@ class QualityObjectiveServiceTest {
         @Test
         void sansCibleNiSeuils_leRefusDitPourquoi() {
             assertThatThrownBy(() -> service.create(new ObjectiveDto.CreateRequest(
-                    "x", KPI, null, null, null, 1, null, null, null,
-                    2, 1, 1, PILOTE, null, 5)))
+                    "x", KPI, null, null, null, 1, null, null, null, 2, 1, 1)))
                     .isInstanceOf(ObjectiveValidationException.class)
                     .hasMessageContaining("cannot say whether it is met");
         }
@@ -278,7 +274,7 @@ class QualityObjectiveServiceTest {
             releves();
             ObjectiveDto.ObjectiveResponse out = service.update(OBJ,
                     new ObjectiveDto.UpdateRequest("Nouveau titre", null, null, null,
-                            null, null, null, null, null, null, 3, null, null, null, null));
+                            null, null, null, null, null, null, 3, null));
             assertThat(out.title()).isEqualTo("Nouveau titre");
             assertThat(out.recoveryPeriods()).isEqualTo(3);
             assertThat(out.targetValue()).isEqualByComparingTo("500");
@@ -412,8 +408,10 @@ class QualityObjectiveServiceTest {
                     .contains("cible 500 ppm")
                     .contains("900 ppm")
                     .contains("Production")
-                    .contains("5 jours ouvrés")
-                    .contains("du 01/10/2026 au 01/11/2026");
+                    .contains("du 01/10/2026 au 01/11/2026")
+                    // Plus de délai d'analyse : il se saisit à l'ouverture du
+                    // dossier, dans la fenêtre CAPA (ADR 0143).
+                    .doesNotContain("jours ouvrés");
         }
 
         @Test
@@ -488,10 +486,16 @@ class QualityObjectiveServiceTest {
     // ---------- décision du pilote ----------
 
     @Nested
-    @DisplayName("Le pilote accepte ou rejette")
+    @DisplayName("Le pilote ouvre la CAPA depuis la ligne, ou décline avec un motif")
     class Decider {
 
         QualityObjectiveProposal enAttente;
+
+        /** L'action telle que le pilote l'écrit dans la fenêtre CAPA. */
+        static final ObjectiveDto.OpenCapaRequest ACTION = new ObjectiveDto.OpenCapaRequest(
+                "Recaler le réglage de la presse 3",
+                "Reprise du plan de contrôle et nouvelle gamme de réglage.",
+                PILOTE, "Awa Diallo", LocalDate.now().plusDays(10));
 
         @BeforeEach
         void proposition() {
@@ -510,22 +514,56 @@ class QualityObjectiveServiceTest {
             enAttente.setStatus(ProposalStatus.PENDING);
             enAttente.setCreatedAt(Instant.now());
             when(proposals.findByIdAndTenantId(PROP, TENANT)).thenReturn(Optional.of(enAttente));
+            when(proposals.findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(TENANT, OBJ))
+                    .thenReturn(List.of(enAttente));
             when(objectives.findByIdAndTenantId(OBJ, TENANT)).thenReturn(Optional.of(objectif()));
             when(capaService.openCase(any(), any(), any())).thenReturn(dossierCree());
+            releves("2026-10", "900");
+        }
+
+        private CapaDto.OpenCaseRequest ouvrir() {
+            service.openCapa(OBJ, ACTION);
+            ArgumentCaptor<CapaDto.OpenCaseRequest> c =
+                    ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
+            verify(capaService).openCase(c.capture(), any(), any());
+            return c.getValue();
         }
 
         @Test
-        void accepter_creeLeDossier_etLaPropositionLeCite() {
-            ObjectiveDto.ProposalResponse out = service.accept(PROP);
-            assertThat(out.status()).isEqualTo(ProposalStatus.ACCEPTED);
-            assertThat(out.capaCaseId()).isEqualTo(CASE);
-            assertThat(out.decidedBy()).isEqualTo(ACTOR);
-            assertThat(out.decidedAt()).isNotNull();
+        void leDossierNaitDeLActionSaisie_etRienNEstPreredige() {
+            // La recette l'a demandé ainsi : un dossier prérempli par la règle
+            // se signait sans être lu, et son action ne disait pas ce qu'on
+            // allait vraiment faire.
+            CapaDto.OpenCaseRequest req = ouvrir();
+            assertThat(req.title()).isEqualTo("Recaler le réglage de la presse 3");
+            assertThat(req.description()).isEqualTo(ACTION.description());
+            assertThat(req.title()).isNotEqualTo(enAttente.getTitle());
+        }
+
+        @Test
+        void laPropositionEnAttenteEstSoldeeParLeDossier() {
+            ObjectiveDto.CapaOpenedResponse out = service.openCapa(OBJ, ACTION);
+            assertThat(out.capaId()).isEqualTo(CASE);
+            assertThat(out.proposalId()).isEqualTo(PROP);
+            assertThat(enAttente.getStatus()).isEqualTo(ProposalStatus.ACCEPTED);
+            assertThat(enAttente.getCapaCaseId()).isEqualTo(CASE);
+            assertThat(enAttente.getDecidedBy()).isEqualTo(ACTOR);
+        }
+
+        @Test
+        void sansProposition_onPeutQuandMemeAgir() {
+            // La règle ne propose qu'au bout de ses périodes consécutives ; la
+            // recette veut le bouton dès la première ligne passée en alerte.
+            when(proposals.findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(TENANT, OBJ))
+                    .thenReturn(List.of());
+            ObjectiveDto.CapaOpenedResponse out = service.openCapa(OBJ, ACTION);
+            assertThat(out.capaId()).isEqualTo(CASE);
+            assertThat(out.proposalId()).isNull();
         }
 
         @Test
         void leDossierNaitCorrectif_surLaSourceObjectifQualite() {
-            service.accept(PROP);
+            service.openCapa(OBJ, ACTION);
             ArgumentCaptor<CapaDto.OpenCaseRequest> c =
                     ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
             verify(capaService).openCase(c.capture(),
@@ -541,61 +579,75 @@ class QualityObjectiveServiceTest {
         void laVerificationDEfficaciteEstOBLIGATOIRE_sansQuestionPosee() {
             // Contrairement aux autres dossiers, où elle se décide à l'ouverture :
             // un écart d'objectif ne se referme pas sur une déclaration.
-            service.accept(PROP);
-            ArgumentCaptor<CapaDto.OpenCaseRequest> c =
-                    ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
-            verify(capaService).openCase(c.capture(), any(), any());
-            assertThat(c.getValue().verificationRequired()).isTrue();
-            assertThat(c.getValue().verificationAssigneeId()).isEqualTo(PILOTE);
-            assertThat(c.getValue().effectivenessCriterion())
-                    .isEqualTo(enAttente.getEffectivenessCriterion());
+            CapaDto.OpenCaseRequest req = ouvrir();
+            assertThat(req.verificationRequired()).isTrue();
+            assertThat(req.verificationAssigneeId()).isEqualTo(PILOTE);
+        }
+
+        @Test
+        void leCritereEstEcritParLaRegle_etNonParLaFenetre() {
+            // Verrouillé : le laisser saisir reviendrait à clore sur une cible
+            // plus facile que celle qu'on s'était donnée.
+            CapaDto.OpenCaseRequest req = ouvrir();
+            assertThat(req.effectivenessCriterion())
+                    .contains("Taux de NC client")
+                    .contains("500")
+                    .contains("2 période(s)");
         }
 
         @Test
         void lInstructionDeVerificationDitQuAucunCalculNEstADemander() {
             // Le vérificateur n'a rien à mesurer : la plateforme compte les
             // périodes. Sans cela, il pourrait conclure de son côté.
-            service.accept(PROP);
-            ArgumentCaptor<CapaDto.OpenCaseRequest> c =
-                    ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
-            verify(capaService).openCase(c.capture(), any(), any());
-            assertThat(c.getValue().verificationInstructions())
+            CapaDto.OpenCaseRequest req = ouvrir();
+            assertThat(req.verificationInstructions())
                     .contains("Taux de NC client")
                     .contains("2 période(s)")
                     .contains("Aucun calcul");
             // Le critère et l'instruction ne se confondent pas : l'un dit à quoi
             // on reconnaîtra l'effet, l'autre ce qu'il y a à faire.
-            assertThat(c.getValue().verificationInstructions())
-                    .isNotEqualTo(c.getValue().effectivenessCriterion());
+            assertThat(req.verificationInstructions())
+                    .isNotEqualTo(req.effectivenessCriterion());
         }
 
         @Test
-        void leDossierEstConfieAuPilote_nommeEtPasEnUuid() {
-            service.accept(PROP);
-            ArgumentCaptor<CapaDto.OpenCaseRequest> c =
-                    ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
-            verify(capaService).openCase(c.capture(), any(), any());
-            assertThat(c.getValue().ownerId()).isEqualTo(PILOTE);
-            assertThat(c.getValue().ownerName()).isEqualTo("Awa Diallo");
+        void leDossierEstConfieAQuiLaFenetreDesigne_nommeEtPasEnUuid() {
+            // Le pilote n'est plus porté par l'objectif : il se choisit au
+            // moment où l'on décide d'agir (ADR 0143).
+            CapaDto.OpenCaseRequest req = ouvrir();
+            assertThat(req.ownerId()).isEqualTo(PILOTE);
+            assertThat(req.ownerName()).isEqualTo("Awa Diallo");
         }
 
         @Test
-        void lEcheanceEstCalculeeALAcceptation_etTombeUnJourOuvre() {
-            service.accept(PROP);
-            ArgumentCaptor<CapaDto.OpenCaseRequest> c =
-                    ArgumentCaptor.forClass(CapaDto.OpenCaseRequest.class);
-            verify(capaService).openCase(c.capture(), any(), any());
-            LocalDate echeance = c.getValue().dueDate();
-            assertThat(echeance).isAfter(LocalDate.now());
-            assertThat(echeance.getDayOfWeek().getValue()).isLessThanOrEqualTo(5);
+        void lEcheanceEstCelleQuOnASaisie() {
+            // Et non un délai réglé des mois plus tôt sur l'objectif.
+            assertThat(ouvrir().dueDate()).isEqualTo(ACTION.dueDate());
         }
 
         @Test
-        void accepterDeuxFois_estRefuse() {
-            enAttente.setStatus(ProposalStatus.ACCEPTED);
-            assertThatThrownBy(() -> service.accept(PROP))
+        void laCriticiteSuitLeNiveauAtteint() {
+            assertThat(ouvrir().criticity()).isEqualTo(ObjectiveLevel.CRITICAL.criticity());
+        }
+
+        @Test
+        void unObjectifAtteint_nOuvreRien() {
+            // Il n'y a pas d'écart à traiter : le bouton n'est pas proposé, et
+            // le serveur refuse si on l'appelle quand même.
+            releves("2026-10", "100");
+            assertThatThrownBy(() -> service.openCapa(OBJ, ACTION))
                     .isInstanceOf(ObjectiveStateException.class)
-                    .hasMessageContaining("already been decided");
+                    .hasMessageContaining("not in alert or critical");
+            verify(capaService, never()).openCase(any(), any(), any());
+        }
+
+        @Test
+        void unObjectifArchive_nOuvrePlusRien() {
+            QualityObjective archive = objectif();
+            archive.setStatus(ObjectiveLifecycle.ARCHIVED);
+            when(objectives.findByIdAndTenantId(OBJ, TENANT)).thenReturn(Optional.of(archive));
+            assertThatThrownBy(() -> service.openCapa(OBJ, ACTION))
+                    .isInstanceOf(ObjectiveStateException.class);
         }
 
         @Test
@@ -628,7 +680,7 @@ class QualityObjectiveServiceTest {
         @Test
         void unePropositionInconnue_estIntrouvable() {
             when(proposals.findByIdAndTenantId(PROP, TENANT)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> service.accept(PROP))
+            assertThatThrownBy(() -> service.reject(PROP, "motif"))
                     .isInstanceOf(ProposalNotFoundException.class);
         }
     }
@@ -728,33 +780,6 @@ class QualityObjectiveServiceTest {
             assertThat(h).hasSize(1);
             assertThat(h.get(0).objectiveTitle()).isEqualTo("Taux de NC client");
             assertThat(h.get(0).rejectionReason()).isEqualTo("motif");
-        }
-    }
-
-    @Nested
-    @DisplayName("L'échéance de cause racine")
-    class Echeance {
-
-        @Test
-        void cinqJoursOuvresDepuisUnJeudi_tombentLeJeudiSuivant() {
-            // Les jours OUVRÉS : cinq jours posés un jeudi tomberaient sinon un
-            // mardi, en ayant compté un week-end où personne n'a travaillé.
-            assertThat(QualityObjectiveService.echeanceCauseRacine(5))
-                    .isAfterOrEqualTo(LocalDate.now().plusDays(5));
-        }
-
-        @Test
-        void aucunJourDemande_aumoinsUnJourOuvre() {
-            assertThat(QualityObjectiveService.echeanceCauseRacine(0))
-                    .isAfter(LocalDate.now());
-        }
-
-        @Test
-        void lEcheanceNeTombeJamaisUnWeekEnd() {
-            for (int jours = 1; jours <= 20; jours++) {
-                assertThat(QualityObjectiveService.echeanceCauseRacine(jours)
-                        .getDayOfWeek().getValue()).isLessThanOrEqualTo(5);
-            }
         }
     }
 }

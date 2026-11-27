@@ -166,6 +166,21 @@
     </mat-hint>
   </mat-form-field>
 
+    <!-- LA SOURCE IMPOSE : la vérification est exigée sans question posée, et le
+         critère est rédigé par la règle. Montrés, non saisis — un écart
+         d'objectif ne se referme pas sur une déclaration mais sur le retour
+         mesuré du KPI sous la cible (ADR 0133 §4, ADR 0143). -->
+    <div class="verification-imposee" *ngIf="verificationImposee"
+         data-test="capa-verification-imposee">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <p class="verification-imposee__titre" i18n="@@capa.verification.imposed">
+          Vérification d'efficacité exigée, et son critère est fixé par la règle
+        </p>
+        <p class="verification-imposee__critere">{{ critereImpose }}</p>
+      </div>
+    </div>
+
     <qos-capa-verification-fields *ngIf="demandeEfficacite"
                                   [group]="form" [mandatory]="true"
                                   data-test="capa-verification-demande"

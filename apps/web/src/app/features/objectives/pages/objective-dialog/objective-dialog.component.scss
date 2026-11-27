@@ -81,3 +81,11 @@
     .regle__niveau { color: var(--qos-danger-fg); }
   }
 }
+
+/* Les seuils saisis s'écartent du catalogue : dit avant l'enregistrement. */
+.divergence {
+  margin: -4px 0 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--qos-warn-fg);
+}

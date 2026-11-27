@@ -24165,10 +24165,6 @@ historique 12 mois</source>
         <source>Période</source>
         <target state="translated">期間</target>
       </trans-unit>
-      <trans-unit id="objectives.filter.as-of-hint" datatype="html">
-        <source>Vide = état courant</source>
-        <target state="translated">空欄 = 現在の状態</target>
-      </trans-unit>
       <trans-unit id="objectives.filter.process" datatype="html">
         <source>Processus</source>
         <target state="translated">プロセス</target>
@@ -24212,10 +24208,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.column.status" datatype="html">
         <source>Statut</source>
         <target state="translated">状態</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.capa" datatype="html">
-        <source>CAPA</source>
-        <target state="translated">CAPA</target>
       </trans-unit>
       <trans-unit id="objectives.status.not-evaluated" datatype="html">
         <source>Non mesuré</source>
@@ -24269,14 +24261,6 @@ historique 12 mois</source>
         <source>12 mois</source>
         <target state="translated">12 か月</target>
       </trans-unit>
-      <trans-unit id="objectives.capa.proposed" datatype="html">
-        <source>Proposée · à valider par le pilote</source>
-        <target state="translated">提案済み · 責任者の承認待ち</target>
-      </trans-unit>
-      <trans-unit id="objectives.capa.proposed-periods" datatype="html">
-        <source>Proposée · <x id="count"/> périodes consécutives</source>
-        <target state="translated">提案済み · 連続 <x id="count"/> 期間</target>
-      </trans-unit>
       <trans-unit id="objectives.capa.open" datatype="html">
         <source>CAPA en cours · retour sous la cible attendu</source>
         <target state="translated">CAPA 進行中 · 目標値への回復を待機</target>
@@ -24288,54 +24272,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.recovery.remaining" datatype="html">
         <source><x id="tenues"/> période(s) sous la cible sur <x id="exigees"/> — il en reste <x id="reste"/></source>
         <target state="translated">目標値内の期間は <x id="exigees"/> 期間中 <x id="tenues"/> 期間 — あと <x id="reste"/> 期間</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.title" datatype="html">
-        <source>CAPA préremplie</source>
-        <target state="translated">自動入力された CAPA</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.objective" datatype="html">
-        <source>Objectif</source>
-        <target state="translated">目標</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.observed" datatype="html">
-        <source>Écart constaté</source>
-        <target state="translated">実測値</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.periods" datatype="html">
-        <source>Périodes consécutives</source>
-        <target state="translated">連続期間数</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.criterion" datatype="html">
-        <source>Vérification d'efficacité — obligatoire</source>
-        <target state="translated">有効性の検証 — 必須</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.links" datatype="html">
-        <source>Liens générés</source>
-        <target state="translated">生成されたリンク</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.links-list" datatype="html">
-        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
-        <target state="translated">当月の顧客不適合 · 苦情 · PFMEA · コントロールプラン · マネジメントレビュー 9.3</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.accept" datatype="html">
-        <source>Accepter et enregistrer la CAPA</source>
-        <target state="translated">承認して CAPA を登録</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.add-action" datatype="html">
-        <source>Accepter et ajouter une action</source>
-        <target state="translated">承認して処置を追加</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.reject" datatype="html">
-        <source>Rejeter avec justification</source>
-        <target state="translated">理由を付けて却下</target>
-      </trans-unit>
-      <trans-unit id="objectives.accepted" datatype="html">
-        <source>CAPA enregistrée.</source>
-        <target state="translated">CAPA を登録しました。</target>
-      </trans-unit>
-      <trans-unit id="objectives.open-capa" datatype="html">
-        <source>Ouvrir</source>
-        <target state="translated">開く</target>
       </trans-unit>
       <trans-unit id="objectives.rejected" datatype="html">
         <source>Proposition rejetée, avec son motif.</source>
@@ -24416,10 +24352,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.field.iso-clause" datatype="html">
         <source>Clause ISO 9001</source>
         <target state="translated">ISO 9001 箇条</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi" datatype="html">
-        <source>Source de données</source>
-        <target state="translated">データ元</target>
       </trans-unit>
       <trans-unit id="objectives.field.kpi-locked" datatype="html">
         <source>Le KPI d'un objectif ne change pas : son historique cesserait d'être comparable.</source>
@@ -24517,18 +24449,6 @@ historique 12 mois</source>
         <source>Nombre de périodes</source>
         <target state="translated">期間数</target>
       </trans-unit>
-      <trans-unit id="objectives.field.capa-owner" datatype="html">
-        <source>Responsable de la CAPA</source>
-        <target state="translated">CAPA 責任者</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.due-days" datatype="html">
-        <source>Délai d'analyse de cause racine</source>
-        <target state="translated">根本原因分析の期限</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.working-days" datatype="html">
-        <source>jours ouvrés</source>
-        <target state="translated">営業日</target>
-      </trans-unit>
       <trans-unit id="objectives.field.recovery" datatype="html">
         <source>Retour à « atteint » après</source>
         <target state="translated">「達成」に戻る条件</target>
@@ -24572,10 +24492,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.error.evaluate" datatype="html">
         <source>La confrontation aux mesures n'a pas abouti.</source>
         <target state="translated">実測値との照合を完了できませんでした。</target>
-      </trans-unit>
-      <trans-unit id="objectives.error.accept" datatype="html">
-        <source>La CAPA n'a pas pu être enregistrée.</source>
-        <target state="translated">CAPA を保存できませんでした。</target>
       </trans-unit>
       <trans-unit id="objectives.error.reject" datatype="html">
         <source>Le rejet n'a pas pu être enregistré.</source>
@@ -25706,8 +25622,8 @@ historique 12 mois</source>
         <target state="translated">カテゴリ：</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-critical" datatype="html">
-        <source>Critical</source>
-        <target state="translated">クリティカル</target>
+        <source>Seuil critique</source>
+        <target state="translated">危険しきい値</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-health" datatype="html">
         <source>Santé</source>
@@ -25738,8 +25654,8 @@ historique 12 mois</source>
         <target state="translated">値</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-warning" datatype="html">
-        <source>Warning</source>
-        <target state="translated">ウォーニング</target>
+        <source>Seuil d'alerte</source>
+        <target state="translated">警告しきい値</target>
       </trans-unit>
       <trans-unit id="kpis.detail.delete-measurement-title" datatype="html">
         <source>Supprimer cette mesure ?</source>
@@ -37762,6 +37678,58 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">ダイアグラムエディターを読み込めません。</target>
+      </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target>品質目標</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target>有効性の検証は必須で、その基準は規則が定めます</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target>アクション</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target>アクションを追加</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target>アクションなし — 理由を記載</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target>現在の期間</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target>KPI コード</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
+        <target>目標値としきい値は KPI から取り込まれ、変更できます。</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
+        <target>これらの値は KPI の値と異なります。保存時に KPI へ反映するか確認します。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces valeurs sur le KPI ?</source>
+        <target>これらの値を KPI に反映しますか？</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
+        <target>KPI には別の目標値としきい値が設定されています。置き換えると、全員に対して この目標に合わせられます。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter</source>
+        <target>反映する</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target>KPI はそのままにする</target>
       </trans-unit>
     </body>
   </file>

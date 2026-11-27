@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CreateObjectiveRequest,
+  ObjectiveCapaOpened,
+  OpenObjectiveCapaRequest,
   ObjectiveProposal,
   ObjectiveReview,
   QualityObjective,
@@ -72,10 +74,17 @@ export class ObjectivesService {
     return this.http.post<ObjectiveProposal[]>(`${this.endpoint}/evaluate`, {});
   }
 
-  /** « Accepter et enregistrer la CAPA » : le dossier naît. */
-  accept(proposalId: string): Observable<ObjectiveProposal> {
-    return this.http.post<ObjectiveProposal>(
-      `${this.endpoint}/proposals/${proposalId}/accept`, {});
+  /**
+   * « Ajouter une action » : la fenêtre CAPA s'ouvre sur la ligne d'un objectif
+   * en alerte ou critique, et le dossier naît de ce qui y est saisi.
+   *
+   * <p>Le corps ne porte ni source, ni criticité, ni vérification : le serveur
+   * les impose. Une proposition encore en attente est soldée par ce dossier.
+   */
+  openCapa(objectiveId: string,
+           request: OpenObjectiveCapaRequest): Observable<ObjectiveCapaOpened> {
+    return this.http.post<ObjectiveCapaOpened>(
+      `${this.endpoint}/${objectiveId}/capa`, request);
   }
 
   /** « Rejeter avec justification » : le motif est obligatoire. */

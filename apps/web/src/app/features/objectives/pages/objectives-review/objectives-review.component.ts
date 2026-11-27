@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import {
+  CapaCreateDialogComponent
+} from '../../../capa/pages/capa-create-dialog/capa-create-dialog.component';
 import { StatusTone } from '../../../../shared/ui/status-pill/status-pill.component';
 import { DocumentProcess } from '../../../documents/documents.types';
 import { DocumentsService } from '../../../documents/documents.service';
 import {
-  objectiveLevelLabel,
   objectiveStatusLabel,
   objectiveStatusTone,
   periodLabel
@@ -28,8 +29,13 @@ import { ObjectiveRejectDialogComponent } from '../objective-reject-dialog/objec
 /**
  * « Objectifs vs KPI réels » — la revue (ISO 9001 §6.2, §9.3).
  *
- * <p>Quatre tuiles, une ligne par objectif face à son indicateur, et le panneau
- * de la CAPA préremplie quand une proposition attend une décision.
+ * <p>Quatre tuiles, et une ligne par objectif face à son indicateur.
+ *
+ * <p><b>Aucune CAPA préremplie.</b> Sur une ligne en alerte ou critique, on
+ * ouvre LA fenêtre CAPA de la plateforme et on écrit l'action qu'on va faire ;
+ * le dossier naît de ces mots-là, sous la source « Objectif qualité ». C'est ce
+ * que la recette a demandé : un dossier prérédigé par la règle se signait sans
+ * être lu (ADR 0143).
  *
  * <p><b>Le statut n'est pas lu en base.</b> Le serveur le recalcule depuis les
  * relevés à chaque appel : le figer le ferait mentir dès qu'un relevé est
@@ -58,25 +64,29 @@ export class ObjectivesReviewComponent implements OnInit {
   processId = '';
   asOf = '';
 
-  /** La proposition dont le panneau latéral montre la CAPA préremplie. */
-  selected?: ObjectiveProposal;
-
   loading = false;
   failed = false;
   deciding = false;
   canManage = false;
 
   readonly statusLabel = objectiveStatusLabel;
-  readonly levelLabel = objectiveLevelLabel;
   readonly period = periodLabel;
+
+  /**
+   * Les vingt-quatre derniers mois, du plus récent au plus ancien.
+   *
+   * <p>La valeur est le PREMIER jour du mois : le serveur borne à la fin du
+   * mois demandé, et n'importe quel jour de ce mois donne la même revue. Deux
+   * ans couvrent la comparaison annuelle d'une revue de direction (§9.3).
+   */
+  readonly mois = ObjectivesReviewComponent.derniersMois(24);
 
   constructor(
     private readonly svc: ObjectivesService,
     private readonly docs: DocumentsService,
     private readonly authz: AuthzService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar,
-    private readonly router: Router
+    private readonly snack: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -94,14 +104,7 @@ export class ObjectivesReviewComponent implements OnInit {
     this.svc.review(this.processId || null, this.asOf || null)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
-        next: r => {
-          this.review = r;
-          // La proposition ouverte peut avoir été tranchée entre-temps : on la
-          // retrouve dans la nouvelle liste, ou on referme le panneau.
-          this.selected = this.selected
-            ? r.pendingProposals.find(p => p.id === this.selected!.id)
-            : r.pendingProposals[0];
-        },
+        next: r => (this.review = r),
         error: () => {
           this.failed = true;
           this.review = undefined;
@@ -111,18 +114,6 @@ export class ObjectivesReviewComponent implements OnInit {
 
   tone(o: QualityObjective): StatusTone {
     return objectiveStatusTone(o.assessment.status);
-  }
-
-  /**
-   * L'écart que cite le panneau, avec son unité : « 2 % », jamais « 2 ».
-   *
-   * <p>L'unité n'est pas portée par la proposition — elle appartient au KPI de
-   * l'objectif, qu'on retrouve par son identifiant. Sans elle, le fait affiché
-   * contredit la description du dossier, qui écrit bien l'unité.
-   */
-  proposalObservedLabel(p: ObjectiveProposal): string {
-    const unite = this.review?.objectives.find(o => o.id === p.objectiveId)?.kpiUnit;
-    return `${p.observedValue}${unite ? ' ' + unite : ''}`;
   }
 
   /** La proposition en attente d'un objectif, s'il y en a une. */
@@ -196,16 +187,20 @@ export class ObjectivesReviewComponent implements OnInit {
   }
 
   /**
-   * Ce que dit la colonne CAPA : le dossier ouvert, la proposition en attente,
-   * ou rien.
+   * L'écart appelle-t-il une action aujourd'hui ?
+   *
+   * <p>Le STATUT et non la seule proposition : la règle ne propose qu'au bout
+   * de ses périodes consécutives, et la recette veut le bouton dès la première
+   * ligne passée en alerte. Un dossier déjà ouvert le retire : on ne traite pas
+   * deux fois le même écart.
    */
+  aTraiter(o: QualityObjective): boolean {
+    const s = o.assessment.status;
+    return (s === 'WARNING' || s === 'CRITICAL') && !o.assessment.heldByOpenCapa;
+  }
+
+  /** Ce que dit la colonne Action quand il n'y a rien à ouvrir. */
   capaLabel(o: QualityObjective): string {
-    const p = this.proposalFor(o);
-    if (p) {
-      return p.breachPeriods > 1
-        ? $localize`:@@objectives.capa.proposed-periods:Proposée · ${p.breachPeriods}:count: périodes consécutives`
-        : $localize`:@@objectives.capa.proposed:Proposée · à valider par le pilote`;
-    }
     if (o.assessment.heldByOpenCapa) {
       return $localize`:@@objectives.capa.open:CAPA en cours · retour sous la cible attendu`;
     }
@@ -216,10 +211,6 @@ export class ObjectivesReviewComponent implements OnInit {
   recoveryLabel(o: QualityObjective): string {
     const reste = Math.max(0, o.recoveryPeriods - o.assessment.onTargetPeriods);
     return $localize`:@@objectives.recovery.remaining:${o.assessment.onTargetPeriods}:tenues: période(s) sous la cible sur ${o.recoveryPeriods}:exigees: — il en reste ${reste}:reste:`;
-  }
-
-  select(proposal: ObjectiveProposal | undefined): void {
-    this.selected = proposal;
   }
 
   create(): void {
@@ -264,52 +255,36 @@ export class ObjectivesReviewComponent implements OnInit {
     });
   }
 
-  /** « Accepter et enregistrer la CAPA » : le dossier naît, et l'écran y mène. */
-  accept(p: ObjectiveProposal): void {
-    this.deciding = true;
-    this.svc.accept(p.id).pipe(finalize(() => (this.deciding = false))).subscribe({
-      next: decided => {
-        this.snack.open($localize`:@@objectives.accepted:CAPA enregistrée.`,
-          $localize`:@@objectives.open-capa:Ouvrir`, { duration: 8000 })
-          .onAction().subscribe(() => {
-            if (decided.capaCaseId) {
-              this.router.navigate(['/capa', decided.capaCaseId]);
-            }
-          });
-        this.selected = undefined;
-        this.load();
-      },
-      error: err => this.snack.open(
-        safeErrorMessage(err, $localize`:@@objectives.error.accept:La CAPA n'a pas pu être enregistrée.`),
-        undefined, { duration: 6000 })
-    });
-  }
-
   /**
-   * La CAPA proposée ne convient pas tout à fait : on l'enregistre, et on va lui
-   * ajouter l'action qui manque.
+   * « Ajouter une action » : LA fenêtre CAPA s'ouvre, vide, et le dossier naît
+   * de ce qu'on y écrit.
    *
-   * <p>C'est la troisième voie que demande la maquette annotée, à côté
-   * d'accepter et de rejeter. Rejeter en bloc laisserait l'écart sans traitement
-   * alors que le désaccord ne porte que sur le geste à faire.
+   * <p>La source, la criticité, la vérification d'efficacité et son critère ne
+   * sont pas demandés : le serveur les impose. Ce qui se saisit ici, c'est
+   * l'action — son intitulé, qui en répond, et pour quand.
    */
-  acceptAndAddAction(p: ObjectiveProposal): void {
-    this.deciding = true;
-    this.svc.accept(p.id).pipe(finalize(() => (this.deciding = false))).subscribe({
-      next: decided => {
-        this.selected = undefined;
-        if (decided.capaCaseId) {
-          // On mène au dossier, où le panneau d'actions est à portée. Ouvrir la
-          // fenêtre d'ajout d'ici demanderait de traverser deux composants du
-          // module CAPA, ce que ce lot n'a pas à faire.
-          this.router.navigate(['/capa', decided.capaCaseId]);
-        } else {
-          this.load();
-        }
-      },
-      error: err => this.snack.open(
-        safeErrorMessage(err, $localize`:@@objectives.error.accept:La CAPA n'a pas pu être enregistrée.`),
-        undefined, { duration: 6000 })
+  addAction(o: QualityObjective): void {
+    this.dialog.open(CapaCreateDialogComponent, {
+      panelClass: 'qos-dialog-panel', width: '720px', maxWidth: '96vw',
+      data: {
+        source: { type: 'QUALITY_OBJECTIVE' as const, reference: o.title },
+        lockCriticity: true,
+        prefill: { criticity: o.assessment.status === 'CRITICAL' ? 'CRITICAL' : 'MEDIUM' },
+        imposedVerification: { criterion: o.effectivenessCriterion },
+        open: (req: { title: string; description?: string; ownerId: string;
+                      ownerName?: string; dueDate?: string }) =>
+          this.svc.openCapa(o.id, {
+            title: req.title,
+            description: req.description ?? null,
+            ownerId: req.ownerId,
+            ownerName: req.ownerName ?? null,
+            dueDate: req.dueDate ?? ''
+          }).pipe(map(opened => ({ capaId: opened.capaId })))
+      }
+    }).afterClosed().subscribe(opened => {
+      if (opened) {
+        this.load();
+      }
     });
   }
 
@@ -326,7 +301,6 @@ export class ObjectivesReviewComponent implements OnInit {
         next: () => {
           this.snack.open($localize`:@@objectives.rejected:Proposition rejetée, avec son motif.`,
             undefined, { duration: 5000 });
-          this.selected = undefined;
           this.load();
         },
         error: err => this.snack.open(
@@ -358,5 +332,17 @@ export class ObjectivesReviewComponent implements OnInit {
         });
       }
     });
+  }
+
+  /** Les `n` derniers mois, libellés « mm/aaaa », valeur `AAAA-MM-01`. */
+  private static derniersMois(n: number): ReadonlyArray<{ value: string; label: string }> {
+    const aujourdhui = new Date();
+    const liste: { value: string; label: string }[] = [];
+    for (let i = 0; i < n; i++) {
+      const d = new Date(aujourdhui.getFullYear(), aujourdhui.getMonth() - i, 1);
+      const mois = String(d.getMonth() + 1).padStart(2, '0');
+      liste.push({ value: `${d.getFullYear()}-${mois}-01`, label: `${mois}/${d.getFullYear()}` });
+    }
+    return liste;
   }
 }

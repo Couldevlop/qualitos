@@ -158,3 +158,27 @@ mat-dialog-actions button[type='submit'] {
   align-items: center;
   gap: 6px;
 }
+
+/* La vérification imposée par la source : lue, jamais saisie. */
+.verification-imposee {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--qos-border, rgba(0, 0, 0, .12));
+  border-radius: 10px;
+  background: var(--qos-surface-muted, rgba(0, 0, 0, .03));
+
+  mat-icon { flex: 0 0 auto; opacity: .7; }
+
+  &__titre {
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+
+  &__critere {
+    margin: 0;
+    font-size: .875rem;
+    line-height: 1.45;
+  }
+}

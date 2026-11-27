@@ -24166,10 +24166,6 @@ historique 12 mois</source>
         <source>Période</source>
         <target state="translated">期间</target>
       </trans-unit>
-      <trans-unit id="objectives.filter.as-of-hint" datatype="html">
-        <source>Vide = état courant</source>
-        <target state="translated">留空 = 当前状态</target>
-      </trans-unit>
       <trans-unit id="objectives.filter.process" datatype="html">
         <source>Processus</source>
         <target state="translated">过程</target>
@@ -24213,10 +24209,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.column.status" datatype="html">
         <source>Statut</source>
         <target state="translated">状态</target>
-      </trans-unit>
-      <trans-unit id="objectives.column.capa" datatype="html">
-        <source>CAPA</source>
-        <target state="translated">CAPA</target>
       </trans-unit>
       <trans-unit id="objectives.status.not-evaluated" datatype="html">
         <source>Non mesuré</source>
@@ -24270,14 +24262,6 @@ historique 12 mois</source>
         <source>12 mois</source>
         <target state="translated">12 个月</target>
       </trans-unit>
-      <trans-unit id="objectives.capa.proposed" datatype="html">
-        <source>Proposée · à valider par le pilote</source>
-        <target state="translated">已提议 · 待负责人确认</target>
-      </trans-unit>
-      <trans-unit id="objectives.capa.proposed-periods" datatype="html">
-        <source>Proposée · <x id="count"/> périodes consécutives</source>
-        <target state="translated">已提议 · 连续 <x id="count"/> 个期间</target>
-      </trans-unit>
       <trans-unit id="objectives.capa.open" datatype="html">
         <source>CAPA en cours · retour sous la cible attendu</source>
         <target state="translated">CAPA 进行中 · 等待回到目标值</target>
@@ -24289,54 +24273,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.recovery.remaining" datatype="html">
         <source><x id="tenues"/> période(s) sous la cible sur <x id="exigees"/> — il en reste <x id="reste"/></source>
         <target state="translated"><x id="exigees"/> 个期间中已有 <x id="tenues"/> 个达标 — 还差 <x id="reste"/> 个</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.title" datatype="html">
-        <source>CAPA préremplie</source>
-        <target state="translated">预填的 CAPA</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.objective" datatype="html">
-        <source>Objectif</source>
-        <target state="translated">目标</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.observed" datatype="html">
-        <source>Écart constaté</source>
-        <target state="translated">观测值</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.periods" datatype="html">
-        <source>Périodes consécutives</source>
-        <target state="translated">连续期间数</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.criterion" datatype="html">
-        <source>Vérification d'efficacité — obligatoire</source>
-        <target state="translated">有效性验证 — 必填</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.links" datatype="html">
-        <source>Liens générés</source>
-        <target state="translated">生成的关联</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.links-list" datatype="html">
-        <source>NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</source>
-        <target state="translated">本月客户不合格 · 投诉 · PFMEA · 控制计划 · 管理评审 9.3</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.accept" datatype="html">
-        <source>Accepter et enregistrer la CAPA</source>
-        <target state="translated">接受并登记 CAPA</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.add-action" datatype="html">
-        <source>Accepter et ajouter une action</source>
-        <target state="translated">接受并添加措施</target>
-      </trans-unit>
-      <trans-unit id="objectives.panel.reject" datatype="html">
-        <source>Rejeter avec justification</source>
-        <target state="translated">拒绝并说明理由</target>
-      </trans-unit>
-      <trans-unit id="objectives.accepted" datatype="html">
-        <source>CAPA enregistrée.</source>
-        <target state="translated">CAPA 已登记。</target>
-      </trans-unit>
-      <trans-unit id="objectives.open-capa" datatype="html">
-        <source>Ouvrir</source>
-        <target state="translated">打开</target>
       </trans-unit>
       <trans-unit id="objectives.rejected" datatype="html">
         <source>Proposition rejetée, avec son motif.</source>
@@ -24417,10 +24353,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.field.iso-clause" datatype="html">
         <source>Clause ISO 9001</source>
         <target state="translated">ISO 9001 条款</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.kpi" datatype="html">
-        <source>Source de données</source>
-        <target state="translated">数据来源</target>
       </trans-unit>
       <trans-unit id="objectives.field.kpi-locked" datatype="html">
         <source>Le KPI d'un objectif ne change pas : son historique cesserait d'être comparable.</source>
@@ -24518,18 +24450,6 @@ historique 12 mois</source>
         <source>Nombre de périodes</source>
         <target state="translated">期间数</target>
       </trans-unit>
-      <trans-unit id="objectives.field.capa-owner" datatype="html">
-        <source>Responsable de la CAPA</source>
-        <target state="translated">CAPA 负责人</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.due-days" datatype="html">
-        <source>Délai d'analyse de cause racine</source>
-        <target state="translated">根本原因分析期限</target>
-      </trans-unit>
-      <trans-unit id="objectives.field.working-days" datatype="html">
-        <source>jours ouvrés</source>
-        <target state="translated">个工作日</target>
-      </trans-unit>
       <trans-unit id="objectives.field.recovery" datatype="html">
         <source>Retour à « atteint » après</source>
         <target state="translated">恢复“已达成”所需</target>
@@ -24573,10 +24493,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.error.evaluate" datatype="html">
         <source>La confrontation aux mesures n'a pas abouti.</source>
         <target state="translated">与实测值的比对未能完成。</target>
-      </trans-unit>
-      <trans-unit id="objectives.error.accept" datatype="html">
-        <source>La CAPA n'a pas pu être enregistrée.</source>
-        <target state="translated">未能保存 CAPA。</target>
       </trans-unit>
       <trans-unit id="objectives.error.reject" datatype="html">
         <source>Le rejet n'a pas pu être enregistré.</source>
@@ -25707,8 +25623,8 @@ historique 12 mois</source>
         <target state="translated">类别：</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-critical" datatype="html">
-        <source>Critical</source>
-        <target state="translated">严重</target>
+        <source>Seuil critique</source>
+        <target state="translated">严重阈值</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-health" datatype="html">
         <source>Santé</source>
@@ -25739,8 +25655,8 @@ historique 12 mois</source>
         <target state="translated">数值</target>
       </trans-unit>
       <trans-unit id="kpis.detail.col-warning" datatype="html">
-        <source>Warning</source>
-        <target state="translated">警告</target>
+        <source>Seuil d'alerte</source>
+        <target state="translated">警戒阈值</target>
       </trans-unit>
       <trans-unit id="kpis.detail.delete-measurement-title" datatype="html">
         <source>Supprimer cette mesure ?</source>
@@ -37763,6 +37679,58 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">无法加载图编辑器。</target>
+      </trans-unit>
+      <trans-unit id="capa.source.quality-objective" datatype="html">
+        <source>Objectif qualité</source>
+        <target>质量目标</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.imposed" datatype="html">
+        <source>Vérification d'efficacité exigée, et son critère est fixé par la règle</source>
+        <target>必须进行有效性验证，其判定标准由规则设定</target>
+      </trans-unit>
+      <trans-unit id="objectives.column.action" datatype="html">
+        <source>Action</source>
+        <target>措施</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.add" datatype="html">
+        <source>Ajouter une action</source>
+        <target>添加措施</target>
+      </trans-unit>
+      <trans-unit id="objectives.action.decline" datatype="html">
+        <source>Aucune action — justifier</source>
+        <target>不采取措施 — 说明理由</target>
+      </trans-unit>
+      <trans-unit id="objectives.filter.as-of-current" datatype="html">
+        <source>Période courante</source>
+        <target>当前周期</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-code" datatype="html">
+        <source>Code du KPI</source>
+        <target>KPI 代码</target>
+      </trans-unit>
+      <trans-unit id="objectives.field.kpi-hint" datatype="html">
+        <source>Cible et seuils sont reprises du KPI, et modifiables.</source>
+        <target>目标值与阈值取自 KPI，可以修改。</target>
+      </trans-unit>
+      <trans-unit id="objectives.thresholds.differ" datatype="html">
+        <source>Ces valeurs s'écartent de celles du KPI. À l'enregistrement, il vous sera proposé de les y reporter.</source>
+        <target>这些数值与 KPI 的数值不同。保存时将询问是否同步到 KPI。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.title" datatype="html">
+        <source>Reporter ces valeurs sur le KPI ?</source>
+        <target>要将这些数值同步到 KPI 吗？</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.message" datatype="html">
+        <source>Le KPI porte d'autres cible et seuils. Les remplacer les alignera sur cet objectif, pour tout le monde.</source>
+        <target>KPI 当前的目标值与阈值不同。替换后，它将对所有人按本目标对齐。</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.confirm" datatype="html">
+        <source>Reporter</source>
+        <target>同步</target>
+      </trans-unit>
+      <trans-unit id="objectives.kpi-sync.cancel" datatype="html">
+        <source>Laisser le KPI tel quel</source>
+        <target>保持 KPI 不变</target>
       </trans-unit>
     </body>
   </file>

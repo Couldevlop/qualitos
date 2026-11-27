@@ -19,11 +19,16 @@
 
     <ng-container qosMeta>
       <!-- Les deux filtres de la maquette : la période observée et le processus. -->
+      <!-- Un MOIS, pas un jour : la revue se tient sur une période, et la borne
+           est la fin du mois choisi. Un calendrier jour par jour faisait croire
+           que le 12 et le 27 donnaient deux lectures différentes. -->
       <mat-form-field appearance="outline" class="filtre">
         <mat-label i18n="@@objectives.filter.as-of">Période</mat-label>
-        <input matInput type="date" [(ngModel)]="asOf" (ngModelChange)="load()"
-               data-test="objectifs-filtre-periode">
-        <mat-hint i18n="@@objectives.filter.as-of-hint">Vide = état courant</mat-hint>
+        <mat-select [(ngModel)]="asOf" (ngModelChange)="load()"
+                    data-test="objectifs-filtre-periode">
+          <mat-option value="" i18n="@@objectives.filter.as-of-current">Période courante</mat-option>
+          <mat-option *ngFor="let m of mois" [value]="m.value">{{ m.label }}</mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filtre">
@@ -74,12 +79,12 @@
           <span class="c-nombre" i18n="@@objectives.column.actual">Réel</span>
           <span class="c-nombre" i18n="@@objectives.column.deviation">Écart</span>
           <span class="c-statut" i18n="@@objectives.column.status">Statut</span>
-          <span class="c-capa" i18n="@@objectives.column.capa">CAPA</span>
+          <span class="c-capa" i18n="@@objectives.column.action">Action</span>
           <span class="c-actions"><span class="sr-only" i18n="@@common.actions">Actions</span></span>
         </header>
 
-        <article class="ligne" *ngFor="let o of r.objectives" [attr.data-test]="'objectif-' + o.id"
-                 [class.ligne--choisie]="selected && selected.objectiveId === o.id">
+        <article class="ligne" *ngFor="let o of r.objectives"
+                 [attr.data-test]="'objectif-' + o.id">
           <div class="c-objectif">
             <strong>{{ o.title }}</strong>
             <span class="ligne__meta">
@@ -102,10 +107,30 @@
               {{ recoveryLabel(o) }}
             </span>
           </span>
-          <button type="button" class="c-capa c-capa--lien" (click)="select(proposalFor(o))"
-                  [disabled]="!proposalFor(o)" [attr.data-test]="'objectif-capa-' + o.id">
-            {{ capaLabel(o) }}
-          </button>
+          <!-- RIEN N'EST PRÉRÉDIGÉ. Sur une ligne en alerte ou critique, on ouvre
+               la fenêtre CAPA et on écrit l'action qu'on va faire : un dossier
+               prérempli par la règle se signait sans être lu. L'action part au
+               module CAPA, sous la source « Objectif qualité ». -->
+          <span class="c-capa">
+            <ng-container *ngIf="aTraiter(o); else capaEtat">
+              <button mat-stroked-button type="button" *ngIf="canManage" class="c-capa__action"
+                      [disabled]="deciding" (click)="addAction(o)"
+                      [attr.data-test]="'objectif-ajouter-action-' + o.id">
+                <mat-icon>playlist_add</mat-icon>
+                <span i18n="@@objectives.action.add">Ajouter une action</span>
+              </button>
+              <!-- Décliner reste possible, et motivé : sans cela, un objectif
+                   critique sans dossier ne se distingue pas d'un objectif que
+                   personne n'a regardé (ADR 0133 §3). -->
+              <button type="button" class="c-capa__refus" *ngIf="canManage && proposalFor(o)"
+                      [disabled]="deciding" (click)="reject(proposalFor(o)!)"
+                      [attr.data-test]="'objectif-rejeter-' + o.id"
+                      i18n="@@objectives.action.decline">Aucune action — justifier</button>
+            </ng-container>
+            <ng-template #capaEtat>
+              <span class="c-capa__etat">{{ capaLabel(o) }}</span>
+            </ng-template>
+          </span>
           <span class="c-actions">
             <button mat-icon-button type="button" *ngIf="canManage" (click)="edit(o)"
                     i18n-aria-label="@@common.edit" aria-label="Modifier"
@@ -115,7 +140,10 @@
             <button mat-icon-button type="button" *ngIf="canManage" (click)="archive(o)"
                     i18n-aria-label="@@objectives.archive.aria" aria-label="Retirer du suivi"
                     [attr.data-test]="'objectif-archiver-' + o.id">
-              <mat-icon>archive</mat-icon>
+              <!-- La poubelle, comme partout ailleurs dans la plateforme. Le
+                   geste reste le RETRAIT DU SUIVI : rien n'est effacé, et la
+                   confirmation le dit. -->
+              <mat-icon>delete_outline</mat-icon>
             </button>
           </span>
         </article>
@@ -125,65 +153,6 @@
           pour les processus qui comptent.</p>
       </section>
 
-      <!-- La CAPA préremplie : rédigée par la règle, tranchée par le pilote. -->
-      <aside class="panneau" *ngIf="selected as p" data-test="objectifs-panneau">
-        <h2 class="panneau__titre" i18n="@@objectives.panel.title">CAPA préremplie</h2>
-
-        <qos-status-pill [label]="levelLabel(p.level)"
-                         [tone]="p.level === 'CRITICAL' ? 'danger' : 'warn'">
-        </qos-status-pill>
-
-        <dl class="panneau__faits">
-          <dt i18n="@@objectives.panel.objective">Objectif</dt>
-          <dd>{{ p.objectiveTitle }}</dd>
-          <dt i18n="@@objectives.panel.observed">Écart constaté</dt>
-          <dd>{{ proposalObservedLabel(p) }}</dd>
-          <dt i18n="@@objectives.panel.periods">Périodes consécutives</dt>
-          <dd>{{ p.breachPeriods }}</dd>
-        </dl>
-
-        <p class="panneau__corps">{{ p.description }}</p>
-
-        <!-- Le critère est VERROUILLÉ : pour un écart d'objectif, l'efficacité
-             est le retour du KPI sous la cible, pas une appréciation. -->
-        <div class="panneau__critere" data-test="objectifs-critere">
-          <span class="panneau__critere-label" i18n="@@objectives.panel.criterion">
-            Vérification d'efficacité — obligatoire
-          </span>
-          <p>{{ p.effectivenessCriterion }}</p>
-        </div>
-
-        <!-- « Liens générés » : la ligne de la maquette annotée, en texte comme
-             chez elle. Elle nomme ce que le dossier rapproche. À ce jour,
-             accepter la proposition ne pose que la référence vers l'objectif
-             (`CapaSourceType.QUALITY_OBJECTIVE`) : l'impact AMDEC et plan de
-             surveillance se déclare à la CLÔTURE (ADR 0128), et la revue de
-             direction n'est pas un module de la plateforme. -->
-        <div class="panneau__liens" data-test="objectifs-liens">
-          <span class="panneau__liens-label" i18n="@@objectives.panel.links">Liens générés</span>
-          <p i18n="@@objectives.panel.links-list">NC clients du mois · Réclamations · PFMEA · Control plan · Revue de direction 9.3</p>
-        </div>
-
-        <div class="panneau__actions" *ngIf="canManage">
-          <button mat-flat-button color="primary" type="button" [disabled]="deciding"
-                  (click)="accept(p)" data-test="objectifs-accepter">
-            <mat-icon>check</mat-icon>
-            <span i18n="@@objectives.panel.accept">Accepter et enregistrer la CAPA</span>
-          </button>
-          <!-- La CAPA proposée ne convient pas tout à fait : on l'enregistre et on
-               va lui ajouter l'action qui manque, plutôt que de la rejeter en
-               bloc. Rejeter laisserait l'écart sans traitement. -->
-          <button mat-stroked-button type="button" [disabled]="deciding"
-                  (click)="acceptAndAddAction(p)" data-test="objectifs-ajouter-action">
-            <mat-icon>playlist_add</mat-icon>
-            <span i18n="@@objectives.panel.add-action">Accepter et ajouter une action</span>
-          </button>
-          <button mat-stroked-button type="button" [disabled]="deciding" (click)="reject(p)"
-                  data-test="objectifs-rejeter">
-            <span i18n="@@objectives.panel.reject">Rejeter avec justification</span>
-          </button>
-        </div>
-      </aside>
     </div>
   </ng-container>
 </div>

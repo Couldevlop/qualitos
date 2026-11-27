@@ -45,14 +45,20 @@
 
   <div class="ligne">
     <mat-form-field appearance="outline" class="col col--large">
-      <mat-label i18n="@@objectives.field.kpi">Source de données</mat-label>
-      <mat-select formControlName="kpiId" required data-test="objectif-kpi">
+      <!-- LE CODE EN TÊTE : c'est lui qui fait le lien avec le catalogue des
+           KPI, et c'est par lui que les seuils se reprennent d'une fenêtre à
+           l'autre. Le nom suit, parce qu'un code seul ne se reconnaît pas. -->
+      <mat-label i18n="@@objectives.field.kpi-code">Code du KPI</mat-label>
+      <mat-select formControlName="kpiId" required data-test="objectif-kpi"
+                  (selectionChange)="onKpiChosen()">
         <mat-option *ngFor="let k of kpis" [value]="k.id">
-          {{ k.name }} <span class="code">({{ k.code }})</span>
+          <span class="code">{{ k.code }}</span> · {{ k.name }}
         </mat-option>
       </mat-select>
       <mat-hint *ngIf="editing" i18n="@@objectives.field.kpi-locked">Le KPI d'un objectif ne change
         pas : son historique cesserait d'être comparable.</mat-hint>
+      <mat-hint *ngIf="!editing" i18n="@@objectives.field.kpi-hint">La source de données de
+        l'objectif. Ses seuils descendent dans les trois champs ci-dessous.</mat-hint>
       <mat-error *ngIf="form.controls.kpiId.hasError('required')"
                  i18n="@@objectives.field.kpi-required">Un objectif se mesure contre un KPI du
         catalogue.</mat-error>
@@ -97,6 +103,15 @@
     </mat-form-field>
   </div>
 
+  <!-- Les seuils saisis s'écartent de ceux du catalogue : on le dit, et on
+       proposera de les y reporter à l'enregistrement. Ni l'un ni l'autre n'a
+       tort — la cible du KPI dit la santé de l'indicateur, celle de l'objectif
+       l'engagement pris (ADR 0133 §1). -->
+  <p class="divergence" *ngIf="thresholdsDifferFromKpi" data-test="objectif-divergence-kpi"
+     i18n="@@objectives.thresholds.differ">
+    Ces seuils diffèrent de ceux du KPI. À l'enregistrement, la fenêtre proposera de les y reporter.
+  </p>
+
   <mat-form-field appearance="outline" class="col">
     <mat-label i18n="@@objectives.field.period">Période</mat-label>
     <mat-select formControlName="periodMonths" required data-test="objectif-periode">
@@ -132,20 +147,6 @@
     </mat-form-field>
     <span i18n="@@objectives.rule.critical-after">période → la CAPA est
       <strong>proposée automatiquement</strong>.</span>
-  </div>
-
-  <div class="ligne">
-    <qos-user-picker class="col" formControlName="capaOwnerId" required
-                     data-test="objectif-pilote"
-                     i18n-label="@@objectives.field.capa-owner" label="Responsable de la CAPA"
-                     (userSelected)="onCapaOwner($event)"></qos-user-picker>
-
-    <mat-form-field appearance="outline" class="col">
-      <mat-label i18n="@@objectives.field.due-days">Délai d'analyse de cause racine</mat-label>
-      <input matInput formControlName="rootCauseDueDays" type="number" min="1" required
-             data-test="objectif-delai-cause">
-      <span matTextSuffix i18n="@@objectives.field.working-days">jours ouvrés</span>
-    </mat-form-field>
   </div>
 
   <!-- Le retour à « atteint » n'est pas un détail d'affichage : c'est aussi le

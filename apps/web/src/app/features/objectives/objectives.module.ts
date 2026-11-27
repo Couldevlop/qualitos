@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { CapaCreateDialogModule } from '../capa/capa-create-dialog.module';
 import { UiModule } from '../../shared/ui/ui.module';
-import { UserPickerModule } from '../../shared/user-picker/user-picker.module';
 import { ObjectiveDialogComponent } from './pages/objective-dialog/objective-dialog.component';
 import { ObjectiveRejectDialogComponent } from './pages/objective-reject-dialog/objective-reject-dialog.component';
 import { ObjectivesReviewComponent } from './pages/objectives-review/objectives-review.component';
@@ -24,8 +24,11 @@ const routes: Routes = [
     ObjectiveDialogComponent,
     ObjectiveRejectDialogComponent
   ],
+  // `CapaCreateDialogModule` : « Ajouter une action » sur une ligne de la revue
+  // ouvre LA fenêtre de création commune (ADR 0088), et non une fenêtre propre
+  // aux objectifs — deux formulaires pour la même action divergeraient.
   imports: [
-    SharedModule, UiModule, UserPickerModule, FormsModule,
+    SharedModule, UiModule, FormsModule, CapaCreateDialogModule,
     RouterModule.forChild(routes)
   ]
 })

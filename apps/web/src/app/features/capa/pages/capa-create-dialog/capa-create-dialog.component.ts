@@ -88,6 +88,16 @@ export interface CapaCreateDialogData {
   /** La criticité découle de l'écran d'origine (cotation d'un risque) : affichée, non modifiable. */
   lockCriticity?: boolean;
   /**
+   * La vérification d'efficacité est IMPOSÉE par la source, et son critère est
+   * rédigé par la règle : la question « exigée ? » n'est pas posée, le critère
+   * n'est pas saisissable, et les deux sont montrés tels qu'ils seront écrits.
+   *
+   * <p>Un seul cas aujourd'hui : l'écart sur objectif qualité (ADR 0133 §4,
+   * ADR 0143). Le serveur les impose de son côté — ce qui est affiché ici ne
+   * part pas, et ne peut donc pas diverger de ce qui sera enregistré.
+   */
+  imposedVerification?: { criterion: string };
+  /**
    * La nature de `prefill.type` est IMPOSÉE : seule elle est proposée, cochée.
    *
    * <p>Pour les disciplines du traitement 8D, qui ne parlent chacune que d'une
@@ -508,7 +518,20 @@ export class CapaCreateDialogComponent implements OnInit, OnDestroy {
    * premier correctif — celui-là, justement, qui le promet.
    */
   get demandeEfficacite(): boolean {
-    return !this.isDefineAction && !this.isContainment;
+    return !this.isDefineAction && !this.isContainment && !this.verificationImposee;
+  }
+
+  /**
+   * La source impose la vérification et son critère : rien à trancher, rien à
+   * saisir — et donc rien à valider non plus.
+   */
+  get verificationImposee(): boolean {
+    return !!this.data.imposedVerification;
+  }
+
+  /** Le critère que le serveur écrira, montré avant d'enregistrer. */
+  get critereImpose(): string {
+    return this.data.imposedVerification?.criterion ?? '';
   }
 
   get dialogTitle(): string {

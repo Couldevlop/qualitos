@@ -22,8 +22,8 @@ import java.util.UUID;
  * cible d'un objectif qu'on n'atteint pas le ferait passer au vert sans que rien
  * n'ait changé sur le terrain.
  *
- * <p>Accepter ou rejeter une proposition en relève aussi : c'est l'arbitrage du
- * pilote, pas une consultation.
+ * <p>Ouvrir la CAPA d'un écart ou rejeter une proposition en relève aussi :
+ * c'est l'arbitrage du pilote, pas une consultation.
  */
 @RestController
 @RequestMapping("/api/v1/quality-objectives")
@@ -112,13 +112,19 @@ public class QualityObjectiveController {
     }
 
     /**
-     * « Accepter et enregistrer la CAPA » : le dossier naît, avec vérification
-     * d'efficacité obligatoire et critère verrouillé.
+     * « Ajouter une action » : la fenêtre CAPA s'ouvre sur la ligne d'un objectif
+     * en alerte ou critique, et le dossier naît de ce qui y est saisi.
+     *
+     * <p>Le corps ne porte ni source, ni criticité, ni vérification : le serveur
+     * les impose (ADR 0143). Une proposition encore en attente est soldée par ce
+     * dossier.
      */
     @RequiresPermission(Permission.OBJECTIVE_MANAGE)
-    @PostMapping("/proposals/{proposalId}/accept")
-    public ObjectiveDto.ProposalResponse accept(@PathVariable UUID proposalId) {
-        return service.accept(proposalId);
+    @PostMapping("/{id}/capa")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ObjectiveDto.CapaOpenedResponse openCapa(
+            @PathVariable UUID id, @Valid @RequestBody ObjectiveDto.OpenCapaRequest req) {
+        return service.openCapa(id, req);
     }
 
     /** « Rejeter avec justification » : le motif est obligatoire. */

@@ -16,7 +16,7 @@ export type CapaStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJEC
 // reclamations : la reference pointe un ecart, pas une reclamation.
 export type CapaSourceType = 'NON_CONFORMITY' | 'EXTERNAL_NON_CONFORMITY' | 'AUDIT'
   | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT'
-  | 'SPC_ALERT' | 'ANOMALY' | 'RISK' | 'OTHER';
+  | 'SPC_ALERT' | 'ANOMALY' | 'RISK' | 'QUALITY_OBJECTIVE' | 'OTHER';
 
 /**
  * Nature d'une action (§4.2, ISO 9001 §10.2, 8D étape D3).
