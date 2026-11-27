@@ -37,7 +37,7 @@
   --t-m: 1.25rem;
   --t-l: 1.5rem;
   --t-xl: clamp(1.9rem, 3.2vw, 2.9rem);
-  --t-xxl: clamp(2.6rem, 6.2vw, 5rem);
+  --t-xxl: clamp(2.1rem, 4.4vw, 3.5rem);
 
   --pas: 1.25rem;
   /* RESSERRE de clamp(3rem, 5.5vw, 5.25rem). Sur un ecran large, deux
@@ -286,10 +286,13 @@ img { max-width: 100%; height: auto; }
 .heros h1 {
   font-size: var(--t-xxl);
   font-weight: 700;
-  /* Les coupures du titre sont posées à la main ; cette borne n'est là que
-     pour les téléphones étroits, où la plus longue des trois lignes doit
-     encore tenir. */
-  max-width: 21ch;
+  /* LA COUPURE EST POSEE A LA MAIN, une seule, et la borne doit la laisser
+     tenir. A 21ch, la premiere moitie se brisait en deux et l'accroche
+     sortait sur TROIS lignes au lieu des deux voulues : la borne decidait
+     d'une coupure que le texte avait deja decidee. 36ch laisse passer la
+     plus longue des deux moitiees, et les telephones etroits replient
+     naturellement. */
+  max-width: 36ch;
   margin-bottom: 0.95rem;
 }
 .heros h1 em {
@@ -306,8 +309,6 @@ img { max-width: 100%; height: auto; }
   max-width: 56ch;
   margin-bottom: 1.5rem;
 }
-
-.heros__actions { display: flex; flex-wrap: wrap; gap: 0.85rem; }
 
 /* La chaîne : construite une fois, c'est le seul mouvement de la page. */
 .chaine {
@@ -844,8 +845,6 @@ img { max-width: 100%; height: auto; }
      telephone : elle encombrait plus qu'elle ne disait. */
   .marque__suite { display: none; }
   /* Un appel a l'action prend toute la largeur : la cible est le pouce. */
-  .heros__actions { display: grid; gap: 0.6rem; }
-  .heros__actions .bouton { justify-content: center; }
 }
 
 @media (max-width: 380px) {
