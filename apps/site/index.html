@@ -191,17 +191,17 @@
     <header class="entete">
       <div class="enveloppe entete__barre">
         <a class="marque" href="#">
-          <img
-            class="marque__sceau"
-            src="assets/qualitos-marque.png"
-            alt=""
-            width="256"
-            height="256"
-          />
-          <span>
+          <span class="marque__haut">
+            <img
+              class="marque__sceau"
+              src="assets/qualitos-marque.png"
+              alt=""
+              width="256"
+              height="256"
+            />
             <span class="marque__nom">Qualit<b>OS</b></span>
-            <span class="marque__suite">The Quality Operating System</span>
           </span>
+          <span class="marque__suite">The Quality Operating System</span>
         </a>
 
         <button
@@ -230,9 +230,9 @@
     <main id="contenu">
       <!-- ======================================================================
      HÉROS
-     Le titre est posé dans une bande de tolérance, et une trace de mesure
-     la traverse : c'est l'objet qu'un responsable qualité regarde tous les
-     matins. Pas un grand chiffre sur un dégradé.
+     Le titre est posé dans une bande de tolérance, et la chaîne de
+     traçabilité court dessous : de ce qu'un client signale jusqu'à la clause
+     qu'un auditeur réclame. Pas un grand chiffre sur un dégradé.
      ====================================================================== -->
       <section class="heros">
         <div class="enveloppe heros__contenu">
@@ -246,71 +246,43 @@
 
             <p class="heros__chapo">
               NC, audits, SMI, SPC, APQP, risques, fournisseurs : une qualité
-              enfin connectée. Pilotez la qualité de bout en bout, sans quitter
-              QualitOS.
+              enfin connectée, où l'IA voit la dérive avant vous et montre ce
+              qui l'a produite. Pilotez la qualité de bout en bout, sans
+              quitter QualitOS.
             </p>
-
-            <div class="heros__actions">
-              <a class="bouton bouton--signal" href="#contact"
-                >Demander une démo</a
-              >
-              <a class="bouton bouton--trait" href="#referentiel"
-                >Voir ce que ça couvre</a
-              >
-            </div>
           </div>
 
-          <!-- Les deux limites encadrent la carte : chacune dans sa gouttiere, au-dessus
-         de la ligne haute et au-dessous de la ligne basse, et non dans la bande ou
-         passent les mesures. Le point qui franchit la limite haute reste a droite,
-         la ou aucune etiquette ne l'attend : c'est le dessin qui doit se lire, pas
-         le texte qui doit s'ecarter. -->
-          <svg
-            class="trace"
-            viewBox="0 0 1200 170"
-            role="img"
-            aria-label="Carte de contrôle : entre la limite supérieure et la limite inférieure, une série de mesures reste dans les limites, puis un point les franchit et devient orange."
-          >
-            <text class="trace__borne" x="4" y="20">
-              LSS — limite supérieure
-            </text>
-            <line class="trace__limite" x1="0" y1="38" x2="1200" y2="38"></line>
-            <line
-              class="trace__moyenne"
-              x1="0"
-              y1="90"
-              x2="1200"
-              y2="90"
-            ></line>
-            <text class="trace__legende" x="4" y="86">X̄</text>
-            <line
-              class="trace__limite"
-              x1="0"
-              y1="142"
-              x2="1200"
-              y2="142"
-            ></line>
-            <text class="trace__borne" x="4" y="162">
-              LIS — limite inférieure
-            </text>
+          <!-- LA CHAINE, et non plus une carte de controle.
+         Le titre dit « QualitOS le relie » : la figure doit montrer LE LIEN.
+         La carte disait « derive detectee » -- vrai, mais c'est une
+         statistique parmi d'autres, elle demande de savoir lire une carte,
+         et l'anneau du referentiel, plus bas, dit deja le modele. Celle-ci
+         dit le PARCOURS : ce que le client signale a un bout, ce que
+         l'auditeur reclame a l'autre, et tout ce qui tient entre les deux.
 
-            <polyline
-              class="trace__ligne"
-              points="20,96 80,84 140,102 200,80 260,98 320,76 380,104 440,82 500,71 560,94 620,66 680,88 740,59 800,79 860,51 920,73 980,42 1040,63 1100,28 1160,55"
-            ></polyline>
+         EN HTML ET NON EN SVG : un viewBox ne se replie pas. Six libelles
+         dans une boite de 1200 unites tombent a quatre pixels de haut sur un
+         telephone, illisibles, et aucune media query ne rattrape cela --
+         viewBox ne s'ecrit pas en CSS. Une liste, elle, passe a deux
+         colonnes toute seule, se lit au lecteur d'ecran, et se copie.
 
-            <circle class="trace__point" cx="440" cy="82" r="4"></circle>
-            <circle class="trace__point" cx="740" cy="59" r="4"></circle>
-            <circle class="trace__point" cx="980" cy="42" r="4"></circle>
-            <circle
-              class="trace__point trace__point--hors"
-              cx="1100"
-              cy="28"
-            ></circle>
-            <text class="trace__etiquette" x="1012" y="16">
-              dérive détectée
-            </text>
-          </svg>
+         ET CE SONT DES LIENS. Six boites arrondies, bordees, dont la premiere
+         porte l'orange exact du bouton de demonstration : c'est la forme d'un
+         bouton. Inertes, elles promettaient un clic qu'elles ne tenaient pas.
+         Chacune mene donc a la section qui l'explique -- la chaine devient le
+         sommaire de la page au lieu d'en etre le trompe-l'oeil. -->
+          <ol class="chaine">
+            <li class="chaine__maillon chaine__maillon--depart"><a href="#modules">Réclamation client</a></li>
+            <li class="chaine__maillon"><a href="#modules">Non-conformité</a></li>
+            <li class="chaine__maillon"><a href="#referentiel">Cause racine</a></li>
+            <li class="chaine__maillon"><a href="#modules">Action corrective</a></li>
+            <li class="chaine__maillon"><a href="#securite">Preuve signée</a></li>
+            <li class="chaine__maillon chaine__maillon--fin"><a href="#normes">ISO 9001 § 10.2</a></li>
+          </ol>
+          <p class="chaine__bouts">
+            <span>ce que le client signale</span>
+            <span>ce que l'auditeur réclame</span>
+          </p>
 
           <!-- Ce pied de héros disait les cinq méthodes, et le titre avec lui. Il dit
          désormais la couverture entière, sinon l'accroche promet tout le
@@ -340,6 +312,14 @@
             <div>
               <dt>Risques et tiers</dt>
               <dd>AMDEC, fournisseurs, compétences, changements.</dd>
+            </div>
+            <!-- SIXIEME COLONNE, ajoutee parce que son absence disait le
+           contraire de la promesse. Les cinq premieres enumeraient des
+           modules ; l'IA n'en est pas un -- elle traverse les cinq autres --
+           et ne figurer nulle part la rendait optionnelle a la lecture. -->
+            <div>
+              <dt>Intelligence</dt>
+              <dd>Dérive détectée, causes suggérées, prévision — et ses sources.</dd>
             </div>
           </dl>
         </div>
@@ -644,6 +624,93 @@
       </section>
 
       <!-- ======================================================================
+     LES ÉCRANS — la page argumentait sans jamais montrer. Trois captures
+     réelles, prises sur une instance peuplée : des mesures, des montants et
+     des causes qui existent. Posée APRÈS le référentiel et AVANT les modules,
+     parce qu'elle prouve ce que la section précédente vient d'affirmer.
+     ====================================================================== -->
+      <section class="section section--marine" id="ecrans">
+        <div class="enveloppe">
+          <div class="titre-section">
+            <h2>Voilà à quoi ça ressemble</h2>
+            <p>
+              Trois écrans, tels qu'ils sortent de l'application. Rien n'est
+              redessiné pour la circonstance.
+            </p>
+          </div>
+
+          <div class="galerie">
+            <figure class="ecran galerie__piece galerie__piece--large">
+              <img
+                src="assets/ecran-ishikawa.png"
+                width="1075"
+                height="306"
+                loading="lazy"
+                decoding="async"
+                alt="Diagramme d'Ishikawa : six arêtes — méthodes, machines,
+                     mesures, main-d'œuvre, matières, milieu — convergeant vers
+                     l'énoncé du problème."
+              />
+              <figcaption>
+                <b>Une cause s'écrit ici, et ne se réécrit plus.</b> Elle porte
+                ensuite les actions qui la traitent, les mesures qui la suivent
+                et les preuves qui la closent.
+              </figcaption>
+            </figure>
+
+            <figure class="ecran galerie__piece">
+              <img
+                src="assets/ecran-carte-controle.png"
+                width="1568"
+                height="548"
+                loading="lazy"
+                decoding="async"
+                alt="Carte de contrôle : onze mesures, limites à trois sigmas,
+                     deux points signalés hors contrôle en rouge, et trois
+                     indicateurs — état du procédé, ligne centrale, limites."
+              />
+              <figcaption>
+                <b>Onze points suffisent à voir partir une dérive.</b> Les
+                limites se calculent depuis la série, les huit règles de Nelson
+                tournent dessus, et un procédé hors contrôle ouvre une CAPA si
+                vous le demandez.
+              </figcaption>
+            </figure>
+
+            <figure class="ecran galerie__piece">
+              <img
+                src="assets/ecran-cout-qualite.png"
+                width="1568"
+                height="596"
+                loading="lazy"
+                decoding="async"
+                alt="Coûts de non-qualité : total du mois, barres comparant les
+                     coûts de conformité aux coûts de non-conformité, et le
+                     détail par famille avec ses imputations."
+              />
+              <figcaption>
+                <b>Ce que la non-qualité coûte, en euros.</b> Prévention et
+                contrôle d'un côté, défaillances de l'autre : le rapport entre
+                les deux est l'argument que votre direction attend.
+              </figcaption>
+            </figure>
+          </div>
+
+          <!-- LA SEULE RELANCE DE LA PAGE, et elle est posee ici a dessein.
+         L'en-tete et le formulaire sont aux deux extremites de dix mille
+         pixels : entre les deux, un visiteur convaincu n'avait nulle part ou
+         aller sans remonter. Le point ou il vient de VOIR le produit est
+         celui ou il a le plus de raisons de demander a le voir en vrai. -->
+          <p class="relance">
+            Ces écrans sur vos propres données, c'est une heure.
+            <a class="bouton bouton--trait" href="#contact"
+              >Demander une démo</a
+            >
+          </p>
+        </div>
+      </section>
+
+      <!-- ======================================================================
      MODULES TRANSVERSES
      ====================================================================== -->
       <section class="section section--froide" id="modules">
@@ -657,103 +724,127 @@
             </p>
           </div>
 
-          <div class="modules">
-            <article class="module">
-              <h3>Maîtrise documentaire</h3>
-              <p>
-                Versions, circuit d'approbation, lecture obligatoire avec
-                preuve, signature électronique.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.5</span>
-            </article>
-            <article class="module">
-              <h3>CAPA</h3>
-              <p>
-                Actions correctives et préventives, escalade automatique,
-                efficacité mesurée après coup.
-              </p>
-              <span class="module__clause num">ISO 9001 §10.2</span>
-            </article>
-            <article class="module">
-              <h3>Non-conformités</h3>
+          <!-- QUATRE FAMILLES, et non douze cartes d'un tenant.
+         Le chapo annonce qu'on active ce dont on a besoin ; alignees a
+         l'identique et sans regroupement, les douze demandaient de lire les
+         douze pour savoir ce que la plateforme couvre. Les familles sont
+         celles que la bande du heros nomme deja : ecarts, documents, risques,
+         ressources -- le visiteur retrouve en detail ce qu'il a survole. -->
+          <section class="modules-famille">
+            <h3>Écarts et actions</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Non-conformités</h4>
               <p>
                 Saisie au poste avec photos et localisation, catégories et
                 natures propres à votre métier.
               </p>
               <span class="module__clause num">ISO 9001 §8.7</span>
-            </article>
-            <article class="module">
-              <h3>Audits</h3>
+              </article>
+              <article class="module">
+              <h4>CAPA</h4>
               <p>
-                Programme annuel, listes de contrôle, exécution hors ligne,
-                rapport rédigé à partir des constats.
+                Actions correctives et préventives, escalade automatique,
+                efficacité mesurée après coup.
               </p>
-              <span class="module__clause num">ISO 19011</span>
-            </article>
-            <article class="module">
-              <h3>Risques et AMDEC</h3>
-              <p>
-                Cotation, criticité, nœud papillon pour les risques majeurs,
-                réévaluation à chaque donnée nouvelle.
-              </p>
-              <span class="module__clause num">ISO 31000</span>
-            </article>
-            <article class="module">
-              <h3>Qualité fournisseurs</h3>
-              <p>
-                Fiches de score, audits, certificats matière, écarts suivis
-                jusqu'à la réponse 8D.
-              </p>
-              <span class="module__clause num">ISO 9001 §8.4</span>
-            </article>
-            <article class="module">
-              <h3>Compétences et formation</h3>
-              <p>
-                Matrices par poste, habilitations, rappels d'échéance,
-                attestations vérifiables.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.2</span>
-            </article>
-            <article class="module">
-              <h3>Gestion des changements</h3>
-              <p>
-                Demande, analyse d'impact, validation à plusieurs niveaux,
-                documents et formations à reprendre.
-              </p>
-              <span class="module__clause num">ISO 9001 §6.3</span>
-            </article>
-            <article class="module">
-              <h3>Réclamations clients</h3>
+              <span class="module__clause num">ISO 9001 §10.2</span>
+              </article>
+              <article class="module">
+              <h4>Réclamations clients</h4>
               <p>
                 Réception multi-canal, classement et tonalité analysés, lien
                 direct vers la CAPA ouverte.
               </p>
               <span class="module__clause num">ISO 10002</span>
-            </article>
-            <article class="module">
-              <h3>Métrologie</h3>
+              </article>
+            </div>
+          </section>
+          <section class="modules-famille">
+            <h3>Documents et preuves</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Maîtrise documentaire</h4>
               <p>
-                Plans d'étalonnage, échéances, études R&amp;R de répétabilité et
-                reproductibilité.
+                Versions, circuit d'approbation, lecture obligatoire avec
+                preuve, signature électronique.
               </p>
-              <span class="module__clause num">ISO 9001 §7.1.5</span>
-            </article>
-            <article class="module">
-              <h3>Parties intéressées</h3>
+              <span class="module__clause num">ISO 9001 §7.5</span>
+              </article>
+              <article class="module">
+              <h4>Audits</h4>
+              <p>
+                Programme annuel, listes de contrôle, exécution hors ligne,
+                rapport rédigé à partir des constats.
+              </p>
+              <span class="module__clause num">ISO 19011</span>
+              </article>
+            </div>
+          </section>
+          <section class="modules-famille">
+            <h3>Risques et tiers</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Risques et AMDEC</h4>
+              <p>
+                Cotation, criticité, nœud papillon pour les risques majeurs,
+                réévaluation à chaque donnée nouvelle.
+              </p>
+              <span class="module__clause num">ISO 31000</span>
+              </article>
+              <article class="module">
+              <h4>Qualité fournisseurs</h4>
+              <p>
+                Fiches de score, audits, certificats matière, écarts suivis
+                jusqu'à la réponse 8D.
+              </p>
+              <span class="module__clause num">ISO 9001 §8.4</span>
+              </article>
+              <article class="module">
+              <h4>Parties intéressées</h4>
               <p>
                 Registre, matrice d'évaluation, exigences rattachées aux
                 risques, écarts, audits et documents.
               </p>
               <span class="module__clause num">ISO 9001 §4.2</span>
-            </article>
-            <article class="module">
-              <h3>Santé, sécurité, environnement</h3>
+              </article>
+            </div>
+          </section>
+          <section class="modules-famille">
+            <h3>Ressources et terrain</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Compétences et formation</h4>
+              <p>
+                Matrices par poste, habilitations, rappels d'échéance,
+                attestations vérifiables.
+              </p>
+              <span class="module__clause num">ISO 9001 §7.2</span>
+              </article>
+              <article class="module">
+              <h4>Métrologie</h4>
+              <p>
+                Plans d'étalonnage, échéances, études R&amp;R de répétabilité et
+                reproductibilité.
+              </p>
+              <span class="module__clause num">ISO 9001 §7.1.5</span>
+              </article>
+              <article class="module">
+              <h4>Gestion des changements</h4>
+              <p>
+                Demande, analyse d'impact, validation à plusieurs niveaux,
+                documents et formations à reprendre.
+              </p>
+              <span class="module__clause num">ISO 9001 §6.3</span>
+              </article>
+              <article class="module">
+              <h4>Santé, sécurité, environnement</h4>
               <p>
                 Les mêmes audits, écarts et actions, appliqués aux sujets SSE.
               </p>
               <span class="module__clause num">ISO 14001 · 45001</span>
-            </article>
-          </div>
+              </article>
+            </div>
+          </section>
         </div>
       </section>
 
