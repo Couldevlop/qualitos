@@ -276,6 +276,28 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).contains("Not filled in.");
     }
 
+    /**
+     * ET CELUI DE NOVEMBRE 2026 AUSSI, qui est le dessin sous lequel les
+     * rapports les plus recents ont ete scelles -- ce sont eux que ce
+     * changement pouvait rendre indelivrables.
+     *
+     * <p>Il garde ses deux traits : le dessin remanie (pagination, pied sans
+     * identifiant de client) ET la ligne qui annonce la discipline vide.
+     */
+    @Test
+    void un_rapport_scelle_en_novembre_garde_son_dessin_et_annonce_ses_vides()
+            throws IOException {
+        EightDSnapshot novembre = new EightDSnapshot("NC-2026-0007",
+                "Fuite au presse-étoupe", "tenant-demo", "13/09/2026 10:00 UTC",
+                "Ada Lovelace", true, snapshot(false).sections(), "fr", "2026-11");
+
+        String texte = texteDe(renderer.render(novembre, URL));
+
+        assertThat(texte).contains("Non renseignée.");
+        assertThat(texte).contains("Page 1 /");
+        assertThat(texte).doesNotContain("Tenant:");
+    }
+
     /** Le meme instantane, avec la langue du document neuf. */
     private EightDSnapshot enFrancais(EightDSnapshot snapshot) {
         return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),

@@ -645,6 +645,22 @@ describe('NcEightDComponent', () => {
   });
 
   /**
+   * LA COLONNE « PREUVE » D'UNE ACTION : au D3 et au D7, jamais au D5.
+   *
+   * <p>La pièce d'une action atteste que CE geste-là a été fait — un
+   * endiguement qu'on montre, une barrière qu'on installe. Le D5 supprime la
+   * cause, et ce qu'il a à démontrer n'est pas « l'action a été faite » mais
+   * « le problème a cessé » : cela se prouve au D6, sur le dossier.
+   */
+  it('donne la colonne « Preuve » au D3 et au D7, jamais au D5', async () => {
+    await monter(['QUALITY_MANAGER']);
+
+    expect(component.montreLaColonnePreuve('D3')).toBe(true);
+    expect(component.montreLaColonnePreuve('D7')).toBe(true);
+    expect(component.montreLaColonnePreuve('D5')).toBe(false);
+  });
+
+  /**
    * LE D6 ATTESTE LES ACTIONS CORRECTIVES, et l'endiguement n'en est pas une.
    *
    * <p>Bloquer un lot arrete l'effet et laisse la cause entiere (ISO 9001

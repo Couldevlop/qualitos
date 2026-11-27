@@ -377,7 +377,8 @@ describe('NcDetailComponent — le traitement 8D', () => {
   /**
    * LA SIGNATURE DE LA CLÔTURE, et elle seule. « Résolu par » se lisait ici
    * au-dessus : le D6 démontre que le problème a cessé, et le nom de qui a
-   * déclaré l'écart résolu n'en fait pas partie. Le champ reste au modèle.
+   * déclaré l'écart résolu n'en fait pas partie. Le champ reste au modèle et
+   * l'API le sert toujours ; c'est cet écran qui cesse de l'afficher.
    */
   it('montre la signature de la clôture, et tait celle de la résolution', () => {
     setup(ecart({
