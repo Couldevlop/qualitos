@@ -1016,6 +1016,24 @@
               Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.
             </p>
 
+            <!-- CE QUE LES ACTIONS ONT PRODUIT. Le verdict se porte au D5 ou au
+                 D7, sur la ligne de l'action ; il se LIT ici, sous la discipline
+                 qui clot le traitement, et le rapport 8D porte le meme tableau.
+                 Rendu tel que le rapport le donne -- colonnes comprises -- et
+                 non recompose : deux assemblages du meme fait divergent. -->
+            <table class="table-efficacite" *ngIf="efficaciteD8 as t"
+                   data-test="d8-efficacite">
+              <caption *ngIf="t.caption">{{ t.caption }}</caption>
+              <thead>
+                <tr><th *ngFor="let colonne of t.columns" scope="col">{{ colonne }}</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rang of t.rows">
+                  <td *ngFor="let cellule of rang">{{ cellule }}</td>
+                </tr>
+              </tbody>
+            </table>
+
             <ng-container *ngIf="!isTerminal(n.status); else remerciementLecture">
               <mat-form-field appearance="outline" class="full">
                 <mat-label i18n="@@nc.8d.d8-label">Message à l’équipe</mat-label>

@@ -47,6 +47,7 @@ import {
   VisionScore,
   NcBlockingAction,
   NcCapaCaseRef,
+  EightDTable,
 } from '../../nc.types';
 import {
   NcConvertChoice,
@@ -714,6 +715,15 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   remerciementEnregistre = '';
   remerciementModifie = false;
 
+  /**
+   * L'EFFICACITE DES ACTIONS, telle que le rapport la porte au D8 (ADR 0143).
+   *
+   * <p>Lue dans le rapport et non recomposee ici : le document remis au client
+   * et l'ecran doivent dire la meme chose, et deux assemblages du meme fait
+   * finissent par diverger. Absente tant qu'aucune action n'a ete jugee.
+   */
+  efficaciteD8?: EightDTable;
+
   /** Lit le rapport pour en tirer le seul D8 ; son echec ne casse pas l ecran. */
   private chargerRemerciement(): void {
     this.svc.getEightDReport(this.ncId).pipe(
@@ -721,6 +731,8 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(rapport => {
       if (!rapport) return;
       this.remerciementEnregistre = rapport.recognition ?? '';
+      this.efficaciteD8 = rapport.disciplines
+        ?.find(d => d.code === 'D8')?.tables?.[0];
       if (!this.remerciementModifie) {
         this.remerciementControl.setValue(this.remerciementEnregistre, { emitEvent: false });
       }
@@ -767,6 +779,11 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     // Le TOTAL aussi : vider la carte par dossier sans le recalculer laissait
     // l ancien total en place, et le D6 restait coche sur des preuves parties.
     this.comptesParEtape.set('D6', 0);
+    // LE D8 SE RELIT AUSSI. Un verdict d'efficacite se porte depuis le D5 ou le
+    // D7, et le tableau qui le montre vit au D8 : sans cette relecture, la
+    // discipline restait muette jusqu'au prochain chargement de la page, juste
+    // apres le geste qui la remplit.
+    this.chargerRemerciement();
     this.reload$.next();
   }
 

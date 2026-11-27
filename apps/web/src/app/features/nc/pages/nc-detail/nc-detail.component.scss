@@ -1022,3 +1022,34 @@ section.card > .sub {
     word-break: break-word;
   }
 }
+
+/* L'EFFICACITE DES ACTIONS, au D8 (ADR 0143). Les memes mesures que le tableau
+   du rapport 8D : le lecteur passe de l'un a l'autre, et deux grilles
+   differentes pour les memes colonnes se lisent comme deux donnees. */
+.table-efficacite {
+  width: 100%;
+  margin: 0 0 var(--qos-space-3);
+  border-collapse: collapse;
+  font-size: 13.5px;
+
+  caption {
+    text-align: start;
+    padding-bottom: var(--qos-space-1);
+    color: var(--qos-fg-secondary);
+  }
+
+  th {
+    text-align: start;
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  th, td {
+    padding: var(--qos-space-2) var(--qos-space-3) var(--qos-space-2) 0;
+    border-bottom: 1px solid var(--qos-border-subtle);
+    vertical-align: top;
+  }
+}
