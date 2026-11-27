@@ -24,15 +24,21 @@ import { ObjectiveDialogComponent, ObjectiveDialogData } from './objective-dialo
  */
 describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
 
+  // Il PORTE ses seuils : c'est d'eux que la fenêtre reprend cible et seuils
+  // quand on le choisit (ADR 0143).
   const PPM: KpiResponse = {
     id: 'k-1', code: 'NC-CLI', name: 'NC client', category: 'Qualité',
     unit: 'ppm', direction: 'LOWER_IS_BETTER', frequency: 'MONTHLY',
-    status: 'ACTIVE'
+    status: 'ACTIVE', targetValue: 500, thresholdWarning: 600,
+    thresholdCritical: 800
   } as KpiResponse;
 
+  // Celui-ci n'en porte AUCUN : choisir un indicateur sans cible ne doit pas
+  // effacer ce qui est déjà saisi.
   const TAUX: KpiResponse = {
     ...PPM, id: 'k-2', code: 'CONF', name: 'Taux de conformité',
-    unit: '%', direction: 'HIGHER_IS_BETTER'
+    unit: '%', direction: 'HIGHER_IS_BETTER', targetValue: undefined,
+    thresholdWarning: undefined, thresholdCritical: undefined
   } as KpiResponse;
 
   function page(content: KpiResponse[]): KpiPage {
