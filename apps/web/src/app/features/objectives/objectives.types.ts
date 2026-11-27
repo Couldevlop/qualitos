@@ -61,9 +61,12 @@ export interface QualityObjective {
   warningPeriods: number;
   criticalPeriods: number;
   recoveryPeriods: number;
-  capaOwnerId: string;
-  capaOwnerName: string | null;
-  rootCauseDueDays: number;
+  /**
+   * Le critère d'efficacité que portera la CAPA née de cet objectif, rédigé par
+   * la règle et verrouillé. Rendu par le serveur, jamais envoyé : la fenêtre
+   * d'ouverture le montre, et c'est le serveur qui l'écrit (ADR 0133 §4).
+   */
+  effectivenessCriterion: string;
   lifecycle: ObjectiveLifecycle;
   assessment: ObjectiveAssessment;
   createdAt: string;
@@ -120,9 +123,27 @@ export interface CreateObjectiveRequest {
   warningPeriods: number;
   criticalPeriods: number;
   recoveryPeriods: number;
-  capaOwnerId: string;
-  capaOwnerName?: string | null;
-  rootCauseDueDays: number;
+}
+
+/**
+ * « Ajouter une action » : ce que le pilote écrit dans la fenêtre CAPA pour
+ * traiter l'écart d'un objectif.
+ *
+ * <p>Ni source, ni criticité, ni vérification : le serveur les impose
+ * (ADR 0143). Rien n'est prérédigé — le dossier naît de ces mots-là.
+ */
+export interface OpenObjectiveCapaRequest {
+  title: string;
+  description?: string | null;
+  ownerId: string;
+  ownerName?: string | null;
+  dueDate: string;
+}
+
+/** Le dossier qui vient de naître, et la proposition qu'il solde s'il y en avait une. */
+export interface ObjectiveCapaOpened {
+  capaId: string;
+  proposalId: string | null;
 }
 
 export type UpdateObjectiveRequest = Partial<Omit<CreateObjectiveRequest, 'kpiId'>> & {

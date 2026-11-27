@@ -46,8 +46,13 @@ describe('capa.labels', () => {
     // registre, de sorte qu'un dossier ouvert sous cette source en citant un
     // écart restait orphelin de lui. Son libellé reste, pour les dossiers
     // déjà ouverts qui la portent.
+    // « Objectif qualité » les rejoint : le dossier se rattache à l'objectif
+    // dont l'indicateur a décroché, et c'est la revue « Objectifs vs KPI
+    // réels » qui sait lequel — aucun registre n'existe pour en choisir la
+    // référence à la main (ADR 0143).
     expect(automates).toEqual(
-      ['EXTERNAL_NON_CONFORMITY', 'INTERNAL', 'SPC_ALERT', 'ANOMALY']);
+      ['EXTERNAL_NON_CONFORMITY', 'INTERNAL', 'SPC_ALERT', 'ANOMALY',
+       'QUALITY_OBJECTIVE']);
   });
 
   it('nomme « externe » la source d’un écart signalé du dehors', () => {

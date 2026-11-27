@@ -113,6 +113,11 @@ export const CAPA_SOURCES: ReadonlyArray<{
   // obliger à passer par la fiche du registre privait d'un chemin légitime. Le
   // rattachement reste garanti, mais par la référence — choisie au registre.
   { value: 'RISK',           label: $localize`:@@capa.source.risk:Risque`, manual: true, register: 'risk' },
+  // Ouverte depuis la revue « Objectifs vs KPI réels », et de là seulement : le
+  // dossier se rattache à l'objectif dont l'indicateur a décroché, et c'est cet
+  // écran-là qui sait lequel. Pas proposée à la création libre, faute d'un
+  // registre où en choisir la référence.
+  { value: 'QUALITY_OBJECTIVE', label: $localize`:@@capa.source.quality-objective:Objectif qualité`, manual: false },
   { value: 'OTHER',          label: $localize`:@@capa.source.other:Autre`, manual: true }
 ];
 

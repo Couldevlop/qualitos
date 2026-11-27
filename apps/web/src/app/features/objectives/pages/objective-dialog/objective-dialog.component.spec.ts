@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
-import { DirectoryService } from '../../../../core/directory/directory.service';
-import { DirectoryUser } from '../../../../core/directory/directory.types';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
-import { UserPickerModule } from '../../../../shared/user-picker/user-picker.module';
 import { DocumentsService } from '../../../documents/documents.service';
 import { KpisService } from '../../../kpis/kpis.service';
 import { KpiPage, KpiResponse } from '../../../kpis/kpis.types';
@@ -26,33 +24,22 @@ import { ObjectiveDialogComponent, ObjectiveDialogData } from './objective-dialo
  */
 describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
 
+  // Il PORTE ses seuils : c'est d'eux que la fenêtre reprend cible et seuils
+  // quand on le choisit (ADR 0143).
   const PPM: KpiResponse = {
     id: 'k-1', code: 'NC-CLI', name: 'NC client', category: 'Qualité',
     unit: 'ppm', direction: 'LOWER_IS_BETTER', frequency: 'MONTHLY',
-    status: 'ACTIVE'
+    status: 'ACTIVE', targetValue: 500, thresholdWarning: 600,
+    thresholdCritical: 800
   } as KpiResponse;
 
+  // Celui-ci n'en porte AUCUN : choisir un indicateur sans cible ne doit pas
+  // effacer ce qui est déjà saisi.
   const TAUX: KpiResponse = {
     ...PPM, id: 'k-2', code: 'CONF', name: 'Taux de conformité',
-    unit: '%', direction: 'HIGHER_IS_BETTER'
+    unit: '%', direction: 'HIGHER_IS_BETTER', targetValue: undefined,
+    thresholdWarning: undefined, thresholdCritical: undefined
   } as KpiResponse;
-
-  /** La personne que l'annuaire renvoie : le pilote désigné dans les bancs. */
-  const AWA: DirectoryUser = {
-    id: 'i', accountId: 'u-1', displayName: 'Awa Diallo',
-    email: 'a@d.fr', active: true
-  };
-
-  /** L'annuaire du choix de pilote : il ne rend personne, ce n'est pas le sujet. */
-  function annuaireVide(): jasmine.SpyObj<DirectoryService> {
-    const directory = jasmine.createSpyObj<DirectoryService>(
-      'DirectoryService', ['search', 'getByAccount']);
-    directory.search.and.returnValue(of({
-      content: [AWA], page: 0, size: 20, totalElements: 1, totalPages: 1
-    }));
-    directory.getByAccount.and.returnValue(of(AWA));
-    return directory;
-  }
 
   function page(content: KpiResponse[]): KpiPage {
     return { content, totalElements: content.length, totalPages: 1, number: 0, size: 50 };
@@ -61,28 +48,39 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
   let fixture: ComponentFixture<ObjectiveDialogComponent>;
   let component: ObjectiveDialogComponent;
   let svc: jasmine.SpyObj<ObjectivesService>;
+  let kpis: jasmine.SpyObj<KpisService>;
+  let dialog: jasmine.SpyObj<MatDialog>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<ObjectiveDialogComponent, QualityObjective>>;
   let snack: jasmine.SpyObj<MatSnackBar>;
 
-  async function build(data: ObjectiveDialogData = {}): Promise<void> {
+  async function build(
+    data: ObjectiveDialogData = {}, peutEcrireAuxKpis = true, reportAccepte = true
+  ): Promise<void> {
     svc = jasmine.createSpyObj<ObjectivesService>('ObjectivesService', ['create', 'update']);
     svc.create.and.returnValue(of({ id: 'o-1' } as QualityObjective));
     svc.update.and.returnValue(of({ id: 'o-1' } as QualityObjective));
 
-    const kpis = jasmine.createSpyObj<KpisService>('KpisService', ['list']);
+    kpis = jasmine.createSpyObj<KpisService>('KpisService', ['list', 'update']);
     kpis.list.and.returnValue(of(page([PPM, TAUX])));
+    kpis.update.and.returnValue(of(PPM));
+
+    const authz = jasmine.createSpyObj<AuthzService>('AuthzService', ['can']);
+    authz.can.and.returnValue(of(peutEcrireAuxKpis));
+
+    // La confirmation du report sur le KPI : elle répond ce que le banc veut.
+    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    dialog.open.and.returnValue(
+      { afterClosed: () => of(reportAccepte) } as never);
 
     const docs = jasmine.createSpyObj<DocumentsService>('DocumentsService', ['processes']);
     docs.processes.and.returnValue(of([{ id: 'p-1', name: 'Production', position: 0 }]));
-
-    const directory = annuaireVide();
 
     dialogRef = jasmine.createSpyObj('MatDialogRef', ['close']);
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ObjectiveDialogComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: ObjectivesService, useValue: svc },
         { provide: KpisService, useValue: kpis },
@@ -90,7 +88,8 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
         { provide: MatDialogRef, useValue: dialogRef },
         { provide: MatSnackBar, useValue: snack },
         { provide: MAT_DIALOG_DATA, useValue: data },
-        { provide: DirectoryService, useValue: directory }
+        { provide: AuthzService, useValue: authz },
+        { provide: MatDialog, useValue: dialog }
       ]
     }).compileComponents();
 
@@ -181,7 +180,7 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
     await build();
     component.form.patchValue({
       title: 'T', kpiId: 'k-1', targetValue: 500, thresholdWarning: 400,
-      thresholdCritical: 300, capaOwnerId: 'u-1'
+      thresholdCritical: 300
     });
     component.submit();
     expect(svc.create).not.toHaveBeenCalled();
@@ -191,7 +190,7 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
     await build();
     component.form.patchValue({
       title: '  Taux de NC client  ', processId: 'p-1', kpiId: 'k-1', periodMonths: 3,
-      targetValue: 500, thresholdWarning: 600, thresholdCritical: 800, capaOwnerId: 'u-1'
+      targetValue: 500, thresholdWarning: 600, thresholdCritical: 800
     });
     component.submit();
     expect(svc.create).toHaveBeenCalled();
@@ -206,7 +205,7 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
     await build();
     component.form.patchValue({
       title: 'T', kpiId: 'k-1', targetValue: 500, thresholdWarning: 600,
-      thresholdCritical: 800, capaOwnerId: 'u-1', isoClause: ''
+      thresholdCritical: 800, isoClause: ''
     });
     component.submit();
     const body = svc.create.calls.mostRecent().args[0];
@@ -215,16 +214,119 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
     expect(body.isoClause).toBeNull();
   });
 
-  /** Le nom du responsable est RECOPIÉ au choix : la revue n'affiche pas un UUID. */
-  it('recopie le nom du responsable choisi dans l\'annuaire', async () => {
+  /**
+   * La recette ne veut plus saisir deux fois la même cible : choisir le KPI
+   * descend ses seuils dans les trois champs, qui restent modifiables.
+   */
+  it('reprend les seuils du KPI choisi, à la création', async () => {
     await build();
-    component.onCapaOwner(AWA);
+    component.form.controls.kpiId.setValue('k-1');
+    component.onKpiChosen();
+    expect(component.form.controls.targetValue.value).toBe(500);
+    expect(component.form.controls.thresholdWarning.value).toBe(600);
+    expect(component.form.controls.thresholdCritical.value).toBe(800);
+  });
+
+  /**
+   * Un KPI sans cible n'efface pas ce qui est déjà saisi : ce serait perdre le
+   * travail de l'utilisateur au moment où il change d'avis d'indicateur.
+   */
+  it('ne vide rien quand le KPI choisi ne porte pas de seuils', async () => {
+    await build();
+    component.form.patchValue({ targetValue: 42, thresholdWarning: 43, thresholdCritical: 44 });
+    component.form.controls.kpiId.setValue('k-2');
+    component.onKpiChosen();
+    expect(component.form.controls.targetValue.value).toBe(42);
+    expect(component.form.controls.thresholdCritical.value).toBe(44);
+  });
+
+  /**
+   * En modification le KPI est verrouillé : écraser les seuils par ceux du
+   * catalogue réécrirait un engagement déjà pris.
+   */
+  it('ne reprend pas les seuils du KPI en modification', async () => {
+    await build({ objective: {
+      id: 'o-1', title: 'Existant', kpiId: 'k-1', periodMonths: 1, targetValue: 95,
+      thresholdWarning: 90, thresholdCritical: 85, warningPeriods: 2,
+      criticalPeriods: 1, recoveryPeriods: 1
+    } as QualityObjective });
+    component.onKpiChosen();
+    expect(component.form.controls.targetValue.value).toBe(95);
+  });
+
+  /**
+   * Les seuils modifiés s'écartent de ceux du KPI : la fenêtre PROPOSE de les
+   * reporter. Elle ne le fait pas d'office — un même KPI peut porter deux
+   * objectifs de cibles différentes (ADR 0133 §1), et écrire sans demander
+   * écraserait silencieusement le premier.
+   */
+  it('propose de reporter les seuils modifiés sur le KPI, et le fait si on accepte',
+    async () => {
+      await build();
+      component.form.patchValue({
+        title: 'T', kpiId: 'k-1', targetValue: 400, thresholdWarning: 500,
+        thresholdCritical: 700
+      });
+      expect(component.thresholdsDifferFromKpi).toBeTrue();
+      component.submit();
+      expect(dialog.open).toHaveBeenCalled();
+      expect(kpis.update).toHaveBeenCalled();
+      const [id, corps] = kpis.update.calls.mostRecent().args as [string, Record<string, number>];
+      expect(id).toBe('k-1');
+      expect(corps['targetValue']).toBe(400);
+      expect(corps['thresholdCritical']).toBe(700);
+    });
+
+  it('n\'écrit pas au KPI si on refuse le report', async () => {
+    await build({}, true, false);
     component.form.patchValue({
-      title: 'T', kpiId: 'k-1', targetValue: 500, thresholdWarning: 600,
-      thresholdCritical: 800, capaOwnerId: 'u-1'
+      title: 'T', kpiId: 'k-1', targetValue: 400, thresholdWarning: 500,
+      thresholdCritical: 700
     });
     component.submit();
-    expect(svc.create.calls.mostRecent().args[0].capaOwnerName).toBe('Awa Diallo');
+    expect(kpis.update).not.toHaveBeenCalled();
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  /** Sans le droit d'écrire au catalogue, il n'y a rien à proposer. */
+  it('ne propose rien à qui ne peut pas écrire au catalogue des KPI', async () => {
+    await build({}, false);
+    component.form.patchValue({
+      title: 'T', kpiId: 'k-1', targetValue: 400, thresholdWarning: 500,
+      thresholdCritical: 700
+    });
+    expect(component.thresholdsDifferFromKpi).toBeFalse();
+    component.submit();
+    expect(dialog.open).not.toHaveBeenCalled();
+    expect(kpis.update).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Le refus du catalogue ne perd pas l'objectif : il est déjà enregistré, et
+   * c'est lui que l'utilisateur venait créer.
+   */
+  it('garde l\'objectif enregistré même si le report au KPI échoue', async () => {
+    await build();
+    kpis.update.and.returnValue(throwError(() => ({ status: 403 })));
+    component.form.patchValue({
+      title: 'T', kpiId: 'k-1', targetValue: 400, thresholdWarning: 500,
+      thresholdCritical: 700
+    });
+    component.submit();
+    expect(svc.create).toHaveBeenCalled();
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  /** Seuils identiques à ceux du KPI : aucune question à poser. */
+  it('ne demande rien quand les seuils sont ceux du KPI', async () => {
+    await build();
+    component.form.patchValue({
+      title: 'T', kpiId: 'k-1', targetValue: 500, thresholdWarning: 600,
+      thresholdCritical: 800
+    });
+    expect(component.thresholdsDifferFromKpi).toBeFalse();
+    component.submit();
+    expect(dialog.open).not.toHaveBeenCalled();
   });
 
   it('garde l\'écran ouvert et dit l\'erreur quand le serveur refuse', async () => {
@@ -232,7 +334,7 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
     svc.create.and.returnValue(throwError(() => ({ status: 400 })));
     component.form.patchValue({
       title: 'T', kpiId: 'k-1', targetValue: 500, thresholdWarning: 600,
-      thresholdCritical: 800, capaOwnerId: 'u-1'
+      thresholdCritical: 800
     });
     component.submit();
     expect(snack.open).toHaveBeenCalled();
@@ -250,7 +352,7 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
       id: 'o-1', title: 'Existant', kpiId: 'k-2', processId: 'p-1', isoClause: '6.2',
       periodMonths: 6, targetValue: 95, thresholdWarning: 90, thresholdCritical: 85,
       warningPeriods: 3, criticalPeriods: 2, recoveryPeriods: 2,
-      capaOwnerId: 'u-7', capaOwnerName: 'Jean Koffi', rootCauseDueDays: 10
+      effectivenessCriterion: 'Le KPI revient sous 95 %…'
     } as QualityObjective;
     await build({ objective: o });
     expect(component.editing).toBeTrue();
@@ -263,7 +365,7 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
     await build({ objective: {
       id: 'o-1', title: 'Existant', kpiId: 'k-1', periodMonths: 1, targetValue: 500,
       thresholdWarning: 600, thresholdCritical: 800, warningPeriods: 2,
-      criticalPeriods: 1, recoveryPeriods: 1, capaOwnerId: 'u-1', rootCauseDueDays: 5
+      criticalPeriods: 1, recoveryPeriods: 1
     } as QualityObjective });
     component.form.controls.targetValue.setValue(400);
     component.submit();
@@ -281,22 +383,25 @@ describe('ObjectiveDialogComponent — définir un objectif (ADR 0133)', () => {
 
   it('survit à un catalogue de KPI indisponible', async () => {
     svc = jasmine.createSpyObj<ObjectivesService>('ObjectivesService', ['create', 'update']);
-    const kpis = jasmine.createSpyObj<KpisService>('KpisService', ['list']);
-    kpis.list.and.returnValue(throwError(() => new Error('boom')));
+    const catalogue = jasmine.createSpyObj<KpisService>('KpisService', ['list', 'update']);
+    catalogue.list.and.returnValue(throwError(() => new Error('boom')));
     const docs = jasmine.createSpyObj<DocumentsService>('DocumentsService', ['processes']);
     docs.processes.and.returnValue(throwError(() => new Error('boom')));
+    const authz = jasmine.createSpyObj<AuthzService>('AuthzService', ['can']);
+    authz.can.and.returnValue(of(true));
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ObjectiveDialogComponent],
-      imports: [SharedModule, UiModule, UserPickerModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: ObjectivesService, useValue: svc },
-        { provide: KpisService, useValue: kpis },
+        { provide: KpisService, useValue: catalogue },
         { provide: DocumentsService, useValue: docs },
         { provide: MatDialogRef, useValue: jasmine.createSpyObj('MatDialogRef', ['close']) },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open']) },
         { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: DirectoryService, useValue: annuaireVide() }
+        { provide: AuthzService, useValue: authz },
+        { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) }
       ]
     }).compileComponents();
 

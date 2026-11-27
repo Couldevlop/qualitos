@@ -62,11 +62,11 @@
               <span *ngIf="k.targetValue !== undefined && k.targetValue !== null">{{ k.targetValue }} {{ k.unit }}</span>
               <span *ngIf="k.targetValue === undefined || k.targetValue === null" class="dim">—</span>
             </td></tr>
-            <tr><th i18n="@@kpis.detail.col-warning">Warning</th><td>
+            <tr><th i18n="@@kpis.detail.col-warning">Seuil d'alerte</th><td>
               <span *ngIf="k.thresholdWarning !== undefined && k.thresholdWarning !== null">{{ k.thresholdWarning }} {{ k.unit }}</span>
               <span *ngIf="k.thresholdWarning === undefined || k.thresholdWarning === null" class="dim">—</span>
             </td></tr>
-            <tr><th i18n="@@kpis.detail.col-critical">Critical</th><td>
+            <tr><th i18n="@@kpis.detail.col-critical">Seuil critique</th><td>
               <span *ngIf="k.thresholdCritical !== undefined && k.thresholdCritical !== null">{{ k.thresholdCritical }} {{ k.unit }}</span>
               <span *ngIf="k.thresholdCritical === undefined || k.thresholdCritical === null" class="dim">—</span>
             </td></tr>

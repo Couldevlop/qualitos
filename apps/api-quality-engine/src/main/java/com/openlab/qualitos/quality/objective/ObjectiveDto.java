@@ -45,10 +45,7 @@ public final class ObjectiveDto {
             @NotNull BigDecimal thresholdCritical,
             @NotNull @Min(1) Integer warningPeriods,
             @NotNull @Min(1) Integer criticalPeriods,
-            @NotNull @Min(1) Integer recoveryPeriods,
-            @NotNull UUID capaOwnerId,
-            @Size(max = 255) String capaOwnerName,
-            @NotNull @Min(1) Integer rootCauseDueDays
+            @NotNull @Min(1) Integer recoveryPeriods
     ) {}
 
     /** La modification d'un objectif : seuls les champs renseignés changent. */
@@ -64,12 +61,32 @@ public final class ObjectiveDto {
             @Min(1) Integer warningPeriods,
             @Min(1) Integer criticalPeriods,
             @Min(1) Integer recoveryPeriods,
-            UUID capaOwnerId,
-            @Size(max = 255) String capaOwnerName,
-            @Min(1) Integer rootCauseDueDays,
             /** Même nom que dans la réponse : « status » y désigne déjà autre chose. */
             ObjectiveLifecycle lifecycle
     ) {}
+
+    /**
+     * « Ajouter une action » : ce que le pilote écrit dans la fenêtre CAPA pour
+     * traiter l'écart d'un objectif.
+     *
+     * <p>Rien n'est prérédigé. Le dossier naît de CES mots-là, et le pilote et
+     * l'échéance sont ceux qu'on désigne ici — l'objectif n'en porte plus.
+     *
+     * <p>Ce que la fenêtre n'envoie PAS, et que le serveur impose : la source
+     * ({@code QUALITY_OBJECTIVE}), la criticité (celle du niveau atteint), la
+     * vérification d'efficacité (exigée, sans question posée) et son critère
+     * (verrouillé). Voir l'ADR 0143.
+     */
+    public record OpenCapaRequest(
+            @NotBlank @Size(max = 255) String title,
+            @Size(max = 4000) String description,
+            @NotNull UUID ownerId,
+            @Size(max = 255) String ownerName,
+            @NotNull LocalDate dueDate
+    ) {}
+
+    /** Le dossier qui vient de naître, et la proposition qu'il solde s'il y en avait une. */
+    public record CapaOpenedResponse(UUID capaId, UUID proposalId) {}
 
     /**
      * Le rejet d'une CAPA proposée. Le motif est OBLIGATOIRE : un rejet sans
@@ -84,6 +101,10 @@ public final class ObjectiveDto {
      *
      * @param kpiUnit      l'unité, reprise du KPI : l'écran l'affiche, l'objectif ne la porte pas
      * @param kpiDirection le sens d'amélioration, repris du KPI
+     * @param effectivenessCriterion le critère d'efficacité que portera la CAPA née de cet
+     *                     objectif, rédigé par la règle. RENDU et jamais envoyé : la fenêtre
+     *                     d'ouverture le montre verrouillé, et le serveur l'écrit lui-même
+     *                     (ADR 0133 §4). Le lire sur la ligne évite de le redemander.
      */
     public record ObjectiveResponse(
             UUID id,
@@ -103,9 +124,7 @@ public final class ObjectiveDto {
             int warningPeriods,
             int criticalPeriods,
             int recoveryPeriods,
-            UUID capaOwnerId,
-            String capaOwnerName,
-            int rootCauseDueDays,
+            String effectivenessCriterion,
             ObjectiveLifecycle lifecycle,
             AssessmentResponse assessment,
             Instant createdAt,

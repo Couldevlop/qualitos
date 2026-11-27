@@ -138,7 +138,9 @@ TRANSLATIONS = {
     'kpis.detail.archive-title': ('Archiver le KPI ?', "Archive KPI?", "¿Archivar el KPI?", "أرشفة مؤشر الأداء؟", "KPIをアーカイブしますか？", "归档此 KPI？"),
     'kpis.detail.archived': ('KPI archivé.', "KPI archived.", "KPI archivado.", "تمت أرشفة مؤشر الأداء.", "KPIをアーカイブしました。", "KPI 已归档。"),
     'kpis.detail.category-prefix': ('Catégorie :', "Category:", "Categoría:", "الفئة:", "カテゴリ：", "类别："),
-    'kpis.detail.col-critical': ('Critical', "Critical", "Critical", "حرج", "クリティカル", "严重"),
+    'kpis.detail.col-critical': (
+        'Seuil critique', 'Critical threshold', 'Umbral crítico',
+        'الحد الحرج', '危険しきい値', '严重阈值'),
     'kpis.detail.col-health': ('Santé', "Health", "Estado", "الحالة", "ヘルス", "健康度"),
     'kpis.detail.col-industries': ('Secteurs', "Industries", "Sectores", "القطاعات", "業種", "行业"),
     'kpis.detail.col-period-end': ('Fin de période', "Period end", "Fin de periodo", "نهاية الفترة", "期間終了", "周期结束"),
@@ -146,7 +148,9 @@ TRANSLATIONS = {
     'kpis.detail.col-target': ('Cible', "Target", "Objetivo", "الهدف", "目標", "目标"),
     'kpis.detail.col-unit': ('Unité', "Unit", "Unidad", "الوحدة", "単位", "单位"),
     'kpis.detail.col-value': ('Valeur', "Value", "Valor", "القيمة", "値", "数值"),
-    'kpis.detail.col-warning': ('Warning', "Warning", "Warning", "تحذير", "ウォーニング", "警告"),
+    'kpis.detail.col-warning': (
+        "Seuil d'alerte", 'Warning threshold', 'Umbral de alerta',
+        'حد التنبيه', '警告しきい値', '警戒阈值'),
     'kpis.detail.delete-measurement-title': ('Supprimer cette mesure ?', "Delete this measurement?", "¿Eliminar esta medición?", "حذف هذا القياس؟", "この測定値を削除しますか？", "删除此测量值？"),
     'kpis.detail.delete-title': ('Supprimer le KPI ?', "Delete KPI?", "¿Eliminar el KPI?", "حذف مؤشر الأداء؟", "KPIを削除しますか？", "删除此 KPI？"),
     'kpis.detail.deleted': ('KPI supprimé.', "KPI deleted.", "KPI eliminado.", "تم حذف مؤشر الأداء.", "KPIを削除しました。", "KPI 已删除。"),

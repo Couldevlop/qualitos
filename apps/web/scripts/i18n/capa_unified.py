@@ -102,6 +102,22 @@ TRANSLATIONS = {
         'شذوذ مكتشف', '検知された異常', '检测到的异常'),
     'capa.source.risk': (
         'Risque', 'Risk', 'Riesgo', 'خطر', 'リスク', '风险'),
+    # Posée par la revue « Objectifs vs KPI réels », et de là seulement
+    # (ADR 0143) : l'objectif dont l'indicateur a décroché sert de
+    # sous-catégorie, en référence du dossier.
+    'capa.source.quality-objective': (
+        'Objectif qualité', 'Quality objective', 'Objetivo de calidad',
+        'هدف الجودة', '品質目標', '质量目标'),
+    # Le critère d'efficacité d'un écart d'objectif est écrit par la règle, et
+    # affiché en lecture seule : le laisser saisir permettrait de clore sur une
+    # cible plus facile que l'engagement pris.
+    'capa.verification.imposed': (
+        "Vérification d'efficacité exigée, et son critère est fixé par la règle",
+        'Effectiveness verification is required, and the rule sets its criterion',
+        'Se exige la verificación de eficacia, y la regla fija su criterio',
+        'التحقق من الفعالية مطلوب، والقاعدة تحدد معياره',
+        '有効性の検証は必須で、その基準は規則が定めます',
+        '必须进行有效性验证，其判定标准由规则设定'),
 
     # --- la fiche : l'action unique et le pilote -------------------------------
     'capa.detail.legacy-actions': (

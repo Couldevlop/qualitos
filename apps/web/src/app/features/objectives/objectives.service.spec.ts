@@ -53,8 +53,7 @@ describe('ObjectivesService — les objectifs qualité (ADR 0133)', () => {
     const body: CreateObjectiveRequest = {
       title: 'Taux de NC client', kpiId: 'k-1', periodMonths: 1,
       targetValue: 500, thresholdWarning: 600, thresholdCritical: 800,
-      warningPeriods: 2, criticalPeriods: 1, recoveryPeriods: 1,
-      capaOwnerId: 'u-1', rootCauseDueDays: 5
+      warningPeriods: 2, criticalPeriods: 1, recoveryPeriods: 1
     };
     service.create(body).subscribe();
     const req = http.expectOne(base);
@@ -108,12 +107,24 @@ describe('ObjectivesService — les objectifs qualité (ADR 0133)', () => {
     req.flush([{ id: 'pr-1' }, { id: 'pr-2' }]);
   });
 
-  it('accepte une proposition : le dossier naît côté serveur', (done) => {
-    service.accept('pr-1').subscribe(p => {
-      expect(p.capaCaseId).toBe('c-9');
+  /**
+   * L'action se saisit dans la fenêtre CAPA puis s'envoie sur l'objectif, pas
+   * sur la proposition : le bouton existe aussi quand la règle n'a encore rien
+   * proposé (ADR 0143).
+   */
+  it('ouvre la CAPA sur l\'objectif, avec l\'action saisie', (done) => {
+    service.openCapa('o-1', {
+      title: 'Recaler la presse 3', ownerId: 'u-1', ownerName: 'Awa Diallo',
+      dueDate: '2026-12-10'
+    }).subscribe(out => {
+      expect(out.capaId).toBe('c-9');
       done();
     });
-    http.expectOne(`${base}/proposals/pr-1/accept`).flush({ id: 'pr-1', capaCaseId: 'c-9' });
+    const req = http.expectOne(`${base}/o-1/capa`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.title).toBe('Recaler la presse 3');
+    expect(req.request.body.dueDate).toBe('2026-12-10');
+    req.flush({ capaId: 'c-9', proposalId: 'pr-1' });
   });
 
   it('envoie le motif du rejet dans le corps : sans lui le serveur refuse', () => {

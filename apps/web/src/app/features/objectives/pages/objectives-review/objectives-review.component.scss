@@ -41,18 +41,11 @@
   &--critique .tuile__valeur { color: var(--qos-danger-fg); }
 }
 
-// Le tableau à gauche, la CAPA préremplie à droite : on lit la ligne et on
-// décide sans quitter l'écran. Le panneau passe sous le tableau quand la
-// largeur ne permet plus les deux.
+// Le tableau prend toute la largeur : il n'y a plus de panneau à sa droite.
+// La décision ne se prend plus en lisant un dossier prérédigé, mais en
+// ouvrant la fenêtre CAPA depuis la ligne (ADR 0143).
 .revue {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 24px;
-  align-items: start;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  display: block;
 }
 
 .tableau {
@@ -75,7 +68,11 @@
 .tableau__entete,
 .ligne {
   display: grid;
-  grid-template-columns: minmax(0, 2.4fr) 90px 90px 80px 190px minmax(0, 1.4fr) 88px;
+  // L'intitulé d'un objectif tient en toutes lettres : « Tenir 98 % de
+  // conformité au premier passage sur la ligne 2 » se repliait sur cinq lignes
+  // dans 2,4 parts, pendant qu'une colonne de nombres en gardait quatre-vingt-dix
+  // pixels pour trois caractères.
+  grid-template-columns: minmax(0, 4fr) 92px 92px 84px 170px minmax(200px, 1.6fr) 88px;
   gap: 12px;
   align-items: center;
   padding: 12px 16px;
@@ -90,8 +87,6 @@
   border-bottom: 1px solid var(--qos-border-subtle);
 
   &:last-of-type { border-bottom: none; }
-
-  &--choisie { background: var(--qos-accent-bg-soft); }
 
   &__meta {
     display: block;
@@ -119,20 +114,39 @@
   &--fort { font-weight: 600; }
 }
 
-// La colonne CAPA est un bouton : elle ouvre le panneau. Désactivée, elle
-// redevient du texte — il n'y a rien à ouvrir.
-.c-capa--lien {
-  border: none;
-  background: none;
-  padding: 0;
-  font: inherit;
-  text-align: left;
-  color: var(--qos-accent-fg-soft);
-  cursor: pointer;
+// La colonne Action : un bouton quand il y a un écart à traiter, du texte
+// quand le dossier est déjà ouvert.
+.c-capa {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
 
-  &:disabled {
+  &__action {
+    // Le bouton de Material est haut pour une ligne de tableau : on le resserre
+    // sans descendre sous la cible tactile de 32 px.
+    line-height: 32px;
+    font-size: 13px;
+  }
+
+  &__refus {
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
     color: var(--qos-text-muted);
-    cursor: default;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:disabled { cursor: default; opacity: .6; }
+  }
+
+  &__etat {
+    font-size: 13px;
+    color: var(--qos-text-muted);
   }
 }
 
@@ -148,81 +162,22 @@
   color: var(--qos-text-muted);
 }
 
-.panneau {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 18px;
-  border: 1px solid var(--qos-border-subtle);
-  border-radius: 8px;
-  background: var(--qos-surface-raised);
-  position: sticky;
-  top: 16px;
+.filtre { width: 180px; }
 
-  @media (max-width: 1200px) { position: static; }
-
-  &__titre {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  &__faits {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 6px 12px;
-    margin: 0;
-    font-size: 13px;
-
-    dt { color: var(--qos-text-muted); }
-    dd { margin: 0; }
-  }
-
-  &__corps {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--qos-text-muted);
-    white-space: pre-line;
-  }
-
-  // Le critère verrouillé : encadré, pour qu'on voie qu'il n'est pas à écrire.
-  &__critere {
-    padding: 12px;
-    border-radius: 6px;
-    background: var(--qos-accent-bg-soft);
-    font-size: 13px;
-
-    p { margin: 6px 0 0; line-height: 1.5; }
-  }
-
-  &__critere-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--qos-accent-fg-soft);
-  }
-
-  // « Liens générés » : un sous-titre discret et sa liste, comme la maquette.
-  // Subordonné au critère verrouillé juste au-dessus, qui garde son encadré.
-  &__liens {
-    font-size: 13px;
-
-    p {
-      margin: 4px 0 0;
-      line-height: 1.5;
-      color: var(--qos-text-muted);
-    }
-  }
-
-  &__liens-label { font-weight: 600; }
-
-  &__actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+/*
+  L'en-tête de la colonne des icônes est là pour les lecteurs d'écran, et pour
+  eux seuls. `.sr-only` n'était définie ni ici ni globalement : le mot
+  « ACTIONS » s'affichait donc en toutes lettres au-dessus de deux icônes qui
+  se passent de titre.
+*/
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
-
-.filtre { width: 170px; }

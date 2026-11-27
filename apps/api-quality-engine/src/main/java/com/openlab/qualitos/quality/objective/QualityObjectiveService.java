@@ -100,9 +100,6 @@ public class QualityObjectiveService {
         o.setWarningPeriods(req.warningPeriods());
         o.setCriticalPeriods(req.criticalPeriods());
         o.setRecoveryPeriods(req.recoveryPeriods());
-        o.setCapaOwnerId(req.capaOwnerId());
-        o.setCapaOwnerName(blankToNull(req.capaOwnerName()));
-        o.setRootCauseDueDays(req.rootCauseDueDays());
         o.setStatus(ObjectiveLifecycle.ACTIVE);
         o.setCreatedBy(CurrentUser.requireUserId());
         return toResponse(objectives.save(o), kpi, null);
@@ -126,9 +123,6 @@ public class QualityObjectiveService {
         if (req.warningPeriods() != null) o.setWarningPeriods(req.warningPeriods());
         if (req.criticalPeriods() != null) o.setCriticalPeriods(req.criticalPeriods());
         if (req.recoveryPeriods() != null) o.setRecoveryPeriods(req.recoveryPeriods());
-        if (req.capaOwnerId() != null) o.setCapaOwnerId(req.capaOwnerId());
-        if (req.capaOwnerName() != null) o.setCapaOwnerName(blankToNull(req.capaOwnerName()));
-        if (req.rootCauseDueDays() != null) o.setRootCauseDueDays(req.rootCauseDueDays());
         if (req.lifecycle() != null) o.setStatus(req.lifecycle());
 
         KpiDefinition kpi = loadKpi(o.getKpiId(), tenantId);
@@ -290,60 +284,107 @@ public class QualityObjectiveService {
     // ---------- décision du pilote ----------
 
     /**
-     * « Accepter et enregistrer la CAPA » : le pilote retient la proposition, et
-     * le dossier naît.
+     * « Ajouter une action » : le pilote décide d'agir, et le dossier naît de ce
+     * qu'il écrit.
      *
-     * <p><b>La vérification d'efficacité est OBLIGATOIRE</b>, sans question posée
-     * — contrairement aux autres dossiers, où elle se décide à l'ouverture. Un
-     * écart d'objectif ne se referme pas sur une déclaration : il se referme
-     * quand le KPI est revenu sous la cible. Le critère est donc VERROUILLÉ,
-     * rédigé par la règle et non saisissable, faute de quoi on pourrait clore sur
-     * un critère plus facile que celui qu'on s'était donné.
+     * <p><b>Rien n'est prérédigé.</b> La fenêtre CAPA s'ouvre vide ; l'intitulé,
+     * la description, le responsable et l'échéance sont ceux qu'on y saisit. La
+     * recette l'a demandé ainsi : un dossier prérempli par la règle se signait
+     * sans être lu, et son action ne disait pas ce qu'on allait vraiment faire.
      *
-     * <p>L'échéance se calcule MAINTENANT, et non à la rédaction de la
-     * proposition : une proposition laissée trois semaines en attente donnerait
-     * sinon un dossier né en retard.
+     * <p><b>Quatre choses restent au serveur</b>, et la fenêtre ne les demande
+     * pas : la source ({@code QUALITY_OBJECTIVE}), la criticité — celle du
+     * niveau atteint —, la vérification d'efficacité, OBLIGATOIRE sans question
+     * posée, et son critère, VERROUILLÉ. Un écart d'objectif ne se referme pas
+     * sur une déclaration : il se referme quand le KPI est revenu sous la cible,
+     * et laisser saisir le critère reviendrait à clore sur une cible plus facile
+     * que celle qu'on s'était donnée (ADR 0133 §4).
+     *
+     * <p>Une proposition encore en attente sur cet objectif est SOLDÉE par ce
+     * dossier : elle passe {@code ACCEPTED} et porte sa référence. Sans cela, la
+     * revue aurait proposé indéfiniment ce qu'on venait de traiter. Il n'en faut
+     * pas pour agir — la recette veut le bouton sur toute ligne en alerte ou
+     * critique, y compris au premier dépassement.
+     *
+     * <p>Voir l'ADR 0143.
      */
     @Transactional
-    public ObjectiveDto.ProposalResponse accept(UUID proposalId) {
+    public ObjectiveDto.CapaOpenedResponse openCapa(UUID objectiveId,
+                                                    ObjectiveDto.OpenCapaRequest req) {
         UUID tenantId = requireTenantId();
-        QualityObjectiveProposal p = loadProposal(proposalId, tenantId);
-        if (!p.isPending()) {
+        QualityObjective o = load(objectiveId, tenantId);
+        if (o.getStatus() != ObjectiveLifecycle.ACTIVE) {
             throw new ObjectiveStateException(
-                    "This proposal has already been decided (" + p.getStatus() + ")");
+                    "An archived objective no longer opens CAPA cases");
         }
-        QualityObjective o = load(p.getObjectiveId(), tenantId);
+        KpiDefinition kpi = loadKpi(o.getKpiId(), tenantId);
+        ObjectiveAssessment a = apprecier(o, kpi, null);
+        ObjectiveLevel niveau = niveauATraiter(a);
+        if (niveau == null) {
+            throw new ObjectiveStateException(
+                    "This objective is not in alert or critical: there is no deviation to treat");
+        }
+
+        List<ObjectivePeriodSeries.Period> periodes = periodes(o, null);
+        Instant debutDeLaDerniere = periodes.isEmpty()
+                ? null : periodes.get(periodes.size() - 1).start();
+        String source = referenceSource(o, niveau, debutDeLaDerniere);
+
+        Optional<QualityObjectiveProposal> enAttente = proposals
+                .findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(tenantId, o.getId())
+                .stream().filter(QualityObjectiveProposal::isPending).findFirst();
 
         CapaDto.CaseResponse dossier = capaService.openCase(
                 new CapaDto.OpenCaseRequest(
-                        p.getTitle(),
-                        p.getDescription(),
+                        req.title().trim(),
+                        blankToNull(req.description()),
                         // Un écart déjà survenu se traite par un correctif : le
                         // nommer préventif laisserait croire qu'il ne s'est pas
                         // produit (ISO 9001 §10.2).
                         CapaType.CORRECTIVE,
                         // La nature de l'action suit celle du dossier.
                         null,
-                        p.getLevel().criticity(),
+                        niveau.criticity(),
                         CapaSourceType.QUALITY_OBJECTIVE,
-                        referenceSource(o, p),
-                        o.getCapaOwnerId(),
-                        o.getCapaOwnerName(),
-                        echeanceCauseRacine(o.getRootCauseDueDays()),
+                        source,
+                        req.ownerId(),
+                        blankToNull(req.ownerName()),
+                        req.dueDate(),
                         // Obligatoire, sans question posée : voir plus haut.
                         Boolean.TRUE,
-                        o.getCapaOwnerId(),
-                        o.getCapaOwnerName(),
+                        req.ownerId(),
+                        blankToNull(req.ownerName()),
                         instructionsDeVerification(o),
-                        p.getEffectivenessCriterion()),
+                        critereDEfficacite(o, kpi)),
                 CapaSourceType.QUALITY_OBJECTIVE,
-                referenceSource(o, p));
+                source);
 
-        p.setStatus(ProposalStatus.ACCEPTED);
-        p.setCapaCaseId(dossier.id());
-        p.setDecidedBy(CurrentUser.userId().orElse(null));
-        p.setDecidedAt(Instant.now());
-        return toResponse(proposals.save(p), o.getTitle());
+        UUID propositionSoldee = null;
+        if (enAttente.isPresent()) {
+            QualityObjectiveProposal p = enAttente.get();
+            p.setStatus(ProposalStatus.ACCEPTED);
+            p.setCapaCaseId(dossier.id());
+            p.setDecidedBy(CurrentUser.userId().orElse(null));
+            p.setDecidedAt(Instant.now());
+            propositionSoldee = proposals.save(p).getId();
+        }
+        return new ObjectiveDto.CapaOpenedResponse(dossier.id(), propositionSoldee);
+    }
+
+    /**
+     * Le niveau que l'écart appelle aujourd'hui, ou {@code null} s'il n'y a rien
+     * à traiter.
+     *
+     * <p>Le STATUT et non le seul niveau déclenché : la règle ne déclenche qu'au
+     * bout de ses périodes consécutives, alors que la recette veut pouvoir agir
+     * dès la première ligne passée en alerte.
+     */
+    private ObjectiveLevel niveauATraiter(ObjectiveAssessment a) {
+        return switch (a.status()) {
+            case CRITICAL -> ObjectiveLevel.CRITICAL;
+            case WARNING -> ObjectiveLevel.WARNING;
+            case ON_TARGET, NOT_EVALUATED -> null;
+        };
     }
 
     /**
@@ -470,9 +511,7 @@ public class QualityObjectiveService {
         if (o.getProcessName() != null) {
             b.append("Processus : ").append(o.getProcessName()).append(".\n");
         }
-        b.append("Analyse de cause racine attendue sous ")
-                .append(o.getRootCauseDueDays()).append(" jours ouvrés.");
-        return b.toString();
+        return b.toString().stripTrailing();
     }
 
     /**
@@ -514,29 +553,19 @@ public class QualityObjectiveService {
                 + "Aucun calcul à faire : constater, et consigner ce que montre la courbe.";
     }
 
-    /** {@code objective:<id>:<niveau>:<début de période>} — ce qui relie le dossier à l'écart. */
-    private String referenceSource(QualityObjective o, QualityObjectiveProposal p) {
-        return "objective:" + o.getId() + ":" + p.getLevel() + ":" + p.getPeriodStart();
-    }
-
     /**
-     * L'échéance d'analyse de cause racine, en jours OUVRÉS depuis aujourd'hui.
+     * {@code objective:<id>:<niveau>:<début de période>} — ce qui relie le dossier
+     * à l'écart.
      *
-     * <p>Les jours ouvrés, et non calendaires : « cinq jours » posé un jeudi
-     * tomberait sinon un mardi, en ayant compté un week-end où personne n'a
-     * travaillé. Les jours fériés ne sont pas connus de la plateforme et ne sont
-     * donc pas retirés.
+     * <p>La période est celle de la dernière appréciation, et non celle d'une
+     * proposition : on peut ouvrir un dossier sans qu'aucune proposition n'ait
+     * été rédigée. Sans mesure, la date est omise — la référence reste unique
+     * par le niveau.
      */
-    static LocalDate echeanceCauseRacine(int joursOuvres) {
-        LocalDate d = LocalDate.now();
-        int restants = Math.max(1, joursOuvres);
-        while (restants > 0) {
-            d = d.plusDays(1);
-            if (d.getDayOfWeek() != DayOfWeek.SATURDAY && d.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                restants--;
-            }
-        }
-        return d;
+    private String referenceSource(QualityObjective o, ObjectiveLevel niveau,
+                                   Instant debutDeLaPeriode) {
+        return "objective:" + o.getId() + ":" + niveau
+                + (debutDeLaPeriode == null ? "" : ":" + debutDeLaPeriode);
     }
 
     // ---------- helpers ----------
@@ -622,7 +651,7 @@ public class QualityObjectiveService {
                 o.getPeriodMonths(), o.getTargetValue(),
                 o.getThresholdWarning(), o.getThresholdCritical(),
                 o.getWarningPeriods(), o.getCriticalPeriods(), o.getRecoveryPeriods(),
-                o.getCapaOwnerId(), o.getCapaOwnerName(), o.getRootCauseDueDays(),
+                critereDEfficacite(o, kpi),
                 o.getStatus(),
                 new ObjectiveDto.AssessmentResponse(
                         app.status(), app.observedValue(),

@@ -82,14 +82,16 @@ class QualityObjectiveAuthorizationTest {
     }
 
     @Test @WithMockUser(roles = "USER")
-    void unUtilisateurNAccepteNiNeRejetteUneCapaProposee() throws Exception {
-        mockMvc.perform(post(BASE + "/proposals/" + PROP + "/accept").with(csrf()))
+    void unUtilisateurNOuvrePasLaCapaEtNeRejettePasUneProposition() throws Exception {
+        mockMvc.perform(post(BASE + "/" + OBJ + "/capa").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"peu importe\"}"))
                 .andExpect(status().isForbidden());
         mockMvc.perform(post(BASE + "/proposals/" + PROP + "/reject").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"reason\":\"peu importe\"}"))
                 .andExpect(status().isForbidden());
-        verify(service, never()).accept(any());
+        verify(service, never()).openCapa(any(), any());
         verify(service, never()).reject(any(), any());
     }
 
@@ -108,7 +110,9 @@ class QualityObjectiveAuthorizationTest {
         mockMvc.perform(patch(BASE + "/" + OBJ).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isForbidden());
-        mockMvc.perform(post(BASE + "/proposals/" + PROP + "/accept").with(csrf()))
+        mockMvc.perform(post(BASE + "/" + OBJ + "/capa").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"peu importe\"}"))
                 .andExpect(status().isForbidden());
     }
 
