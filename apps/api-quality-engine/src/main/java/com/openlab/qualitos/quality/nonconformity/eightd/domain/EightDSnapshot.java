@@ -64,11 +64,35 @@ public record EightDSnapshot(
         String layout) {
 
     /** Le nom du dessin en vigueur, ecrit par l'assembleur sur tout rapport neuf. */
-    public static final String MISE_EN_PAGE_COURANTE = "2026-11";
+    public static final String MISE_EN_PAGE_COURANTE = "2026-12";
+
+    /**
+     * Le dessin remanie de novembre 2026 : largeurs de colonnes, pied de page,
+     * pagination, accents. Les rapports scelles sous ce nom se redessinent
+     * ainsi pour toujours, et le dessin courant l'a repris en entier.
+     */
+    private static final String MISE_EN_PAGE_2026_11 = "2026-11";
 
     /** Vrai quand ce rapport se dessine selon la mise en page remaniee. */
     public boolean dessinRemanie() {
-        return MISE_EN_PAGE_COURANTE.equals(layout);
+        return MISE_EN_PAGE_2026_11.equals(layout)
+                || MISE_EN_PAGE_COURANTE.equals(layout);
+    }
+
+    /**
+     * Vrai quand ce rapport ECRIT « Non renseignee. » sous une discipline vide.
+     *
+     * <p>Le dessin courant ne l'ecrit plus : une rubrique vide se laisse vide,
+     * et ce qui manque est deja nomme par le bandeau « rapport partiel » et par
+     * le libelle de provenance de la discipline.
+     *
+     * <p>Les rapports scelles AVANT ce dessin continuent de l'ecrire, et c'est
+     * la raison d'etre du marqueur : leur empreinte porte sur les octets du PDF,
+     * re-rendu a chaque telechargement et compare au sceau. Retirer cette ligne
+     * pour eux les rendrait indelivrables sans qu'aucune donnee n'ait bouge.
+     */
+    public boolean annonceLesDisciplinesVides() {
+        return !MISE_EN_PAGE_COURANTE.equals(layout);
     }
 
     /**

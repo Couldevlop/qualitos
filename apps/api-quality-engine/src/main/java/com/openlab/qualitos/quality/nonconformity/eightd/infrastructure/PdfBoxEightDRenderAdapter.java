@@ -128,8 +128,10 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             page.y = entete(page.flux, bold, regular, snapshot, page.y, fr, remanie);
             page.y = encadreNc(page.flux, bold, regular, snapshot, page.y, fr);
 
+            boolean annonceLesVides = snapshot.annonceLesDisciplinesVides();
             for (EightDSnapshot.Section section : snapshot.sections()) {
-                page = discipline(doc, page, bold, regular, section, fr, remanie);
+                page = discipline(doc, page, bold, regular, section, fr, remanie,
+                        annonceLesVides);
             }
 
             page = piedIntegrite(doc, page, bold, regular, mono, snapshot, verifyUrl, fr,
@@ -299,7 +301,8 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private Page discipline(PDDocument doc, Page page, PDType1Font bold, PDType1Font regular,
-                            EightDSnapshot.Section section, boolean fr, boolean remanie)
+                            EightDSnapshot.Section section, boolean fr, boolean remanie,
+                            boolean annonceLesVides)
             throws IOException {
         page = place(doc, page, 46f);
         texte(page.flux, bold, 13, INDIGO, MARGIN, page.y,
@@ -317,11 +320,22 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             page.y -= 14;
         }
 
+        // UNE RUBRIQUE VIDE SE LAISSE VIDE. « Non renseignée. » s'inscrivait
+        // sous chaque discipline sans contenu : un constat de manque, répété,
+        // dans le document qui part chez le client. Ce qui manque est déjà
+        // nommé en tête — le bandeau « rapport partiel » énumère les
+        // disciplines vides — et par le libellé de provenance juste au-dessus.
+        //
+        // Les rapports scellés sous un dessin antérieur l'écrivent toujours :
+        // leur empreinte porte sur les octets du PDF, et retirer la ligne pour
+        // eux les rendrait indélivrables (voir EightDSnapshot#layout).
         if (rienAMontrer(section)) {
-            page = place(doc, page, 16f);
-            texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y,
-                    mot(fr, "Non renseignée.", "Not filled in."));
-            page.y -= 14;
+            if (annonceLesVides) {
+                page = place(doc, page, 16f);
+                texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y,
+                        mot(fr, "Non renseignée.", "Not filled in."));
+                page.y -= 14;
+            }
             return page;
         }
         page = fiche(doc, page, bold, regular, section);

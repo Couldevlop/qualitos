@@ -220,13 +220,6 @@
    5 pourquoi) gardent leur hiérarchie : sans cela, tout s'aplatit. */
 .discipline-card .lignes li { white-space: pre-wrap; }
 
-.discipline-card .vide {
-  margin: 0;
-  font-size: 13px;
-  font-style: italic;
-  color: var(--mat-sys-error, #b3261e);
-}
-
 // Les blocs VIVANTS d'une discipline : les figures d'analyse de cause (D4) et le
 // tableau des actions (D5, D6). Ils se distinguent du texte agrege par un filet
 // a gauche, parce qu'ils ne sont PAS ce que le PDF scellera : le document porte

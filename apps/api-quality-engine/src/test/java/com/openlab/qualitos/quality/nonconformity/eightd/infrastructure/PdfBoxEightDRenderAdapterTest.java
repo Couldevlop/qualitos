@@ -242,6 +242,40 @@ class PdfBoxEightDRenderAdapterTest {
         assertThat(texte).doesNotContain("ML-DSA + ancr");
     }
 
+    /**
+     * UNE RUBRIQUE VIDE SE LAISSE VIDE dans le document neuf.
+     *
+     * <p>« Non renseignée. » s'inscrivait sous chaque discipline sans contenu :
+     * un constat de manque, repete, dans le document qui part chez le client.
+     * Ce qui manque reste dit la ou c'est utile -- le bandeau de rapport
+     * partiel nomme les disciplines vides, et le libelle de provenance de
+     * chacune distingue « rien a dire » de « on n'a pas cherche ».
+     */
+    @Test
+    void le_document_neuf_laisse_une_discipline_vide_sans_l_annoncer() throws IOException {
+        String texte = texteDe(renderer.render(remanie(snapshot(false)), URL));
+
+        assertThat(texte).doesNotContain("Non renseignée.");
+        assertThat(texte).doesNotContain("Not filled in.");
+        // Ce qui MANQUE reste dit, et mieux : nomme en tete, explique sur place.
+        assertThat(texte).contains("RAPPORT PARTIEL - disciplines sans contenu :");
+        assertThat(texte).contains("cette discipline se saisit");
+    }
+
+    /**
+     * ET LE RAPPORT DEJA SCELLE L'ECRIT TOUJOURS. Son empreinte porte sur les
+     * octets du PDF, re-rendu a chaque telechargement et compare au sceau :
+     * retirer cette ligne pour lui le rendrait indelivrable sans qu'aucune
+     * donnee n'ait bouge.
+     */
+    @Test
+    void un_rapport_scelle_sous_un_dessin_anterieur_annonce_toujours_ses_vides()
+            throws IOException {
+        String texte = texteDe(renderer.render(snapshot(false), URL));
+
+        assertThat(texte).contains("Not filled in.");
+    }
+
     /** Le meme instantane, avec la langue du document neuf. */
     private EightDSnapshot enFrancais(EightDSnapshot snapshot) {
         return new EightDSnapshot(snapshot.ncReference(), snapshot.ncTitle(),

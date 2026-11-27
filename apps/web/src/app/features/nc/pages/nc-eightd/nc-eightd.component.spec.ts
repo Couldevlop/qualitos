@@ -172,19 +172,21 @@ describe('NcEightDComponent', () => {
     expect(hote().textContent).toContain('NC-2026-0007');
   });
 
-  it('dit qu\'une discipline n\'a pas de source plutôt que de laisser un bloc vide', async () => {
+  /**
+   * UNE RUBRIQUE VIDE SE LAISSE VIDE. « Non renseigné. » s'inscrivait sous
+   * chaque discipline sans contenu : un constat de manque, répété, dans un
+   * document qu'on relit avant de le remettre. Ce qui manque reste dit là où
+   * c'est utile — le libellé de provenance distingue « rien à dire » de « on
+   * n'a pas cherché », et le bandeau « partiel » nomme les disciplines vides.
+   */
+  it('laisse une discipline vide sans annoncer qu\'elle l\'est', async () => {
     await monter(['QUALITY_MANAGER']);
 
-    // D1 et D8 : rien a montrer, et elles le disent. D3 est vide elle aussi,
-     // mais elle PORTE le tableau des actions d'endiguement : annoncer « Non
-     // renseigne » juste au-dessus de son contenu faisait croire la discipline
-     // manquante a qui lisait la ligne suivante.
-    const vides = hote().querySelectorAll('[data-test="discipline-vide"]');
-    expect(vides.length).toBe(2);
-    // ET ELLE DIT POURQUOI : le libellé de provenance ne survit qu'à la
-    // discipline vide, où il distingue « rien à dire » de « on n'a pas
-    // cherché ». Servie, elle ne le porte plus — et la ligne disparaît avec
-    // lui au lieu de laisser un blanc.
+    expect(hote().querySelectorAll('[data-test="discipline-vide"]').length).toBe(0);
+    expect(hote().textContent).not.toContain('Non renseigné');
+    // Le libellé de provenance, lui, ne survit qu'à la discipline vide : servie,
+    // elle ne le porte plus, et la ligne disparaît avec lui au lieu de laisser
+    // un blanc.
     expect(hote().textContent).toContain('rien à agréger');
     expect(hote().querySelectorAll('[data-test="discipline-source"]').length).toBe(3);
   });

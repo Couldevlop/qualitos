@@ -22937,10 +22937,6 @@ historique 12 mois</source>
         <source>Ce que l'équipe a appris, et ce qui mérite d'être dit</source>
         <target state="translated">チームが学んだこと、そして伝える価値のあること</target>
       </trans-unit>
-      <trans-unit id="nc.8d.discipline-empty" datatype="html">
-        <source>Non renseigné.</source>
-        <target state="translated">未記入です。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.issue" datatype="html">
         <source>Émettre</source>
         <target state="translated">発行</target>
@@ -23964,10 +23960,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.validator-failed" datatype="html">
         <source>Le valideur n'a pas pu être enregistré.</source>
         <target state="translated">承認者を保存できませんでした。</target>
-      </trans-unit>
-      <trans-unit id="nc.8d.resolved-by" datatype="html">
-        <source>Résolu par</source>
-        <target state="translated">解決者</target>
       </trans-unit>
       <trans-unit id="nc.8d.closed-by" datatype="html">
         <source>Clôturé par</source>
