@@ -15,7 +15,12 @@
   --bleu: #1f62c4;
   --bleu-clair: #e8effa;
   --signal: #f5901f;
-  --signal-sombre: #b9690a;
+  /* ASSOMBRI de #b9690a, qui donnait 3,57:1 sur le bleu pale des cartes --
+     sous les 4,5:1 qu'exige WCAG 2.2 AA pour du texte de 13 a 15 px. Cette
+     teinte sert de TEXTE (fonction d'un metier, role d'un profil), pas
+     d'accent decoratif : elle doit se lire, pas se deviner. A #a05a08 elle
+     donne 4,60:1 sur ce bleu et 5,30:1 sur blanc. */
+  --signal-sombre: #a05a08;
 
   --encre: #0f1d33;
   --encre-douce: #42536e;
@@ -240,6 +245,16 @@ img { max-width: 100%; height: auto; }
   border-color: var(--signal);
 }
 .bouton--signal:hover { background: var(--signal-sombre); border-color: var(--signal-sombre); color: #fff; }
+/* CIBLE TACTILE : 24 px de haut au minimum (WCAG 2.2, 2.5.8). Poses en
+   ligne dans un paragraphe, le courriel et le telephone tombaient a 19 px --
+   un doigt les manque, et ce sont les deux seuls moyens de joindre
+   quelqu'un sans remplir le formulaire. */
+a[href^='mailto:'],
+a[href^='tel:'] {
+  display: inline-block;
+  padding-block: 0.2rem;
+}
+
 .bouton--trait {
   background: transparent;
   color: var(--marine);
@@ -247,6 +262,19 @@ img { max-width: 100%; height: auto; }
 }
 .bouton--trait:hover { border-color: var(--marine); color: var(--marine); background: var(--bleu-clair); }
 .section--marine .bouton--trait { color: #fff; border-color: #51719e; }
+
+.relance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.1rem;
+  margin: 1.6rem 0 0;
+  padding-top: 1.3rem;
+  border-top: 1px solid #2c4877;
+  font-size: var(--t-m);
+  color: #cdd9ec;
+  max-width: none;
+}
 .section--marine .bouton--trait:hover { background: rgba(255, 255, 255, 0.08); border-color: #fff; }
 
 /* ==========================================================================
@@ -332,25 +360,35 @@ img { max-width: 100%; height: auto; }
 .chaine__maillon {
   position: relative;
   flex: 1 1 8.5rem;
+  background: var(--papier);
+  border: 1.5px solid var(--filet-fort);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+/* Le remplissage est porte par le LIEN, pas par le maillon : sinon seul le
+   mot serait cliquable et le reste de la boite, qui a pourtant l'air d'un
+   bouton, resterait mort sous le curseur. */
+.chaine__maillon a {
+  display: block;
   padding: 0.65rem 0.5rem;
   text-align: center;
   font-size: var(--t-s);
   font-weight: 600;
   color: var(--encre);
-  background: var(--papier);
-  border: 1.5px solid var(--filet-fort);
-  border-radius: 10px;
+  text-decoration: none;
 }
+.chaine__maillon:hover { border-color: var(--bleu); background: var(--bleu-clair); }
+.chaine__maillon--depart:hover { border-color: var(--signal-sombre); background: #fce4c4; }
 .chaine__maillon--depart {
   background: #fdf0de;
   border-color: var(--signal);
-  color: var(--signal-sombre);
 }
+.chaine__maillon--depart a { color: var(--signal-sombre); }
 .chaine__maillon--fin {
   background: var(--bleu-clair);
   border-color: var(--bleu);
-  color: var(--marine);
 }
+.chaine__maillon--fin a { color: var(--marine); }
 
 /* Le trait court DANS la gouttiere, pas dans la boite : pose en absolu sur la
    largeur du gap, il relie sans rien pousser. */
@@ -372,9 +410,12 @@ img { max-width: 100%; height: auto; }
      maillon, pas se serrer dans la moitie gauche. */
   max-width: none;
   gap: 1rem;
-  margin: 0.5rem 0 0;
-  font-family: var(--police-nombre);
-  font-size: var(--t-xs);
+  margin: 0.55rem 0 0;
+  /* LE MONO EST RESERVE AUX NOMBRES ET AUX REFERENCES DE CLAUSE. Ces deux
+     mentions ne sont ni l'un ni l'autre : elles portent l'idee la plus forte
+     de la figure -- a quoi la chaine repond aux deux bouts -- et etaient le
+     plus petit texte de la page. */
+  font-size: var(--t-s);
   color: var(--encre-douce);
 }
 
@@ -402,7 +443,7 @@ img { max-width: 100%; height: auto; }
    pas une chaîne de mots reliés par des points médians. */
 .couverture-rapide {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   margin-top: 2rem;
   border-top: 1px solid var(--filet);
 }
@@ -465,20 +506,33 @@ img { max-width: 100%; height: auto; }
 .chaine li:nth-child(even) { border-left-color: var(--signal); }
 
 /* ---------- grille de modules ---------- */
+.modules-famille { margin-top: 1.5rem; }
+.modules-famille:first-of-type { margin-top: 1.1rem; }
+.modules-famille > h3 {
+  font-size: var(--t-s);
+  font-weight: 700;
+  color: var(--marine);
+  margin: 0 0 0.55rem;
+}
+
 .modules {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
   gap: 0;
-  border-top: 1px solid var(--filet);
   border-left: 1px solid var(--filet);
 }
+/* LE FILET DU HAUT EST SUR LA CARTE, pas sur la grille. Porte par la grille,
+   il traversait les colonnes vides : une famille de deux cartes sur quatre
+   colonnes tirait un trait dans le vide, et la rangee avait l'air d'un
+   tableau inacheve. Sur la carte, il ne couvre que ce qui existe. */
 .module {
   padding: 1.2rem;
+  border-top: 1px solid var(--filet);
   border-right: 1px solid var(--filet);
   border-bottom: 1px solid var(--filet);
   background: var(--papier);
 }
-.module h3 { font-size: var(--t-base); font-weight: 700; margin-bottom: 0.45rem; }
+.module h4 { font-size: var(--t-base); font-weight: 700; margin-bottom: 0.45rem; }
 .module p { font-size: var(--t-s); color: var(--encre-douce); margin: 0; }
 .module__clause {
   display: block;
@@ -491,7 +545,11 @@ img { max-width: 100%; height: auto; }
 /* ---------- normes ---------- */
 .normes-grille { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); }
 
-.familles-normes { display: grid; gap: 0.7rem; }
+/* ALIGNEE EN HAUT. La feuille de route voisine compte dix-neuf etapes ;
+   sans cette ligne, les sept familles s'etiraient pour l'egaler et prenaient
+   113 px de pas pour deux lignes de texte chacune. Une liste se lit par son
+   propre rythme, pas par celui de sa voisine. */
+.familles-normes { display: grid; gap: 0.7rem; align-content: start; }
 .famille-norme { border-top: 2px solid var(--signal); padding-top: 0.6rem; }
 .famille-norme h3 { font-size: var(--t-s); font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
 .famille-norme p { font-size: var(--t-s); color: #a9bcd8; margin: 0; }
@@ -642,7 +700,12 @@ img { max-width: 100%; height: auto; }
 .coordonnees a:hover { color: var(--signal); }
 
 .formulaire { background: #fff; padding: clamp(1.75rem, 3vw, 2.5rem); border-radius: 4px; }
-.formulaire h3 { font-size: var(--t-l); margin-bottom: 0.4rem; }
+/* LE TITRE DU FORMULAIRE ETAIT BLANC SUR BLANC, donc invisible. La bande
+   est marine et ses h3 sont blancs ; la carte du formulaire, elle, est
+   blanche, et cette regle ne reposait pas la couleur. « Demander une
+   demonstration » existait dans le document, se lisait au lecteur d'ecran
+   et ne se voyait pas a l'oeil -- sur le seul formulaire de la page. */
+.formulaire h3 { font-size: var(--t-l); color: var(--marine); margin-bottom: 0.4rem; }
 .formulaire > p { font-size: var(--t-s); color: var(--encre-douce); margin-bottom: 1.25rem; }
 
 .champs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }

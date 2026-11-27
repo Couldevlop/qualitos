@@ -246,8 +246,9 @@
 
             <p class="heros__chapo">
               NC, audits, SMI, SPC, APQP, risques, fournisseurs : une qualité
-              enfin connectée. Pilotez la qualité de bout en bout, sans quitter
-              QualitOS.
+              enfin connectée, où l'IA voit la dérive avant vous et montre ce
+              qui l'a produite. Pilotez la qualité de bout en bout, sans
+              quitter QualitOS.
             </p>
           </div>
 
@@ -263,14 +264,20 @@
          dans une boite de 1200 unites tombent a quatre pixels de haut sur un
          telephone, illisibles, et aucune media query ne rattrape cela --
          viewBox ne s'ecrit pas en CSS. Une liste, elle, passe a deux
-         colonnes toute seule, se lit au lecteur d'ecran, et se copie. -->
+         colonnes toute seule, se lit au lecteur d'ecran, et se copie.
+
+         ET CE SONT DES LIENS. Six boites arrondies, bordees, dont la premiere
+         porte l'orange exact du bouton de demonstration : c'est la forme d'un
+         bouton. Inertes, elles promettaient un clic qu'elles ne tenaient pas.
+         Chacune mene donc a la section qui l'explique -- la chaine devient le
+         sommaire de la page au lieu d'en etre le trompe-l'oeil. -->
           <ol class="chaine">
-            <li class="chaine__maillon chaine__maillon--depart">Réclamation client</li>
-            <li class="chaine__maillon">Non-conformité</li>
-            <li class="chaine__maillon">Cause racine</li>
-            <li class="chaine__maillon">Action corrective</li>
-            <li class="chaine__maillon">Preuve signée</li>
-            <li class="chaine__maillon chaine__maillon--fin">ISO 9001 § 10.2</li>
+            <li class="chaine__maillon chaine__maillon--depart"><a href="#modules">Réclamation client</a></li>
+            <li class="chaine__maillon"><a href="#modules">Non-conformité</a></li>
+            <li class="chaine__maillon"><a href="#referentiel">Cause racine</a></li>
+            <li class="chaine__maillon"><a href="#modules">Action corrective</a></li>
+            <li class="chaine__maillon"><a href="#securite">Preuve signée</a></li>
+            <li class="chaine__maillon chaine__maillon--fin"><a href="#normes">ISO 9001 § 10.2</a></li>
           </ol>
           <p class="chaine__bouts">
             <span>ce que le client signale</span>
@@ -305,6 +312,14 @@
             <div>
               <dt>Risques et tiers</dt>
               <dd>AMDEC, fournisseurs, compétences, changements.</dd>
+            </div>
+            <!-- SIXIEME COLONNE, ajoutee parce que son absence disait le
+           contraire de la promesse. Les cinq premieres enumeraient des
+           modules ; l'IA n'en est pas un -- elle traverse les cinq autres --
+           et ne figurer nulle part la rendait optionnelle a la lecture. -->
+            <div>
+              <dt>Intelligence</dt>
+              <dd>Dérive détectée, causes suggérées, prévision — et ses sources.</dd>
             </div>
           </dl>
         </div>
@@ -680,6 +695,18 @@
               </figcaption>
             </figure>
           </div>
+
+          <!-- LA SEULE RELANCE DE LA PAGE, et elle est posee ici a dessein.
+         L'en-tete et le formulaire sont aux deux extremites de dix mille
+         pixels : entre les deux, un visiteur convaincu n'avait nulle part ou
+         aller sans remonter. Le point ou il vient de VOIR le produit est
+         celui ou il a le plus de raisons de demander a le voir en vrai. -->
+          <p class="relance">
+            Ces écrans sur vos propres données, c'est une heure.
+            <a class="bouton bouton--trait" href="#contact"
+              >Demander une démo</a
+            >
+          </p>
         </div>
       </section>
 
@@ -697,103 +724,127 @@
             </p>
           </div>
 
-          <div class="modules">
-            <article class="module">
-              <h3>Maîtrise documentaire</h3>
-              <p>
-                Versions, circuit d'approbation, lecture obligatoire avec
-                preuve, signature électronique.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.5</span>
-            </article>
-            <article class="module">
-              <h3>CAPA</h3>
-              <p>
-                Actions correctives et préventives, escalade automatique,
-                efficacité mesurée après coup.
-              </p>
-              <span class="module__clause num">ISO 9001 §10.2</span>
-            </article>
-            <article class="module">
-              <h3>Non-conformités</h3>
+          <!-- QUATRE FAMILLES, et non douze cartes d'un tenant.
+         Le chapo annonce qu'on active ce dont on a besoin ; alignees a
+         l'identique et sans regroupement, les douze demandaient de lire les
+         douze pour savoir ce que la plateforme couvre. Les familles sont
+         celles que la bande du heros nomme deja : ecarts, documents, risques,
+         ressources -- le visiteur retrouve en detail ce qu'il a survole. -->
+          <section class="modules-famille">
+            <h3>Écarts et actions</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Non-conformités</h4>
               <p>
                 Saisie au poste avec photos et localisation, catégories et
                 natures propres à votre métier.
               </p>
               <span class="module__clause num">ISO 9001 §8.7</span>
-            </article>
-            <article class="module">
-              <h3>Audits</h3>
+              </article>
+              <article class="module">
+              <h4>CAPA</h4>
               <p>
-                Programme annuel, listes de contrôle, exécution hors ligne,
-                rapport rédigé à partir des constats.
+                Actions correctives et préventives, escalade automatique,
+                efficacité mesurée après coup.
               </p>
-              <span class="module__clause num">ISO 19011</span>
-            </article>
-            <article class="module">
-              <h3>Risques et AMDEC</h3>
-              <p>
-                Cotation, criticité, nœud papillon pour les risques majeurs,
-                réévaluation à chaque donnée nouvelle.
-              </p>
-              <span class="module__clause num">ISO 31000</span>
-            </article>
-            <article class="module">
-              <h3>Qualité fournisseurs</h3>
-              <p>
-                Fiches de score, audits, certificats matière, écarts suivis
-                jusqu'à la réponse 8D.
-              </p>
-              <span class="module__clause num">ISO 9001 §8.4</span>
-            </article>
-            <article class="module">
-              <h3>Compétences et formation</h3>
-              <p>
-                Matrices par poste, habilitations, rappels d'échéance,
-                attestations vérifiables.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.2</span>
-            </article>
-            <article class="module">
-              <h3>Gestion des changements</h3>
-              <p>
-                Demande, analyse d'impact, validation à plusieurs niveaux,
-                documents et formations à reprendre.
-              </p>
-              <span class="module__clause num">ISO 9001 §6.3</span>
-            </article>
-            <article class="module">
-              <h3>Réclamations clients</h3>
+              <span class="module__clause num">ISO 9001 §10.2</span>
+              </article>
+              <article class="module">
+              <h4>Réclamations clients</h4>
               <p>
                 Réception multi-canal, classement et tonalité analysés, lien
                 direct vers la CAPA ouverte.
               </p>
               <span class="module__clause num">ISO 10002</span>
-            </article>
-            <article class="module">
-              <h3>Métrologie</h3>
+              </article>
+            </div>
+          </section>
+          <section class="modules-famille">
+            <h3>Documents et preuves</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Maîtrise documentaire</h4>
               <p>
-                Plans d'étalonnage, échéances, études R&amp;R de répétabilité et
-                reproductibilité.
+                Versions, circuit d'approbation, lecture obligatoire avec
+                preuve, signature électronique.
               </p>
-              <span class="module__clause num">ISO 9001 §7.1.5</span>
-            </article>
-            <article class="module">
-              <h3>Parties intéressées</h3>
+              <span class="module__clause num">ISO 9001 §7.5</span>
+              </article>
+              <article class="module">
+              <h4>Audits</h4>
+              <p>
+                Programme annuel, listes de contrôle, exécution hors ligne,
+                rapport rédigé à partir des constats.
+              </p>
+              <span class="module__clause num">ISO 19011</span>
+              </article>
+            </div>
+          </section>
+          <section class="modules-famille">
+            <h3>Risques et tiers</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Risques et AMDEC</h4>
+              <p>
+                Cotation, criticité, nœud papillon pour les risques majeurs,
+                réévaluation à chaque donnée nouvelle.
+              </p>
+              <span class="module__clause num">ISO 31000</span>
+              </article>
+              <article class="module">
+              <h4>Qualité fournisseurs</h4>
+              <p>
+                Fiches de score, audits, certificats matière, écarts suivis
+                jusqu'à la réponse 8D.
+              </p>
+              <span class="module__clause num">ISO 9001 §8.4</span>
+              </article>
+              <article class="module">
+              <h4>Parties intéressées</h4>
               <p>
                 Registre, matrice d'évaluation, exigences rattachées aux
                 risques, écarts, audits et documents.
               </p>
               <span class="module__clause num">ISO 9001 §4.2</span>
-            </article>
-            <article class="module">
-              <h3>Santé, sécurité, environnement</h3>
+              </article>
+            </div>
+          </section>
+          <section class="modules-famille">
+            <h3>Ressources et terrain</h3>
+            <div class="modules">
+              <article class="module">
+              <h4>Compétences et formation</h4>
+              <p>
+                Matrices par poste, habilitations, rappels d'échéance,
+                attestations vérifiables.
+              </p>
+              <span class="module__clause num">ISO 9001 §7.2</span>
+              </article>
+              <article class="module">
+              <h4>Métrologie</h4>
+              <p>
+                Plans d'étalonnage, échéances, études R&amp;R de répétabilité et
+                reproductibilité.
+              </p>
+              <span class="module__clause num">ISO 9001 §7.1.5</span>
+              </article>
+              <article class="module">
+              <h4>Gestion des changements</h4>
+              <p>
+                Demande, analyse d'impact, validation à plusieurs niveaux,
+                documents et formations à reprendre.
+              </p>
+              <span class="module__clause num">ISO 9001 §6.3</span>
+              </article>
+              <article class="module">
+              <h4>Santé, sécurité, environnement</h4>
               <p>
                 Les mêmes audits, écarts et actions, appliqués aux sujets SSE.
               </p>
               <span class="module__clause num">ISO 14001 · 45001</span>
-            </article>
-          </div>
+              </article>
+            </div>
+          </section>
         </div>
       </section>
 
