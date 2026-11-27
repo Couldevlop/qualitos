@@ -239,9 +239,21 @@ public class CapaService {
      * dependrait de qui la demande -- et nommer ici divulguerait un dossier
      * hors de portee par un message d'erreur.
      *
-     * <p>Les MEMES regles que {@link #closureBlockers}, lues action par action :
-     * pas {@code DONE}, ou faite sans que son effet soit verifie (ADR 0132). Un
-     * dossier regle ne retient rien, {@link #actionsQuiBloquent} s'en charge.
+     * <p>SEULES LES ACTIONS QUI RESTENT A EXECUTER, c'est-a-dire celles qui ne
+     * sont pas {@code DONE}. L'ADR 0132 borne son verrou a la CLOTURE et l'ecrit
+     * noir sur blanc : « la resolution n'est pas concernee » — une verification
+     * d'efficacite se mesure sur des semaines, et l'exiger avant la resolution
+     * bloquerait le dossier a l'etape d'avant.
+     *
+     * <p>Ce decompte reutilisait pourtant le predicat de la cloture
+     * ({@link #actionsQuiBloquent}), qui compte aussi les actions FAITES dont la
+     * verification promise n'a pas conclu. Une action terminee depuis le 8D
+     * retenait donc la resolution de l'ecart, sous un motif qui demandait de la
+     * TERMINER alors qu'elle l'etait. Pour avancer, il fallait rendre tout de
+     * suite le verdict d'efficacite de cette action — celui-la meme que l'ADR
+     * 0132 range dans la CLOTURE, et qu'on ne mesure pas en un clic. Ce qui
+     * reste a verifier se dit donc la ou c'est vrai
+     * ({@link ClosureBlockerCode#ACTION_VERIFICATIONS_PENDING}), pas ici.
      *
      * <p>Pourquoi des actions et plus des dossiers : « 2 dossiers CAPA ont des
      * actions a mener » obligeait a les ouvrir un a un pour savoir combien de
@@ -250,7 +262,7 @@ public class CapaService {
     @Transactional(readOnly = true)
     public int unexecutedActionCountFor(UUID escaladeId, String ncReference) {
         return dossiersDe(escaladeId, ncReference).stream()
-                .mapToInt(c -> actionsQuiBloquent(c).size())
+                .mapToInt(c -> actionsNonExecutees(c).size())
                 .sum();
     }
 
@@ -1511,9 +1523,7 @@ public class CapaService {
         if (actions.isEmpty()) {
             return List.of();
         }
-        List<CapaAction> aFaire = actions.stream()
-                .filter(a -> a.getStatus() != CapaActionStatus.DONE)
-                .toList();
+        List<CapaAction> aFaire = actionsNonExecutees(c);
         List<CapaAction> aVerifier = actionsNonVerifiees(c, actions).stream()
                 .filter(a -> a.getStatus() == CapaActionStatus.DONE)
                 .toList();
@@ -1522,6 +1532,26 @@ public class CapaService {
                                 a.getId(), a.getTitle(), CapaDto.BlockingReason.TO_DO)),
                         aVerifier.stream().map(a -> new CapaDto.BlockingAction(
                                 a.getId(), a.getTitle(), CapaDto.BlockingReason.TO_VERIFY)))
+                .toList();
+    }
+
+    /**
+     * Les actions de ce dossier qui restent A EXECUTER : pas encore {@code DONE}.
+     *
+     * <p>La seule lecture qui vaille pour la RESOLUTION d'un ecart — « ce qui
+     * devait etre fait l'a-t-il ete ? » — et le volet {@code TO_DO} de la
+     * cloture. Une seule methode pour les deux, parce que deux lectures de la
+     * meme question finiraient par diverger.
+     *
+     * <p>Un dossier REGLE — clos ou ecarte — ne retient plus rien : ce qui est
+     * clos l'a ete sur l'etat d'alors.
+     */
+    private List<CapaAction> actionsNonExecutees(CapaCase c) {
+        if (CAPA_SETTLED_STATUSES.contains(c.getStatus())) {
+            return List.of();
+        }
+        return c.getActions().stream()
+                .filter(a -> a.getStatus() != CapaActionStatus.DONE)
                 .toList();
     }
 

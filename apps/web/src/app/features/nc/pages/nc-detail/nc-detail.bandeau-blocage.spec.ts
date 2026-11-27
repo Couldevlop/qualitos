@@ -175,6 +175,40 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
     expect(un('nc-blocker-lien-capa-2')).toBeNull();
   });
 
+  /**
+   * SOUS LE MOTIF DE LA RÉSOLUTION, une action terminée depuis le 8D qui
+   * attend sa vérification n'est pas nommée : elle retient la CLÔTURE du
+   * dossier, pas la résolution de l'écart (ADR 0132). Nommée ici, elle
+   * demandait de terminer une action déjà terminée — et le décompte de la
+   * ligne contredisait celui du motif.
+   */
+  it('ne nomme pas, pour résoudre, une action faite qui attend sa vérification', async () => {
+    await monter();
+    afficher(ecart('ACTION_DEFINED', [{ code: 'CAPA_ACTIONS_TO_CARRY_OUT', count: 1 }], [
+      {
+        id: 'capa-1', title: 'Le dossier', status: 'IN_PROGRESS', blockingActions: [
+          { id: 'act-1', title: 'Reprendre les 12 vannes', reason: 'TO_DO' },
+          { id: 'act-2', title: 'Changer le joint', reason: 'TO_VERIFY' }
+        ]
+      }
+    ]));
+
+    const aFaire = un('nc-blocker-action-act-1');
+    expect(aFaire).not.toBeNull();
+    expect(un('nc-blocker-action-act-2'))
+      .withContext('elle est faite : redemander sa clôture est le défaut même')
+      .toBeNull();
+    expect(texte('nc-blocker-compte-capa-1')).toContain('1 action le retient');
+
+    // LE BLOC NE SE RECONSTRUIT PAS A CHAQUE PASSE. Filtrer en recopiant le
+    // dossier donnait une nouvelle identite a chaque detection, `*ngFor`
+    // redessinait tout, et le focus pose sur une action sautait.
+    fixture.detectChanges();
+    expect(un('nc-blocker-action-act-1'))
+      .withContext('un bloc redessiné à chaque passe perd le focus du clavier')
+      .toBe(aFaire);
+  });
+
   // Le second regard ne se lève pas en ouvrant un dossier : aucun lien n'y mène.
   it('ne met aucun lien sur le motif du second regard', async () => {
     await monter();

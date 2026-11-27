@@ -23,6 +23,14 @@ public enum NcBlockerCode {
      *
      * <p>Empêche de RÉSOUDRE : résoudre, c'est dire « ce qui devait être fait
      * l'a été », et un dossier en cours dit l'inverse sur la même page.
+     *
+     * <p>SEULES LES ACTIONS NON EXÉCUTÉES COMPTENT. Une action terminée depuis
+     * le 8D dont la vérification promise n'a pas conclu ne retient pas la
+     * résolution : l'ADR 0132 borne ce verrou à la clôture, où il se dit par
+     * {@code ACTION_VERIFICATIONS_PENDING}. Comptée ici, elle faisait demander
+     * de TERMINER une action qui l'était, et n'avançait qu'au prix d'un verdict
+     * d'efficacité rendu séance tenante — un effet se mesure sur des semaines,
+     * et l'exiger avant la résolution retient l'écart à l'étape d'avant.
      */
     CAPA_ACTIONS_TO_CARRY_OUT,
 
