@@ -215,9 +215,9 @@
 
         <nav class="nav" id="nav" aria-label="Principale">
           <a href="#referentiel">Le référentiel</a>
+          <a href="#ia">IA</a>
           <a href="#modules">Modules</a>
           <a href="#normes">Normes</a>
-          <a href="#ia">IA</a>
           <a href="#metiers">Votre métier</a>
           <a href="#securite">Sécurité</a>
           <a href="#equipe">L’équipe</a>
@@ -588,15 +588,15 @@
                   <strong
                     >Un indicateur sous son objectif devient une alerte</strong
                   >
-                  et appelle un plan d'actions : le seuil n'est pas une couleur
-                  sur un tableau, c'est le déclencheur d'un dossier.
+                  : le seuil n'est pas une couleur sur un tableau, il propose une
+                  CAPA au pilote, qui l'accepte ou la refuse en justifiant.
                 </li>
                 <li>
                   <strong
-                    >Un risque repéré chez une partie intéressée alimente le
+                    >Un risque repéré chez une partie prenante alimente le
                     registre des risques</strong
                   >
-                  sans ressaisie : la partie intéressée reste citée comme son
+                  sans ressaisie : la partie prenante reste citée comme son
                   origine.
                 </li>
                 <li>
@@ -634,8 +634,7 @@
           <div class="titre-section">
             <h2>Voilà à quoi ça ressemble</h2>
             <p>
-              Trois écrans, tels qu'ils sortent de l'application. Rien n'est
-              redessiné pour la circonstance.
+              Trois écrans, tels qu'ils sortent de l'application.
             </p>
           </div>
 
@@ -652,9 +651,8 @@
                      l'énoncé du problème."
               />
               <figcaption>
-                <b>Une cause s'écrit ici, et ne se réécrit plus.</b> Elle porte
-                ensuite les actions qui la traitent, les mesures qui la suivent
-                et les preuves qui la closent.
+                <b>Six familles de causes, une arête chacune.</b> Le problème est
+                posé à droite, et chaque cause s'écrit là où elle appartient.
               </figcaption>
             </figure>
 
@@ -670,10 +668,8 @@
                      indicateurs — état du procédé, ligne centrale, limites."
               />
               <figcaption>
-                <b>Onze points suffisent à voir partir une dérive.</b> Les
-                limites se calculent depuis la série, les huit règles de Nelson
-                tournent dessus, et un procédé hors contrôle ouvre une CAPA si
-                vous le demandez.
+                <b>Hors contrôle, et le point qui le dit.</b> Ligne centrale et
+                limites estimées depuis la série, pas saisies à la main.
               </figcaption>
             </figure>
 
@@ -689,9 +685,8 @@
                      détail par famille avec ses imputations."
               />
               <figcaption>
-                <b>Ce que la non-qualité coûte, en euros.</b> Prévention et
-                contrôle d'un côté, défaillances de l'autre : le rapport entre
-                les deux est l'argument que votre direction attend.
+                <b>Ce que la non-qualité coûte, en euros.</b> Conformité d'un
+                côté, non-conformité de l'autre, ligne par ligne.
               </figcaption>
             </figure>
           </div>
@@ -702,11 +697,108 @@
          aller sans remonter. Le point ou il vient de VOIR le produit est
          celui ou il a le plus de raisons de demander a le voir en vrai. -->
           <p class="relance">
-            Ces écrans sur vos propres données, c'est une heure.
+            Ces écrans sur vos propres données, en quarante minutes.
             <a class="bouton bouton--trait" href="#contact"
               >Demander une démo</a
             >
           </p>
+        </div>
+      </section>
+
+      <!-- ======================================================================
+     IA
+     ====================================================================== -->
+      <section class="section" id="ia">
+        <div class="enveloppe">
+          <div class="titre-section">
+            <h2>Une IA qui montre son raisonnement, ou qui se tait</h2>
+            <p>
+              Elle propose, vous décidez. Chaque prédiction affiche ce qui l'a
+              produite — les variables qui pèsent, les documents cités — et
+              aucune décision critique ne part sans validation humaine signée.
+            </p>
+          </div>
+
+          <!-- LA SEULE PREUVE QUI VAILLE pour un titre pareil. « Une IA qui
+         montre son raisonnement » etait affirme six fois et montre zero :
+         une carte disait « la part de chaque variable dans le score », avec
+         un exemple invente a cote. Cette capture EST cette carte, en vrai --
+         la carte est donc partie, et l'exemple invente avec elle. -->
+          <figure class="ecran ecran--clair">
+            <img
+              src="assets/ecran-explication-ia.png"
+              width="1568"
+              height="750"
+              loading="lazy"
+              alt="Une anomalie détectée, de score 0,705, et son explication :
+                   la part de chaque variable dans ce score, en barres."
+            />
+            <figcaption>
+              <b>Pourquoi ce point est signalé.</b> La part de chaque variable
+              dans le score, et le score de départ auquel elle s'ajoute.
+            </figcaption>
+          </figure>
+
+          <div class="ia-exemples">
+            <article class="ia-exemple">
+              <h3>Elle voit la dérive avant la pièce mauvaise</h3>
+              <p>
+                Les huit règles de Nelson sur vos cartes de contrôle, complétées
+                par une détection d'anomalies multivariée sur les signaux qui ne
+                suivent pas une loi simple.
+              </p>
+              <q
+                >Le procédé de sertissage sortira des limites dans quatre jours
+                au rythme actuel.</q
+              >
+            </article>
+            <article class="ia-exemple">
+              <h3>Elle regroupe les écarts qui se ressemblent</h3>
+              <p>
+                Les non-conformités se rassemblent par densité sur leur contenu
+                réel, pas sur la catégorie cochée à la saisie.
+              </p>
+              <q
+                >Ces onze écarts de trois ateliers décrivent la même cause ;
+                deux ont déjà une CAPA close.</q
+              >
+            </article>
+            <article class="ia-exemple">
+              <h3>Elle lit la photo de l'audit 5S</h3>
+              <p>
+                Encombrement, marquage au sol absent, équipement de protection
+                manquant : repérés sur l'image, à confirmer par l'auditeur.
+              </p>
+              <q
+                >Zone B : trois emplacements non identifiés, deux allées
+                encombrées.</q
+              >
+            </article>
+            <article class="ia-exemple">
+              <h3>Elle répond en français à vos questions de données</h3>
+              <p>
+                Posez la question, obtenez le chiffre et le graphique — la
+                requête produite reste visible, et elle ne sort jamais du
+                périmètre de votre organisation.
+              </p>
+              <q
+                >Combien de non-conformités fournisseur en mars sur l'usine de
+                Tours ?</q
+              >
+            </article>
+            <article class="ia-exemple">
+              <h3>Elle rédige le brouillon, vous gardez la plume</h3>
+              <p>
+                Manuel qualité, procédures, comptes rendus de revue de direction
+                : pré-remplis à partir de votre contexte, publiés seulement
+                après validation.
+              </p>
+              <q
+                >Procédure de maîtrise documentaire, adaptée à vos trois sites
+                et à votre nomenclature.</q
+              >
+            </article>
+          </div>
         </div>
       </section>
 
@@ -730,119 +822,162 @@
          douze pour savoir ce que la plateforme couvre. Les familles sont
          celles que la bande du heros nomme deja : ecarts, documents, risques,
          ressources -- le visiteur retrouve en detail ce qu'il a survole. -->
+          <!-- UNE FAMILLE POUR LE PILOTAGE, et elle vient en premier.
+         Un objectif qualite n'est ni un ecart, ni un document, ni un tiers :
+         c'est ce qu'on s'engage a tenir, et c'est de la que les ecarts
+         prennent leur sens. Le ranger ailleurs l'aurait fait lire comme un
+         module de plus parmi douze. -->
+          <section class="modules-famille">
+            <h3>Pilotage</h3>
+            <div class="modules">
+              <article class="module">
+                <h4>Objectifs qualité</h4>
+                <p>
+                  Une cible et des seuils posés sur un indicateur, par période
+                  et par processus. Hors cible, une CAPA est proposée au
+                  pilote, qui l'accepte ou la refuse en justifiant.
+                </p>
+                <span class="module__clause num">ISO 9001 §6.2</span>
+              </article>
+              <!-- PAS DE CLAUSE SUR CETTE CARTE, et c'est voulu : le module
+             n'en revendique aucune. Il met en oeuvre le modele PAF, qui
+             n'est pas une exigence de l'ISO 9001 -- celle-ci ne demande pas
+             de chiffrer le cout de la qualite. Lui coller un numero pour
+             aligner la rangee serait une invention. -->
+              <article class="module">
+                <h4>Coûts de non-qualité</h4>
+                <p>
+                  Chaque dépense s'impute sous son libellé, à sa date, avec sa
+                  pièce et son lot. Les quatre familles du modèle PAF se
+                  totalisent seules, dans la devise de votre organisation.
+                </p>
+                <span class="module__clause module__clause--mot">Modèle PAF</span>
+              </article>
+            </div>
+          </section>
+
           <section class="modules-famille">
             <h3>Écarts et actions</h3>
             <div class="modules">
               <article class="module">
-              <h4>Non-conformités</h4>
-              <p>
+                <h4>Non-conformités</h4>
+                <p>
                 Saisie au poste avec photos et localisation, catégories et
                 natures propres à votre métier.
-              </p>
-              <span class="module__clause num">ISO 9001 §8.7</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §8.7</span>
+                </article>
               <article class="module">
-              <h4>CAPA</h4>
-              <p>
+                <h4>CAPA</h4>
+                <p>
                 Actions correctives et préventives, escalade automatique,
                 efficacité mesurée après coup.
-              </p>
-              <span class="module__clause num">ISO 9001 §10.2</span>
+                </p>
+                <span class="module__clause num">ISO 9001 §10.2</span>
+                </article>
+              <article class="module">
+                <h4>Dérogations client</h4>
+                <p>
+                  Demander au client d'accepter une pièce hors spécification :
+                  signature interne du manager qualité, envoi au client,
+                  acceptation ou refus tracés.
+                </p>
+                <span class="module__clause num">ISO 9001 §8.7.1</span>
               </article>
               <article class="module">
-              <h4>Réclamations clients</h4>
-              <p>
+                <h4>Réclamations clients</h4>
+                <p>
                 Réception multi-canal, classement et tonalité analysés, lien
                 direct vers la CAPA ouverte.
-              </p>
-              <span class="module__clause num">ISO 10002</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 10002</span>
+                </article>
             </div>
           </section>
           <section class="modules-famille">
             <h3>Documents et preuves</h3>
             <div class="modules">
               <article class="module">
-              <h4>Maîtrise documentaire</h4>
-              <p>
+                <h4>Maîtrise documentaire</h4>
+                <p>
                 Versions, circuit d'approbation, lecture obligatoire avec
                 preuve, signature électronique.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.5</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §7.5</span>
+                </article>
               <article class="module">
-              <h4>Audits</h4>
-              <p>
+                <h4>Audits</h4>
+                <p>
                 Programme annuel, listes de contrôle, exécution hors ligne,
                 rapport rédigé à partir des constats.
-              </p>
-              <span class="module__clause num">ISO 19011</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 19011</span>
+                </article>
             </div>
           </section>
           <section class="modules-famille">
             <h3>Risques et tiers</h3>
             <div class="modules">
               <article class="module">
-              <h4>Risques et AMDEC</h4>
-              <p>
+                <h4>Risques et AMDEC</h4>
+                <p>
                 Cotation, criticité, nœud papillon pour les risques majeurs,
                 réévaluation à chaque donnée nouvelle.
-              </p>
-              <span class="module__clause num">ISO 31000</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 31000</span>
+                </article>
               <article class="module">
-              <h4>Qualité fournisseurs</h4>
-              <p>
+                <h4>Qualité fournisseurs</h4>
+                <p>
                 Fiches de score, audits, certificats matière, écarts suivis
                 jusqu'à la réponse 8D.
-              </p>
-              <span class="module__clause num">ISO 9001 §8.4</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §8.4</span>
+                </article>
               <article class="module">
-              <h4>Parties intéressées</h4>
-              <p>
+                <h4>Parties prenantes</h4>
+                <p>
                 Registre, matrice d'évaluation, exigences rattachées aux
                 risques, écarts, audits et documents.
-              </p>
-              <span class="module__clause num">ISO 9001 §4.2</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §4.2</span>
+                </article>
             </div>
           </section>
           <section class="modules-famille">
             <h3>Ressources et terrain</h3>
             <div class="modules">
               <article class="module">
-              <h4>Compétences et formation</h4>
-              <p>
+                <h4>Compétences et formation</h4>
+                <p>
                 Matrices par poste, habilitations, rappels d'échéance,
                 attestations vérifiables.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.2</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §7.2</span>
+                </article>
               <article class="module">
-              <h4>Métrologie</h4>
-              <p>
+                <h4>Métrologie</h4>
+                <p>
                 Plans d'étalonnage, échéances, études R&amp;R de répétabilité et
                 reproductibilité.
-              </p>
-              <span class="module__clause num">ISO 9001 §7.1.5</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §7.1.5</span>
+                </article>
               <article class="module">
-              <h4>Gestion des changements</h4>
-              <p>
+                <h4>Gestion des changements</h4>
+                <p>
                 Demande, analyse d'impact, validation à plusieurs niveaux,
                 documents et formations à reprendre.
-              </p>
-              <span class="module__clause num">ISO 9001 §6.3</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 9001 §6.3</span>
+                </article>
               <article class="module">
-              <h4>Santé, sécurité, environnement</h4>
-              <p>
+                <h4>Santé, sécurité, environnement</h4>
+                <p>
                 Les mêmes audits, écarts et actions, appliqués aux sujets SSE.
-              </p>
-              <span class="module__clause num">ISO 14001 · 45001</span>
-              </article>
+                </p>
+                <span class="module__clause num">ISO 14001 · 45001</span>
+                </article>
             </div>
           </section>
         </div>
@@ -926,7 +1061,7 @@
                   ><span class="duree">2 sem.</span>
                 </li>
                 <li>
-                  <span>Contexte et parties intéressées</span
+                  <span>Contexte et parties prenantes</span
                   ><span class="duree">2–3 sem.</span>
                 </li>
                 <li>
@@ -986,93 +1121,6 @@
         </div>
       </section>
 
-      <!-- ======================================================================
-     IA
-     ====================================================================== -->
-      <section class="section" id="ia">
-        <div class="enveloppe">
-          <div class="titre-section">
-            <h2>Une IA qui montre son raisonnement, ou qui se tait</h2>
-            <p>
-              Elle propose, vous décidez. Chaque prédiction affiche ce qui l'a
-              produite — les variables qui pèsent, les documents cités — et
-              aucune décision critique ne part sans validation humaine signée.
-            </p>
-          </div>
-
-          <div class="ia-exemples">
-            <article class="ia-exemple">
-              <h3>Elle voit la dérive avant la pièce mauvaise</h3>
-              <p>
-                Les huit règles de Nelson sur vos cartes de contrôle, complétées
-                par une détection d'anomalies multivariée sur les signaux qui ne
-                suivent pas une loi simple.
-              </p>
-              <q
-                >Le procédé de sertissage sortira des limites dans quatre jours
-                au rythme actuel.</q
-              >
-            </article>
-            <article class="ia-exemple">
-              <h3>Elle regroupe les écarts qui se ressemblent</h3>
-              <p>
-                Les non-conformités se rassemblent par densité sur leur contenu
-                réel, pas sur la catégorie cochée à la saisie.
-              </p>
-              <q
-                >Ces onze écarts de trois ateliers décrivent la même cause ;
-                deux ont déjà une CAPA close.</q
-              >
-            </article>
-            <article class="ia-exemple">
-              <h3>Elle lit la photo de l'audit 5S</h3>
-              <p>
-                Encombrement, marquage au sol absent, équipement de protection
-                manquant : repérés sur l'image, à confirmer par l'auditeur.
-              </p>
-              <q
-                >Zone B : trois emplacements non identifiés, deux allées
-                encombrées.</q
-              >
-            </article>
-            <article class="ia-exemple">
-              <h3>Elle répond en français à vos questions de données</h3>
-              <p>
-                Posez la question, obtenez le chiffre et le graphique — la
-                requête produite reste visible, et elle ne sort jamais du
-                périmètre de votre organisation.
-              </p>
-              <q
-                >Combien de non-conformités fournisseur en mars sur l'usine de
-                Tours ?</q
-              >
-            </article>
-            <article class="ia-exemple">
-              <h3>Elle rédige le brouillon, vous gardez la plume</h3>
-              <p>
-                Manuel qualité, procédures, comptes rendus de revue de direction
-                : pré-remplis à partir de votre contexte, publiés seulement
-                après validation.
-              </p>
-              <q
-                >Procédure de maîtrise documentaire, adaptée à vos trois sites
-                et à votre nomenclature.</q
-              >
-            </article>
-            <article class="ia-exemple">
-              <h3>Elle explique pourquoi elle a signalé</h3>
-              <p>
-                Pour chaque alerte, la part de chaque variable dans le score —
-                pas un verdict sans motif.
-              </p>
-              <q
-                >Ce point est signalé à 61 % par la température de bain, à 24 %
-                par le temps de cycle.</q
-              >
-            </article>
-          </div>
-        </div>
-      </section>
 
       <!-- ======================================================================
      PAR MÉTIER
@@ -1117,10 +1165,6 @@
                 <li>
                   Le taux de couverture par norme et par clause, recalculé à
                   chaque preuve
-                </li>
-                <li>
-                  Le dossier de certification produit en un geste, preuves liées
-                  et horodatées
                 </li>
                 <li>
                   Plusieurs référentiels menés ensemble, avec les preuves
@@ -1173,17 +1217,6 @@
             </article>
           </div>
 
-          <p
-            style="
-              margin-top: 2.5rem;
-              font-size: 0.9375rem;
-              color: var(--encre-douce);
-            "
-          >
-            Un secteur n'est jamais codé en dur : c'est un paquet de modèles,
-            d'indicateurs et de référentiels qu'on active, qu'on modifie, et
-            qu'on peut écrire pour un métier que nous ne connaissons pas encore.
-          </p>
         </div>
       </section>
 
@@ -1205,9 +1238,7 @@
               <h3>Service hébergé</h3>
               <p>
                 Mise en service rapide, mises à jour continues, sauvegardes et
-                supervision incluses. Vos données restent isolées de celles des
-                autres organisations, par la base elle-même et non par une
-                condition dans le code.
+                supervision incluses.
               </p>
             </article>
             <article class="deploiement">
@@ -1222,8 +1253,6 @@
               <h3>Hybride</h3>
               <p>
                 Le socle hébergé, les traitements sensibles chez vous.
-                L'intelligence artificielle peut tourner entièrement sur vos
-                machines, sans qu'aucun texte ne quitte votre réseau.
               </p>
             </article>
           </div>
@@ -1628,9 +1657,9 @@
          page, toute section est a un clic, sans remonter chercher la barre. -->
         <nav class="pied__plan" aria-label="Plan du site">
           <a href="#referentiel">Le référentiel commun</a>
+          <a href="#ia">L’intelligence artificielle</a>
           <a href="#modules">Les modules</a>
           <a href="#normes">Normes et certification</a>
-          <a href="#ia">L’intelligence artificielle</a>
           <a href="#metiers">Selon votre poste</a>
           <a href="#securite">Déploiement et sécurité</a>
           <a href="#equipe">L’équipe</a>
