@@ -1,7 +1,9 @@
 package com.openlab.qualitos.quality.capa;
 
 import com.openlab.qualitos.quality.authz.application.RecordScope;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.capa.effectiveness.application.EffectivenessReviewPort;
+import com.openlab.qualitos.quality.capa.effectiveness.domain.CaseSettlement;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessReview;
 import com.openlab.qualitos.quality.capa.effectiveness.domain.EffectivenessVerdict;
 import com.openlab.qualitos.quality.common.CurrentUser;
@@ -11,6 +13,7 @@ import com.openlab.qualitos.quality.nonconformity.NcStatus;
 import com.openlab.qualitos.quality.nonconformity.NonConformity;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -1280,6 +1283,17 @@ public class CapaService {
      * <p>Le jugement s'AJOUTE a l'historique, il n'ecrase rien : une action
      * jugee insuffisante, reprise, puis jugee efficace laisse les trois lignes,
      * et c'est cette suite qu'un auditeur lit.
+     *
+     * <p><b>QUI PEUT JUGER</b> : celui qui porte {@code capa.verify}, et LA
+     * PERSONNE DESIGNEE sur l'action — a defaut celle du dossier (ADR 0143).
+     * Une verification exigee doit etre confiee a quelqu'un (ADR 0131) ; la
+     * refuser ensuite a cette personne-la, parce que son role ne porte pas
+     * l'action du catalogue, rendait la designation sans effet.
+     *
+     * <p><b>ET CE QUE LE JUGEMENT ENTRAINE</b> : un verdict qui clot une action
+     * clot son dossier, des lors que plus rien ne s'y oppose (ADR 0143). Sans
+     * cela, l'ecran d'efficacite redemandait une seconde evaluation du meme
+     * geste pour faire ce que la premiere avait deja etabli.
      */
     public CapaDto.ActionResponse verifyActionEffectiveness(
             UUID capaId, UUID actionId, CapaDto.EffectivenessRequest request) {
@@ -1291,6 +1305,7 @@ public class CapaService {
         }
         CapaAction a = actionRepository.findByIdAndCapaId(actionId, capaId)
                 .orElseThrow(() -> new CapaActionNotFoundException(actionId));
+        exigerLeDroitDeJuger(c, a);
 
         if (!Boolean.TRUE.equals(a.getVerificationRequired())) {
             throw new CapaValidationException(
@@ -1322,7 +1337,48 @@ public class CapaService {
                 now);
         effectivenessReviews.save(review);
         journal.record(c, CapaTransition.UPDATED);
+        // LE DOSSIER SUIT LE VERDICT DE SON ACTION (ADR 0143). La liste
+        // d'obstacles est celle que le verdict du dossier doit franchir
+        // (ADR 0137) : le jugement d'une action ne contourne donc rien, et un
+        // obstacle qui demeure laisse le dossier RESOLU — l'ecran le nomme
+        // avant le clic, comme il le faisait deja.
+        if (CaseSettlement.settlesCase(verdict, c.getStatus() == CapaStatus.RESOLVED,
+                () -> closureBlockers(c).isEmpty())) {
+            c.setEffectivenessVerified(true);
+            c.setEffectivenessVerifiedAt(now);
+            c.setStatus(CapaStatus.CLOSED);
+            c.setClosedAt(now);
+            journal.record(caseRepository.save(c), CapaTransition.CLOSED);
+        }
         return toActionResponse(a, review);
+    }
+
+    /**
+     * QUI PEUT PORTER LE VERDICT D'UNE ACTION (ADR 0143).
+     *
+     * <p>Le droit {@code capa.verify} l'accorde, comme avant. A defaut, la
+     * PERSONNE DESIGNEE sur l'action — a defaut celle du dossier — le porte sur
+     * cette action-la, et sur aucune autre : c'est a elle que la verification a
+     * ete confiee, et un role qui ne porte pas l'action du catalogue ne doit pas
+     * lui retirer ce qu'on lui a demande de faire.
+     *
+     * <p>La portee est lue avec {@code capa.verify} elle-meme : vide, l'appelant
+     * a le droit ; presente, elle designe l'appelant du jeton, et c'est a lui
+     * que la designation doit correspondre. Le {@code sub} du jeton, jamais un
+     * champ du corps (CLAUDE.md §18.2 #2).
+     */
+    private void exigerLeDroitDeJuger(CapaCase c, CapaAction a) {
+        Optional<UUID> restreinteA = scope.restrictTo(Permission.CAPA_VERIFY);
+        if (restreinteA.isEmpty()) {
+            return;
+        }
+        UUID designe = a.getVerificationAssigneeId() != null
+                ? a.getVerificationAssigneeId()
+                : c.getVerificationAssigneeId();
+        if (designe == null || !designe.equals(restreinteA.get())) {
+            throw new AccessDeniedException(
+                    "Only the designated verifier of this action may judge its effectiveness");
+        }
     }
 
     public void deleteAction(UUID capaId, UUID actionId) {
