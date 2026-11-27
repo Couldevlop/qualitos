@@ -20,7 +20,11 @@
   --encre: #0f1d33;
   --encre-douce: #42536e;
   --papier: #ffffff;
-  --papier-froid: #f2f5fa;
+  /* Releve de #f2f5fa. L'ecart avec le blanc valait trois pour cent :
+     l'alternance etait dans le code et pas dans l'oeil, et dix sections
+     defilaient sur un fond unique. Assez fonce pour qu'on passe une
+     frontiere, assez clair pour que --encre-douce y reste lisible. */
+  --papier-froid: #e9eff8;
   --filet: #c9d6e8;
   --filet-fort: #9db4d4;
 
@@ -35,8 +39,13 @@
   --t-xl: clamp(1.9rem, 3.2vw, 2.9rem);
   --t-xxl: clamp(2.6rem, 6.2vw, 5rem);
 
-  --pas: 1.5rem;
-  --marge-section: clamp(3rem, 5.5vw, 5.25rem);
+  --pas: 1.25rem;
+  /* RESSERRE de clamp(3rem, 5.5vw, 5.25rem). Sur un ecran large, deux
+     sections voisines mettaient 168 px de vide entre elles -- plus que la
+     hauteur de trois lignes de texte -- et il fallait defiler sans rien lire
+     entre deux idees. Le blanc separe ; passe une certaine largeur il ne
+     separe plus, il interrompt. */
+  --marge-section: clamp(2.25rem, 3.6vw, 3.5rem);
 
   --police-titre: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --police-texte: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -138,7 +147,21 @@ img { max-width: 100%; height: auto; }
   min-height: 4.25rem;
 }
 
-.marque { display: flex; align-items: center; gap: 0.7rem; margin-right: auto; text-decoration: none; }
+/* LA SIGNATURE COURT SOUS L'ENSEMBLE, pas a cote du nom.
+   Posee en deuxieme colonne, elle mesurait 205 px la ou le sceau et le nom
+   n'en prenaient que 147 : le bloc de marque occupait pres de 260 px et
+   poussait les huit entrees du menu contre le bouton de demonstration, qui
+   finissait colle au bord. Sous l'ensemble, le bloc se regle sur la plus
+   large des deux lignes -- une cinquantaine de pixels rendus au menu -- et
+   le sceau se centre au-dessus de son propre texte. */
+.marque {
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+  margin-right: auto;
+  text-decoration: none;
+}
+.marque__haut { display: flex; align-items: center; gap: 0.6rem; }
 /* Le fichier d'origine est le verrouillage complet : hexagone, nom et cinq
    pictogrammes, pour 1,2 Mo. Reduit a la taille d'une barre, rien n'y etait
    lisible et le nom y etait dit deux fois. On sert donc l'hexagone seul,
@@ -158,6 +181,7 @@ img { max-width: 100%; height: auto; }
 .marque__nom b { color: var(--signal); font-weight: 700; }
 .marque__suite {
   display: block;
+  text-align: center;
   font-family: var(--police-texte);
   font-size: 0.6875rem;
   font-weight: 500;
@@ -230,7 +254,7 @@ img { max-width: 100%; height: auto; }
    ========================================================================== */
 .heros {
   position: relative;
-  padding-block: clamp(2.5rem, 5vw, 4.25rem) clamp(2rem, 4vw, 3.25rem);
+  padding-block: clamp(2rem, 3.4vw, 3rem) clamp(1.5rem, 2.6vw, 2.25rem);
   background:
     linear-gradient(180deg, var(--papier) 0%, var(--papier-froid) 100%);
   overflow: hidden;
@@ -266,7 +290,7 @@ img { max-width: 100%; height: auto; }
      pour les téléphones étroits, où la plus longue des trois lignes doit
      encore tenir. */
   max-width: 21ch;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.95rem;
 }
 .heros h1 em {
   font-style: normal;
@@ -280,60 +304,94 @@ img { max-width: 100%; height: auto; }
   font-size: var(--t-m);
   color: var(--encre-douce);
   max-width: 56ch;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .heros__actions { display: flex; flex-wrap: wrap; gap: 0.85rem; }
 
-/* La trace de mesure : dessinée une fois, c'est le seul mouvement de la page. */
-.trace {
-  display: block;
-  width: 100%;
-  height: clamp(104px, 14vw, 170px);
-  margin-top: 2.5rem;
-}
-.trace__ligne {
-  fill: none;
-  stroke: var(--bleu);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  stroke-dasharray: 1400;
-  stroke-dashoffset: 1400;
-  animation: tracer 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s forwards;
-}
-.trace__limite { stroke: var(--filet-fort); stroke-width: 1; stroke-dasharray: 5 5; }
-.trace__moyenne { stroke: var(--filet-fort); stroke-width: 1; }
-.trace__point { fill: var(--bleu); opacity: 0; animation: paraitre 0.4s ease 2.5s forwards; }
-.trace__point--hors {
-  fill: var(--signal);
-  r: 6;
-  animation: paraitre 0.4s ease 2.7s forwards;
-}
-.trace__etiquette {
-  font-family: var(--police-nombre);
-  font-size: 12px;
-  fill: var(--signal-sombre);
-  opacity: 0;
-  animation: paraitre 0.5s ease 3s forwards;
-}
-.trace__legende { font-family: var(--police-nombre); font-size: 11px; fill: var(--encre-douce); }
-/* Les deux limites portent leur nom dans la gouttiere qui leur est reservee,
-   au-dessus de la ligne haute et au-dessous de la ligne basse : elles encadrent
-   la carte au lieu de se superposer aux mesures. */
-.trace__borne {
-  font-family: var(--police-nombre);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  fill: var(--encre-douce);
+/* La chaîne : construite une fois, c'est le seul mouvement de la page. */
+.chaine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.6rem 1.15rem;
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
 }
 
-@keyframes tracer { to { stroke-dashoffset: 0; } }
+/* Un maillon : la boite et son mot. Les deux extremites sont teintees -- le
+   depart en signal, l'arrivee en bleu de norme -- et le ventre de la chaine
+   reste neutre. Teinter les six donnerait un arc-en-ciel ou rien ne ressort ;
+   n'en teinter aucun ne dirait pas que la chaine va de quelque part vers
+   quelque part. */
+.chaine__maillon {
+  position: relative;
+  flex: 1 1 8.5rem;
+  padding: 0.65rem 0.5rem;
+  text-align: center;
+  font-size: var(--t-s);
+  font-weight: 600;
+  color: var(--encre);
+  background: var(--papier);
+  border: 1.5px solid var(--filet-fort);
+  border-radius: 10px;
+}
+.chaine__maillon--depart {
+  background: #fdf0de;
+  border-color: var(--signal);
+  color: var(--signal-sombre);
+}
+.chaine__maillon--fin {
+  background: var(--bleu-clair);
+  border-color: var(--bleu);
+  color: var(--marine);
+}
+
+/* Le trait court DANS la gouttiere, pas dans la boite : pose en absolu sur la
+   largeur du gap, il relie sans rien pousser. */
+.chaine__maillon + .chaine__maillon::before {
+  content: '';
+  position: absolute;
+  left: -1.15rem;
+  width: 1.15rem;
+  top: 50%;
+  border-top: 1.5px dotted var(--filet-fort);
+}
+
+.chaine__bouts {
+  display: flex;
+  justify-content: space-between;
+  /* Le heros borne ses paragraphes a 52 ch pour la mesure de lecture. Ces
+     deux mentions ne sont pas un paragraphe : elles reperent les DEUX BOUTS
+     de la chaine, et doivent donc tomber sous le premier et sous le dernier
+     maillon, pas se serrer dans la moitie gauche. */
+  max-width: none;
+  gap: 1rem;
+  margin: 0.5rem 0 0;
+  font-family: var(--police-nombre);
+  font-size: var(--t-xs);
+  color: var(--encre-douce);
+}
+
+/* UN SEUL MOUVEMENT, et il raconte quelque chose : la chaine se construit de
+   gauche a droite, maillon apres maillon, dans l'ordre meme ou un ecart la
+   parcourt. Pas un effet par section -- celui-ci, une fois, a l'arrivee. */
+.chaine__maillon { opacity: 0; animation: paraitre 0.45s ease forwards; }
+.chaine__maillon:nth-child(1) { animation-delay: 0.25s; }
+.chaine__maillon:nth-child(2) { animation-delay: 0.38s; }
+.chaine__maillon:nth-child(3) { animation-delay: 0.51s; }
+.chaine__maillon:nth-child(4) { animation-delay: 0.64s; }
+.chaine__maillon:nth-child(5) { animation-delay: 0.77s; }
+.chaine__maillon:nth-child(6) { animation-delay: 0.9s; }
+.chaine__bouts { opacity: 0; animation: paraitre 0.45s ease 1.05s forwards; }
+
+
 @keyframes paraitre { to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .trace__ligne { stroke-dashoffset: 0; animation: none; }
-  .trace__point, .trace__point--hors, .trace__etiquette { opacity: 1; animation: none; }
+  .chaine__maillon,
+  .chaine__bouts { opacity: 1; animation: none; }
 }
 
 /* La couverture, en pied de héros : des colonnes séparées par des filets,
@@ -341,7 +399,7 @@ img { max-width: 100%; height: auto; }
 .couverture-rapide {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  margin-top: 2.75rem;
+  margin-top: 2rem;
   border-top: 1px solid var(--filet);
 }
 .couverture-rapide div {
@@ -364,13 +422,13 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ---------- titres de section ---------- */
-.titre-section { margin-bottom: 1.75rem; max-width: 62ch; }
+.titre-section { margin-bottom: 1.35rem; max-width: 62ch; }
 .titre-section h2 { font-size: var(--t-xl); font-weight: 700; margin-bottom: 0.6rem; }
 .titre-section p { font-size: var(--t-m); color: var(--encre-douce); }
 .section--marine .titre-section p { color: #a9bcd8; }
 
 /* ---------- le constat : deux colonnes qui s'opposent ---------- */
-.constat { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: start; }
+.constat { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); align-items: start; }
 
 .liste-constat { list-style: none; margin: 0; padding: 0; }
 
@@ -388,7 +446,7 @@ img { max-width: 100%; height: auto; }
 .liste-constat span { color: var(--encre-douce); font-size: var(--t-s); }
 
 /* ---------- le référentiel commun ---------- */
-.referentiel { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: center; }
+.referentiel { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); align-items: center; }
 .referentiel svg { width: 100%; height: auto; }
 
 .chaine { list-style: none; margin: 1.25rem 0 0; padding: 0; }
@@ -427,11 +485,11 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ---------- normes ---------- */
-.normes-grille { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.75rem, 3.2vw, 3rem); }
+.normes-grille { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); }
 
-.familles-normes { display: grid; gap: 1.05rem; }
-.famille-norme { border-top: 2px solid var(--signal); padding-top: 0.85rem; }
-.famille-norme h3 { font-size: var(--t-s); font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+.familles-normes { display: grid; gap: 0.7rem; }
+.famille-norme { border-top: 2px solid var(--signal); padding-top: 0.6rem; }
+.famille-norme h3 { font-size: var(--t-s); font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
 .famille-norme p { font-size: var(--t-s); color: #a9bcd8; margin: 0; }
 
 .etapes-certif { list-style: none; margin: 0; padding: 0; counter-reset: etape; }
@@ -456,8 +514,8 @@ img { max-width: 100%; height: auto; }
 .etapes-certif .duree { font-family: var(--police-nombre); font-size: var(--t-xs); color: #8aa3c6; }
 
 /* ---------- IA ---------- */
-.ia-exemples { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 1.5rem 1.75rem; }
-.ia-exemple { border-top: 2px solid var(--bleu); padding-top: 1rem; }
+.ia-exemples { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 1.1rem 1.5rem; }
+.ia-exemple { border-top: 2px solid var(--bleu); padding-top: 0.75rem; }
 .ia-exemple h3 { font-size: var(--t-base); margin-bottom: 0.5rem; }
 .ia-exemple p { font-size: var(--t-s); color: var(--encre-douce); }
 .ia-exemple q {
@@ -500,12 +558,12 @@ img { max-width: 100%; height: auto; }
 .deploiement p { font-size: var(--t-s); color: var(--encre-douce); }
 .deploiement--retenu { border-color: var(--signal); border-width: 2px; }
 
-.socle-securite { list-style: none; margin: 1.75rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.25rem 2rem; }
+.socle-securite { list-style: none; margin: 1.3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem 1.75rem; }
 .socle-securite li { font-size: var(--t-s); color: var(--encre-douce); padding-top: 0.8rem; border-top: 1px solid var(--filet); }
 .socle-securite strong { display: block; color: var(--marine); font-weight: 600; }
 
 /* ---------- qui construit ---------- */
-.equipe { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: start; }
+.equipe { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); align-items: start; }
 
 .profil h3 { font-size: var(--t-l); color: var(--marine); margin: 0 0 0.3rem; }
 .profil__role { color: var(--signal-sombre); font-size: var(--t-s); font-weight: 500; margin: 0 0 1rem; }
@@ -571,7 +629,7 @@ img { max-width: 100%; height: auto; }
 .faq details p { padding-bottom: 1.15rem; color: var(--encre-douce); }
 
 /* ---------- contact ---------- */
-.contact { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.75rem, 3.2vw, 3rem); align-items: start; }
+.contact { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.5rem, 2.4vw, 2.5rem); align-items: start; }
 
 .coordonnees { list-style: none; margin: 1.5rem 0 0; padding: 0; }
 .coordonnees li { padding: 0.8rem 0; border-top: 1px solid rgba(255, 255, 255, 0.14); }
@@ -670,6 +728,59 @@ img { max-width: 100%; height: auto; }
 .pied a { color: var(--encre-douce); }
 
 /* ---------- adaptation ---------- */
+
+/* ==========================================================================
+   LES ÉCRANS — ce qui s'achète se regarde
+   ========================================================================== */
+/* La page disait tout du produit et n'en montrait rien : trois images en tout,
+   dont un favicon et un logo. Un acheteur de QMS veut voir l'ecran avant de
+   demander une demo, et ceux qui comparent ouvrent deux onglets.
+
+   Les captures sont REELLES -- prises sur une instance peuplee, avec des
+   mesures, des montants et des causes qui existent. Pas des maquettes : c'est
+   la seule preuve qu'un editeur puisse donner tant qu'il n'a pas de logos
+   clients a aligner. */
+.galerie {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.2vw, 2rem);
+  margin-top: 1.4rem;
+}
+
+/* Le premier ecran tient toute la largeur : c'est la carte de controle, celle
+   que le heros dessine en SVG douze ecrans plus haut. Le dessin promet, la
+   capture tient -- et les deux se repondent. */
+.galerie__piece--large { grid-column: 1 / -1; }
+
+.ecran { margin: 0; }
+
+.ecran img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--papier);
+  /* Deux ombres : une courte qui pose l'ecran sur le fond, une longue et
+     diffuse qui l'en decolle. Une seule ombre grise donne la vignette de
+     gabarit que tout le monde reconnait. */
+  box-shadow:
+    0 1px 2px rgba(5, 14, 30, 0.4),
+    0 22px 48px -20px rgba(5, 14, 30, 0.75);
+}
+
+.ecran figcaption {
+  margin-top: 0.85rem;
+  font-size: var(--t-s);
+  line-height: 1.55;
+  max-width: 54ch;
+}
+
+/* La legende DIT ce qu'on regarde, elle ne le nomme pas : « carte de
+   controle » est deja ecrit dans l'image. */
+.ecran figcaption b { font-weight: 600; color: #fff; }
+
+
 @media (max-width: 960px) {
   .constat, .referentiel, .normes-grille, .contact, .equipe { grid-template-columns: 1fr; }
   .couverture-rapide { grid-template-columns: repeat(2, 1fr); }
@@ -704,6 +815,20 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ---------- tres petits ecrans ---------- */
+@media (max-width: 860px) {
+  /* Deux captures cote a cote sur un telephone ne montrent plus rien : on
+     deroule. */
+  .galerie { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 760px) {
+  /* Repliee, la chaine n'a plus de gouttiere horizontale a traverser : un
+     trait pendrait en debut de rangee, reliant deux maillons qui ne se
+     suivent pas. L'ordre de lecture suffit. */
+  .chaine__maillon + .chaine__maillon::before { display: none; }
+  .chaine__bouts { flex-direction: column; gap: 0.2rem; }
+}
+
 @media (max-width: 560px) {
   /* Sans bordure laterale, le retrait interieur n'aligne plus rien : il
      decale juste le texte par rapport au reste de la page. */
