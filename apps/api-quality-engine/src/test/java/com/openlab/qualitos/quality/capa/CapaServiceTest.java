@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.capa;
 
 import com.openlab.qualitos.quality.authz.application.RecordScope;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -3047,6 +3048,258 @@ class CapaServiceTest {
         ArgumentCaptor<EffectivenessReview> ecrit = ArgumentCaptor.forClass(EffectivenessReview.class);
         verify(reviews).save(ecrit.capture());
         assertThat(ecrit.getValue().criterion()).isEqualTo("Zero retard sur 620 expeditions");
+    }
+
+    // ========================================================================
+    // Le dossier suit le verdict de son action (ADR 0144)
+    // ========================================================================
+
+    private CapaDto.EffectivenessRequest jugeEfficace() {
+        return new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.EFFECTIVE,
+                "4,2 %", "< 1 %", "0 rebut sur 3 mois", null);
+    }
+
+    /**
+     * LE DEFAUT CORRIGE : l'action jugee efficace depuis sa discipline 8D
+     * cloture son dossier. L'ecran d'efficacite redemandait une SECONDE
+     * evaluation du meme geste pour faire ce que la premiere avait etabli
+     * (ADR 0144).
+     */
+    @Test
+    void verifyActionEffectiveness_clotLeDossierSurUnVerdictEfficace() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaAction a = actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        // La verification promise a conclu : c'est la ligne que le service vient
+        // d'ecrire, relue par la liste d'obstacles.
+        when(reviews.findLastPerActionOfCase(TENANT, c.getId()))
+                .thenReturn(Map.of(a.getId(), jugement(c, a, EffectivenessVerdict.EFFECTIVE)));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(), jugeEfficace());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+        assertThat(c.getClosedAt()).isNotNull();
+        assertThat(c.getEffectivenessVerified()).isTrue();
+        assertThat(c.getEffectivenessVerifiedAt()).isNotNull();
+        verify(journal).record(c, CapaTransition.CLOSED);
+    }
+
+    /** « Partiellement » attend une action de plus : le dossier reste resolu. */
+    @Test
+    void verifyActionEffectiveness_neClotPasSurUnVerdictPartiel() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaAction a = actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(),
+                new CapaDto.EffectivenessRequest(null, EffectivenessVerdict.PARTIAL,
+                        null, null, "2,5 %", null));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        verify(caseRepo, never()).save(any());
+        verify(journal, never()).record(any(), eq(CapaTransition.CLOSED));
+    }
+
+    /**
+     * AUCUNE PORTE DEROBEE : l'ecart rattache encore ouvert retient la cloture
+     * par ce chemin comme par celui du verdict du dossier (ADR 0137). Le
+     * jugement, lui, s'inscrit : c'est un constat, pas une fermeture.
+     */
+    @Test
+    void verifyActionEffectiveness_neClotPasTantQuUnEcartRattacheEstOuvert() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaAction a = actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(reviews.findLastPerActionOfCase(TENANT, c.getId()))
+                .thenReturn(Map.of(a.getId(), jugement(c, a, EffectivenessVerdict.EFFECTIVE)));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(
+                eq(TENANT), eq(c.getId()), ArgumentMatchers.anyList())).thenReturn(1L);
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(), jugeEfficace());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        verify(reviews).save(any());
+        verify(journal, never()).record(any(), eq(CapaTransition.CLOSED));
+    }
+
+    /** Un dossier qui n'est pas resolu garde son travail en cours. */
+    @Test
+    void verifyActionEffectiveness_neClotPasUnDossierNonResolu() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = actionPromise(c);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(), jugeEfficace());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        verify(caseRepo, never()).save(any());
+    }
+
+    // ========================================================================
+    // Qui peut porter le verdict d'une action (ADR 0144)
+    // ========================================================================
+
+    /**
+     * LA PERSONNE DESIGNEE JUGE, sans porter {@code capa.verify}. Une
+     * verification exigee doit etre confiee a quelqu'un (ADR 0131) ; la refuser
+     * ensuite a cette personne-la rendait la designation sans effet.
+     */
+    @Test
+    void verifyActionEffectiveness_laPersonneDesigneeJuge() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = actionPromise(c);
+        UUID designe = a.getVerificationAssigneeId();
+        when(scope.restrictTo(Permission.CAPA_VERIFY)).thenReturn(Optional.of(designe));
+        // LA PORTEE AUSSI : sans « voir tous les dossiers », la personne
+        // designee sur l'action doit voir le dossier qu'on lui demande de juger
+        // (ADR 0144). Stubbee ici, la chaine entiere est eprouvee.
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(designe));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(), jugeEfficace());
+
+        verify(reviews).save(any());
+    }
+
+    /** A defaut de verificateur sur l'action, celui du DOSSIER juge. */
+    @Test
+    void verifyActionEffectiveness_aDefautLeVerificateurDuDossierJuge() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        UUID designe = UUID.randomUUID();
+        c.setVerificationAssigneeId(designe);
+        CapaAction a = actionPromise(c);
+        a.setVerificationAssigneeId(null);
+        when(scope.restrictTo(Permission.CAPA_VERIFY)).thenReturn(Optional.of(designe));
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(designe));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        service.verifyActionEffectiveness(c.getId(), a.getId(), jugeEfficace());
+
+        verify(reviews).save(any());
+    }
+
+    /**
+     * ET PERSONNE D'AUTRE. Le chemin ne s'ouvre pas a tout le monde : il
+     * s'ouvre a qui la verification a ete confiee.
+     */
+    @Test
+    void verifyActionEffectiveness_refuseQuiNEstPasDesigne() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = actionPromise(c);
+        when(scope.restrictTo(Permission.CAPA_VERIFY))
+                .thenReturn(Optional.of(UUID.randomUUID()));
+        // Il VOIT le dossier — il porte « voir tous les dossiers » : le refus
+        // porte bien sur le jugement, et non sur la lecture.
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.empty());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.verifyActionEffectiveness(c.getId(), a.getId(),
+                jugeEfficace()))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(reviews, never()).save(any());
+    }
+
+    /** Aucun designe nulle part : nul ne juge sans le droit. */
+    @Test
+    void verifyActionEffectiveness_refuseQuandPersonneNEstDesigne() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        CapaAction a = actionPromise(c);
+        a.setVerificationAssigneeId(null);
+        when(scope.restrictTo(Permission.CAPA_VERIFY))
+                .thenReturn(Optional.of(UUID.randomUUID()));
+        // Il VOIT le dossier — il porte « voir tous les dossiers » : le refus
+        // porte bien sur le jugement, et non sur la lecture.
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.empty());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.verifyActionEffectiveness(c.getId(), a.getId(),
+                jugeEfficace()))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(reviews, never()).save(any());
+    }
+
+    /**
+     * LA MEME GARDE SUR LE VERDICT DU DOSSIER (ADR 0144) -- celui que l'ecran
+     * d'efficacite envoie. Le verificateur du dossier le porte sans detenir
+     * l'action du catalogue.
+     */
+    @Test
+    void verifyEffectiveness_leVerificateurDuDossierJuge() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        action(c, CapaActionStatus.DONE);
+        UUID designe = UUID.randomUUID();
+        c.setVerificationAssigneeId(designe);
+        c.setEffectivenessCriterion("Aucun rebut pendant 3 mois");
+        when(scope.restrictTo(Permission.CAPA_VERIFY)).thenReturn(Optional.of(designe));
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(designe));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), jugeEfficace());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    /**
+     * ET CELUI QU'UNE ACTION DESIGNE, car la question se tranche action par
+     * action (ADR 0131) : sans cela, un dossier dont seule l'action nomme un
+     * verificateur offrait a cette personne l'ecran, la ligne et le
+     * formulaire -- puis un refus a l'envoi.
+     */
+    @Test
+    void verifyEffectiveness_leVerificateurDUneActionJugeLeDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        CapaAction a = actionPromise(c);
+        a.setVerificationRequired(false);
+        UUID designe = a.getVerificationAssigneeId();
+        c.setEffectivenessCriterion("Aucun rebut pendant 3 mois");
+        when(scope.restrictTo(Permission.CAPA_VERIFY)).thenReturn(Optional.of(designe));
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(designe));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), jugeEfficace());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    /** Et nul autre : le refus porte sur le jugement, non sur la lecture. */
+    @Test
+    void verifyEffectiveness_refuseQuiNEstPasDesigne() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.setVerificationAssigneeId(UUID.randomUUID());
+        when(scope.restrictTo(Permission.CAPA_VERIFY))
+                .thenReturn(Optional.of(UUID.randomUUID()));
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.empty());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(), jugeEfficace()))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(reviews, never()).save(any());
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+    }
+
+    /** Aucun designe nulle part : nul ne juge sans le droit. */
+    @Test
+    void verifyEffectiveness_refuseQuandPersonneNEstDesigne() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(scope.restrictTo(Permission.CAPA_VERIFY))
+                .thenReturn(Optional.of(UUID.randomUUID()));
+        when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.empty());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(), jugeEfficace()))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(reviews, never()).save(any());
     }
 
     /**

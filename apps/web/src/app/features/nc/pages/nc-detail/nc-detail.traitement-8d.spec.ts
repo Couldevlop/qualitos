@@ -268,6 +268,54 @@ describe('NcDetailComponent — le traitement 8D', () => {
   });
 
   /**
+   * L'EFFICACITÉ DES ACTIONS SE LIT AU D8 (ADR 0144).
+   *
+   * <p>Le verdict se porte au D5 ou au D7, sur la ligne de l'action. Aucune
+   * discipline ne disait ensuite si cela avait SERVI : le traitement se fermait
+   * sur une équipe remerciée pour un résultat qu'il ne nommait pas.
+   *
+   * <p>Le tableau est celui du rapport, rendu tel quel — colonnes comprises —
+   * et non recomposé ici : deux assemblages du même fait divergent.
+   */
+  it('montre au D8 l’efficacité des actions, telle que le rapport la porte', () => {
+    svc.getEightDReport.and.returnValue(of({
+      recognition: null,
+      disciplines: [{
+        code: 'D8', title: 'Reconnaissance de l’équipe', sourced: false, sourceLabel: '',
+        lines: [], fields: [], editable: true,
+        tables: [{
+          caption: 'Efficacité des actions',
+          columns: ['Action', 'Nature', 'Verdict', 'Jugée le'],
+          rows: [['Remplacer le joint', 'Corrective', 'Efficace', '20/11/2026']]
+        }]
+      }]
+    } as any));
+
+    setup(ecart());
+
+    const tableau = un('d8-efficacite');
+    expect(tableau).withContext('le tableau du D8 est rendu').not.toBeNull();
+    expect(tableau?.textContent).toContain('Remplacer le joint');
+    expect(tableau?.textContent).toContain('Efficace');
+    expect(tableau?.textContent).toContain('20/11/2026');
+  });
+
+  /** Rien de jugé, rien de montré : pas de tableau vide sous la discipline. */
+  it('ne montre aucun tableau au D8 quand aucune action n’a été jugée', () => {
+    svc.getEightDReport.and.returnValue(of({
+      recognition: null,
+      disciplines: [{
+        code: 'D8', title: 'Reconnaissance de l’équipe', sourced: false, sourceLabel: '',
+        lines: [], fields: [], editable: true, tables: []
+      }]
+    } as any));
+
+    setup(ecart());
+
+    expect(un('d8-efficacite')).toBeNull();
+  });
+
+  /**
    * La conversion en cycle PDCA ou en projet DMAIC est une OPTION du D2, pas
    * une étape : ce que l'écart révèle peut mériter un cycle, et c'est une
    * décision, non un passage obligé (§3.6).

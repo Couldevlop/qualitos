@@ -1,9 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges,
+  OnDestroy, Output
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, forkJoin } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subscription } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import {
   ConfirmDialogComponent, ConfirmDialogData
@@ -67,7 +72,7 @@ const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false
 })
-export class CapaActionPanelComponent implements OnChanges {
+export class CapaActionPanelComponent implements OnChanges, OnDestroy {
 
   /**
    * Les dossiers à lire. Le panneau les charge lui-même : l'appelant n'a que
@@ -218,12 +223,35 @@ export class CapaActionPanelComponent implements OnChanges {
    */
   private actionVisee: string | null = null;
 
+  /**
+   * Vrai quand l'utilisateur porte l'action « vérifier une efficacité ».
+   *
+   * <p>Lu par abonnement, et non à chaque passe de détection : un gabarit qui
+   * rappellerait le service à chaque passe créerait un flux par ligne et par
+   * passe.
+   */
+  private droitDeJuger = false;
+
+  /** L'abonnement au droit, résilié avec le panneau. */
+  private readonly abonnements = new Subscription();
+
   constructor(
     private readonly capaService: CapaService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
-    private readonly cdr: ChangeDetectorRef
-  ) {}
+    private readonly cdr: ChangeDetectorRef,
+    private readonly authz: AuthzService,
+    private readonly auth: AuthService
+  ) {
+    this.abonnements.add(this.authz.can('capa.verify').subscribe(ok => {
+      this.droitDeJuger = ok;
+      this.cdr.markForCheck();
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.abonnements.unsubscribe();
+  }
 
   ngOnChanges(): void {
     this.reload();
@@ -699,6 +727,25 @@ export class CapaActionPanelComponent implements OnChanges {
     return Boolean(action.verificationRequired)
       && action.status === 'DONE'
       && action.verificationVerdict !== 'EFFECTIVE';
+  }
+
+  /**
+   * QUI PEUT JUGER CETTE LIGNE (ADR 0144).
+   *
+   * <p>Celui qui porte l'action « vérifier une efficacité », comme avant — et
+   * la PERSONNE DÉSIGNÉE sur l'action, à défaut celle du dossier, qui ne la
+   * porte pas. Le bouton lui était caché : on lui confiait la vérification, et
+   * l'écran ne lui offrait nulle part de la rendre. Le serveur applique la même
+   * règle, et c'est lui qui tranche.
+   */
+  peutJuger(action: CapaActionResponse): boolean {
+    if (this.droitDeJuger) {
+      return true;
+    }
+    const moi = this.auth.snapshot()?.userId;
+    const designe = action.verificationAssigneeId
+      ?? this.dossierDe(action)?.verificationAssigneeId;
+    return Boolean(moi) && moi === designe;
   }
 
   /** Vrai quand l'effet de cette action a ete constate, et juge suffisant. */

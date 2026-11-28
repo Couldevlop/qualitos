@@ -358,10 +358,26 @@ public class EightDSourceAdapter implements EightDSourcePort {
         }
         Map<UUID, EffectivenessReview> verdicts =
                 efficacite.findLastPerActionOfCase(tenantId, capa.getId());
+        // LE VERDICT DU DOSSIER VAUT POUR SON ACTION UNIQUE (ADR 0144). Un
+        // jugement porte depuis l'ecran d'efficacite est une evaluation DU
+        // DOSSIER : sans ce repli, il n'atteignait aucune discipline, et le
+        // rapport taisait un verdict pourtant rendu. Reserve au dossier d'UNE
+        // SEULE action (ADR 0135) : sur un dossier ancien qui en porte
+        // plusieurs, le meme verdict se repeterait sur chaque ligne en
+        // pretendant juger chacune.
+        //
+        // C'est le DERNIER jugement du dossier, action comprise : sur un
+        // dossier d'une action, prendre celui de l'action aurait affiche un
+        // « partiellement » depasse sous un « efficace » rendu depuis.
+        EffectivenessReview duDossierSeul = capa.getActions().size() == 1
+                ? efficacite.findLastByCase(tenantId, capa.getId()).orElse(null)
+                : null;
         List<EightDSources.Action> actions = new ArrayList<>();
         for (CapaAction action : capa.getActions()) {
             List<String> pieces = parAction.getOrDefault(action.getId(), List.of());
-            EffectivenessReview jugement = verdicts.get(action.getId());
+            EffectivenessReview jugement = duDossierSeul != null
+                    ? duDossierSeul
+                    : verdicts.get(action.getId());
             actions.add(new EightDSources.Action(
                     action.getTitle(), action.getDescription(),
                     nom(action.getActionType()), nom(action.getStatus()),

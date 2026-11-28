@@ -446,6 +446,32 @@ class EffectivenessInfrastructureTest {
                 .containsExactlyInAnyOrder("CAPA-PILOTE", "CAPA-VERIF", "CAPA-ACTION");
     }
 
+    /**
+     * LE VERIFICATEUR D'UNE ACTION VOIT SON DOSSIER (ADR 0144).
+     *
+     * <p>La vérification se confie action par action (ADR 0131), et la requête
+     * ne connaissait que le vérificateur du DOSSIER : la personne désignée sur
+     * l'action trouvait son plan de travail vide de la seule ligne qui
+     * l'attendait, et la fiche lui répondait 404. C'est le défaut inverse de la
+     * fuite, et tout aussi réel.
+     */
+    @Test
+    void leVerificateurDUneActionVoitSonDossier() {
+        UUID tenant = UUID.randomUUID();
+        UUID moi = UUID.randomUUID();
+
+        CapaCase aVerifier = dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-VERIF-ACTION");
+        aVerifier.getActions().get(0).setVerificationAssigneeId(moi);
+        CapaCase enregistre = cases.save(aVerifier);
+
+        cases.save(dossierSurLePlan(tenant, CapaStatus.RESOLVED, "CAPA-AUTRUI"));
+
+        assertThat(port().findInScope(tenant, Optional.of(moi)))
+                .extracting(EvaluationCasePort.EvaluationCase::reference)
+                .containsExactly("CAPA-VERIF-ACTION");
+        assertThat(port().sees(tenant, enregistre.getId(), Optional.of(moi))).isTrue();
+    }
+
     @Test
     void unDossierRestreintArriveAvecTOUTESSesActions() {
         // Le piège de la requête restreinte : filtrer sur la jointure ramenée

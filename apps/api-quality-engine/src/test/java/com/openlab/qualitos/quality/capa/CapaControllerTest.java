@@ -261,6 +261,62 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.status").value("CLOSED"));
     }
 
+    /**
+     * LE JUGEMENT N'EST PLUS REFUSE A L'ENTREE (ADR 0144).
+     *
+     * <p>Un simple utilisateur — qui ne porte pas {@code capa.verify} —
+     * ATTEINT le service, qui seul sait si la vérification lui a été confiée.
+     * Refusé par l'intercepteur, il l'était avant qu'on sache quelle action
+     * était visée, donc avant de pouvoir constater qu'il en était le
+     * vérificateur désigné.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void actionEffectiveness_unSimpleUtilisateurAtteintLeService() throws Exception {
+        when(service.verifyActionEffectiveness(eq(CAPA), eq(ACTION), any()))
+                .thenReturn(actionResp());
+
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/actions/{a}/effectiveness", CAPA, ACTION)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"verdict\":\"EFFECTIVE\",\"observed\":\"0 rebut\"}"))
+                .andExpect(status().isOk());
+    }
+
+    /** Et le refus du service, lui, sort en 403 — pas en 500. */
+    @Test @WithMockUser(roles = "USER")
+    void actionEffectiveness_quiNEstPasDesigne_returns403() throws Exception {
+        when(service.verifyActionEffectiveness(eq(CAPA), eq(ACTION), any()))
+                .thenThrow(new org.springframework.security.access.AccessDeniedException(
+                        "Only the designated verifier of this action may judge its effectiveness"));
+
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/actions/{a}/effectiveness", CAPA, ACTION)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"verdict\":\"EFFECTIVE\",\"observed\":\"0 rebut\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    /** Le verdict du DOSSIER suit la même règle : c'est l'écran d'efficacité. */
+    @Test @WithMockUser(roles = "USER")
+    void effectiveness_quiNEstPasDesigne_returns403() throws Exception {
+        when(service.verifyEffectiveness(eq(CAPA), any()))
+                .thenThrow(new org.springframework.security.access.AccessDeniedException(
+                        "Only the designated verifier of this CAPA may judge its effectiveness"));
+
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/effectiveness", CAPA).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"verdict\":\"EFFECTIVE\",\"observed\":\"0 rebut\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    /** La clôture directe, elle, garde sa garde d'intercepteur. */
+    @Test @WithMockUser(roles = "USER")
+    void close_withoutVerification_resteRefuseAuSimpleUtilisateur() throws Exception {
+        mockMvc.perform(post("/api/v1/capa/cases/{id}/close", CAPA).with(csrf()))
+                .andExpect(status().isForbidden());
+        verify(service, never()).closeWithoutVerification(any());
+    }
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void close_withoutVerification_success() throws Exception {
         when(service.closeWithoutVerification(CAPA)).thenReturn(caseResp(CapaStatus.CLOSED));

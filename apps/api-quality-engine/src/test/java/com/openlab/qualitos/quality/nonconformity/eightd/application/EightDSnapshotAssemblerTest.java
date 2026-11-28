@@ -220,6 +220,98 @@ class EightDSnapshotAssemblerTest {
         assertThat(d8.sourceLabel()).isEmpty();
     }
 
+    // ---------- D8 : l'efficacite des actions (ADR 0144) ----------
+
+    /**
+     * Un dossier dont l'action a ete jugee, pour le tableau d'efficacite du D8.
+     *
+     * @param verdict le verdict porte sur l'action, ou {@code null} si aucun
+     */
+    private EightDSources.Capa capaJugee(String verdict) {
+        return new EightDSources.Capa("Fuite presse-etoupe", "CORRECTIVE", "HIGH", "CLOSED",
+                LocalDate.parse("2026-09-30"), Instant.parse("2026-09-13T10:00:00Z"),
+                null, null, List.of(),
+                List.of(new EightDSources.Action("Remplacer le joint", null, "CORRECTIVE",
+                        "DONE", "Ada Lovelace", LocalDate.parse("2026-09-01"),
+                        LocalDate.parse("2026-09-30"), Instant.parse("2026-09-10T08:00:00Z"),
+                        List.of(), verdict,
+                        verdict == null ? null : Instant.parse("2026-11-20T14:30:00Z"))));
+    }
+
+    /**
+     * LE DEFAUT CORRIGE : le D5 disait ce qui avait ete decide, le D6 ce qui
+     * avait ete mene et prouve, et aucune discipline ne disait si cela avait
+     * SERVI. Le document se fermait sur une equipe remerciee pour un resultat
+     * qu'il ne nommait pas.
+     */
+    @Test
+    void d8_porte_l_efficacite_des_actions_jugees() {
+        EightDSources sources = new EightDSources(nc(null), List.of(), List.of(), List.of(),
+                List.of(capaJugee("EFFECTIVE")), null, List.of());
+
+        EightDSnapshot.Section d8 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D8");
+
+        assertThat(d8.tables()).hasSize(1);
+        EightDSnapshot.Table tableau = d8.tables().get(0);
+        assertThat(tableau.caption()).isEqualTo("Efficacité des actions");
+        assertThat(tableau.columns()).containsExactly("Action", "Nature", "Verdict", "Jugée le");
+        assertThat(tableau.rows()).hasSize(1);
+        assertThat(tableau.rows().get(0).cells()).containsExactly(
+                "Remplacer le joint", "Corrective", "Efficace", "20/11/2026");
+    }
+
+    /** Les trois verdicts se lisent dans les mots de l'ecran (ADR 0108). */
+    @Test
+    void d8_met_les_verdicts_en_mots() {
+        EightDSources partiel = new EightDSources(nc(null), List.of(), List.of(), List.of(),
+                List.of(capaJugee("PARTIAL")), null, List.of());
+        EightDSources inefficace = new EightDSources(nc(null), List.of(), List.of(), List.of(),
+                List.of(capaJugee("INEFFECTIVE")), null, List.of());
+
+        assertThat(section(assembler.assemble(partiel, null, null, null, "t", null, null), "D8")
+                .tables().get(0).rows().get(0).cells())
+                .contains("Partiellement efficace");
+        assertThat(section(assembler.assemble(inefficace, null, null, null, "t", null, null), "D8")
+                .tables().get(0).rows().get(0).cells())
+                .contains("Inefficace");
+    }
+
+    /**
+     * AUCUNE LIGNE POUR CE QUI N'A PAS ETE JUGE, et aucun tableau du tout quand
+     * rien ne l'a ete : une ligne « non jugée » ferait de la discipline un
+     * relevé de manques là où elle montre ce qui a été obtenu.
+     */
+    @Test
+    void d8_ne_tabule_rien_quand_aucune_action_n_a_ete_jugee() {
+        EightDSources sources = new EightDSources(nc(null), List.of(), List.of(), List.of(),
+                List.of(capaJugee(null)), null, List.of());
+
+        assertThat(section(assembler.assemble(sources, null, null, null, "t", null, null), "D8")
+                .tables()).isEmpty();
+    }
+
+    /**
+     * LE DRAPEAU « SERVIE » RESTE CELUI DU TEXTE. Il gouverne la mention
+     * « rapport partiel » et la coche du sommaire : un jugement d'efficacité ne
+     * remplace pas le mot que l'équipe n'a pas écrit. Le libellé, lui, se tait
+     * — « se renseigne à la main » au-dessus d'un tableau rempli enverrait
+     * chercher ce qui est déjà là.
+     */
+    @Test
+    void d8_juge_mais_sans_remerciement_reste_non_servi_et_sans_libelle() {
+        EightDSources sources = new EightDSources(ncOuverte(), List.of(), List.of(), List.of(),
+                List.of(capaJugee("EFFECTIVE")), null, List.of());
+
+        EightDSnapshot.Section d8 = section(
+                assembler.assemble(sources, null, null, null, "t", null, null), "D8");
+
+        assertThat(d8.tables()).hasSize(1);
+        assertThat(d8.lines()).isEmpty();
+        assertThat(d8.sourced()).isFalse();
+        assertThat(d8.sourceLabel()).isEmpty();
+    }
+
     @Test
     void une_saisie_multiligne_devient_autant_de_lignes() {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(),

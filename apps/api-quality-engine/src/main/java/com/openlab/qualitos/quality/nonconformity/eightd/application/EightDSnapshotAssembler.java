@@ -287,12 +287,76 @@ public class EightDSnapshotAssembler {
         if (!saisi && solde) {
             lignes.addAll(RECONNAISSANCE_STANDARD);
         }
+        // CE QUE LES ACTIONS ONT PRODUIT, sous la discipline qui clot le
+        // traitement (ADR 0144). Le D5 et le D7 disent ce qui a ete decide, le
+        // D6 ce qui a ete mene et prouve ; aucune des trois ne disait si cela a
+        // SERVI, et le rapport remis au client se fermait donc sur une equipe
+        // remerciee pour un resultat qu'il ne nommait pas.
+        List<EightDSnapshot.Table> tableaux = tableauDesEfficacites(sources.capas());
         // PLUS DE « Renseignée par l'équipe qualité » : la phrase attribuait la
         // discipline à un service au-dessus de ce qu'elle disait, là où le
         // lecteur vient lire ce que l'équipe a appris. Servie, la discipline se
         // tait sur sa provenance ; vide, elle dit ce qui manque.
-        String label = lignes.isEmpty() ? A_SAISIR : "";
-        return section(EightDDiscipline.D8, !lignes.isEmpty(), label, lignes);
+        String label = lignes.isEmpty() && tableaux.isEmpty() ? A_SAISIR : "";
+        // SERVIE PAR LE TEXTE, et par lui seul : « sourced » decide du drapeau
+        // « rapport partiel » et de la coche du sommaire, et un jugement
+        // d'efficacite ne remplace pas le mot que l'equipe n'a pas ecrit. Le
+        // libelle, lui, se tait des que la discipline montre quelque chose --
+        // « se renseigne a la main » au-dessus d'un tableau rempli enverrait
+        // chercher ce qui est deja la.
+        return new EightDSnapshot.Section(
+                EightDDiscipline.D8.code(), EightDDiscipline.D8.titre(),
+                !lignes.isEmpty(), label, List.copyOf(lignes), List.of(), tableaux);
+    }
+
+    /**
+     * Les colonnes du jugement d'efficacite, dans l'ordre ou on le lit : ce qui
+     * a ete juge, a quoi on l'a compare, ce qu'on a releve, et la conclusion.
+     */
+    private static final List<String> COLONNES_EFFICACITE =
+            List.of("Action", "Nature", "Verdict", "Jugée le");
+
+    /** Les trois verdicts, mis dans les mots de l'ecran (ADR 0108). */
+    private static final Map<String, String> VERDICTS = Map.of(
+            "EFFECTIVE", "Efficace",
+            "PARTIAL", "Partiellement efficace",
+            "INEFFECTIVE", "Inefficace");
+
+    /** Les natures d'action, mises dans les mots de l'ecran. */
+    private static final Map<String, String> NATURES = Map.of(
+            "CONTAINMENT", "Immédiate",
+            "CORRECTIVE", "Corrective",
+            "PREVENTIVE", "Préventive");
+
+    /**
+     * UNE LIGNE PAR ACTION JUGEE, et aucune pour celles qui ne l'ont pas ete.
+     *
+     * <p>Une ligne « non jugée » ferait de la discipline un relevé de manques
+     * là où elle montre ce qui a été obtenu : ce qui reste à juger se lit sur
+     * l'écran d'efficacité, dont c'est le métier.
+     *
+     * <p>Aucun tableau du tout quand rien n'a été jugé : une discipline qui
+     * porterait un tableau vide annoncerait un contenu qu'elle n'a pas.
+     */
+    private List<EightDSnapshot.Table> tableauDesEfficacites(List<EightDSources.Capa> capas) {
+        List<EightDSnapshot.Row> lignes = new ArrayList<>();
+        for (EightDSources.Capa capa : capas) {
+            for (EightDSources.Action action : capa.actions()) {
+                if (action.effectivenessVerdict() == null
+                        || action.effectivenessVerdict().isBlank()) {
+                    continue;
+                }
+                lignes.add(new EightDSnapshot.Row(List.of(
+                        texteOu(action.title(), "(sans intitulé)"),
+                        libelle(NATURES, texteOu(action.actionType(), "?")),
+                        libelle(VERDICTS, action.effectivenessVerdict()),
+                        action.effectivenessReviewedAt() == null
+                                ? "-" : jour(action.effectivenessReviewedAt()))));
+            }
+        }
+        return lignes.isEmpty() ? List.of()
+                : List.of(new EightDSnapshot.Table(
+                        "Efficacité des actions", COLONNES_EFFICACITE, List.copyOf(lignes)));
     }
 
     /**

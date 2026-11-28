@@ -88,8 +88,17 @@ public class CapaController {
     // refusait déjà d'aboutir tant qu'une action restait à faire, et /start ne
     // faisait qu'annoncer un travail dont la première action témoigne mieux.
 
+    /**
+     * Le verdict d'efficacite du dossier (ADR 0108).
+     *
+     * <p>Meme droit qu'avant — {@code capa.verify} —, mais la garde est portee
+     * par le SERVICE (ADR 0144) : la PERSONNE DESIGNEE sur le dossier, ou sur
+     * une de ses actions, porte son verdict sans detenir ce droit, et nul autre
+     * ne le peut. Un refus pose ici, avant de connaitre le dossier visé, ne
+     * savait pas qui en etait le verificateur et refusait donc a celui-la meme
+     * a qui la verification avait ete confiee.
+     */
     @PatchMapping("/cases/{id}/effectiveness")
-    @RequiresPermission(Permission.CAPA_VERIFY)
     public CapaDto.CaseResponse verifyEffectiveness(
             @PathVariable UUID id,
             @Valid @RequestBody CapaDto.EffectivenessRequest request) {
@@ -99,13 +108,19 @@ public class CapaController {
     /**
      * Le jugement porte sur UNE action du dossier (ADR 0132).
      *
-     * <p>Meme permission que le jugement du dossier : c'est le meme geste, a
-     * l'echelle ou la promesse de verification a ete faite. Un droit distinct
-     * laisserait verifier le dossier sans pouvoir verifier ses actions, alors
-     * que le premier depend desormais des secondes.
+     * <p>Meme droit que le jugement du dossier — {@code capa.verify} —, c'est le
+     * meme geste a l'echelle ou la promesse de verification a ete faite. Mais la
+     * garde est portee par le SERVICE et non par l'intercepteur (ADR 0144) : la
+     * PERSONNE DESIGNEE sur l'action peut porter son verdict sur cette action-la
+     * sans detenir ce droit, et nul autre ne le peut. Un refus pose ici, avant
+     * de connaitre l'action visee, ne savait pas qui en etait le verificateur et
+     * refusait donc a celui-la meme a qui la verification avait ete confiee.
+     *
+     * <p>Le catalogue des droits n'en est pas elargi d'un pouce : {@code tous()}
+     * aurait ouvert le jugement a chacun, et c'est la designation, non le role,
+     * qui ouvre ce chemin-ci.
      */
     @PatchMapping("/cases/{id}/actions/{actionId}/effectiveness")
-    @RequiresPermission(Permission.CAPA_VERIFY)
     public CapaDto.ActionResponse verifyActionEffectiveness(
             @PathVariable UUID id,
             @PathVariable UUID actionId,

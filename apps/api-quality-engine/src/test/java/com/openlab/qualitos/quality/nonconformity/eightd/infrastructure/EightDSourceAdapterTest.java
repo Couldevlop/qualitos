@@ -53,6 +53,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -300,6 +301,91 @@ class EightDSourceAdapterTest {
         assertThat(remontee.effectivenessReviewedAt()).isNull();
     }
 
+    /**
+     * LE VERDICT DU DOSSIER VAUT POUR SON ACTION UNIQUE (ADR 0144).
+     *
+     * <p>Un jugement porte depuis l'ecran d'efficacite est une evaluation DU
+     * DOSSIER : le rapport ne lisait que celles des actions, et taisait donc un
+     * verdict pourtant rendu. Depuis l'ADR 0135 un dossier porte une action et
+     * une seule : le juger, c'est la juger.
+     */
+    @Test
+    void le_verdict_du_dossier_remonte_sur_son_action_unique() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase dossier = capa();
+        assertThat(dossier.getActions()).hasSize(1);
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(dossier));
+        when(efficacite.findLastByCase(TENANT, CAPA)).thenReturn(Optional.of(
+                EffectivenessReview.rehydrate(UUID.randomUUID(), TENANT, CAPA,
+                        EffectivenessVerdict.EFFECTIVE, "Rebut sous 2 %", "4,2 %", "2 %", "0 %",
+                        null, UUID.randomUUID(), "Vera Verificatrice", JUGE_LE)));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        EightDSources.Action remontee = sources.capas().get(0).actions().get(0);
+        assertThat(remontee.effectivenessVerdict()).isEqualTo("EFFECTIVE");
+        assertThat(remontee.effectivenessReviewedAt()).isEqualTo(JUGE_LE);
+    }
+
+    /**
+     * LE DERNIER JUGEMENT GAGNE. La requete du dossier rend tout son historique
+     * du plus recent au plus ancien, actions comprises : le verdict rendu depuis
+     * couvre donc celui de l'action, et jamais l'inverse. Un rapport qui
+     * afficherait un « partiellement » depasse sous un « efficace » rendu depuis
+     * serait signe tel quel.
+     */
+    @Test
+    void le_dernier_jugement_du_dossier_couvre_celui_de_l_action() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase dossier = capa();
+        UUID action = dossier.getActions().get(0).getId();
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(dossier));
+        when(efficacite.findLastPerActionOfCase(TENANT, CAPA)).thenReturn(Map.of(
+                action, jugement(action)));
+        when(efficacite.findLastByCase(TENANT, CAPA)).thenReturn(Optional.of(
+                EffectivenessReview.rehydrate(UUID.randomUUID(), TENANT, CAPA,
+                        EffectivenessVerdict.EFFECTIVE, "Rebut sous 2 %", "4,2 %", "2 %", "0 %",
+                        null, UUID.randomUUID(), "Vera Verificatrice", PLUS_TARD)));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        EightDSources.Action remontee = sources.capas().get(0).actions().get(0);
+        assertThat(remontee.effectivenessVerdict()).isEqualTo("EFFECTIVE");
+        assertThat(remontee.effectivenessReviewedAt()).isEqualTo(PLUS_TARD);
+    }
+
+    /**
+     * ET LE REPLI S'ARRETE LA : un dossier ancien qui porte plusieurs actions
+     * ne recopie pas le verdict du dossier sur chaque ligne, ce qui pretendrait
+     * juger chacune. Seules les actions jugees pour elles-memes portent un
+     * verdict.
+     */
+    @Test
+    void un_dossier_a_plusieurs_actions_ne_recopie_pas_le_verdict_du_dossier() {
+        NonConformity nc = nc();
+        nc.setCapaCaseId(CAPA);
+        CapaCase dossier = capa();
+        CapaAction seconde = new CapaAction();
+        seconde.setId(UUID.randomUUID());
+        seconde.setTitle("Former l'equipe de nuit");
+        seconde.setActionType(CapaActionType.PREVENTIVE);
+        seconde.setStatus(CapaActionStatus.DONE);
+        dossier.getActions().add(seconde);
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc));
+        when(capas.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(dossier));
+
+        EightDSources sources = adapter.collect(TENANT, NC);
+
+        assertThat(sources.capas().get(0).actions())
+                .extracting(EightDSources.Action::effectivenessVerdict)
+                .containsOnlyNulls();
+        verify(efficacite, never()).findLastByCase(any(), any());
+    }
+
     /** Une piece sans nom d'origine se designe par sa cle : jamais une ligne vide. */
     @Test
     void une_piece_sans_nom_d_origine_se_designe_par_sa_cle() {
@@ -336,6 +422,9 @@ class EightDSourceAdapterTest {
     }
 
     private static final Instant JUGE_LE = Instant.parse("2026-10-02T09:00:00Z");
+
+    /** Un jugement rendu APRES celui de l'action. */
+    private static final Instant PLUS_TARD = Instant.parse("2026-10-20T09:00:00Z");
 
     /** Une piece deposee : son nom d'origine est ce que le D6 ecrit. */
     private CapaEvidence piece(UUID actionId, String nom) {
