@@ -64,13 +64,14 @@ class QualityObjectiveServiceTest {
     @Mock KpiMeasurementRepository measurements;
     @Mock CapaService capaService;
     @Mock CapaCaseRepository capaCases;
+    @Mock com.openlab.qualitos.quality.authz.application.AuthorizationService authz;
 
     QualityObjectiveService service;
 
     @BeforeEach
     void setUp() {
         service = new QualityObjectiveService(objectives, proposals, kpis, measurements,
-                capaService, capaCases);
+                capaService, capaCases, authz);
         TenantContext.setTenantId(TENANT.toString());
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(ACTOR.toString(), "n/a", List.of()));
@@ -352,21 +353,40 @@ class QualityObjectiveServiceTest {
                     .isEqualTo(ObjectiveStatus.CRITICAL);
         }
 
-        // ---------- la confrontation est automatique (ADR 0146) ----------
+        // ---------- la confrontation, acte de pilotage (ADR 0146) ----------
+
+        /**
+         * LA REVUE N'ECRIT RIEN, et c'est la correction du defaut trouve au
+         * pentest : tant que la confrontation vivait dans cette methode, la
+         * lecture — ouverte a tout authentifie — executait ce que la permission
+         * objective.manage refuse.
+         */
+        @Test
+        void laRevue_nEcritJAMAIS() {
+            when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
+                    TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
+            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
+            releves("2026-09", "650", "2026-10", "660");
+
+            service.review(null, null);
+
+            verify(proposals, never()).save(any());
+            verify(authz, never()).has(any());
+        }
 
         @Test
-        void ouvrirLaRevue_confronteLesObjectifsAuxMesures() {
-            // Il n'y a plus de bouton : l'écran dit la vérité du jour sans
-            // qu'on ait à demander la confrontation.
+        void confronterAuxMesures_ecritLaProposition() {
+            // Il n'y a plus de bouton : ouvrir l'ecran declenche ceci, et
+            // l'ecran dit alors la verite du jour.
+            jePuisPiloter();
             when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
                     TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
             when(objectives.findByIdAndTenantId(OBJ, TENANT))
                     .thenReturn(Optional.of(objectif()));
-            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
             when(kpis.findById(KPI)).thenReturn(Optional.of(kpi()));
             releves("2026-09", "650", "2026-10", "660");
 
-            service.review(null, null);
+            service.confronterAuxMesures();
 
             ArgumentCaptor<QualityObjectiveProposal> c =
                     ArgumentCaptor.forClass(QualityObjectiveProposal.class);
@@ -375,44 +395,42 @@ class QualityObjectiveServiceTest {
             assertThat(c.getValue().getObjectiveId()).isEqualTo(OBJ);
         }
 
+        /**
+         * LE DROIT GARDE LA CONFRONTATION. Sans objective.manage, rien ne
+         * s'ecrit — et rien n'est refuse : la confrontation n'est pas demandee
+         * par qui lit, elle est declenchee a l'occasion de sa visite, et lever
+         * un 403 fermerait une revue que le produit veut ouverte.
+         */
         @Test
-        void rejouerUneRevuePASSEE_nEcritRien() {
-            // Confronter pendant une relecture d'archive daterait d'aujourd'hui
-            // des propositions nées d'une lecture d'hier.
-            // Le MEME jeu que le banc precedent, qui lui ecrit.
-            when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
-                    TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
-            lenient().when(objectives.findByIdAndTenantId(OBJ, TENANT))
-                    .thenReturn(Optional.of(objectif()));
-            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
-            lenient().when(kpis.findById(KPI)).thenReturn(Optional.of(kpi()));
-            releves("2026-09", "650", "2026-10", "660");
-
-            service.review(null, LocalDate.parse("2026-10-31"));
+        void sansLeDroitDePiloter_laConfrontationNEcritRien() {
+            service.confronterAuxMesures();
 
             verify(proposals, never()).save(any());
+            verify(objectives, never())
+                    .findByTenantIdAndStatusOrderByCreatedAtDesc(any(), any());
         }
 
         @Test
-        void unObjectifQuOnNePeutPasConfronter_neCassePasLaRevue() {
-            // Tant que la confrontation était un geste, son échec se disait
-            // dans un bandeau. Devenue automatique, la même erreur emporterait
-            // la page entière et masquerait les objectifs qui se lisent bien.
+        void unObjectifQuOnNePeutPasConfronter_nArretePasLesAutres() {
+            // La revue lit le catalogue en bloc ; la confrontation, elle,
+            // recharge le KPI par son identifiant. Absent de ce second chemin,
+            // elle leve — et la boucle doit continuer.
+            jePuisPiloter();
             when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
                     TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
             when(objectives.findByIdAndTenantId(OBJ, TENANT))
                     .thenReturn(Optional.of(objectif()));
-            // La revue lit le catalogue en bloc ; la confrontation, elle,
-            // recharge le KPI par son identifiant. Absent de ce second chemin,
-            // elle lève — et la ligne doit paraître quand même.
-            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
             when(kpis.findById(KPI)).thenReturn(Optional.empty());
             releves("2026-09", "650", "2026-10", "660");
 
-            ObjectiveDto.ReviewResponse r = service.review(null, null);
+            service.confronterAuxMesures();
 
-            assertThat(r.objectives()).hasSize(1);
             verify(proposals, never()).save(any());
+        }
+
+        private void jePuisPiloter() {
+            when(authz.has(com.openlab.qualitos.quality.authz.domain.Permission.OBJECTIVE_MANAGE))
+                    .thenReturn(true);
         }
     }
 

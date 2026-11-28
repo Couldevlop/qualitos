@@ -14,6 +14,8 @@ import com.openlab.qualitos.quality.kpi.KpiDefinition;
 import com.openlab.qualitos.quality.kpi.KpiDefinitionRepository;
 import com.openlab.qualitos.quality.kpi.KpiMeasurement;
 import com.openlab.qualitos.quality.kpi.KpiMeasurementRepository;
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
+import com.openlab.qualitos.quality.authz.domain.Permission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,9 @@ public class QualityObjectiveService {
 
     private static final Logger log = LoggerFactory.getLogger(QualityObjectiveService.class);
 
+    /** Le droit de piloter : il garde la confrontation, pas la lecture. */
+    private final AuthorizationService authz;
+
     /** Au-delà, une revue ne lit plus : vingt-quatre périodes couvrent deux ans de mensuel. */
     private static final int MAX_PERIODS = 24;
 
@@ -72,13 +77,15 @@ public class QualityObjectiveService {
                                    KpiDefinitionRepository kpis,
                                    KpiMeasurementRepository measurements,
                                    CapaService capaService,
-                                   CapaCaseRepository capaCases) {
+                                   CapaCaseRepository capaCases,
+                                   AuthorizationService authz) {
         this.objectives = objectives;
         this.proposals = proposals;
         this.kpis = kpis;
         this.measurements = measurements;
         this.capaService = capaService;
         this.capaCases = capaCases;
+        this.authz = authz;
     }
 
     // ---------- définition ----------
@@ -173,24 +180,21 @@ public class QualityObjectiveService {
      * quatre compteurs, et ce qui attend une décision.
      *
      * @param processId filtre sur un processus, ou {@code null} pour tous
-     * <p><b>LA CONFRONTATION EST AUTOMATIQUE</b> (ADR 0146). Ouvrir la revue
-     * confronte les objectifs à leurs mesures ; il n'y a plus de geste à faire
-     * pour que l'écran dise la vérité du jour. Un bouton « Confronter aux
-     * mesures » laissait la revue en retard sur les relevés tant que personne
-     * ne pensait à le presser — et un écart déjà mesuré n'attendait alors que
-     * l'attention de quelqu'un pour exister.
-     *
-     * <p>Rejouer une revue PASSÉE n'écrit rien : {@code asOf} renseigné relit
-     * l'état d'alors, et la règle de déclenchement ne porte que sur l'état
-     * courant. Confronter pendant une relecture d'archive daterait d'aujourd'hui
-     * des propositions nées d'une lecture d'hier.
+     * <p><b>CETTE MÉTHODE N'ÉCRIT RIEN</b>, et c'est volontaire : la lecture de
+     * la revue est ouverte à tout authentifié (c'est ce qu'une organisation
+     * montre à ses équipes), alors que confronter aux mesures est un acte de
+     * pilotage. Tant que la confrontation vivait ici, la lecture ouverte
+     * exécutait ce que {@code objective.manage} refuse — et une violation de
+     * clé d'unicité, qui ne survient qu'au commit, emportait la revue entière.
+     * La confrontation est donc sortie dans {@link #confronterAuxMesures()},
+     * appelée hors de cette transaction.
      *
      * @param processId filtre sur un processus, ou {@code null} pour tous
      * @param asOf      fin de la période observée, ou {@code null} pour l'état courant.
      *                  Une revue mensuelle se tient souvent après la fin du mois, et doit
      *                  pouvoir se rejouer telle qu'elle a été lue.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public ObjectiveDto.ReviewResponse review(UUID processId, LocalDate asOf) {
         UUID tenantId = requireTenantId();
         List<QualityObjective> suivis = objectives
@@ -198,10 +202,6 @@ public class QualityObjectiveService {
                 .stream()
                 .filter(o -> processId == null || processId.equals(o.getProcessId()))
                 .toList();
-
-        if (asOf == null) {
-            confronterAuxMesures(suivis);
-        }
 
         Map<UUID, KpiDefinition> catalogue = chargerKpis(suivis, tenantId);
         List<ObjectiveDto.ObjectiveResponse> lignes = new ArrayList<>();
@@ -234,24 +234,37 @@ public class QualityObjectiveService {
     }
 
     /**
-     * Confronte les objectifs suivis à leurs mesures, SANS POUVOIR CASSER LA
-     * REVUE (ADR 0146).
+     * Confronte tous les objectifs suivis à leurs mesures — l'automatisme de
+     * l'ADR 0146, devenu un ACTE DE PILOTAGE au lieu d'un effet de la lecture.
+     *
+     * <p><b>LE DROIT SE VÉRIFIE ICI</b>, pas à l'annotation du point d'entrée :
+     * la garde voyage avec le comportement, donc tout appelant futur la
+     * rencontre. Sans {@code objective.manage}, la méthode ne fait rien et ne
+     * refuse rien — elle n'est pas demandée par qui lit, elle est seulement
+     * déclenchée à l'occasion de sa visite. Lever un 403 fermerait une revue
+     * que le produit veut ouverte.
      *
      * <p>Un objectif qu'on ne peut pas confronter — KPI retiré du catalogue,
-     * sens d'amélioration absent, mesures illisibles — est PASSÉ. Tant que la
-     * confrontation était un geste explicite, son échec se disait dans un
-     * bandeau et l'écran restait lisible ; devenue automatique, la même erreur
-     * emporterait la page entière et masquerait les trente objectifs qui, eux,
-     * se lisent très bien. L'objectif fautif paraît simplement sans
-     * proposition, exactement comme avant que la règle n'existe.
+     * sens d'amélioration absent, mesures illisibles — est PASSÉ : il n'arrête
+     * pas les autres, et il paraît simplement sans proposition.
      *
      * <p>Réévaluer la même période ne crée rien de neuf : {@link #evaluate} rend
      * la proposition déjà là, et la clé {@code uk_qo_proposals_periode} dit la
      * même chose en base. Un écran rafraîchi trois fois ne propose donc pas
-     * trois fois le même dossier.
+     * trois fois le même dossier. Deux visites SIMULTANÉES peuvent en revanche
+     * se croiser : la seconde violera la clé au commit, hors de portée du
+     * {@code catch} ci-dessous. C'est pourquoi cette transaction est distincte
+     * de celle de la revue — elle échoue seule, la lecture reste servie, et la
+     * proposition paraît à la visite suivante.
      */
-    private void confronterAuxMesures(List<QualityObjective> suivis) {
-        for (QualityObjective o : suivis) {
+    @Transactional
+    public void confronterAuxMesures() {
+        if (!authz.has(Permission.OBJECTIVE_MANAGE)) {
+            return;
+        }
+        UUID tenantId = requireTenantId();
+        for (QualityObjective o : objectives
+                .findByTenantIdAndStatusOrderByCreatedAtDesc(tenantId, ObjectiveLifecycle.ACTIVE)) {
             try {
                 evaluate(o.getId());
             } catch (RuntimeException e) {

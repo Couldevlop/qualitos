@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.objective;
 import com.openlab.qualitos.quality.authz.domain.Permission;
 import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/quality-objectives")
 public class QualityObjectiveController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(QualityObjectiveController.class);
+
     private final QualityObjectiveService service;
 
     public QualityObjectiveController(QualityObjectiveService service) {
@@ -37,6 +41,21 @@ public class QualityObjectiveController {
 
     /**
      * L'écran « Objectifs vs KPI réels ».
+     *
+     * <p>Ouvrir cet écran confronte d'abord les objectifs à leurs mesures
+     * (ADR 0146) : plus de bouton à presser pour que la revue cesse d'être en
+     * retard sur les relevés. La confrontation reste un ACTE DE PILOTAGE —
+     * {@link QualityObjectiveService#confronterAuxMesures()} vérifie le droit
+     * elle-même et ne fait rien pour qui ne l'a pas. La lecture, elle, demeure
+     * ouverte à tout authentifié.
+     *
+     * <p>Deux précautions, et chacune répare un défaut constaté :
+     * la confrontation est SAUTÉE quand {@code asOf} est renseigné — rejouer une
+     * revue d'archive daterait d'aujourd'hui des propositions nées d'une lecture
+     * d'hier ; et son échec est AVALÉ ICI, hors de sa transaction, parce qu'une
+     * violation de la clé d'unicité ne survient qu'au commit. Deux visites
+     * simultanées se croiseraient sinon en emportant la revue entière, là où
+     * l'une des deux propositions suffit.
      *
      * @param processId filtre sur un processus ; absent, tous les processus
      * @param asOf      fin de la période observée ({@code AAAA-MM-JJ}) ; absente, l'état
@@ -48,7 +67,18 @@ public class QualityObjectiveController {
             @RequestParam(required = false) UUID processId,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate asOf) {
+        if (asOf == null) {
+            confronterSansCasserLaRevue();
+        }
         return service.review(processId, asOf);
+    }
+
+    private void confronterSansCasserLaRevue() {
+        try {
+            service.confronterAuxMesures();
+        } catch (RuntimeException e) {
+            LOG.warn("Confrontation aux mesures non aboutie : {}", e.toString());
+        }
     }
 
     @GetMapping("/{id}")

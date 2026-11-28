@@ -31,6 +31,22 @@ décision humaine (ADR 0143). Rien ne se fait sans qu'on le voie.
 **Ouvrir la revue confronte les objectifs à leurs mesures.** Le bouton
 disparaît, avec son gestionnaire, ses libellés et son bandeau de résultat.
 
+**La confrontation reste un ACTE DE PILOTAGE.** C'est la correction d'un défaut
+que la première version de cette décision avait introduit, et qu'un test de
+contournement a mis au jour : la confrontation vivait dans la méthode de lecture,
+or la lecture de la revue est **ouverte à tout authentifié** — c'est ce qu'une
+organisation montre à ses équipes — tandis que l'écriture porte
+`objective.manage`. La lecture ouverte exécutait donc ce que l'écriture refuse,
+et un simple utilisateur devenait auteur de propositions.
+
+Fermer la lecture aurait été le mauvais remède : il aurait supprimé une fonction
+voulue. C'est l'écriture qui sort du chemin de lecture. `confronterAuxMesures()`
+**vérifie le droit elle-même**, dans le service et non à l'annotation du point
+d'entrée : la garde voyage avec le comportement, donc tout appelant futur la
+rencontre. Sans le droit, la méthode ne fait rien **et ne refuse rien** — elle
+n'est pas demandée par qui lit, elle est seulement déclenchée à l'occasion de sa
+visite ; lever un 403 fermerait la revue par un autre chemin.
+
 Trois bornes, sans lesquelles la décision serait fausse :
 
 1. **Rejouer une revue PASSÉE n'écrit rien.** La confrontation ne porte que sur
@@ -49,11 +65,20 @@ Trois bornes, sans lesquelles la décision serait fausse :
    pour la même période, et la clé `uk_qo_proposals_periode` dit la même chose
    en base. Un écran ouvert trois fois ne propose pas trois fois le même dossier.
 
+   Deux visites **simultanées** peuvent en revanche se croiser, et la clé est
+   alors violée **au commit** — hors de portée d'un `try/catch` posé autour de la
+   boucle, ce que la première version de cette décision avait manqué. C'est
+   pourquoi la confrontation tourne dans **sa propre transaction**, distincte de
+   celle de la revue, et pourquoi son échec est avalé au point d'appel, hors de
+   cette transaction : elle échoue seule, la lecture reste servie, et la
+   proposition paraît à la visite suivante.
+
 ## Conséquences
 
-- `review` cesse d'être `@Transactional(readOnly = true)` : une lecture d'écran
-  écrit désormais, dans le seul cas d'une proposition qui manquait. C'est le prix
-  assumé de l'automatisme, et il est borné par la clé d'unicité.
+- `review` **reste** `@Transactional(readOnly = true)` et n'écrit rien : c'est ce
+  qui rend la lecture sûre de pouvoir demeurer ouverte. Un banc le tient
+  explicitement (`laRevue_nEcritJAMAIS`), parce que c'est la propriété qu'une
+  régression future ferait disparaître sans bruit.
 - Le point d'entrée manuel **reste** côté serveur : il est ce que la règle
   expose à un appelant qui n'est pas l'écran, et c'est par lui que les bancs de
   la règle la jouent isolément. Seul le **bouton** disparaît.

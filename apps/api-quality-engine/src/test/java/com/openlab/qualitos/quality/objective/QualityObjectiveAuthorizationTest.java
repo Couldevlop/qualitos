@@ -137,6 +137,24 @@ class QualityObjectiveAuthorizationTest {
         verify(service).history(OBJ);
     }
 
+    /**
+     * LA LECTURE RESTE UNE LECTURE. Depuis l'ADR 0146 le GET declenche la
+     * confrontation aux mesures, qui est une ECRITURE ; un pentest a montre que
+     * la lecture, ouverte a tout authentifie, executait alors ce que le POST
+     * /evaluate refuse a ce meme role. Le droit se verifie desormais DANS le
+     * service, donc ce banc tient la seule chose que le web peut tenir : le GET
+     * reste ouvert, et il n'ecrit pas lui-meme.
+     *
+     * <p>Le refus pour qui n'a pas objective.manage se tient au niveau du
+     * service — voir {@code sansLeDroitDePiloter_laConfrontationNEcritRien}.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void unUtilisateurLitLaRevue_sansQueLeWebNEcrive() throws Exception {
+        mockMvc.perform(get(BASE)).andExpect(status().isOk());
+        verify(service, never()).evaluate(any());
+        verify(service, never()).evaluateAll();
+    }
+
     @Test
     void sansJeton_rienNEstLisible() throws Exception {
         mockMvc.perform(get(BASE)).andExpect(status().isUnauthorized());
