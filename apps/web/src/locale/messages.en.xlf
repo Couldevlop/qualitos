@@ -23950,17 +23950,13 @@ declared income
         <source>Le constat ne peut pas rester vide.</source>
         <target state="translated">The finding cannot be left empty.</target>
       </trans-unit>
-      <trans-unit id="nc.8d.validator-own-work" datatype="html">
-        <source>Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre travail. Un autre détenteur du droit de clôture désignera le valideur.</source>
-        <target state="translated">You resolved this non-conformity: you cannot choose who reviews your own work. Another holder of the closing right will designate the validator.</target>
-      </trans-unit>
       <trans-unit id="nc.8d.validator" datatype="html">
         <source>Valideur de la clôture (second regard)</source>
         <target state="translated">Closure validator (second pair of eyes)</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator-hint" datatype="html">
-        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
-        <target state="translated">Optional. This person can close this non-conformity even without a quality role — and never if they resolved it themselves.</target>
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité.</source>
+        <target state="translated">Optional. This person can close this non-conformity even without a quality role.</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator-saved" datatype="html">
         <source>Valideur enregistré.</source>
@@ -23973,10 +23969,6 @@ declared income
       <trans-unit id="nc.8d.closed-by" datatype="html">
         <source>Clôturé par</source>
         <target state="translated">Closed by</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.second-look" datatype="html">
-        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
-        <target state="translated">You resolved this non-conformity: closing it calls for a second pair of eyes. A quality manager, or the designated validator, has to do it.</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>

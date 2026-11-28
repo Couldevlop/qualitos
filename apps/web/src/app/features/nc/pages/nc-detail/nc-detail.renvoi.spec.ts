@@ -178,15 +178,15 @@ describe('NcDetailComponent — le renvoi en modification', () => {
   // ---------- a qui ----------
 
   /**
-   * ON NE RENVOIE PAS SON PROPRE TRAVAIL, pas plus qu'on ne le valide. Le motif
-   * SECOND_LOOK_REQUIRED dit au lecteur qu'il est l'auteur de la resolution ;
-   * le serveur refuse les deux gestes, et l'ecran n'en propose aucun.
+   * QUI A RESOLU PEUT AUSSI RENVOYER (ADR 0145) : clore et renvoyer sont les
+   * deux reponses d'un seul acte, et puisque la cloture ne lui est plus
+   * refusee, le renvoi ne l'est pas davantage.
    */
-  it("cache le renvoi à la personne qui a résolu l'écart", async () => {
+  it("offre le renvoi sur tout écart résolu", async () => {
     await monter();
-    afficher(ecart('RESOLVED', [{ code: 'SECOND_LOOK_REQUIRED', count: 1 }]));
+    afficher(ecart('RESOLVED', []));
 
-    expect(un('nc-send-back')).toBeNull();
+    expect(un('nc-send-back')).not.toBeNull();
   });
 
   // ---------- ce que la fiche en dit ----------

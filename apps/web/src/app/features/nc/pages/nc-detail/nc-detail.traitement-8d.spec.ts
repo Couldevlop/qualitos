@@ -356,22 +356,22 @@ describe('NcDetailComponent — le traitement 8D', () => {
     expect(svc.getNc).toHaveBeenCalled();
   });
 
-  // ---------- le second regard ----------
+  // ---------- le second regard : offert, plus exigé ----------
 
   /**
-   * Clore, c'est valider que la résolution tient, et personne ne valide son
-   * propre travail. Le motif éteint le bouton AVANT le clic, et dit que l'écart
-   * n'est pas en défaut — c'est la personne qui ne peut pas le clôturer.
+   * LE SECOND REGARD N'EST PLUS UN OBSTACLE (ADR 0145). Un écart résolu se
+   * clôt, quelle que soit la personne qui lit la fiche. Le valideur désigné
+   * garde son rôle — il peut clore sans rôle qualité, et renvoyer — mais plus
+   * rien n'attend qu'il se manifeste.
    */
-  it('éteint la clôture et explique le second regard', () => {
+  it('laisse la clôture allumée sur un écart résolu sans obstacle', () => {
     setup(ecart({
       status: 'RESOLVED', resolvedAt: '2026-11-16T00:00:00Z',
-      blockers: [{ code: 'SECOND_LOOK_REQUIRED', count: 1 }]
+      blockers: []
     }));
 
     const bouton = un('nc-close') as HTMLButtonElement;
-    expect(bouton.disabled).toBeTrue();
-    expect(un('nc-blockers')!.textContent).toContain('second regard');
+    expect(bouton.disabled).toBeFalse();
   });
 
   /**

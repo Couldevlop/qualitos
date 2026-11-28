@@ -23950,16 +23950,12 @@ historique 12 mois</source>
         <source>Le constat ne peut pas rester vide.</source>
         <target state="translated">发现内容不能为空。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.validator-own-work" datatype="html">
-        <source>Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre travail. Un autre détenteur du droit de clôture désignera le valideur.</source>
-        <target state="translated">这个偏差是您解决的：您不能选择谁来复核自己的工作。由其他拥有关闭权限的人指定审核人。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.validator" datatype="html">
         <source>Valideur de la clôture (second regard)</source>
         <target state="translated">关闭审核人（第二双眼睛）</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator-hint" datatype="html">
-        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité.</source>
         <target state="translated">可选。此人即使没有质量角色也可关闭该不合格项；若由其本人解决，则不可。</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator-saved" datatype="html">
@@ -23973,10 +23969,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.closed-by" datatype="html">
         <source>Clôturé par</source>
         <target state="translated">关闭人</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.second-look" datatype="html">
-        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
-        <target state="translated">该不合格项由您解决：关闭需要第二双眼睛。应由质量负责人或指定审核人完成。</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>
