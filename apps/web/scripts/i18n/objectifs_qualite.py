@@ -41,9 +41,6 @@ TRANSLATIONS = {
     'objectives.new': (
         'Nouvel objectif qualité', 'New quality objective', 'Nuevo objetivo de calidad',
         'هدف جودة جديد', '新しい品質目標', '新建质量目标'),
-    'objectives.evaluate-all': (
-        'Confronter aux mesures', 'Compare with measurements', 'Comparar con las mediciones',
-        'المقارنة بالقياسات', '実測値と照合', '与实测数据比对'),
     'objectives.load-failed': (
         "La revue n'a pas pu être chargée.", 'The review could not be loaded.',
         'No se pudo cargar la revisión.', 'تعذّر تحميل المراجعة.',
@@ -134,20 +131,6 @@ TRANSLATIONS = {
         'Proposition rejetée, avec son motif.', 'Proposal rejected, with its reason.',
         'Propuesta rechazada, con su motivo.', 'رُفض الاقتراح مع بيان سببه.',
         '理由とともに提案を却下しました。', '已拒绝该提议，并记录理由。'),
-    'objectives.evaluated.some': (
-        '{$count} CAPA proposée(s) à trancher.',
-        '{$count} CAPA(s) proposed, awaiting a decision.',
-        '{$count} CAPA propuesta(s) pendientes de decisión.',
-        '{$count} إجراء CAPA مقترح بانتظار القرار.',
-        '判断待ちの CAPA 提案が {$count} 件あります。',
-        '有 {$count} 项 CAPA 提议待裁定。'),
-    'objectives.evaluated.none': (
-        "Aucun écart n'atteint la règle de déclenchement.",
-        'No deviation reaches the trigger rule.',
-        'Ninguna desviación alcanza la regla de activación.',
-        'لا يوجد فارق يستوفي قاعدة التحفيز.',
-        'トリガー条件に達した乖離はありません。',
-        '没有偏差达到触发规则。'),
 
     # --- retrait du suivi ---------------------------------------------------
     'objectives.archive.aria': (
@@ -391,13 +374,6 @@ TRANSLATIONS = {
         'No se ha podido guardar el objetivo.',
         'لم يتمكن النظام من حفظ الهدف.',
         '目標を保存できませんでした。', '未能保存该目标。'),
-    'objectives.error.evaluate': (
-        "La confrontation aux mesures n'a pas abouti.",
-        'The comparison against the measurements did not complete.',
-        'La comparación con las mediciones no ha podido completarse.',
-        'لم تكتمل المقارنة مع القياسات.',
-        '実測値との照合を完了できませんでした。',
-        '与实测值的比对未能完成。'),
     'objectives.error.reject': (
         "Le rejet n'a pas pu être enregistré.", 'The rejection could not be saved.',
         'No se ha podido guardar el rechazo.',

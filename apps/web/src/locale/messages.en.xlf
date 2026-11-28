@@ -24142,10 +24142,6 @@ declared income
         <source>Nouvel objectif qualité</source>
         <target state="translated">New quality objective</target>
       </trans-unit>
-      <trans-unit id="objectives.evaluate-all" datatype="html">
-        <source>Confronter aux mesures</source>
-        <target state="translated">Compare with measurements</target>
-      </trans-unit>
       <trans-unit id="objectives.load-failed" datatype="html">
         <source>La revue n'a pas pu être chargée.</source>
         <target state="translated">The review could not be loaded.</target>
@@ -24269,14 +24265,6 @@ declared income
       <trans-unit id="objectives.rejected" datatype="html">
         <source>Proposition rejetée, avec son motif.</source>
         <target state="translated">Proposal rejected, with its reason.</target>
-      </trans-unit>
-      <trans-unit id="objectives.evaluated.some" datatype="html">
-        <source><x id="count"/> CAPA proposée(s) à trancher.</source>
-        <target state="translated"><x id="count"/> CAPA(s) proposed, awaiting a decision.</target>
-      </trans-unit>
-      <trans-unit id="objectives.evaluated.none" datatype="html">
-        <source>Aucun écart n'atteint la règle de déclenchement.</source>
-        <target state="translated">No deviation reaches the trigger rule.</target>
       </trans-unit>
       <trans-unit id="objectives.archive.aria" datatype="html">
         <source>Retirer du suivi</source>
@@ -24481,10 +24469,6 @@ declared income
       <trans-unit id="objectives.error.save" datatype="html">
         <source>L'objectif n'a pas pu être enregistré.</source>
         <target state="translated">The objective could not be saved.</target>
-      </trans-unit>
-      <trans-unit id="objectives.error.evaluate" datatype="html">
-        <source>La confrontation aux mesures n'a pas abouti.</source>
-        <target state="translated">The comparison against the measurements did not complete.</target>
       </trans-unit>
       <trans-unit id="objectives.error.reject" datatype="html">
         <source>Le rejet n'a pas pu être enregistré.</source>

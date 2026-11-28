@@ -24142,10 +24142,6 @@ historique 12 mois</source>
         <source>Nouvel objectif qualité</source>
         <target state="translated">新建质量目标</target>
       </trans-unit>
-      <trans-unit id="objectives.evaluate-all" datatype="html">
-        <source>Confronter aux mesures</source>
-        <target state="translated">与实测数据比对</target>
-      </trans-unit>
       <trans-unit id="objectives.load-failed" datatype="html">
         <source>La revue n'a pas pu être chargée.</source>
         <target state="translated">无法加载评审数据。</target>
@@ -24269,14 +24265,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.rejected" datatype="html">
         <source>Proposition rejetée, avec son motif.</source>
         <target state="translated">已拒绝该提议，并记录理由。</target>
-      </trans-unit>
-      <trans-unit id="objectives.evaluated.some" datatype="html">
-        <source><x id="count"/> CAPA proposée(s) à trancher.</source>
-        <target state="translated">有 <x id="count"/> 项 CAPA 提议待裁定。</target>
-      </trans-unit>
-      <trans-unit id="objectives.evaluated.none" datatype="html">
-        <source>Aucun écart n'atteint la règle de déclenchement.</source>
-        <target state="translated">没有偏差达到触发规则。</target>
       </trans-unit>
       <trans-unit id="objectives.archive.aria" datatype="html">
         <source>Retirer du suivi</source>
@@ -24481,10 +24469,6 @@ historique 12 mois</source>
       <trans-unit id="objectives.error.save" datatype="html">
         <source>L'objectif n'a pas pu être enregistré.</source>
         <target state="translated">未能保存该目标。</target>
-      </trans-unit>
-      <trans-unit id="objectives.error.evaluate" datatype="html">
-        <source>La confrontation aux mesures n'a pas abouti.</source>
-        <target state="translated">与实测值的比对未能完成。</target>
       </trans-unit>
       <trans-unit id="objectives.error.reject" datatype="html">
         <source>Le rejet n'a pas pu être enregistré.</source>
