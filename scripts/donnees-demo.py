@@ -215,13 +215,21 @@ def non_conformites(c):
                                       'problem': 'Jeu radial hors tolerance'},
                 'analyse 5 Pourquoi')
 
-    c.poste('/api/v1/capa/cases', {
+    # PAR `/open`, QUI OUVRE LE DOSSIER ET SON ACTION : l'ecart est le dossier,
+    # la CAPA est l'action (ADR 0135). `/capa/cases` rendait un dossier vide,
+    # c'est-a-dire un dossier sans le geste qui le justifie.
+    c.poste('/api/v1/capa/cases/open', {
         'title': 'Remplacer le roulement de broche et revoir le plan de maintenance',
         'type': 'CORRECTIVE', 'criticity': 'HIGH', 'sourceType': 'NON_CONFORMITY',
         'sourceRef': (interne or {}).get('reference', 'NC-DEMO'),
-        'ownerId': c.sujet, 'dueDate': jour(21),
+        'ownerId': c.sujet, 'ownerName': c.nom, 'dueDate': jour(21),
         'description': 'Changer le roulement, puis passer la broche en maintenance preventive.',
-    }, 'dossier CAPA')
+        'verificationRequired': True,
+        'verificationAssigneeId': c.sujet, 'verificationAssigneeName': c.nom,
+        'verificationInstructions': 'Relever le niveau vibratoire de la broche '
+                                    'apres trente jours de marche.',
+        'effectivenessCriterion': 'Niveau vibratoire sous le seuil d alerte sur trente jours',
+    }, 'CAPA du roulement de broche')
 
     return interne, externe
 
@@ -803,53 +811,67 @@ def huit_disciplines(c):
                     {'category': categorie, 'label': cause},
                     '8D : cause %s' % categorie.lower())
 
-    # --- D3, D5, D7 : UNE CAPA PAR ACTION ----------------------------------
-    # L'ECART EST LE DOSSIER, CHAQUE CAPA EST UNE ACTION (ADR 0135). On
-    # n'ouvre donc pas une CAPA qui porterait trois gestes : on ouvre une CAPA
-    # par geste, toutes rattachees au meme ecart. Les trois natures restent le
-    # point du 8D -- le D3 montre l'endiguement, le D5 le correctif, le D7 le
-    # preventif -- mais elles se lisent desormais dossier par dossier.
+    # --- D3, D5, D7 : UNE CAPA PAR ACTION, PAR LA ROUTE QUI LES LIE --------
+    # L'ECART EST LE DOSSIER, CHAQUE CAPA EST UNE ACTION (ADR 0135), et c'est
+    # `/capa/cases/open` qui tient cette regle : il ouvre le dossier ET son
+    # action unique dans la MEME transaction (ADR 0088), si bien qu'il ne reste
+    # jamais un dossier sans son action. La route `/capa/cases`, elle, cree un
+    # dossier VIDE qu'il fallait remplir par un second appel -- la forme que le
+    # modele ne reconnait plus, et qui laissait poser plusieurs actions sur un
+    # meme dossier.
     #
-    # L'ECHEANCE D'UN DOSSIER NE PEUT PAS ETRE DANS LE PASSE (le moteur rend
-    # 400), alors que celle d'une action l'accepte. Les dates ci-dessous
-    # partent donc d'aujourd'hui et s'etalent : c'est aussi ce qui donne au
-    # filtre « Echeance avant le » du registre quelque chose a filtrer.
-    for titre, nature, etat, echeance, critere in [
+    # L'ENDIGUEMENT N'EST PAS UN TYPE DE DOSSIER : un dossier dont la finalite
+    # se limite a endiguer ne pourrait jamais etre clos (ISO 9001 §10.2), et le
+    # moteur le refuse explicitement. Il reste la NATURE de l'action
+    # (`actionType`), portee par un dossier correctif -- c'est exactement le D3.
+    #
+    # L'ECHEANCE D'UN DOSSIER NE PEUT PAS ETRE DANS LE PASSE (400), alors que
+    # celle d'une action l'accepte : les dates partent donc d'aujourd'hui et
+    # s'etalent. C'est aussi ce qui donne au filtre « Echeance avant le » du
+    # registre quelque chose a filtrer.
+    for titre, type_dossier, nature, fini, echeance, critere in [
         ('Trier et isoler le stock de boitiers du lot en cours',
-         'CONTAINMENT', 'DONE', jour(0), None),
+         'CORRECTIVE', 'CONTAINMENT', True, jour(0), None),
         ('Recaler le montage de vissage au poste 3',
-         'CORRECTIVE', 'DONE', jour(3),
+         'CORRECTIVE', 'CORRECTIVE', True, jour(3),
          'Aucune cote hors tolerance sur trois series consecutives'),
         ('Reprendre la gamme de controle dimensionnel',
-         'CORRECTIVE', 'DONE', jour(10),
+         'CORRECTIVE', 'CORRECTIVE', True, jour(10),
          'Un controle intermediaire tous les cinquante serrages'),
         ('Etendre la reprise de butee aux cinq postes de vissage du site',
-         'PREVENTIVE', 'IN_PROGRESS', jour(20), None),
+         'PREVENTIVE', 'PREVENTIVE', False, jour(20), None),
     ]:
-        dossier = c.poste('/api/v1/capa/cases', {
-            'title': titre, 'type': nature, 'criticity': 'HIGH',
-            'sourceType': 'NON_CONFORMITY', 'sourceRef': nc.get('reference'),
-            'ownerId': c.sujet, 'dueDate': echeance,
+        dossier = c.poste('/api/v1/capa/cases/open', {
+            'title': titre, 'type': type_dossier, 'actionType': nature,
+            'criticity': 'HIGH', 'sourceType': 'NON_CONFORMITY',
+            'sourceRef': nc.get('reference'),
+            'ownerId': c.sujet, 'ownerName': c.nom, 'dueDate': echeance,
             'description': 'Action %s decidee sur l ecart %s.'
                            % (nature.lower(), nc.get('reference', '')),
-        }, '8D : CAPA %s' % nature.lower())
-        if not dossier:
-            continue
-        c.poste('/api/v1/capa/cases/%s/actions' % dossier['id'], {
-            'title': titre, 'actionType': nature, 'status': etat,
-            'assigneeId': c.sujet, 'assigneeName': c.nom,
-            'decidedOn': jour(-6), 'dueDate': echeance,
-            'effectivenessCriterion': critere,
-            # UNE VERIFICATION EXIGEE A UN RESPONSABLE, et le moteur le
-            # refuse autrement (400) : promettre qu'on verifiera sans dire
-            # qui laisserait une promesse sans personne pour la tenir.
+            # UNE VERIFICATION EXIGEE A UN RESPONSABLE, et le moteur le refuse
+            # autrement (400) : promettre qu'on verifiera sans dire qui
+            # laisserait une promesse sans personne pour la tenir.
             'verificationRequired': critere is not None,
             'verificationAssigneeId': c.sujet if critere else None,
             'verificationAssigneeName': c.nom if critere else None,
             'verificationInstructions':
                 'Relever trois series consecutives et consigner les cotes.'
                 if critere else None,
-        }, '8D : action %s' % nature.lower())
+            # LE CRITERE PART AVEC L'OUVERTURE (ADR 0108) : ecrit apres la
+            # mesure, ce n'est plus un critere mais un commentaire.
+            'effectivenessCriterion': critere,
+        }, '8D : CAPA %s' % nature.lower())
+        if not dossier or not fini:
+            continue
+        actions = dossier.get('actions') or []
+        if not actions:
+            print('  ATTENTION : dossier ouvert sans action, le 8D restera vide')
+            continue
+        # L'action nait EN ATTENTE. Un 8D dont tout serait encore a faire ne
+        # montrerait ni le D3 tenu ni le D5 mesurable : on acheve celles qui le
+        # sont. La mise a jour est partielle -- seul l'etat change.
+        c.patche('/api/v1/capa/cases/%s/actions/%s' % (dossier['id'], actions[0]['id']),
+                 {'status': 'DONE'}, '  action achevee')
 
     # --- D8 : la seule discipline qu'aucun module ne sait renseigner -------
     c.met('/api/v1/nc/%s/8d' % nc_id, {
