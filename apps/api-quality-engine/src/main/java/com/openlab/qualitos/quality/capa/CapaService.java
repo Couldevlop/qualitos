@@ -1286,13 +1286,13 @@ public class CapaService {
      * et c'est cette suite qu'un auditeur lit.
      *
      * <p><b>QUI PEUT JUGER</b> : celui qui porte {@code capa.verify}, et LA
-     * PERSONNE DESIGNEE sur l'action — a defaut celle du dossier (ADR 0143).
+     * PERSONNE DESIGNEE sur l'action — a defaut celle du dossier (ADR 0144).
      * Une verification exigee doit etre confiee a quelqu'un (ADR 0131) ; la
      * refuser ensuite a cette personne-la, parce que son role ne porte pas
      * l'action du catalogue, rendait la designation sans effet.
      *
      * <p><b>ET CE QUE LE JUGEMENT ENTRAINE</b> : un verdict qui clot une action
-     * clot son dossier, des lors que plus rien ne s'y oppose (ADR 0143). Sans
+     * clot son dossier, des lors que plus rien ne s'y oppose (ADR 0144). Sans
      * cela, l'ecran d'efficacite redemandait une seconde evaluation du meme
      * geste pour faire ce que la premiere avait deja etabli.
      */
@@ -1338,7 +1338,7 @@ public class CapaService {
                 now);
         effectivenessReviews.save(review);
         journal.record(c, CapaTransition.UPDATED);
-        // LE DOSSIER SUIT LE VERDICT DE SON ACTION (ADR 0143). La liste
+        // LE DOSSIER SUIT LE VERDICT DE SON ACTION (ADR 0144). La liste
         // d'obstacles est celle que le verdict du dossier doit franchir
         // (ADR 0137) : le jugement d'une action ne contourne donc rien, et un
         // obstacle qui demeure laisse le dossier RESOLU — l'ecran le nomme
@@ -1355,7 +1355,7 @@ public class CapaService {
     }
 
     /**
-     * QUI PEUT PORTER LE VERDICT D'UNE ACTION (ADR 0143).
+     * QUI PEUT PORTER LE VERDICT D'UNE ACTION (ADR 0144).
      *
      * <p>Le droit {@code capa.verify} l'accorde, comme avant. A defaut, la
      * PERSONNE DESIGNEE sur l'action — a defaut celle du dossier — le porte sur
@@ -1372,7 +1372,7 @@ public class CapaService {
     }
 
     /**
-     * QUI PEUT PORTER LE VERDICT DU DOSSIER (ADR 0143).
+     * QUI PEUT PORTER LE VERDICT DU DOSSIER (ADR 0144).
      *
      * <p>Meme regle, a l'echelle du dossier : son vérificateur, et ceux que ses
      * actions designent. Les secondes comptent parce que depuis l'ADR 0131 la

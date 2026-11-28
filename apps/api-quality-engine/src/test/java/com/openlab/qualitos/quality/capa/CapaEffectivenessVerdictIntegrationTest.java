@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * L'évaluation d'efficacité sur les vrais services, la vraie base et les vrais
- * droits (ADR 0143).
+ * droits (ADR 0144).
  *
  * <p>Deux choses ne se prouvent qu'ici. La première est que le dossier se
  * CLÔTURE réellement au verdict de son action : le refus de clôture relit en
@@ -184,7 +184,7 @@ class CapaEffectivenessVerdictIntegrationTest {
      *
      * <p>Sur un dossier dont la PROMESSE est au niveau du dossier et de lui
      * seul — le cas que l'écran d'efficacité sert : quand c'est l'action qui a
-     * promis, c'est sur sa ligne qu'elle se juge, et le dossier suit (ADR 0143).
+     * promis, c'est sur sa ligne qu'elle se juge, et le dossier suit (ADR 0144).
      */
     @Test
     void laPersonneDesigneeJugeLeDossierDepuisLEcranDEfficacite() {

@@ -716,7 +716,7 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   remerciementModifie = false;
 
   /**
-   * L'EFFICACITE DES ACTIONS, telle que le rapport la porte au D8 (ADR 0143).
+   * L'EFFICACITE DES ACTIONS, telle que le rapport la porte au D8 (ADR 0144).
    *
    * <p>Lue dans le rapport et non recomposee ici : le document remis au client
    * et l'ecran doivent dire la meme chose, et deux assemblages du meme fait

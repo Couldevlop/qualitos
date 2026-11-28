@@ -13,7 +13,7 @@ import java.util.UUID;
  * ses preuves.
  *
  * <p><b>Le vérificateur d'une ACTION compte, et pas seulement celui du
- * dossier</b> (ADR 0143). Depuis l'ADR 0131 la vérification se confie action par
+ * dossier</b> (ADR 0144). Depuis l'ADR 0131 la vérification se confie action par
  * action : la personne désignée là ne voyait pas le dossier qu'on lui demandait
  * de juger, et son écran d'efficacité était vide de la seule ligne qui
  * l'attendait.

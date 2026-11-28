@@ -268,7 +268,7 @@ describe('NcDetailComponent — le traitement 8D', () => {
   });
 
   /**
-   * L'EFFICACITÉ DES ACTIONS SE LIT AU D8 (ADR 0143).
+   * L'EFFICACITÉ DES ACTIONS SE LIT AU D8 (ADR 0144).
    *
    * <p>Le verdict se porte au D5 ou au D7, sur la ligne de l'action. Aucune
    * discipline ne disait ensuite si cela avait SERVI : le traitement se fermait

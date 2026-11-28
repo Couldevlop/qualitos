@@ -48,7 +48,7 @@ class CapaScopeTest {
     }
 
     /**
-     * LE VERIFICATEUR D'UNE ACTION VOIT LE DOSSIER (ADR 0143).
+     * LE VERIFICATEUR D'UNE ACTION VOIT LE DOSSIER (ADR 0144).
      *
      * <p>La vérification se confie action par action (ADR 0131). La personne
      * désignée là ne voyait pas le dossier qu'on lui demandait de juger : son

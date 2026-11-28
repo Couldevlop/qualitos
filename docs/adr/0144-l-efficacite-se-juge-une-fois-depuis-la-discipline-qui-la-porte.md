@@ -1,4 +1,4 @@
-# ADR 0143 — L'efficacité se juge une fois, depuis la discipline qui la porte
+# ADR 0144 — L'efficacité se juge une fois, depuis la discipline qui la porte
 
 - **Statut** : Accepté
 - **Date** : 2026-11-27

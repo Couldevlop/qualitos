@@ -730,7 +730,7 @@ export class CapaActionPanelComponent implements OnChanges, OnDestroy {
   }
 
   /**
-   * QUI PEUT JUGER CETTE LIGNE (ADR 0143).
+   * QUI PEUT JUGER CETTE LIGNE (ADR 0144).
    *
    * <p>Celui qui porte l'action « vérifier une efficacité », comme avant — et
    * la PERSONNE DÉSIGNÉE sur l'action, à défaut celle du dossier, qui ne la

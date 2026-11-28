@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Le verdict d'une action solde-t-il son dossier (ADR 0143) ? */
+/** Le verdict d'une action solde-t-il son dossier (ADR 0144) ? */
 class CaseSettlementTest {
 
     /**

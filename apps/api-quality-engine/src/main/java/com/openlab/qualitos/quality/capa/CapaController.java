@@ -92,7 +92,7 @@ public class CapaController {
      * Le verdict d'efficacite du dossier (ADR 0108).
      *
      * <p>Meme droit qu'avant — {@code capa.verify} —, mais la garde est portee
-     * par le SERVICE (ADR 0143) : la PERSONNE DESIGNEE sur le dossier, ou sur
+     * par le SERVICE (ADR 0144) : la PERSONNE DESIGNEE sur le dossier, ou sur
      * une de ses actions, porte son verdict sans detenir ce droit, et nul autre
      * ne le peut. Un refus pose ici, avant de connaitre le dossier visé, ne
      * savait pas qui en etait le verificateur et refusait donc a celui-la meme
@@ -110,7 +110,7 @@ public class CapaController {
      *
      * <p>Meme droit que le jugement du dossier — {@code capa.verify} —, c'est le
      * meme geste a l'echelle ou la promesse de verification a ete faite. Mais la
-     * garde est portee par le SERVICE et non par l'intercepteur (ADR 0143) : la
+     * garde est portee par le SERVICE et non par l'intercepteur (ADR 0144) : la
      * PERSONNE DESIGNEE sur l'action peut porter son verdict sur cette action-la
      * sans detenir ce droit, et nul autre ne le peut. Un refus pose ici, avant
      * de connaitre l'action visee, ne savait pas qui en etait le verificateur et

@@ -220,7 +220,7 @@ class EightDSnapshotAssemblerTest {
         assertThat(d8.sourceLabel()).isEmpty();
     }
 
-    // ---------- D8 : l'efficacite des actions (ADR 0143) ----------
+    // ---------- D8 : l'efficacite des actions (ADR 0144) ----------
 
     /**
      * Un dossier dont l'action a ete jugee, pour le tableau d'efficacite du D8.

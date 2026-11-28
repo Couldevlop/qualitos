@@ -288,7 +288,7 @@ public class EightDSnapshotAssembler {
             lignes.addAll(RECONNAISSANCE_STANDARD);
         }
         // CE QUE LES ACTIONS ONT PRODUIT, sous la discipline qui clot le
-        // traitement (ADR 0143). Le D5 et le D7 disent ce qui a ete decide, le
+        // traitement (ADR 0144). Le D5 et le D7 disent ce qui a ete decide, le
         // D6 ce qui a ete mene et prouve ; aucune des trois ne disait si cela a
         // SERVI, et le rapport remis au client se fermait donc sur une equipe
         // remerciee pour un resultat qu'il ne nommait pas.

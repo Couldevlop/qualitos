@@ -3051,7 +3051,7 @@ class CapaServiceTest {
     }
 
     // ========================================================================
-    // Le dossier suit le verdict de son action (ADR 0143)
+    // Le dossier suit le verdict de son action (ADR 0144)
     // ========================================================================
 
     private CapaDto.EffectivenessRequest jugeEfficace() {
@@ -3063,7 +3063,7 @@ class CapaServiceTest {
      * LE DEFAUT CORRIGE : l'action jugee efficace depuis sa discipline 8D
      * cloture son dossier. L'ecran d'efficacite redemandait une SECONDE
      * evaluation du meme geste pour faire ce que la premiere avait etabli
-     * (ADR 0143).
+     * (ADR 0144).
      */
     @Test
     void verifyActionEffectiveness_clotLeDossierSurUnVerdictEfficace() {
@@ -3141,7 +3141,7 @@ class CapaServiceTest {
     }
 
     // ========================================================================
-    // Qui peut porter le verdict d'une action (ADR 0143)
+    // Qui peut porter le verdict d'une action (ADR 0144)
     // ========================================================================
 
     /**
@@ -3157,7 +3157,7 @@ class CapaServiceTest {
         when(scope.restrictTo(Permission.CAPA_VERIFY)).thenReturn(Optional.of(designe));
         // LA PORTEE AUSSI : sans « voir tous les dossiers », la personne
         // designee sur l'action doit voir le dossier qu'on lui demande de juger
-        // (ADR 0143). Stubbee ici, la chaine entiere est eprouvee.
+        // (ADR 0144). Stubbee ici, la chaine entiere est eprouvee.
         when(scope.restrictTo(Permission.CAPA_VIEW_ALL)).thenReturn(Optional.of(designe));
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
@@ -3228,7 +3228,7 @@ class CapaServiceTest {
     }
 
     /**
-     * LA MEME GARDE SUR LE VERDICT DU DOSSIER (ADR 0143) -- celui que l'ecran
+     * LA MEME GARDE SUR LE VERDICT DU DOSSIER (ADR 0144) -- celui que l'ecran
      * d'efficacite envoie. Le verificateur du dossier le porte sans detenir
      * l'action du catalogue.
      */

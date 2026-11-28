@@ -262,7 +262,7 @@ class CapaControllerTest {
     }
 
     /**
-     * LE JUGEMENT N'EST PLUS REFUSE A L'ENTREE (ADR 0143).
+     * LE JUGEMENT N'EST PLUS REFUSE A L'ENTREE (ADR 0144).
      *
      * <p>Un simple utilisateur — qui ne porte pas {@code capa.verify} —
      * ATTEINT le service, qui seul sait si la vérification lui a été confiée.

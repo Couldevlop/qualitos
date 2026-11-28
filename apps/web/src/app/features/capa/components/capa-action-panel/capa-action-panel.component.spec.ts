@@ -127,7 +127,7 @@ describe('CapaActionPanelComponent', () => {
     opts: {
       dossier?: CapaCaseResponse; droits?: boolean; panne?: boolean;
       preuves?: CapaEvidence[];
-      /** Qui est connecte : le `sub` de son jeton (ADR 0143). */
+      /** Qui est connecte : le `sub` de son jeton (ADR 0144). */
       moi?: string;
     } = {}
   ): Promise<void> {
@@ -1076,7 +1076,7 @@ describe('CapaActionPanelComponent', () => {
     });
 
     /**
-     * LA PERSONNE DESIGNEE JUGE (ADR 0143). Le bouton ne tenait qu'au droit
+     * LA PERSONNE DESIGNEE JUGE (ADR 0144). Le bouton ne tenait qu'au droit
      * « verifier une efficacite », livre au seul pilotage : on confiait la
      * verification a quelqu'un, et l'ecran ne lui offrait nulle part de la
      * rendre.

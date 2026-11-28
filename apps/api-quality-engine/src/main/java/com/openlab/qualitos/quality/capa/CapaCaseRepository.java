@@ -23,7 +23,7 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
     /**
      * Les dossiers qui concernent un utilisateur (ADR 0081) : il les pilote, il en
      * vérifie l'efficacité, ou une de leurs actions lui est confiée — à mener ou
-     * à vérifier (ADR 0143). Filtré en base, pour que la pagination reste juste.
+     * à vérifier (ADR 0144). Filtré en base, pour que la pagination reste juste.
      * Un statut nul ne filtre pas.
      */
     @Query("""
