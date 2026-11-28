@@ -32,7 +32,7 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
               and (:status is null or c.status = :status)
               and (:criticity is null or c.criticity = :criticity)
               and (:ownerId is null or c.ownerId = :ownerId)
-              and (:dueBefore is null or (c.dueDate is not null and c.dueDate <= :dueBefore))
+              and (cast(:dueBefore as date) is null or (c.dueDate is not null and c.dueDate <= :dueBefore))
               and (c.ownerId = :user
                    or c.verificationAssigneeId = :user
                    or exists (select a.id from CapaAction a
@@ -64,7 +64,7 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
               and (:status is null or c.status = :status)
               and (:criticity is null or c.criticity = :criticity)
               and (:ownerId is null or c.ownerId = :ownerId)
-              and (:dueBefore is null or (c.dueDate is not null and c.dueDate <= :dueBefore))
+              and (cast(:dueBefore as date) is null or (c.dueDate is not null and c.dueDate <= :dueBefore))
             """)
     Page<CapaCase> search(@Param("tenantId") UUID tenantId, @Param("status") CapaStatus status,
                           @Param("criticity") CapaCriticity criticity,
