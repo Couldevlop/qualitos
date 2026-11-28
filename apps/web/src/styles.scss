@@ -1138,3 +1138,32 @@ gridster.qos-gridster {
 .qos-select-panel--lignes .mat-mdc-option:not(:last-child) {
   border-bottom: 1px solid var(--qos-border-subtle);
 }
+
+/*
+ * Texte reserve au lecteur d'ecran.
+ *
+ * Quand une information est portee par une icone, WCAG 2.2 AA 1.4.1 demande
+ * qu'elle soit aussi dite en toutes lettres : d'ou un mot pose a cote de
+ * l'icone et masque a l'oeil. Encore faut-il qu'il soit masque -- `.sr-only`
+ * etait recopiee dans dix feuilles de composants et definie NULLE PART
+ * globalement, si bien qu'un composant qui l'oubliait AFFICHAIT le mot.
+ *
+ * C'est ce qui se voyait dans le sommaire 8D d'un ecart : chaque discipline
+ * cochee ecrivait « renseignee » en clair a cote de sa coche, et le mot
+ * debordait du bandeau. Le dialogue d'actions CAPA avait le meme oubli.
+ *
+ * La regle vit donc ici, une fois : un composant qui pose `.sr-only` est
+ * couvert sans avoir a y penser. Les dix copies locales deviennent
+ * redondantes -- elles ne nuisent pas, elles sont a retirer au passage.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
