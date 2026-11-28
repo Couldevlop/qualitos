@@ -80,12 +80,11 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
 
   async function build(r: ObjectiveReview = revue(), canManage = true): Promise<void> {
     svc = jasmine.createSpyObj<ObjectivesService>('ObjectivesService',
-      ['review', 'openCapa', 'reject', 'archive', 'evaluateAll']);
+      ['review', 'openCapa', 'reject', 'archive']);
     svc.review.and.returnValue(of(r));
     svc.openCapa.and.returnValue(of({ capaId: 'c-9', proposalId: 'pr-1' }));
     svc.reject.and.returnValue(of(proposition({ status: 'REJECTED' })));
     svc.archive.and.returnValue(of(undefined));
-    svc.evaluateAll.and.returnValue(of([]));
 
     const docs = jasmine.createSpyObj<DocumentsService>('DocumentsService', ['processes']);
     docs.processes.and.returnValue(of([{ id: 'p-1', name: 'Production', position: 0 }]));
@@ -330,11 +329,17 @@ describe('ObjectivesReviewComponent — la revue des objectifs (ADR 0133)', () =
     expect(svc.archive).toHaveBeenCalledWith('o-1');
   });
 
-  it('dit quand aucun écart n\'atteint la règle, plutôt que de ne rien dire', async () => {
+  /**
+   * LA CONFRONTATION N'EST PLUS UN GESTE (ADR 0146). L'ecran n'offre plus de
+   * bouton « Confronter aux mesures » : ouvrir la revue suffit, le serveur
+   * confronte avant de repondre. Un bouton laissait la revue en retard sur les
+   * releves tant que personne ne pensait a le presser.
+   */
+  it("n'offre plus de bouton pour confronter aux mesures", async () => {
     await build();
-    component.evaluateAll();
-    expect(snack.open).toHaveBeenCalled();
-    expect(svc.review).toHaveBeenCalledTimes(2);
+    const html = fixture.nativeElement as HTMLElement;
+    expect(html.querySelector('[data-test="objectifs-evaluer"]')).toBeNull();
+    expect(svc.review).toHaveBeenCalledTimes(1);
   });
 
   it('recharge quand on change un filtre, en le transmettant au service', async () => {

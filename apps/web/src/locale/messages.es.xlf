@@ -24150,10 +24150,6 @@ historial de 12 meses</target>
         <source>Nouvel objectif qualité</source>
         <target state="translated">Nuevo objetivo de calidad</target>
       </trans-unit>
-      <trans-unit id="objectives.evaluate-all" datatype="html">
-        <source>Confronter aux mesures</source>
-        <target state="translated">Comparar con las mediciones</target>
-      </trans-unit>
       <trans-unit id="objectives.load-failed" datatype="html">
         <source>La revue n'a pas pu être chargée.</source>
         <target state="translated">No se pudo cargar la revisión.</target>
@@ -24277,14 +24273,6 @@ historial de 12 meses</target>
       <trans-unit id="objectives.rejected" datatype="html">
         <source>Proposition rejetée, avec son motif.</source>
         <target state="translated">Propuesta rechazada, con su motivo.</target>
-      </trans-unit>
-      <trans-unit id="objectives.evaluated.some" datatype="html">
-        <source><x id="count"/> CAPA proposée(s) à trancher.</source>
-        <target state="translated"><x id="count"/> CAPA propuesta(s) pendientes de decisión.</target>
-      </trans-unit>
-      <trans-unit id="objectives.evaluated.none" datatype="html">
-        <source>Aucun écart n'atteint la règle de déclenchement.</source>
-        <target state="translated">Ninguna desviación alcanza la regla de activación.</target>
       </trans-unit>
       <trans-unit id="objectives.archive.aria" datatype="html">
         <source>Retirer du suivi</source>
@@ -24489,10 +24477,6 @@ historial de 12 meses</target>
       <trans-unit id="objectives.error.save" datatype="html">
         <source>L'objectif n'a pas pu être enregistré.</source>
         <target state="translated">No se ha podido guardar el objetivo.</target>
-      </trans-unit>
-      <trans-unit id="objectives.error.evaluate" datatype="html">
-        <source>La confrontation aux mesures n'a pas abouti.</source>
-        <target state="translated">La comparación con las mediciones no ha podido completarse.</target>
       </trans-unit>
       <trans-unit id="objectives.error.reject" datatype="html">
         <source>Le rejet n'a pas pu être enregistré.</source>

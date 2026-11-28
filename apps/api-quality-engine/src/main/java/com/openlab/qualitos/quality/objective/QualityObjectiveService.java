@@ -14,6 +14,8 @@ import com.openlab.qualitos.quality.kpi.KpiDefinition;
 import com.openlab.qualitos.quality.kpi.KpiDefinitionRepository;
 import com.openlab.qualitos.quality.kpi.KpiMeasurement;
 import com.openlab.qualitos.quality.kpi.KpiMeasurementRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +51,8 @@ import java.util.UUID;
  */
 @Service
 public class QualityObjectiveService {
+
+    private static final Logger log = LoggerFactory.getLogger(QualityObjectiveService.class);
 
     /** Au-delà, une revue ne lit plus : vingt-quatre périodes couvrent deux ans de mensuel. */
     private static final int MAX_PERIODS = 24;
@@ -169,11 +173,24 @@ public class QualityObjectiveService {
      * quatre compteurs, et ce qui attend une décision.
      *
      * @param processId filtre sur un processus, ou {@code null} pour tous
+     * <p><b>LA CONFRONTATION EST AUTOMATIQUE</b> (ADR 0146). Ouvrir la revue
+     * confronte les objectifs à leurs mesures ; il n'y a plus de geste à faire
+     * pour que l'écran dise la vérité du jour. Un bouton « Confronter aux
+     * mesures » laissait la revue en retard sur les relevés tant que personne
+     * ne pensait à le presser — et un écart déjà mesuré n'attendait alors que
+     * l'attention de quelqu'un pour exister.
+     *
+     * <p>Rejouer une revue PASSÉE n'écrit rien : {@code asOf} renseigné relit
+     * l'état d'alors, et la règle de déclenchement ne porte que sur l'état
+     * courant. Confronter pendant une relecture d'archive daterait d'aujourd'hui
+     * des propositions nées d'une lecture d'hier.
+     *
+     * @param processId filtre sur un processus, ou {@code null} pour tous
      * @param asOf      fin de la période observée, ou {@code null} pour l'état courant.
      *                  Une revue mensuelle se tient souvent après la fin du mois, et doit
      *                  pouvoir se rejouer telle qu'elle a été lue.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public ObjectiveDto.ReviewResponse review(UUID processId, LocalDate asOf) {
         UUID tenantId = requireTenantId();
         List<QualityObjective> suivis = objectives
@@ -181,6 +198,10 @@ public class QualityObjectiveService {
                 .stream()
                 .filter(o -> processId == null || processId.equals(o.getProcessId()))
                 .toList();
+
+        if (asOf == null) {
+            confronterAuxMesures(suivis);
+        }
 
         Map<UUID, KpiDefinition> catalogue = chargerKpis(suivis, tenantId);
         List<ObjectiveDto.ObjectiveResponse> lignes = new ArrayList<>();
@@ -210,6 +231,34 @@ public class QualityObjectiveService {
         return new ObjectiveDto.ReviewResponse(asOf,
                 new ObjectiveDto.Counters(lignes.size(), atteints, alertes, critiques),
                 lignes, enAttente);
+    }
+
+    /**
+     * Confronte les objectifs suivis à leurs mesures, SANS POUVOIR CASSER LA
+     * REVUE (ADR 0146).
+     *
+     * <p>Un objectif qu'on ne peut pas confronter — KPI retiré du catalogue,
+     * sens d'amélioration absent, mesures illisibles — est PASSÉ. Tant que la
+     * confrontation était un geste explicite, son échec se disait dans un
+     * bandeau et l'écran restait lisible ; devenue automatique, la même erreur
+     * emporterait la page entière et masquerait les trente objectifs qui, eux,
+     * se lisent très bien. L'objectif fautif paraît simplement sans
+     * proposition, exactement comme avant que la règle n'existe.
+     *
+     * <p>Réévaluer la même période ne crée rien de neuf : {@link #evaluate} rend
+     * la proposition déjà là, et la clé {@code uk_qo_proposals_periode} dit la
+     * même chose en base. Un écran rafraîchi trois fois ne propose donc pas
+     * trois fois le même dossier.
+     */
+    private void confronterAuxMesures(List<QualityObjective> suivis) {
+        for (QualityObjective o : suivis) {
+            try {
+                evaluate(o.getId());
+            } catch (RuntimeException e) {
+                log.warn("Objectif {} non confronté à ses mesures : {}",
+                        o.getId(), e.toString());
+            }
+        }
     }
 
     // ---------- règle de déclenchement ----------

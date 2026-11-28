@@ -5,11 +5,6 @@
     subtitle="Ce que l'organisme s'est engagé à tenir, face à ce que les indicateurs mesurent (ISO 9001 §6.2)."
     i18n-subtitle="@@objectives.review.subtitle">
     <ng-container qosActions>
-      <button mat-stroked-button type="button" *ngIf="canManage" [disabled]="deciding"
-              (click)="evaluateAll()" data-test="objectifs-evaluer">
-        <mat-icon>rule</mat-icon>
-        <span i18n="@@objectives.evaluate-all">Confronter aux mesures</span>
-      </button>
       <button mat-flat-button color="primary" type="button" *ngIf="canManage"
               (click)="create()" data-test="objectifs-nouveau">
         <mat-icon>flag</mat-icon>

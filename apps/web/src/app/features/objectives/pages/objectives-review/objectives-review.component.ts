@@ -233,27 +233,6 @@ export class ObjectivesReviewComponent implements OnInit {
     });
   }
 
-  /**
-   * Confronte tous les objectifs à leurs mesures.
-   *
-   * <p>Le geste est explicite : la règle ne tourne pas dans le dos de
-   * l'utilisateur, et c'est lui qui décide quand la revue se fait.
-   */
-  evaluateAll(): void {
-    this.deciding = true;
-    this.svc.evaluateAll().pipe(finalize(() => (this.deciding = false))).subscribe({
-      next: nees => {
-        this.snack.open(nees.length
-          ? $localize`:@@objectives.evaluated.some:${nees.length}:count: CAPA proposée(s) à trancher.`
-          : $localize`:@@objectives.evaluated.none:Aucun écart n'atteint la règle de déclenchement.`,
-          undefined, { duration: 5000 });
-        this.load();
-      },
-      error: err => this.snack.open(
-        safeErrorMessage(err, $localize`:@@objectives.error.evaluate:La confrontation aux mesures n'a pas abouti.`),
-        undefined, { duration: 6000 })
-    });
-  }
 
   /**
    * « Ajouter une action » : LA fenêtre CAPA s'ouvre, vide, et le dossier naît

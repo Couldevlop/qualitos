@@ -40,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -349,6 +350,69 @@ class QualityObjectiveServiceTest {
                     .isEqualByComparingTo("900");
             assertThat(r.objectives().get(0).assessment().status())
                     .isEqualTo(ObjectiveStatus.CRITICAL);
+        }
+
+        // ---------- la confrontation est automatique (ADR 0146) ----------
+
+        @Test
+        void ouvrirLaRevue_confronteLesObjectifsAuxMesures() {
+            // Il n'y a plus de bouton : l'écran dit la vérité du jour sans
+            // qu'on ait à demander la confrontation.
+            when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
+                    TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
+            when(objectives.findByIdAndTenantId(OBJ, TENANT))
+                    .thenReturn(Optional.of(objectif()));
+            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
+            when(kpis.findById(KPI)).thenReturn(Optional.of(kpi()));
+            releves("2026-09", "650", "2026-10", "660");
+
+            service.review(null, null);
+
+            ArgumentCaptor<QualityObjectiveProposal> c =
+                    ArgumentCaptor.forClass(QualityObjectiveProposal.class);
+            verify(proposals).save(c.capture());
+            assertThat(c.getValue().getStatus()).isEqualTo(ProposalStatus.PENDING);
+            assertThat(c.getValue().getObjectiveId()).isEqualTo(OBJ);
+        }
+
+        @Test
+        void rejouerUneRevuePASSEE_nEcritRien() {
+            // Confronter pendant une relecture d'archive daterait d'aujourd'hui
+            // des propositions nées d'une lecture d'hier.
+            // Le MEME jeu que le banc precedent, qui lui ecrit.
+            when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
+                    TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
+            lenient().when(objectives.findByIdAndTenantId(OBJ, TENANT))
+                    .thenReturn(Optional.of(objectif()));
+            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
+            lenient().when(kpis.findById(KPI)).thenReturn(Optional.of(kpi()));
+            releves("2026-09", "650", "2026-10", "660");
+
+            service.review(null, LocalDate.parse("2026-10-31"));
+
+            verify(proposals, never()).save(any());
+        }
+
+        @Test
+        void unObjectifQuOnNePeutPasConfronter_neCassePasLaRevue() {
+            // Tant que la confrontation était un geste, son échec se disait
+            // dans un bandeau. Devenue automatique, la même erreur emporterait
+            // la page entière et masquerait les objectifs qui se lisent bien.
+            when(objectives.findByTenantIdAndStatusOrderByCreatedAtDesc(
+                    TENANT, ObjectiveLifecycle.ACTIVE)).thenReturn(List.of(objectif()));
+            when(objectives.findByIdAndTenantId(OBJ, TENANT))
+                    .thenReturn(Optional.of(objectif()));
+            // La revue lit le catalogue en bloc ; la confrontation, elle,
+            // recharge le KPI par son identifiant. Absent de ce second chemin,
+            // elle lève — et la ligne doit paraître quand même.
+            when(kpis.findAllById(any())).thenReturn(List.of(kpi()));
+            when(kpis.findById(KPI)).thenReturn(Optional.empty());
+            releves("2026-09", "650", "2026-10", "660");
+
+            ObjectiveDto.ReviewResponse r = service.review(null, null);
+
+            assertThat(r.objectives()).hasSize(1);
+            verify(proposals, never()).save(any());
         }
     }
 
