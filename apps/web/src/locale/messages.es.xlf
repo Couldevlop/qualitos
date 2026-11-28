@@ -23102,6 +23102,30 @@ historial de 12 meses</target>
         <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
         <target state="translated">El comentario no se ha guardado. Inténtelo de nuevo al salir del campo.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.reopen-hint" datatype="html">
+        <source>Une action dont le résultat ne tient pas se rouvre ici, tant que l’écart n’est pas clôturé.</source>
+        <target state="translated">Una acción cuyo resultado no se sostiene puede reabrirse aquí, mientras la no conformidad no esté cerrada.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-action" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">Reabrir</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-already-open" datatype="html">
+        <source>déjà ouverte</source>
+        <target state="translated">ya abierta</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-aria" datatype="html">
+        <source>Rouvrir l'action : <x id="title"/></source>
+        <target state="translated">Reabrir la acción: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-done" datatype="html">
+        <source>Action rouverte.</source>
+        <target state="translated">Acción reabierta.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-error" datatype="html">
+        <source>L'action n'a pas pu être rouverte.</source>
+        <target state="translated">No se ha podido reabrir la acción.</target>
+      </trans-unit>
       <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
         <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>
         <target state="translated">No tiene permiso para resolver una no conformidad. Pida a un responsable de calidad que lo haga.</target>

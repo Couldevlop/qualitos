@@ -997,23 +997,42 @@
               Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.
             </p>
 
-            <!-- CE QUE LES ACTIONS ONT PRODUIT. Le verdict se porte au D5 ou au
-                 D7, sur la ligne de l'action ; il se LIT ici, sous la discipline
-                 qui clot le traitement, et le rapport 8D porte le meme tableau.
-                 Rendu tel que le rapport le donne -- colonnes comprises -- et
-                 non recompose : deux assemblages du meme fait divergent. -->
-            <table class="table-efficacite" *ngIf="efficaciteD8 as t"
-                   data-test="d8-efficacite">
-              <caption *ngIf="t.caption">{{ t.caption }}</caption>
-              <thead>
-                <tr><th *ngFor="let colonne of t.columns" scope="col">{{ colonne }}</th></tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let rang of t.rows">
-                  <td *ngFor="let cellule of rang">{{ cellule }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <!-- LE TABLEAU DES VERDICTS N'EST PLUS ICI. Le D8 remercie
+                 l'equipe, et c'est tout ce qu'il ecrit. Le verdict se porte au
+                 D5 ou au D7, sur la ligne de l'action, et s'y lit : le repeter
+                 sous une autre forme donnait a relire ce qui venait d'etre lu
+                 -- avec des en-tetes rendus par le serveur, donc en francais
+                 quand l'ecran etait en anglais. Le rapport 8D, lui, le porte
+                 toujours : rien n'est perdu.
+
+                 CE QUI PREND SA PLACE : rouvrir une action. Une action jugee
+                 efficace se clot (ADR 0144) et plus rien n'y bougeait -- ni son
+                 etat, ni ses preuves. Or un releve qui arrive la semaine
+                 suivante peut contredire le verdict ; la seule issue etait
+                 alors d'ouvrir une SECONDE CAPA sur le meme geste, deux actions
+                 la ou il n'y en a qu'une (ADR 0135). La borne est le dossier :
+                 tant que l'ecart n'est pas cloture, son traitement se discute. -->
+            <div class="d8-reprise" *ngIf="!isTerminal(n.status) && dossiers(n).length"
+                 data-test="d8-reprise">
+              <p class="dim" i18n="@@nc.8d.reopen-hint">
+                Une action dont le résultat ne tient pas se rouvre ici, tant que
+                l’écart n’est pas clôturé.
+              </p>
+              <div class="d8-reprise__ligne" *ngFor="let d of dossiers(n)">
+                <span class="d8-reprise__titre">{{ d.title }}</span>
+                <button mat-stroked-button type="button" *ngIf="d.status === 'CLOSED'; else dejaOuverte"
+                        [disabled]="acting$ | async" (click)="rouvrir(d)"
+                        [attr.data-test]="'rouvrir-' + d.id"
+                        [attr.aria-label]="rouvrirAria(d)">
+                  <mat-icon aria-hidden="true">lock_open</mat-icon>
+                  <span i18n="@@nc.8d.reopen-action">Rouvrir</span>
+                </button>
+                <ng-template #dejaOuverte>
+                  <span class="dim" i18n="@@nc.8d.reopen-already-open">déjà ouverte</span>
+                </ng-template>
+              </div>
+            </div>
+
 
             <ng-container *ngIf="!isTerminal(n.status); else remerciementLecture">
               <mat-form-field appearance="outline" class="full">

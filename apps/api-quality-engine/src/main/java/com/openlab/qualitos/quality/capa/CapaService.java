@@ -1055,6 +1055,96 @@ public class CapaService {
     }
 
     /**
+     * Rouvre une ACTION close, tant que le dossier n'est pas clôturé.
+     *
+     * <p><b>Le vocabulaire, parce qu'il porte la règle.</b> Le dossier est la
+     * non-conformité ; elle porte plusieurs actions ; chaque action EST une
+     * CAPA (ADR 0135). Ce que cette méthode rouvre est donc une action, et la
+     * {@link CapaCase} qu'elle manipule en est le support — pas un niveau
+     * intermédiaire entre le dossier et ses actions.
+     *
+     * <p>Une action jugée efficace se clôt (ADR 0144), et close elle ne bouge
+     * plus : ni son état, ni ses preuves. C'est juste tant que l'affaire est
+     * finie — mais un traitement 8D se poursuit après le premier verdict. Le
+     * relevé qui arrive la semaine suivante contredit le jugement, une pièce
+     * manque, la mesure ne tient pas : il faut pouvoir revenir, et le dossier,
+     * lui, est toujours ouvert. Sans ce chemin, la seule issue était d'ouvrir
+     * une SECONDE CAPA sur le même geste — deux actions pour un seul geste,
+     * là où il n'y en a qu'un.
+     *
+     * <p><b>La borne est le dossier, et non l'action.</b> Tant que la
+     * non-conformité n'est ni close ni annulée, son traitement se discute. Une
+     * fois le dossier clôturé, l'affaire est arrêtée et la réouverture est
+     * refusée : c'est la clôture du dossier qui scelle, pas celle de l'action.
+     * {@code RESOLVED} ne scelle PAS — c'est précisément l'état d'un dossier
+     * dont les actions sont faites et dont on peut encore vouloir rouvrir une.
+     *
+     * <p><b>Le verdict précédent n'est pas effacé.</b> Il a été rendu, daté et
+     * journalisé ; le supprimer ferait mentir la piste d'audit. On lit donc
+     * « jugée efficace le 28, rouverte le 2 », et le journal porte
+     * {@code REOPENED} par-dessus {@code CLOSED}.
+     *
+     * <p>Une action {@code REJECTED} reste verrouillée : elle n'a pas été
+     * menée à son terme, elle a été écartée. La rouvrir serait revenir sur une
+     * décision d'une autre nature, qui a son propre chemin.
+     */
+    public CapaDto.CaseResponse reopenCase(UUID id) {
+        CapaCase c = loadCase(id);
+        if (c.getStatus() != CapaStatus.CLOSED) {
+            throw new CapaStateException(
+                    "Only a closed action can be reopened; this one is " + c.getStatus());
+        }
+        exigerUnEcartOuvert(c);
+
+        c.setStatus(CapaStatus.IN_PROGRESS);
+        c.setClosedAt(null);
+        // La date de résolution part avec la clôture : une action repartie
+        // en traitement qui afficherait « résolue le 12 mars » dirait deux
+        // choses à la fois. Le verdict, lui, RESTE — il a eu lieu.
+        c.setResolvedAt(null);
+        // LE GESTE REPART AVEC ELLE. Une CAPA EST une action (ADR 0135) :
+        // la rouvrir en laissant sa ligne « faite » lui rendrait un état que
+        // sa propre ligne contredit, et le recalcul automatique la
+        // refermerait aussitôt.
+        for (CapaAction a : c.getActions()) {
+            if (a.getStatus() == CapaActionStatus.DONE) {
+                a.setStatus(CapaActionStatus.IN_PROGRESS);
+                a.setCompletedAt(null);
+            }
+        }
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.REOPENED);
+        return toResponse(saved);
+    }
+
+    /**
+     * Le dossier d'origine doit exister et ne pas être clôturé.
+     *
+     * <p>Le rattachement se lit par la RÉFÉRENCE du dossier, celle que
+     * l'action porte en {@code sourceRef} : c'est le lien que le traitement 8D
+     * emploie, et le seul qui vaille quand plusieurs actions traitent le même
+     * dossier. {@code capaCaseId} n'en désigne qu'une par dossier.
+     */
+    private void exigerUnEcartOuvert(CapaCase c) {
+        boolean neDUnEcart = c.getSourceType() == CapaSourceType.NON_CONFORMITY
+                || c.getSourceType() == CapaSourceType.EXTERNAL_NON_CONFORMITY;
+        if (!neDUnEcart || c.getSourceRef() == null || c.getSourceRef().isBlank()) {
+            throw new CapaStateException(
+                    "Only an action opened from a non-conformity can be reopened from its 8D");
+        }
+        NcStatus statut = ncRepository
+                .findByTenantIdAndReference(c.getTenantId(), c.getSourceRef())
+                .map(NonConformity::getStatus)
+                .orElseThrow(() -> new CapaStateException(
+                        "The non-conformity " + c.getSourceRef() + " no longer exists"));
+        if (statut == NcStatus.CLOSED || statut == NcStatus.CANCELLED) {
+            throw new CapaStateException(
+                    "The non-conformity " + c.getSourceRef() + " is " + statut
+                    + ": reopen the non-conformity before reopening one of its actions");
+        }
+    }
+
+    /**
      * Le verdict de la requête, quelle que soit la forme employée.
      *
      * <p>Exactement l'un des deux champs : {@code verdict}, la forme à employer,

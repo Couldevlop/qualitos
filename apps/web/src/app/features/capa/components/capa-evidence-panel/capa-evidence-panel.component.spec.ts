@@ -61,9 +61,35 @@ describe('CapaEvidencePanelComponent', () => {
     expect(fixture.debugElement.queryAll(By.css('.piece')).length).toBe(1);
   });
 
-  it('dit qu\'aucune preuve n\'est jointe plutot que de laisser un blanc', () => {
+  /**
+   * LE PANNEAU NE COMMENTE PLUS CE QU'IL N'A PAS.
+   *
+   * <p>Il ecrivait trois phrases par action -- a quoi sert une preuve,
+   * qu'il n'y en a aucune, et que le dossier est clos. Repetees pour
+   * chacune des cinq actions d'un ecart, elles remplissaient le D6 d'un
+   * texte identique qui noyait les pieces elles-memes. Ce que la preuve
+   * atteste se dit une fois, au titre de la discipline.
+   */
+  it('ne commente pas l absence de preuve : la discipline le dit deja', () => {
     monter();
-    expect(fixture.debugElement.query(By.css('[data-test="preuves-dossier-vide"]'))).toBeTruthy();
+
+    expect(fixture.debugElement.query(
+      By.css('[data-test="preuves-dossier-vide"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('.preuves-dossier__aide'))).toBeNull();
+    // CE QUI RESTE : le moyen de joindre une piece.
+    expect(fixture.debugElement.query(
+      By.css('[data-test="preuves-dossier-joindre"]'))).toBeTruthy();
+  });
+
+  /**
+   * Le verrou de cloture ne s'ecrit plus non plus : une action close se
+   * ROUVRE depuis le D8 tant que le dossier est ouvert, donc annoncer que
+   * ses preuves « ne changent plus » decourageait a tort.
+   */
+  it('n annonce plus le verrou sur une action close', () => {
+    monter('CLOSED');
+
+    expect(fixture.debugElement.query(By.css('.preuves-dossier__verrou'))).toBeNull();
   });
 
   it('propose le depot sur un dossier ouvert, et le refuse sur un dossier clos', () => {

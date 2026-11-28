@@ -47,7 +47,6 @@ import {
   VisionScore,
   NcBlockingAction,
   NcCapaCaseRef,
-  EightDTable,
 } from '../../nc.types';
 import {
   NcConvertChoice,
@@ -715,15 +714,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   remerciementEnregistre = '';
   remerciementModifie = false;
 
-  /**
-   * L'EFFICACITE DES ACTIONS, telle que le rapport la porte au D8 (ADR 0144).
-   *
-   * <p>Lue dans le rapport et non recomposee ici : le document remis au client
-   * et l'ecran doivent dire la meme chose, et deux assemblages du meme fait
-   * finissent par diverger. Absente tant qu'aucune action n'a ete jugee.
-   */
-  efficaciteD8?: EightDTable;
-
   /** Lit le rapport pour en tirer le seul D8 ; son echec ne casse pas l ecran. */
   private chargerRemerciement(): void {
     this.svc.getEightDReport(this.ncId).pipe(
@@ -731,8 +721,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(rapport => {
       if (!rapport) return;
       this.remerciementEnregistre = rapport.recognition ?? '';
-      this.efficaciteD8 = rapport.disciplines
-        ?.find(d => d.code === 'D8')?.tables?.[0];
       if (!this.remerciementModifie) {
         this.remerciementControl.setValue(this.remerciementEnregistre, { emitEvent: false });
       }
@@ -1278,6 +1266,46 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    *       une ligne s'ouvre pour se corriger (ADR 0115).</li>
    * </ul>
    */
+  /**
+   * Rouvre une action close, depuis le D8.
+   *
+   * <p>Le dossier est l'ecart ; il porte des actions, et chaque action est une
+   * CAPA (ADR 0135). Rouvrir, c'est donc revenir sur UNE action : le verdict
+   * deja rendu reste au journal -- on lit « jugee efficace le 28, rouverte le
+   * 2 » -- et c'est le serveur qui refuse si l'ecart, lui, est cloture.
+   *
+   * <p>L'ecart se relit ensuite en entier : la reouverture change l'etat de
+   * l'action, le compte de la discipline et les coches du rail.
+   */
+  rouvrir(d: NcCapaCaseRef): void {
+    if (this.acting$.value) return;
+    this.acting$.next(true);
+    this.capaService.reopenCase(d.id)
+      .pipe(finalize(() => this.acting$.next(false)))
+      .subscribe({
+        next: () => {
+          this.snack.open(
+            $localize`:@@nc.8d.reopen-done:Action rouverte.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+          this.reload$.next();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] reopen failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err,
+              $localize`:@@nc.8d.reopen-error:L'action n'a pas pu être rouverte.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+  }
+
+  /** « Rouvrir l'action : <titre> » — le bouton seul dirait « Rouvrir » six fois. */
+  rouvrirAria(d: NcCapaCaseRef): string {
+    const titre = d.title ?? '';
+    return $localize`:@@nc.8d.reopen-aria:Rouvrir l'action : ${titre}:title:`;
+  }
+
   addActions(nc: NcResponse): void {
     if (this.acting$.value) return;
     if (!nc.capaCaseId) {
