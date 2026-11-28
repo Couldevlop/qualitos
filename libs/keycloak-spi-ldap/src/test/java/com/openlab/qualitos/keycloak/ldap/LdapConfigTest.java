@@ -129,4 +129,84 @@ class LdapConfigTest {
         LdapConfig cfg = LdapConfig.fromComponentModel(ComponentModels.of(ComponentModels.minimalValid()));
         assertThat(cfg.toString()).contains("bindCredential=<none>");
     }
+
+    // ------------------------------------------------------------------
+    // Le NOM d'attribut. Échapper la valeur ne suffit pas : le nom est
+    // concaténé lui aussi, et la RFC 4515 ne prévoit d'échappement que pour
+    // la valeur. Le nom arrive du SPI
+    // (searchForUserByUserAttributeStream), pas seulement de la configuration.
+    // ------------------------------------------------------------------
+
+    @Test
+    void refuseUnNomDAttributQuiFermeLaClause() {
+        LdapConfig cfg = LdapConfig.fromComponentModel(ComponentModels.of(ComponentModels.minimalValid()));
+
+        assertThatThrownBy(() -> cfg.buildFilter("cn)(uid=*", "x"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void refuseToutCeQuiNEstPasUnNomDAttribut() {
+        LdapConfig cfg = LdapConfig.fromComponentModel(ComponentModels.of(ComponentModels.minimalValid()));
+
+        for (String nom : java.util.List.of(
+                "",
+                " ",
+                "uid ",
+                "u id",
+                "1uid",
+                "uid=",
+                "uid*",
+                "uid(",
+                "uid)",
+                "uid\\\\",
+                "a_b",
+                "uid;",
+                "uid;;fr",
+                "1.2.3.",
+                ".1.2",
+                "cn)(uid=*",
+                "(objectClass=*)")) {
+            assertThatThrownBy(() -> cfg.buildFilter(nom, "x"))
+                    .as("nom refusé : <%s>", nom)
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        assertThatThrownBy(() -> cfg.buildFilter(null, "x"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void accepteLesNomsDAttributLegitimes() {
+        LdapConfig cfg = LdapConfig.fromComponentModel(ComponentModels.of(ComponentModels.minimalValid()));
+
+        assertThat(cfg.buildFilter("uid", "x")).isEqualTo("(uid=x)");
+        assertThat(cfg.buildFilter("sAMAccountName", "x")).isEqualTo("(sAMAccountName=x)");
+        assertThat(cfg.buildFilter("objectGUID", "x")).isEqualTo("(objectGUID=x)");
+        assertThat(cfg.buildFilter("ipa-unique-id", "x")).isEqualTo("(ipa-unique-id=x)");
+        assertThat(cfg.buildFilter("cn;lang-fr", "x")).isEqualTo("(cn;lang-fr=x)");
+        assertThat(cfg.buildFilter("cn;lang-fr;binary", "x")).isEqualTo("(cn;lang-fr;binary=x)");
+        assertThat(cfg.buildFilter("1.3.6.1.4.1.1466.115.121.1.15", "x"))
+                .isEqualTo("(1.3.6.1.4.1.1466.115.121.1.15=x)");
+    }
+
+    @Test
+    void lesAttributsQueLaConfigurationResoutRestentAcceptes() {
+        Map<String, String> ad = ComponentModels.minimalValid();
+        ad.put(LdapConfig.USERNAME_ATTR, "sAMAccountName");
+        ad.put(LdapConfig.UUID_ATTR, "objectGUID");
+
+        Map<String, String> ipa = ComponentModels.minimalValid();
+        ipa.put(LdapConfig.UUID_ATTR, "ipaUniqueID");
+
+        for (Map<String, String> m : java.util.List.of(ComponentModels.minimalValid(), ad, ipa)) {
+            LdapConfig cfg = LdapConfig.fromComponentModel(ComponentModels.of(m));
+
+            assertThat(cfg.buildFilter(cfg.usernameAttribute(), "x")).startsWith("(");
+            assertThat(cfg.buildFilter(cfg.emailAttribute(), "x")).startsWith("(");
+            assertThat(cfg.buildFilter(cfg.firstNameAttribute(), "x")).startsWith("(");
+            assertThat(cfg.buildFilter(cfg.lastNameAttribute(), "x")).startsWith("(");
+            assertThat(cfg.buildFilter(cfg.uuidAttribute(), "x")).startsWith("(");
+        }
+    }
 }

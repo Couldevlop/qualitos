@@ -53,12 +53,13 @@ public class JndiLdapClient implements LdapClient {
         return searchOne(config.buildFilter(config.uuidAttribute(), uuid));
     }
 
-    // nosemgrep: java.lang.security.audit.ldap-injection.ldap-injection
-    // Le filtre n'est jamais concaténé à la main : `LdapConfig.buildFilter` passe
-    // systématiquement la valeur par `LdapEscaper.escapeFilterValue` (échappement
-    // RFC 4515). Le seul caractère non échappé ici est le `*` de présence, réinjecté
-    // après coup à partir d'un jeton littéral — aucune donnée externe ne peut le
-    // produire.
+    // nosemgrep: java.lang.security.audit.ldap-injection.ldap-injection — le filtre
+    // n'est jamais concaténé à la main : `LdapConfig.buildFilter` échappe la valeur
+    // (RFC 4515) ET refuse un nom d'attribut qui n'en est pas un. Les deux moitiés
+    // du filtre sont donc tenues, ce qui n'était pas le cas avant 2026-11-28 : la
+    // justification ne parlait que de la valeur, et le nom passait brut. Ici le nom
+    // vient de la configuration, et le seul caractère non échappé est le `*` de
+    // présence, réinjecté depuis un jeton littéral. Revue : 2027-05-28.
     @Override
     public List<LdapUserEntry> searchAll(int firstResult, int maxResults) {
         // Filtre "présence de l'attribut username" = toutes les entrées utilisateur.
@@ -121,9 +122,10 @@ public class JndiLdapClient implements LdapClient {
 
     // ---------------------------------------------------------------------
 
-    // nosemgrep: java.lang.security.audit.ldap-injection.ldap-injection
-    // Filtre construit en amont par `LdapConfig.buildFilter`, qui échappe la valeur
-    // selon la RFC 4515 ; cette méthode ne fait que l'exécuter.
+    // nosemgrep: java.lang.security.audit.ldap-injection.ldap-injection — filtre
+    // construit en amont par `LdapConfig.buildFilter`, seul point de construction :
+    // il échappe la valeur (RFC 4515) et refuse un nom d'attribut non conforme.
+    // Cette méthode ne fait que l'exécuter. Revue : 2027-05-28.
     private Optional<LdapUserEntry> searchOne(String filter) {
         LdapContext ctx = null;
         try {
