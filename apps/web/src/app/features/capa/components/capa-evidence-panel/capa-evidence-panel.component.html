@@ -1,10 +1,5 @@
 <div class="preuves-dossier">
 
-  <p class="preuves-dossier__aide" *ngIf="!sansAide" i18n="@@capa.evidence.hint">
-    Ce qui atteste que l'action a produit son effet : relevé, procédure signée,
-    photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.
-  </p>
-
   <div class="preuves-dossier__etat" *ngIf="chargement$ | async" role="status">
     <mat-progress-spinner mode="indeterminate" diameter="22"></mat-progress-spinner>
     <span i18n="@@common.loading">Chargement…</span>
@@ -21,7 +16,7 @@
   </p>
 
   <ng-container *ngIf="!stockageCoupe">
-    <ul class="preuves-dossier__liste" *ngIf="(pieces$ | async)?.length; else aucune"
+    <ul class="preuves-dossier__liste" *ngIf="(pieces$ | async)?.length"
         data-test="preuves-dossier-liste">
       <li class="piece" *ngFor="let p of pieces$ | async">
         <mat-icon class="piece__icone" aria-hidden="true">{{ icone(p.contentType) }}</mat-icon>
@@ -38,14 +33,6 @@
       </li>
     </ul>
 
-    <ng-template #aucune>
-      <p class="preuves-dossier__vide" *ngIf="!(chargement$ | async) && !sansAide"
-         data-test="preuves-dossier-vide"
-         i18n="@@capa.evidence.none">
-        Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.
-      </p>
-    </ng-template>
-
     <input type="file" class="preuves-dossier__selecteur" #selecteur
            accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx"
            (change)="fichierChoisi($event)" aria-hidden="true" tabindex="-1">
@@ -57,11 +44,10 @@
       <span i18n="@@capa.evidence.add">Joindre une preuve</span>
     </button>
 
-    <!-- La raison du verrou est énoncée, pas découverte au clic. -->
-    <p class="preuves-dossier__verrou" *ngIf="estTermine && !sansAide"
-       i18n="@@capa.evidence.locked-closed">
-      Le dossier est clos : ses preuves restent consultables, mais ne changent plus.
-    </p>
+    <!-- La raison du verrou est énoncée, pas découverte au clic. Celle de
+         l'action close ne s'écrit plus : une action close se ROUVRE depuis le
+         D8 tant que le dossier est ouvert, donc le verrou n'est pas le dernier
+         mot et l'annoncer comme tel décourageait à tort. -->
     <p class="preuves-dossier__verrou" *ngIf="!estTermine && estPlein && !sansAide"
        i18n="@@capa.evidence.locked-full">
       Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une

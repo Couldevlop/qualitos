@@ -8018,10 +8018,6 @@ Customer portal</target>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">Open the CAPA that addresses this non-conformity</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-link-open" datatype="html">
-        <source>Ouvrir le dossier</source>
-        <target state="translated">Open the case</target>
-      </trans-unit>
       <trans-unit id="audits.detail.create-capa" datatype="html">
         <source>Créer une CAPA</source>
         <target state="translated">Create a CAPA</target>
@@ -23101,6 +23097,30 @@ declared income
       <trans-unit id="nc.8d.d4-comment-failed" datatype="html">
         <source>Le commentaire n'a pas été enregistré. Réessayez en quittant le champ.</source>
         <target state="translated">The comment was not saved. Try again when you leave the field.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-hint" datatype="html">
+        <source>Une action dont le résultat ne tient pas se rouvre ici, tant que l’écart n’est pas clôturé.</source>
+        <target state="translated">An action whose result does not hold can be reopened here, as long as the non-conformity is not closed.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-action" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">Reopen</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-already-open" datatype="html">
+        <source>déjà ouverte</source>
+        <target state="translated">already open</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-aria" datatype="html">
+        <source>Rouvrir l'action : <x id="title"/></source>
+        <target state="translated">Reopen the action: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-done" datatype="html">
+        <source>Action rouverte.</source>
+        <target state="translated">Action reopened.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.reopen-error" datatype="html">
+        <source>L'action n'a pas pu être rouverte.</source>
+        <target state="translated">The action could not be reopened.</target>
       </trans-unit>
       <trans-unit id="nc.blocker.no-right-resolve" datatype="html">
         <source>Vous n'avez pas le droit de résoudre un écart. Demandez à un responsable qualité de porter ce geste.</source>

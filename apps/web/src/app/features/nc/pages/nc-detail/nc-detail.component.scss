@@ -1053,3 +1053,27 @@ section.card > .sub {
     vertical-align: top;
   }
 }
+
+/* LA REPRISE DU D8 : une ligne par action, son titre a gauche et la commande a
+   droite. Pas un tableau -- il n'y a qu'une colonne de donnees, et le tableau
+   qui occupait cette place est precisement ce qui a ete retire. */
+.d8-reprise {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.d8-reprise__ligne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--qos-border, rgba(0, 0, 0, .08));
+}
+
+.d8-reprise__ligne:last-child { border-bottom: none; }
+
+/* Le titre pousse la commande au bord : les boutons s'alignent entre eux,
+   quelle que soit la longueur des intitules. */
+.d8-reprise__titre { flex: 1 1 auto; min-width: 0; }

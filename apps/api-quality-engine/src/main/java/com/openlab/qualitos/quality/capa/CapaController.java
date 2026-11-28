@@ -141,6 +141,19 @@ public class CapaController {
         return service.closeWithoutVerification(id);
     }
 
+    /**
+     * Rouvre une action close depuis le D8, tant que le dossier est ouvert.
+     *
+     * <p>Même permission que la clôture et que le jugement d'efficacité : c'est
+     * la même décision, prise dans l'autre sens. Un droit distinct laisserait
+     * rouvrir à qui on refuse de clore.
+     */
+    @PostMapping("/cases/{id}/reopen")
+    @RequiresPermission(Permission.CAPA_VERIFY)
+    public CapaDto.CaseResponse reopen(@PathVariable UUID id) {
+        return service.reopenCase(id);
+    }
+
     @PatchMapping("/cases/{id}/reject")
     @RequiresPermission(Permission.CAPA_REJECT)
     public CapaDto.CaseResponse reject(@PathVariable UUID id) { return service.rejectCase(id); }

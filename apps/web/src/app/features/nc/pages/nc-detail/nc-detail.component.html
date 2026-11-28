@@ -102,6 +102,18 @@
                 data-test="nc-close">
           <mat-icon>lock</mat-icon> <span i18n="@@nc.detail.close">Clôturer</span>
         </button>
+        <!-- LE RAPPORT REVIENT ICI, d'ou la trame 8D l'avait tire. Il se lit et
+             se renseigne depuis la fiche, comme les deux analyses de cause : il
+             part d'un ecart constate, et n'a donc pas d'entree de menu. Pose au
+             D2, il proposait le compte rendu des huit disciplines sous l'enonce
+             du probleme -- avant d'en avoir rempli sept. -->
+        <button mat-stroked-button class="eightd-btn" (click)="openEightD()"
+                data-test="rapport-8d"
+                i18n-matTooltip="@@nc.detail.eightd-tooltip"
+                matTooltip="Les huit disciplines, agrégées depuis ce dossier">
+          <mat-icon>fact_check</mat-icon>
+          <span i18n="@@nc.detail.eightd">Rapport 8D</span>
+        </button>
       </div>
     </ng-container>
   </header>
@@ -465,8 +477,15 @@
                  passage obligé (§3.6). Le produit, lui, se lit ici parce que
                  c'est une donnée du problème. -->
             <div class="options">
-              <a class="option-link" *ngIf="n.capaCaseId" [routerLink]="['/capa', n.capaCaseId]"
-                 i18n="@@nc.detail.capa-link-open">Ouvrir le dossier</a>
+              <!-- « OUVRIR LE DOSSIER » EST PARTI. Il n'etait pas une option
+                   du probleme : avant la trame 8D, c'etait un CHAMP de la fiche
+                   -- libelle « CAPA liee », valeur en lien -- et la trame en a
+                   fait un bouton au D2. Il mene a `capaCaseId`, c'est-a-dire a
+                   UNE action parmi celles de l'ecart, celle qui s'est trouvee
+                   etre la premiere. Le dossier EST l'ecart et chaque CAPA est
+                   une action (ADR 0135) : il n'y a pas « le » dossier a ouvrir,
+                   et les disciplines D3, D5 et D7 portent deja chacune des
+                   actions sur leur propre ligne. -->
               <button mat-stroked-button (click)="convert(n)" data-test="convertir"
                       *qosCan="'nc.escalate'"
                       [disabled]="(acting$ | async) || (!n.pdcaCycleId && !n.dmaicProjectId && !canEscalate(n.status))"
@@ -497,13 +516,6 @@
                 <mat-icon>shield</mat-icon>
                 <span i18n="@@rr.create-risk">Créer un risque</span>
               </a>
-              <button mat-stroked-button class="eightd-btn" (click)="openEightD()"
-                      data-test="rapport-8d"
-                      i18n-matTooltip="@@nc.detail.eightd-tooltip"
-                      matTooltip="Les huit disciplines, agrégées depuis ce dossier">
-                <mat-icon>fact_check</mat-icon>
-                <span i18n="@@nc.detail.eightd">Rapport 8D</span>
-              </button>
             </div>
 
             <!-- Les photos du constat : elles DÉCRIVENT le problème, c'est donc
@@ -997,23 +1009,42 @@
               Reconnaissez le travail accompli. Ce mot part dans le rapport 8D.
             </p>
 
-            <!-- CE QUE LES ACTIONS ONT PRODUIT. Le verdict se porte au D5 ou au
-                 D7, sur la ligne de l'action ; il se LIT ici, sous la discipline
-                 qui clot le traitement, et le rapport 8D porte le meme tableau.
-                 Rendu tel que le rapport le donne -- colonnes comprises -- et
-                 non recompose : deux assemblages du meme fait divergent. -->
-            <table class="table-efficacite" *ngIf="efficaciteD8 as t"
-                   data-test="d8-efficacite">
-              <caption *ngIf="t.caption">{{ t.caption }}</caption>
-              <thead>
-                <tr><th *ngFor="let colonne of t.columns" scope="col">{{ colonne }}</th></tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let rang of t.rows">
-                  <td *ngFor="let cellule of rang">{{ cellule }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <!-- LE TABLEAU DES VERDICTS N'EST PLUS ICI. Le D8 remercie
+                 l'equipe, et c'est tout ce qu'il ecrit. Le verdict se porte au
+                 D5 ou au D7, sur la ligne de l'action, et s'y lit : le repeter
+                 sous une autre forme donnait a relire ce qui venait d'etre lu
+                 -- avec des en-tetes rendus par le serveur, donc en francais
+                 quand l'ecran etait en anglais. Le rapport 8D, lui, le porte
+                 toujours : rien n'est perdu.
+
+                 CE QUI PREND SA PLACE : rouvrir une action. Une action jugee
+                 efficace se clot (ADR 0144) et plus rien n'y bougeait -- ni son
+                 etat, ni ses preuves. Or un releve qui arrive la semaine
+                 suivante peut contredire le verdict ; la seule issue etait
+                 alors d'ouvrir une SECONDE CAPA sur le meme geste, deux actions
+                 la ou il n'y en a qu'une (ADR 0135). La borne est le dossier :
+                 tant que l'ecart n'est pas cloture, son traitement se discute. -->
+            <div class="d8-reprise" *ngIf="!isTerminal(n.status) && dossiers(n).length"
+                 data-test="d8-reprise">
+              <p class="dim" i18n="@@nc.8d.reopen-hint">
+                Une action dont le résultat ne tient pas se rouvre ici, tant que
+                l’écart n’est pas clôturé.
+              </p>
+              <div class="d8-reprise__ligne" *ngFor="let d of dossiers(n)">
+                <span class="d8-reprise__titre">{{ d.title }}</span>
+                <button mat-stroked-button type="button" *ngIf="d.status === 'CLOSED'; else dejaOuverte"
+                        [disabled]="acting$ | async" (click)="rouvrir(d)"
+                        [attr.data-test]="'rouvrir-' + d.id"
+                        [attr.aria-label]="rouvrirAria(d)">
+                  <mat-icon aria-hidden="true">lock_open</mat-icon>
+                  <span i18n="@@nc.8d.reopen-action">Rouvrir</span>
+                </button>
+                <ng-template #dejaOuverte>
+                  <span class="dim" i18n="@@nc.8d.reopen-already-open">déjà ouverte</span>
+                </ng-template>
+              </div>
+            </div>
+
 
             <ng-container *ngIf="!isTerminal(n.status); else remerciementLecture">
               <mat-form-field appearance="outline" class="full">

@@ -265,6 +265,26 @@ export class CapaService {
     return this.http.patch<CapaActionResponse>(`${this.endpoint}/${caseId}/actions/${actionId}`, input);
   }
 
+  /**
+   * Rouvre une action close, tant que son dossier — la NC — est ouvert.
+   *
+   * <p>Le verdict déjà rendu n'est PAS effacé : il a été daté et journalisé.
+   * Le serveur inscrit `REOPENED` par-dessus `CLOSED` — on lit la suite des
+   * faits, pas leur réécriture.
+   */
+  reopenCase(id: string): Observable<CapaCaseResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === id);
+      if (c) {
+        c.status = 'IN_PROGRESS';
+        c.closedAt = undefined;
+        c.updatedAt = new Date().toISOString();
+      }
+      return of(c as CapaCaseResponse).pipe(delay(120));
+    }
+    return this.http.post<CapaCaseResponse>(`${this.endpoint}/${id}/reopen`, {});
+  }
+
   verifyEffectiveness(id: string, effective: boolean): Observable<CapaCaseResponse> {
     if (environment.useMockApi) {
       const c = this.mockStore.find(x => x.id === id);

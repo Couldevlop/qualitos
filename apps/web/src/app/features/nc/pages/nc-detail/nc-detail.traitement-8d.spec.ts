@@ -107,7 +107,7 @@ describe('NcDetailComponent — le traitement 8D', () => {
         provideRouter([]),
         { provide: NcService, useValue: svc },
         { provide: IshikawaService, useValue: ishikawa },
-        { provide: CapaService, useValue: { updateCase: () => of({}) } },
+        { provide: CapaService, useValue: { updateCase: () => of({}), reopenCase: () => of({}) } },
         { provide: ProductsService, useValue: { list: () => of([]) } },
         { provide: FiveWhysService, useValue: fiveWhys },
         { provide: DirectoryService, useValue: annuaire },
@@ -268,16 +268,15 @@ describe('NcDetailComponent — le traitement 8D', () => {
   });
 
   /**
-   * L'EFFICACITÉ DES ACTIONS SE LIT AU D8 (ADR 0144).
+   * LE D8 NE PORTE PLUS LE TABLEAU DES VERDICTS.
    *
-   * <p>Le verdict se porte au D5 ou au D7, sur la ligne de l'action. Aucune
-   * discipline ne disait ensuite si cela avait SERVI : le traitement se fermait
-   * sur une équipe remerciée pour un résultat qu'il ne nommait pas.
-   *
-   * <p>Le tableau est celui du rapport, rendu tel quel — colonnes comprises —
-   * et non recomposé ici : deux assemblages du même fait divergent.
+   * <p>Il remercie l'équipe, et c'est tout ce qu'il écrit. Le verdict se rend
+   * au D5 ou au D7, sur la ligne de l'action, et s'y lit : le reprendre ici
+   * sous une autre forme donnait à relire ce qui venait d'être lu — avec des
+   * en-têtes rendus par le serveur, donc en français quand l'écran était en
+   * anglais. Le rapport 8D, lui, le porte toujours : rien n'est perdu.
    */
-  it('montre au D8 l’efficacité des actions, telle que le rapport la porte', () => {
+  it('ne reprend plus au D8 les verdicts, même quand le rapport les porte', () => {
     svc.getEightDReport.and.returnValue(of({
       recognition: null,
       disciplines: [{
@@ -293,26 +292,55 @@ describe('NcDetailComponent — le traitement 8D', () => {
 
     setup(ecart());
 
-    const tableau = un('d8-efficacite');
-    expect(tableau).withContext('le tableau du D8 est rendu').not.toBeNull();
-    expect(tableau?.textContent).toContain('Remplacer le joint');
-    expect(tableau?.textContent).toContain('Efficace');
-    expect(tableau?.textContent).toContain('20/11/2026');
+    expect(un('d8-efficacite'))
+      .withContext('le verdict se lit au D5, pas deux fois')
+      .toBeNull();
+    expect(texte())
+      .withContext('et son contenu ne revient pas par un autre chemin')
+      .not.toContain('Remplacer le joint');
+    expect(un('remerciement'))
+      .withContext('ce que le D8 garde : le mot à l’équipe')
+      .not.toBeNull();
   });
 
-  /** Rien de jugé, rien de montré : pas de tableau vide sous la discipline. */
-  it('ne montre aucun tableau au D8 quand aucune action n’a été jugée', () => {
-    svc.getEightDReport.and.returnValue(of({
-      recognition: null,
-      disciplines: [{
-        code: 'D8', title: 'Reconnaissance de l’équipe', sourced: false, sourceLabel: '',
-        lines: [], fields: [], editable: true, tables: []
-      }]
-    } as any));
+  /**
+   * ROUVRIR UNE ACTION, TANT QUE LE DOSSIER EST OUVERT.
+   *
+   * <p>Le dossier est l'écart ; il porte des actions, et chaque action est une
+   * CAPA. Une action jugée efficace se clôt, et close plus rien n'y bouge — ni
+   * son état, ni ses preuves. Or un relevé qui arrive la semaine suivante peut
+   * contredire le verdict ; la seule issue était alors d'ouvrir une SECONDE
+   * CAPA sur le même geste, deux actions là où il n'y en a qu'une.
+   */
+  it('offre de rouvrir une action close, et seulement celle-là', () => {
+    setup(ecart({
+      capaCases: [
+        { id: 'capa-close', title: 'Remplacer le joint', status: 'CLOSED' },
+        { id: 'capa-en-cours', title: 'Revoir la gamme', status: 'IN_PROGRESS' }
+      ]
+    }));
 
-    setup(ecart());
+    expect(un('rouvrir-capa-close'))
+      .withContext('une action close doit pouvoir repartir')
+      .not.toBeNull();
+    expect(un('rouvrir-capa-en-cours'))
+      .withContext('une action déjà ouverte n’a rien à rouvrir')
+      .toBeNull();
+  });
 
-    expect(un('d8-efficacite')).toBeNull();
+  /**
+   * La borne est le DOSSIER, pas l'action : une fois l'écart clôturé,
+   * l'affaire est arrêtée et il n'y a plus rien à rouvrir sur sa fiche.
+   */
+  it('n’offre plus de rouvrir quoi que ce soit sur un écart clôturé', () => {
+    setup(ecart({
+      status: 'CLOSED',
+      capaCases: [{ id: 'capa-close', title: 'Remplacer le joint', status: 'CLOSED' }]
+    }));
+
+    expect(un('d8-reprise'))
+      .withContext('l’écart est clos : son traitement ne se discute plus')
+      .toBeNull();
   });
 
   /**

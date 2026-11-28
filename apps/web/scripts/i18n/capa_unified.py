@@ -148,9 +148,6 @@ TRANSLATIONS = {
         'Ouvrir la CAPA qui traite cette non-conformité', 'Open the CAPA that addresses this non-conformity',
         'Abrir la CAPA que trata esta no conformidad', 'فتح الإجراء الذي يعالج عدم المطابقة هذا',
         'この不適合に対処するCAPAを作成', '创建处理此不符合项的 CAPA'),
-    'nc.detail.capa-link-open': (
-        'Ouvrir le dossier', 'Open the case', 'Abrir el expediente',
-        'فتح الملف', '案件を開く', '打开案例'),
     'audits.detail.create-capa': (
         'Créer une CAPA', 'Create a CAPA', 'Crear una CAPA',
         'إنشاء إجراء تصحيحي/وقائي', 'CAPAを作成', '创建 CAPA'),

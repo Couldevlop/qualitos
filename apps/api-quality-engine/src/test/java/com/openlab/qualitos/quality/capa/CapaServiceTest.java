@@ -1481,6 +1481,117 @@ class CapaServiceTest {
         return n;
     }
 
+    // ---------- rouvrir une action, tant que le dossier est ouvert ----------
+
+    /** Un ecart ouvert, retrouve par la reference que l'action porte. */
+    private void ecartOuvert(CapaCase c, com.openlab.qualitos.quality.nonconformity.NcStatus statut) {
+        c.setSourceRef("NC-2026-0001");
+        com.openlab.qualitos.quality.nonconformity.NonConformity nc =
+                new com.openlab.qualitos.quality.nonconformity.NonConformity();
+        nc.setStatus(statut);
+        when(ncRepo.findByTenantIdAndReference(TENANT, "NC-2026-0001"))
+                .thenReturn(Optional.of(nc));
+    }
+
+    /**
+     * UNE ACTION CLOSE REPART, ET SON GESTE AVEC ELLE.
+     *
+     * <p>Une action jugee efficace se clot (ADR 0144) et plus rien n'y bouge.
+     * Or le releve qui arrive la semaine suivante peut contredire le verdict :
+     * sans ce chemin, la seule issue etait d'ouvrir une SECONDE CAPA sur le
+     * meme geste -- deux actions la ou il n'y en a qu'une (ADR 0135).
+     */
+    @Test
+    void reopenCase_closedActionAndOpenNc_reopensWithItsAction() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        c.setClosedAt(Instant.now());
+        c.setResolvedAt(Instant.now());
+        c.setEffectivenessVerified(true);
+        CapaAction a = action(c, CapaActionStatus.DONE);
+        a.setCompletedAt(Instant.now());
+        ecartOuvert(c, com.openlab.qualitos.quality.nonconformity.NcStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.reopenCase(c.getId());
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        assertThat(c.getClosedAt()).isNull();
+        // Un dossier reparti en traitement qui afficherait « resolu le 12 mars »
+        // dirait deux choses a la fois.
+        assertThat(c.getResolvedAt()).isNull();
+        // LE GESTE REPART AVEC ELLE : laisser la ligne « faite » rendrait un
+        // etat que sa propre ligne contredit, et le recalcul la refermerait.
+        assertThat(a.getStatus()).isEqualTo(CapaActionStatus.IN_PROGRESS);
+        assertThat(a.getCompletedAt()).isNull();
+        // LE VERDICT RESTE : il a ete rendu, date et journalise. L'effacer
+        // ferait mentir la piste d'audit -- on lit « jugee efficace, puis
+        // rouverte », pas « jamais jugee ».
+        assertThat(c.getEffectivenessVerified()).isTrue();
+        verify(journal).record(c, CapaTransition.REOPENED);
+    }
+
+    /** {@code RESOLVED} ne scelle pas, mais seule une action CLOSE se rouvre. */
+    @Test
+    void reopenCase_notClosed_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.reopenCase(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    /**
+     * LA BORNE EST LE DOSSIER, PAS L'ACTION. Une fois l'ecart cloture,
+     * l'affaire est arretee : c'est sa cloture qui scelle, pas celle de l'action.
+     */
+    @Test
+    void reopenCase_closedNc_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        action(c, CapaActionStatus.DONE);
+        ecartOuvert(c, com.openlab.qualitos.quality.nonconformity.NcStatus.CLOSED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.reopenCase(c.getId()))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("NC-2026-0001");
+    }
+
+    /** Un ecart annule scelle comme un ecart clos : l'affaire est arretee. */
+    @Test
+    void reopenCase_cancelledNc_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        ecartOuvert(c, com.openlab.qualitos.quality.nonconformity.NcStatus.CANCELLED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.reopenCase(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    /** Sans reference d'ecart, ce chemin ne sait pas a quoi se borner. */
+    @Test
+    void reopenCase_withoutSourceRef_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        c.setSourceRef(null);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.reopenCase(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    /** L'ecart cite n'existe plus : on refuse plutot que de rouvrir a l'aveugle. */
+    @Test
+    void reopenCase_unknownNc_throws() {
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        c.setSourceRef("NC-2026-0001");
+        when(ncRepo.findByTenantIdAndReference(TENANT, "NC-2026-0001"))
+                .thenReturn(Optional.empty());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.reopenCase(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+    }
+
     private CapaCase capa(UUID tenant, CapaStatus status) {
         CapaCase c = new CapaCase();
         c.setId(UUID.randomUUID());
