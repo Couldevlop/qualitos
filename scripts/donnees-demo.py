@@ -39,6 +39,21 @@ from datetime import date, datetime, timedelta, timezone
 SUFFIXE = datetime.now().strftime('%m%d%H%M%S')
 
 
+def premier_du_mois(decalage_mois=0):
+    """Le premier jour d'un mois, en UTC, decale de N mois par rapport a celui-ci.
+
+    Les periodes d'un objectif sont decoupees sur les MOIS CIVILS : un releve
+    date a « aujourd'hui moins trente jours » peut retomber dans le mois
+    courant et laisser une periode sans mesure, ce qui rompt la suite de
+    depassements que la regle attend.
+    """
+    annee = datetime.now(timezone.utc).year
+    mois = datetime.now(timezone.utc).month + decalage_mois
+    annee += (mois - 1) // 12
+    mois = (mois - 1) % 12 + 1
+    return datetime(annee, mois, 1, tzinfo=timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
 def maintenant(decalage_jours=0):
     return (datetime.now(timezone.utc) + timedelta(days=decalage_jours)) \
         .strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -788,45 +803,53 @@ def huit_disciplines(c):
                     {'category': categorie, 'label': cause},
                     '8D : cause %s' % categorie.lower())
 
-    # --- D3, D5, D7 : les trois natures d'action ---------------------------
-    # TROIS NATURES, ET C'EST LE POINT : le D3 montre l'endiguement, le D5 le
-    # correctif, le D7 le preventif. Un dossier qui n'en porterait qu'une
-    # laisserait deux disciplines vides dans le rapport.
-    dossier = c.poste('/api/v1/capa/cases', {
-        'title': 'Recaler la butee du poste 3 et surveiller la derive',
-        'type': 'CORRECTIVE', 'criticity': 'HIGH', 'sourceType': 'NON_CONFORMITY',
-        'sourceRef': nc.get('reference'), 'ownerId': c.sujet, 'dueDate': jour(25),
-        'description': "Remettre la butee en position, puis la faire entrer au plan "
-                       "de maintenance et a l AMDEC procede.",
-    }, '8D : dossier CAPA')
-    if dossier:
-        for titre, nature, etat, echeance, critere in [
-            ('Trier et isoler le stock de boitiers du lot en cours',
-             'CONTAINMENT', 'DONE', jour(-3), None),
-            ('Recaler le montage de vissage au poste 3',
-             'CORRECTIVE', 'DONE', jour(-1),
-             'Aucune cote hors tolerance sur trois series consecutives'),
-            ('Reprendre la gamme de controle dimensionnel',
-             'CORRECTIVE', 'DONE', jour(2),
-             'Un controle intermediaire tous les cinquante serrages'),
-            ('Etendre la reprise de butee aux cinq postes de vissage du site',
-             'PREVENTIVE', 'IN_PROGRESS', jour(20), None),
-        ]:
-            c.poste('/api/v1/capa/cases/%s/actions' % dossier['id'], {
-                'title': titre, 'actionType': nature, 'status': etat,
-                'assigneeId': c.sujet, 'assigneeName': c.nom,
-                'decidedOn': jour(-6), 'dueDate': echeance,
-                'effectivenessCriterion': critere,
-                # UNE VERIFICATION EXIGEE A UN RESPONSABLE, et le moteur le
-                # refuse autrement (400) : promettre qu'on verifiera sans dire
-                # qui laisserait une promesse sans personne pour la tenir.
-                'verificationRequired': critere is not None,
-                'verificationAssigneeId': c.sujet if critere else None,
-                'verificationAssigneeName': c.nom if critere else None,
-                'verificationInstructions':
-                    'Relever trois series consecutives et consigner les cotes.'
-                    if critere else None,
-            }, '8D : action %s' % nature.lower())
+    # --- D3, D5, D7 : UNE CAPA PAR ACTION ----------------------------------
+    # L'ECART EST LE DOSSIER, CHAQUE CAPA EST UNE ACTION (ADR 0135). On
+    # n'ouvre donc pas une CAPA qui porterait trois gestes : on ouvre une CAPA
+    # par geste, toutes rattachees au meme ecart. Les trois natures restent le
+    # point du 8D -- le D3 montre l'endiguement, le D5 le correctif, le D7 le
+    # preventif -- mais elles se lisent desormais dossier par dossier.
+    #
+    # L'ECHEANCE D'UN DOSSIER NE PEUT PAS ETRE DANS LE PASSE (le moteur rend
+    # 400), alors que celle d'une action l'accepte. Les dates ci-dessous
+    # partent donc d'aujourd'hui et s'etalent : c'est aussi ce qui donne au
+    # filtre « Echeance avant le » du registre quelque chose a filtrer.
+    for titre, nature, etat, echeance, critere in [
+        ('Trier et isoler le stock de boitiers du lot en cours',
+         'CONTAINMENT', 'DONE', jour(0), None),
+        ('Recaler le montage de vissage au poste 3',
+         'CORRECTIVE', 'DONE', jour(3),
+         'Aucune cote hors tolerance sur trois series consecutives'),
+        ('Reprendre la gamme de controle dimensionnel',
+         'CORRECTIVE', 'DONE', jour(10),
+         'Un controle intermediaire tous les cinquante serrages'),
+        ('Etendre la reprise de butee aux cinq postes de vissage du site',
+         'PREVENTIVE', 'IN_PROGRESS', jour(20), None),
+    ]:
+        dossier = c.poste('/api/v1/capa/cases', {
+            'title': titre, 'type': nature, 'criticity': 'HIGH',
+            'sourceType': 'NON_CONFORMITY', 'sourceRef': nc.get('reference'),
+            'ownerId': c.sujet, 'dueDate': echeance,
+            'description': 'Action %s decidee sur l ecart %s.'
+                           % (nature.lower(), nc.get('reference', '')),
+        }, '8D : CAPA %s' % nature.lower())
+        if not dossier:
+            continue
+        c.poste('/api/v1/capa/cases/%s/actions' % dossier['id'], {
+            'title': titre, 'actionType': nature, 'status': etat,
+            'assigneeId': c.sujet, 'assigneeName': c.nom,
+            'decidedOn': jour(-6), 'dueDate': echeance,
+            'effectivenessCriterion': critere,
+            # UNE VERIFICATION EXIGEE A UN RESPONSABLE, et le moteur le
+            # refuse autrement (400) : promettre qu'on verifiera sans dire
+            # qui laisserait une promesse sans personne pour la tenir.
+            'verificationRequired': critere is not None,
+            'verificationAssigneeId': c.sujet if critere else None,
+            'verificationAssigneeName': c.nom if critere else None,
+            'verificationInstructions':
+                'Relever trois series consecutives et consigner les cotes.'
+                if critere else None,
+        }, '8D : action %s' % nature.lower())
 
     # --- D8 : la seule discipline qu'aucun module ne sait renseigner -------
     c.met('/api/v1/nc/%s/8d' % nc_id, {
@@ -835,6 +858,84 @@ def huit_disciplines(c):
                        "et la gamme de controle remise a niveau sans arret de ligne.",
     }, '8D : reconnaissance de l equipe')
     return nc
+
+
+
+def objectifs(c):
+    """Un objectif qualite, ses mesures, sa confrontation et la CAPA qui en nait.
+
+    LA CHAINE COMPLETE, et c'est tout l'interet : un objectif seul ne montre
+    rien. Il faut un indicateur qui derive, des releves qui le prouvent sur
+    assez de periodes pour que la regle du client declenche, puis la
+    proposition de CAPA que la confrontation redige, et le dossier qu'un pilote
+    accepte. Un ecran de revue sans proposition ne se distingue pas d'un ecran
+    casse.
+
+    LES PERIODES SONT ALIGNEES SUR LES MOIS CIVILS (`ObjectivePeriodSeries`) :
+    la derniere fenetre se termine juste apres le mois du dernier releve, et
+    les precedentes se deduisent en remontant. Trois releves dans trois mois
+    civils distincts donnent donc trois periodes -- de quoi franchir les deux
+    periodes critiques exigees ci-dessous. Des fenetres glissantes de trente
+    jours, elles, pourraient tomber deux fois dans le meme mois et ne jamais
+    completer la suite.
+    """
+    print('\nObjectifs qualite')
+
+    # UN INDICATEUR DEDIE : les KPI de la section « kpis » portent une serie qui
+    # tient sa cible, et un objectif atteint ne proposerait aucune CAPA.
+    kpi = c.poste('/api/v1/kpis', {
+        'code': 'rebut-ligne2-%s' % SUFFIXE,
+        'name': 'Taux de rebut ligne 2',
+        'direction': 'LOWER_IS_BETTER', 'unit': '%',
+        'targetValue': 2, 'createdBy': c.sujet,
+    }, 'KPI du rebut')
+    if not kpi:
+        return
+    c.poste('/api/v1/kpis/%s/activate' % kpi['id'], {}, '  activation du KPI')
+
+    # Trois mois civils pleins, tous AU-DELA du seuil critique (4 %), et qui
+    # s'aggravent : la derive se voit sur la courbe autant que dans la regle.
+    for rang, valeur in [(3, 4.3), (2, 4.8), (1, 5.4)]:
+        debut = premier_du_mois(-rang)
+        c.poste('/api/v1/kpis/%s/measurements' % kpi['id'], {
+            'value': valeur,
+            'periodStart': debut, 'periodEnd': premier_du_mois(-rang + 1),
+            'recordedByUserId': c.sujet,
+        }, '  releve %s (%s)' % (valeur, debut[:7]))
+
+    # LES SEUILS SE RANGENT DANS LE SENS DE PROGRES DU KPI (ici on veut
+    # descendre : cible <= alerte <= critique), sans quoi le moteur rend 400 --
+    # un seuil d'alerte du bon cote de la cible ne declencherait jamais.
+    objectif = c.poste('/api/v1/quality-objectives', {
+        'title': 'Ramener le rebut de la ligne 2 sous 2 %',
+        'kpiId': kpi['id'],
+        'processName': 'Assemblage ligne 2',
+        'isoClause': '9.1.1',
+        'periodMonths': 1,
+        'targetValue': 2, 'thresholdWarning': 3, 'thresholdCritical': 4,
+        'warningPeriods': 2, 'criticalPeriods': 2, 'recoveryPeriods': 2,
+    }, 'objectif « rebut sous 2 % »')
+    if not objectif:
+        return
+
+    # 200 avec la proposition si la regle declenche, 204 sinon. Le client rend
+    # `{}` sur un 204 et `None` sur un refus : les confondre ferait passer pour
+    # « rien a proposer » un appel qui a ete refuse.
+    proposition = c.poste('/api/v1/quality-objectives/%s/evaluate' % objectif['id'],
+                          {}, 'confrontation aux mesures')
+    if proposition is None:
+        return
+    if not proposition:
+        print('  ATTENTION : la regle n a pas declenche, la revue restera vide')
+        return
+
+    c.poste('/api/v1/quality-objectives/%s/capa' % objectif['id'], {
+        'title': 'Reprendre le reglage de la ligne 2 et suivre le rebut',
+        'description': 'Le rebut depasse le seuil critique sur deux mois '
+                       'consecutifs : regler, puis verifier le retour sous la cible.',
+        'ownerId': c.sujet, 'ownerName': c.nom,
+        'dueDate': jour(30),
+    }, 'CAPA acceptee depuis l objectif')
 
 
 def derogations(c):
@@ -940,6 +1041,7 @@ SECTIONS = {
     'documents': documents,
     'fournisseurs': fournisseurs,
     'kpis': kpis,
+    'objectifs': objectifs,
     'cercles-idees': cercles_et_idees,
     'formation': formation,
     'equipements': equipements,
