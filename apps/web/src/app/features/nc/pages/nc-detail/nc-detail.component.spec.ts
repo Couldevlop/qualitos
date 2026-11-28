@@ -938,15 +938,15 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(el.querySelector('[data-test="creer-capa"]')!.textContent).toContain('Voir les actions');
   });
 
-  it('montre le lien vers la CAPA, jamais son identifiant brut', () => {
+  it('ne montre jamais l’identifiant brut du dossier, ni de lien vers lui', () => {
     setup(buildNc({ capaCaseId: '99999999-9999-9999-9999-999999999999' }));
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    // Le chemin du dossier porte desormais SON identifiant comme repere
-    // (`capa-dossier-<id>`) : depuis qu'une discipline n'a qu'un tableau pour
-    // tous les dossiers, le lien ne peut plus etre nomme par la discipline.
-    expect(el.querySelector(
-      '[data-test="capa-dossier-99999999-9999-9999-9999-999999999999"]')).not.toBeNull();
+    // LE LIEN EST PARTI : chaque ligne du tableau EST une CAPA (ADR 0135), et
+    // proposer d'aller la voir ailleurs renvoyait au meme endroit.
+    expect(el.querySelector('[data-test^="capa-dossier-"]'))
+      .withContext('plus de bouton « Voir la CAPA » au-dessus du tableau')
+      .toBeNull();
     // L'identifiant reste un repere de banc : il ne se LIT nulle part.
     expect(el.textContent).not.toContain('99999999-9999');
   });

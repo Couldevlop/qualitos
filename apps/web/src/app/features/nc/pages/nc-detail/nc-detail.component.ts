@@ -1974,14 +1974,30 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   /**
-   * « 2 dossiers sur cet écart » — écrit SEULEMENT quand il y en a plusieurs.
+   * Le compte de la DISCIPLINE, et non celui des dossiers de l'écart.
    *
-   * <p>Annoncer « 1 dossier » sur le cas ordinaire serait du bruit ; c'est la
-   * pluralité qui est inattendue, et c'est elle qu'il faut dire.
+   * <p>La phrase annonçait « 6 dossiers CAPA traitent cet écart » au-dessus
+   * d'un tableau qui en montrait QUATRE : elle comptait tous les dossiers de
+   * l'écart — endiguement et préventif compris — alors que le tableau ne
+   * retient que les correctives. Deux nombres pour une même ligne, dont un
+   * faux ; et c'est le chiffre affiché que l'on croit.
+   *
+   * <p>Elle disait aussi « dossiers ». L'écart EST le dossier, et chaque CAPA
+   * est une action (ADR 0135) : compter des « dossiers CAPA » nommait un
+   * niveau intermédiaire que le modèle ne reconnaît pas.
+   *
+   * <p>Le compte vient du panneau, qui seul a lu les actions : le composant,
+   * lui, ne connaît que les dossiers. C'est la même source que les coches du
+   * rail, qui disent déjà vrai par ce chemin.
    */
-  compteDesDossiers(n: NcResponse): string {
-    const nb = this.dossiers(n).length;
-    return $localize`:@@nc.detail.capa-cases-count:${nb}:count: dossiers CAPA traitent cet écart`;
+  compteDesActionsCorrectives(): number {
+    return this.comptesParEtape.get('D5') ?? 0;
+  }
+
+  /** La phrase, écrite SEULEMENT au-delà d'une action : « 1 action » serait du bruit. */
+  libelleDesActionsCorrectives(): string {
+    const nb = this.compteDesActionsCorrectives();
+    return $localize`:@@nc.detail.d5-actions-count:${nb}:count: actions correctives traitent cet écart`;
   }
 
   /** Le titre du bloc dépend de l'étape : résoudre ou clôturer. */
