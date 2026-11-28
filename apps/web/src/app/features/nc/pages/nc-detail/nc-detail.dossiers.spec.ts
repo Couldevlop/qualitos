@@ -121,16 +121,26 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
 
   // ---------- l'invariant : tous les dossiers, pas seulement le premier ----
 
-  it('montre un tableau pour CHAQUE dossier de l’écart', () => {
-    setup(ecart([
+  it('confie au panneau TOUS les dossiers de l’écart, sans les lier un à un', () => {
+    const nc = ecart([
       { id: 'capa-1', title: 'Dossier de la fiche', status: 'IN_PROGRESS' },
       { id: 'capa-2', title: 'Dossier ouvert depuis la liste', status: 'OPEN' }
-    ], 'capa-1'));
+    ], 'capa-1');
+    setup(nc);
 
+    // L'INVARIANT TIENT TOUJOURS -- les actions du second dossier doivent
+    // rester visibles -- mais il se lit la ou il vit : le panneau recoit tous
+    // les identifiants. Il se lisait avant dans une rangee de liens.
+    expect(component.idsDesDossiers(nc))
+      .withContext('sinon les actions du second dossier sont invisibles')
+      .toEqual(['capa-1', 'capa-2']);
+
+    // LES LIENS SONT PARTIS. Une rangee de six boutons « Voir la CAPA »
+    // coiffait un tableau dont chaque ligne EST une CAPA (ADR 0135) : on
+    // proposait d'aller voir ailleurs ce qui etait deja sous les yeux.
     expect(tous('capa-dossier-').length)
-      .withContext('un tableau par dossier, sinon les actions du second sont invisibles')
-      .toBe(2);
-    expect(un('capa-dossier-capa-2')).not.toBeNull();
+      .withContext('la ligne du tableau mene deja a son action')
+      .toBe(0);
   });
 
   /**
@@ -158,18 +168,36 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
   });
 
   /**
-   * C'est la PLURALITÉ qui est inattendue, et c'est elle qu'il faut dire.
-   * Annoncer « 1 dossier » sur le cas ordinaire serait du bruit.
+   * LE COMPTE EST CELUI DE LA DISCIPLINE, PAS CELUI DES DOSSIERS.
+   *
+   * <p>Il annoncait « 6 dossiers CAPA traitent cet ecart » au-dessus d'un
+   * tableau qui en montrait QUATRE : il comptait tous les dossiers de l'ecart,
+   * endiguement et preventif compris, alors que le tableau ne retient que les
+   * correctives. Deux nombres pour une meme ligne, dont un faux.
+   *
+   * <p>Seul le panneau a lu les actions ; le composant ne connait que les
+   * dossiers. Le compte lui vient donc par `compter`, comme les coches du rail.
    */
-  it('annonce le compte seulement quand l’écart porte plusieurs dossiers', () => {
-    setup(ecart([{ id: 'capa-1', title: 'Seul dossier', status: 'OPEN' }], 'capa-1'));
-    expect(un('capa-action-compte')).toBeNull();
-
+  it('annonce le compte des actions correctives, et seulement au-delà d’une', () => {
     setup(ecart([
       { id: 'capa-1', title: 'Premier', status: 'OPEN' },
       { id: 'capa-2', title: 'Second', status: 'OPEN' }
     ], 'capa-1'));
-    expect(un('capa-action-compte')?.textContent).toContain('2');
+
+    // Deux dossiers, mais le panneau n'a pas encore compte : rien a annoncer.
+    expect(un('capa-action-compte'))
+      .withContext('deux dossiers ne font pas deux actions correctives')
+      .toBeNull();
+
+    component.compter('D5', 1);
+    fixture.detectChanges();
+    expect(un('capa-action-compte'))
+      .withContext('« 1 action » serait du bruit')
+      .toBeNull();
+
+    component.compter('D5', 4);
+    fixture.detectChanges();
+    expect(un('capa-action-compte')?.textContent).toContain('4');
   });
 
   /**
@@ -179,8 +207,9 @@ describe('NcDetailComponent — les dossiers CAPA de l’écart', () => {
   it('affiche encore le dossier du lien quand la liste n’est pas servie', () => {
     setup(ecart(undefined, 'capa-1'));
 
-    expect(tous('capa-dossier-').length).toBe(1);
-    expect(un('capa-dossier-capa-1')).not.toBeNull();
+    expect(component.idsDesDossiers(ecart(undefined, 'capa-1')))
+      .withContext('le dossier du lien reste servi au panneau')
+      .toEqual(['capa-1']);
   });
 
   /**

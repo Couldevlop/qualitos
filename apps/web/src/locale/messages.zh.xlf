@@ -8018,10 +8018,6 @@ Portail clients</source>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">创建处理此不符合项的 CAPA</target>
       </trans-unit>
-      <trans-unit id="nc.detail.open-capa" datatype="html">
-        <source>Voir la CAPA</source>
-        <target state="translated">查看 CAPA</target>
-      </trans-unit>
       <trans-unit id="nc.detail.capa-link-open" datatype="html">
         <source>Ouvrir le dossier</source>
         <target state="translated">打开案例</target>
@@ -23454,9 +23450,9 @@ historique 12 mois</source>
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">在 CAPA 案件中写明纠正措施</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
-        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
-        <target state="translated">有 <x id="count"/> 份 CAPA 档案在处理该不合格项</target>
+      <trans-unit id="nc.detail.d5-actions-count" datatype="html">
+        <source><x id="count"/> actions correctives traitent cet écart</source>
+        <target state="translated">有 <x id="count"/> 项纠正措施在处理该不合格项</target>
       </trans-unit>
       <trans-unit id="nc.detail.resolve-needs-analysis-title" datatype="html">
         <source>Analysez l'écart d'abord</source>

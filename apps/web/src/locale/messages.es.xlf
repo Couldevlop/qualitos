@@ -8018,10 +8018,6 @@ Portal de clientes</target>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">Abrir la CAPA que trata esta no conformidad</target>
       </trans-unit>
-      <trans-unit id="nc.detail.open-capa" datatype="html">
-        <source>Voir la CAPA</source>
-        <target state="translated">Ver la CAPA</target>
-      </trans-unit>
       <trans-unit id="nc.detail.capa-link-open" datatype="html">
         <source>Ouvrir le dossier</source>
         <target state="translated">Abrir el expediente</target>
@@ -23454,9 +23450,9 @@ historial de 12 meses</target>
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">Escribir la acción correctiva en un expediente CAPA</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
-        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
-        <target state="translated"><x id="count"/> expedientes CAPA tratan esta no conformidad</target>
+      <trans-unit id="nc.detail.d5-actions-count" datatype="html">
+        <source><x id="count"/> actions correctives traitent cet écart</source>
+        <target state="translated"><x id="count"/> acciones correctivas tratan esta no conformidad</target>
       </trans-unit>
       <trans-unit id="nc.detail.resolve-needs-analysis-title" datatype="html">
         <source>Analysez l'écart d'abord</source>

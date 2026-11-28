@@ -8018,10 +8018,6 @@ Portail clients</source>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">この不適合に対処するCAPAを作成</target>
       </trans-unit>
-      <trans-unit id="nc.detail.open-capa" datatype="html">
-        <source>Voir la CAPA</source>
-        <target state="translated">CAPAを表示</target>
-      </trans-unit>
       <trans-unit id="nc.detail.capa-link-open" datatype="html">
         <source>Ouvrir le dossier</source>
         <target state="translated">案件を開く</target>
@@ -23453,9 +23449,9 @@ historique 12 mois</source>
         <source>Écrire l'action corrective dans une CAPA</source>
         <target state="translated">是正処置をCAPA案件に記載</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-cases-count" datatype="html">
-        <source><x id="count"/> dossiers CAPA traitent cet écart</source>
-        <target state="translated">この不適合は <x id="count"/> 件の CAPA 案件で処理されています</target>
+      <trans-unit id="nc.detail.d5-actions-count" datatype="html">
+        <source><x id="count"/> actions correctives traitent cet écart</source>
+        <target state="translated">この不適合は <x id="count"/> 件の是正処置で対応されています</target>
       </trans-unit>
       <trans-unit id="nc.detail.resolve-needs-analysis-title" datatype="html">
         <source>Analysez l'écart d'abord</source>

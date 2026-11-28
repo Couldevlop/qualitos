@@ -832,24 +832,15 @@
             </p>
 
             <ng-container *ngIf="dossiers(n).length; else sansDossierD5">
-              <!-- Le compte N'APPARAIT QUE s'il y a de quoi compter : « 1 dossier »
-                   sur le cas ordinaire serait du bruit. -->
-              <p class="dim" *ngIf="dossiers(n).length > 1" data-test="capa-action-compte">
-                {{ compteDesDossiers(n) }}
+              <!-- LE COMPTE DE LA DISCIPLINE, pas celui des dossiers : il
+                   annoncait six dossiers au-dessus d'un tableau qui en montrait
+                   quatre, parce qu'il comptait aussi l'endiguement et le
+                   preventif. N'apparait qu'au-dela d'une action -- « 1 action »
+                   serait du bruit. -->
+              <p class="dim" *ngIf="compteDesActionsCorrectives() > 1"
+                 data-test="capa-action-compte">
+                {{ libelleDesActionsCorrectives() }}
               </p>
-              <!-- LES LIENS SEULS, et au-dessus du tableau unique. L'intitule du
-                   dossier s'ecrivait ici : le nom de sa premiere action -- « Action
-                   containment 1 » -- se lisait comme un titre de section, juste
-                   au-dessus d'un tableau qui le reprend sur sa premiere ligne.
-                   Chaque dossier garde son chemin ; le tableau, lui, ne se
-                   dedouble plus pour autant. -->
-              <div class="capa-dossier-head">
-                <a mat-stroked-button *ngFor="let d of dossiers(n)" [routerLink]="['/capa', d.id]"
-                   [attr.data-test]="'capa-dossier-' + d.id">
-                  <mat-icon>open_in_new</mat-icon>
-                  <span i18n="@@nc.detail.open-capa">Voir la CAPA</span>
-                </a>
-              </div>
               <qos-capa-action-panel [capaCaseIds]="idsDesDossiers(n)" [team]="n.teamMembers ?? []"
                                      [source]="sourceDeLEcart(n)"
                                      [ajoutAutorise]="accepteUneCapaDePlus(n)"
