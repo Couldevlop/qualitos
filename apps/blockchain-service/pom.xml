@@ -127,6 +127,17 @@
                 <artifactId>bcutil-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+            <!-- grpc-netty-shaded tire guava 33.6.0-android, porteur de
+                 CVE-2026-102554 (déni de service, HIGH, corrigée en 33.7.2). Le
+                 pom racine épingle déjà 33.7.2-jre, mais ce module a son PROPRE
+                 parent et n'hérite d'aucune de ses surcharges : la version doit
+                 être répétée ici. La saveur -jre est celle qui convient sur JVM ;
+                 grpc ne retient -android que pour la compatibilité Android. -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.7.2-jre</version>
+            </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-bom</artifactId>
