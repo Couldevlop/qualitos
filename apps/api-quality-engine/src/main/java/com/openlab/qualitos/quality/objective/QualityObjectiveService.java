@@ -300,11 +300,21 @@ public class QualityObjectiveService {
      * et laisser saisir le critère reviendrait à clore sur une cible plus facile
      * que celle qu'on s'était donnée (ADR 0133 §4).
      *
-     * <p>Une proposition encore en attente sur cet objectif est SOLDÉE par ce
-     * dossier : elle passe {@code ACCEPTED} et porte sa référence. Sans cela, la
-     * revue aurait proposé indéfiniment ce qu'on venait de traiter. Il n'en faut
-     * pas pour agir — la recette veut le bouton sur toute ligne en alerte ou
-     * critique, y compris au premier dépassement.
+     * <p><b>Le dossier laisse TOUJOURS sa trace sur l'objectif</b>, sous la
+     * forme d'une proposition {@code ACCEPTED} qui porte sa référence. Une
+     * proposition encore en attente est soldée ; s'il n'y en a pas — la recette
+     * veut le bouton dès la première ligne en alerte, avant que la règle n'ait
+     * déclenché — elle est ÉCRITE ici.
+     *
+     * <p>Cette ligne n'est pas une écriture de confort : elle est le SEUL lien
+     * entre le dossier et l'objectif. {@link ObjectiveRecoveryAdapter#forCase}
+     * la cherche pour répondre « le KPI est-il revenu sous la cible ? », et sans
+     * elle il répond « ce dossier ne vient pas d'un objectif » — le dossier se
+     * clôt alors librement, pendant que la fenêtre a annoncé une vérification
+     * d'efficacité verrouillée. Le contrôle affiché n'existerait pas (ADR 0133).
+     * Elle tient aussi la revue : {@code niveauMaintenu} la lit pour retenir
+     * l'objectif jusqu'au retour DURABLE, et la clé {@code uk_qo_proposals_periode}
+     * empêche le moteur de proposer une seconde fois la période déjà traitée.
      *
      * <p>Voir l'ADR 0143.
      */
@@ -326,13 +336,26 @@ public class QualityObjectiveService {
         }
 
         List<ObjectivePeriodSeries.Period> periodes = periodes(o, null);
-        Instant debutDeLaDerniere = periodes.isEmpty()
-                ? null : periodes.get(periodes.size() - 1).start();
-        String source = referenceSource(o, niveau, debutDeLaDerniere);
+        if (periodes.isEmpty()) {
+            throw new ObjectiveStateException(
+                    "This objective has no measured period: there is no deviation to treat");
+        }
+        ObjectivePeriodSeries.Period derniere = periodes.get(periodes.size() - 1);
 
-        Optional<QualityObjectiveProposal> enAttente = proposals
-                .findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(tenantId, o.getId())
-                .stream().filter(QualityObjectiveProposal::isPending).findFirst();
+        // La trace a trois sources possibles, dans cet ordre : la proposition
+        // DE CETTE PÉRIODE si elle existe deja -- sans quoi la cle
+        // uk_qo_proposals_periode refuserait la ligne --, une proposition
+        // encore en attente sur une autre periode, puis la creation.
+        QualityObjectiveProposal lien = proposals
+                .findByTenantIdAndObjectiveIdAndLevelAndPeriodStart(
+                        tenantId, o.getId(), niveau, derniere.start())
+                .or(() -> proposals
+                        .findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(tenantId, o.getId())
+                        .stream().filter(QualityObjectiveProposal::isPending).findFirst())
+                .orElseGet(() -> traceDeLEcart(tenantId, o, kpi, a, niveau, derniere,
+                        req.title().trim()));
+
+        String source = referenceSource(o, niveau, derniere.start());
 
         CapaDto.CaseResponse dossier = capaService.openCase(
                 new CapaDto.OpenCaseRequest(
@@ -359,16 +382,48 @@ public class QualityObjectiveService {
                 CapaSourceType.QUALITY_OBJECTIVE,
                 source);
 
-        UUID propositionSoldee = null;
-        if (enAttente.isPresent()) {
-            QualityObjectiveProposal p = enAttente.get();
-            p.setStatus(ProposalStatus.ACCEPTED);
-            p.setCapaCaseId(dossier.id());
-            p.setDecidedBy(CurrentUser.userId().orElse(null));
-            p.setDecidedAt(Instant.now());
-            propositionSoldee = proposals.save(p).getId();
-        }
-        return new ObjectiveDto.CapaOpenedResponse(dossier.id(), propositionSoldee);
+        lien.setStatus(ProposalStatus.ACCEPTED);
+        lien.setCapaCaseId(dossier.id());
+        // Une proposition d'abord DECLINEE puis traitee ne garde pas son motif
+        // de refus : la ligne porte la decision finale, et le refus reste dans
+        // le journal d'audit, qui lui est horodate.
+        lien.setRejectionReason(null);
+        lien.setDecidedBy(CurrentUser.userId().orElse(null));
+        lien.setDecidedAt(Instant.now());
+        return new ObjectiveDto.CapaOpenedResponse(
+                dossier.id(), proposals.save(lien).getId());
+    }
+
+    /**
+     * La ligne qui relie ce dossier a l'ecart qu'il traite, quand la regle n'a
+     * pas encore propose.
+     *
+     * <p>Elle dit l'ECART CONSTATE, jamais un declenchement qui n'a pas eu lieu :
+     * {@code breachPeriods} porte le nombre de periodes consecutives reellement
+     * depassees, qui peut rester sous le compte exige par la regle -- c'est
+     * precisement le cas que la recette veut pouvoir traiter a la main.
+     *
+     * <p>Son intitule est celui du dossier REELLEMENT ouvert, pas un titre que
+     * personne n'a propose.
+     */
+    private QualityObjectiveProposal traceDeLEcart(
+            UUID tenantId, QualityObjective o, KpiDefinition kpi,
+            ObjectiveAssessment a, ObjectiveLevel niveau,
+            ObjectivePeriodSeries.Period derniere, String titreDuDossier) {
+        QualityObjectiveProposal p = new QualityObjectiveProposal();
+        p.setTenantId(tenantId);
+        p.setObjectiveId(o.getId());
+        p.setLevel(niveau);
+        p.setPeriodStart(derniere.start());
+        p.setPeriodEnd(derniere.end());
+        p.setObservedValue(derniere.value());
+        p.setBreachPeriods(niveau == ObjectiveLevel.CRITICAL
+                ? a.criticalBreaches() : a.warningBreaches());
+        p.setTitle(titreDuDossier);
+        p.setDescription(corpsDuDossier(o, kpi, a, derniere));
+        p.setEffectivenessCriterion(critereDEfficacite(o, kpi));
+        p.setStatus(ProposalStatus.PENDING);
+        return p;
     }
 
     /**

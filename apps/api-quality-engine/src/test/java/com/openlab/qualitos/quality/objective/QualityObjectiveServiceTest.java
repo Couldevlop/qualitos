@@ -41,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -551,14 +552,87 @@ class QualityObjectiveServiceTest {
         }
 
         @Test
-        void sansProposition_onPeutQuandMemeAgir() {
+        void sansProposition_onAgitQuandMeme_ETLeLienEstECRIT() {
             // La règle ne propose qu'au bout de ses périodes consécutives ; la
             // recette veut le bouton dès la première ligne passée en alerte.
+            //
+            // LE LIEN N'EST PAS UN CONFORT. Sans ligne portant capa_case_id,
+            // ObjectiveRecoveryAdapter#forCase répond « ce dossier ne vient pas
+            // d'un objectif » et le dossier se clôt librement — pendant que la
+            // fenêtre a annoncé une vérification d'efficacité verrouillée.
             when(proposals.findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(TENANT, OBJ))
                     .thenReturn(List.of());
             ObjectiveDto.CapaOpenedResponse out = service.openCapa(OBJ, ACTION);
             assertThat(out.capaId()).isEqualTo(CASE);
-            assertThat(out.proposalId()).isNull();
+            assertThat(out.proposalId()).isNotNull();
+
+            ArgumentCaptor<QualityObjectiveProposal> c =
+                    ArgumentCaptor.forClass(QualityObjectiveProposal.class);
+            verify(proposals).save(c.capture());
+            QualityObjectiveProposal lien = c.getValue();
+            assertThat(lien.getCapaCaseId()).isEqualTo(CASE);
+            assertThat(lien.getStatus()).isEqualTo(ProposalStatus.ACCEPTED);
+            assertThat(lien.getObjectiveId()).isEqualTo(OBJ);
+            assertThat(lien.getTenantId()).isEqualTo(TENANT);
+            assertThat(lien.getDecidedBy()).isEqualTo(ACTOR);
+        }
+
+        @Test
+        void leLienEcritPorteLeCritereQueLeDossierAnnonce() {
+            // C'est CETTE copie que lit ObjectiveRecoveryAdapter pour dire au
+            // module CAPA ce qu'il attend avant de clore. Divergente, le dossier
+            // afficherait un critère et se jugerait sur un autre.
+            when(proposals.findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(TENANT, OBJ))
+                    .thenReturn(List.of());
+            CapaDto.OpenCaseRequest dossier = ouvrir();
+
+            ArgumentCaptor<QualityObjectiveProposal> c =
+                    ArgumentCaptor.forClass(QualityObjectiveProposal.class);
+            verify(proposals).save(c.capture());
+            assertThat(c.getValue().getEffectivenessCriterion())
+                    .isEqualTo(dossier.effectivenessCriterion());
+        }
+
+        @Test
+        void leLienEcritDitLEcartCONSTATE_etNonUnDeclenchementQuiNaPasEuLieu() {
+            // Un seul mois au-delà du seuil critique alors que la règle en exige
+            // deux : la ligne porte 1, le compte réel. Écrire le compte exigé
+            // ferait dire au dossier qu'une règle a déclenché quand elle a
+            // seulement été devancée à la main.
+            when(proposals.findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(TENANT, OBJ))
+                    .thenReturn(List.of());
+            ObjectiveDto.CapaOpenedResponse out = service.openCapa(OBJ, ACTION);
+            assertThat(out.capaId()).isEqualTo(CASE);
+
+            ArgumentCaptor<QualityObjectiveProposal> c =
+                    ArgumentCaptor.forClass(QualityObjectiveProposal.class);
+            verify(proposals).save(c.capture());
+            QualityObjectiveProposal lien = c.getValue();
+            assertThat(lien.getBreachPeriods()).isEqualTo(1);
+            assertThat(lien.getLevel()).isEqualTo(ObjectiveLevel.CRITICAL);
+            assertThat(lien.getPeriodStart()).isEqualTo(Instant.parse("2026-10-01T00:00:00Z"));
+            assertThat(lien.getObservedValue()).isEqualByComparingTo("900");
+            // L'intitulé est celui du dossier réellement ouvert, pas un titre
+            // que personne n'a proposé.
+            assertThat(lien.getTitle()).isEqualTo(ACTION.title());
+        }
+
+        @Test
+        void lAPeriodeDejaTraitee_onNEcritPasUneSecondeLigne() {
+            // uk_qo_proposals_periode refuserait la ligne, et surtout : deux
+            // lignes pour une même période feraient proposer deux fois ce qui
+            // a déjà été traité une fois.
+            when(proposals.findByTenantIdAndObjectiveIdOrderByCreatedAtDesc(TENANT, OBJ))
+                    .thenReturn(List.of());
+            when(proposals.findByTenantIdAndObjectiveIdAndLevelAndPeriodStart(
+                    TENANT, OBJ, ObjectiveLevel.CRITICAL,
+                    Instant.parse("2026-10-01T00:00:00Z")))
+                    .thenReturn(Optional.of(enAttente));
+
+            ObjectiveDto.CapaOpenedResponse out = service.openCapa(OBJ, ACTION);
+            assertThat(out.proposalId()).isEqualTo(PROP);
+            assertThat(enAttente.getCapaCaseId()).isEqualTo(CASE);
+            verify(proposals, times(1)).save(any());
         }
 
         @Test
