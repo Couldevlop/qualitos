@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges,
+  OnDestroy, Output
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, forkJoin } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subscription } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -69,7 +72,7 @@ const SUITE: Record<CapaActionStatus, CapaActionStatus | null> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false
 })
-export class CapaActionPanelComponent implements OnChanges {
+export class CapaActionPanelComponent implements OnChanges, OnDestroy {
 
   /**
    * Les dossiers à lire. Le panneau les charge lui-même : l'appelant n'a que
@@ -223,10 +226,14 @@ export class CapaActionPanelComponent implements OnChanges {
   /**
    * Vrai quand l'utilisateur porte l'action « vérifier une efficacité ».
    *
-   * <p>Lu une fois, et non à chaque passe de détection : le droit ne change pas
-   * pendant qu'on regarde un tableau.
+   * <p>Lu par abonnement, et non à chaque passe de détection : un gabarit qui
+   * rappellerait le service à chaque passe créerait un flux par ligne et par
+   * passe.
    */
   private droitDeJuger = false;
+
+  /** L'abonnement au droit, résilié avec le panneau. */
+  private readonly abonnements = new Subscription();
 
   constructor(
     private readonly capaService: CapaService,
@@ -236,10 +243,14 @@ export class CapaActionPanelComponent implements OnChanges {
     private readonly authz: AuthzService,
     private readonly auth: AuthService
   ) {
-    this.authz.can('capa.verify').subscribe(ok => {
+    this.abonnements.add(this.authz.can('capa.verify').subscribe(ok => {
       this.droitDeJuger = ok;
       this.cdr.markForCheck();
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.abonnements.unsubscribe();
   }
 
   ngOnChanges(): void {
