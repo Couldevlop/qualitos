@@ -8018,10 +8018,6 @@ Portail clients</source>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">この不適合に対処するCAPAを作成</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-link-open" datatype="html">
-        <source>Ouvrir le dossier</source>
-        <target state="translated">案件を開く</target>
-      </trans-unit>
       <trans-unit id="audits.detail.create-capa" datatype="html">
         <source>Créer une CAPA</source>
         <target state="translated">CAPAを作成</target>

@@ -8018,10 +8018,6 @@ Portail clients</source>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">创建处理此不符合项的 CAPA</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-link-open" datatype="html">
-        <source>Ouvrir le dossier</source>
-        <target state="translated">打开案例</target>
-      </trans-unit>
       <trans-unit id="audits.detail.create-capa" datatype="html">
         <source>Créer une CAPA</source>
         <target state="translated">创建 CAPA</target>

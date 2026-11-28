@@ -8018,10 +8018,6 @@ Portal de clientes</target>
         <source>Ouvrir la CAPA qui traite cette non-conformité</source>
         <target state="translated">Abrir la CAPA que trata esta no conformidad</target>
       </trans-unit>
-      <trans-unit id="nc.detail.capa-link-open" datatype="html">
-        <source>Ouvrir le dossier</source>
-        <target state="translated">Abrir el expediente</target>
-      </trans-unit>
       <trans-unit id="audits.detail.create-capa" datatype="html">
         <source>Créer une CAPA</source>
         <target state="translated">Crear una CAPA</target>
