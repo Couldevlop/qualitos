@@ -1777,11 +1777,11 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
    * appelle un renvoi : les opposer ici n'aurait laisse au valideur aucune
    * reponse du tout.
    *
-   * <p>La personne qui a resolu l'ecart ne le voit pas : elle ne juge pas son
-   * propre travail, dans un sens comme dans l'autre, et le serveur la refuse.
+   * <p>Qui a resolu l'ecart peut desormais le renvoyer comme le clore : un
+   * second regard n'est plus exige (ADR 0145).
    */
   canSendBack(n: NcResponse): boolean {
-    return n.status === 'RESOLVED' && !this.jeSuisLeResolveur(n);
+    return n.status === 'RESOLVED';
   }
 
   /** Ouvre la fenetre du renvoi : il y a un message a ecrire, meme facultatif. */
@@ -1829,11 +1829,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'CONTROL_PLAN_REVISION_REQUIRED':
         return $localize`:@@nc.blocker.control-plan-revision:Cet écart a été déclaré impactant le plan de surveillance. Acceptez la révision du plan qui le concerne pour pouvoir le clôturer — ou corrigez la réponse si le plan n'était pas en cause.`;
 
-      case 'SECOND_LOOK_REQUIRED':
-        // La phrase dit le GESTE qui débloque, et surtout que l'écart n'est pas
-        // en défaut : c'est la personne qui ne peut pas le clôturer, pas l'écart
-        // qui résiste. Sans cette nuance, on cherche ce qu'il reste à corriger.
-        return $localize`:@@nc.blocker.second-look:Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.`;
       default:
         // Code inconnu (serveur plus récent que l'écran) : mieux vaut une phrase
         // générique qu'un bouton éteint sans explication.
@@ -2059,18 +2054,6 @@ export class NcDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     return null;
   }
 
-  /**
-   * Est-ce MOI qui ai resolu cet ecart ?
-   *
-   * <p>Lu du motif que le serveur a deja calcule, et non d'une comparaison
-   * d'identifiants refaite ici : `SECOND_LOOK_REQUIRED` est le seul motif qui
-   * depende de QUI LIT la fiche, et il ne parait qu'a cette personne-la. Deux
-   * lectures de la meme regle finiraient par diverger ; celle-ci n'en a
-   * qu'une.
-   */
-  jeSuisLeResolveur(n: NcResponse): boolean {
-    return (n.blockers ?? []).some(b => String(b.code) === 'SECOND_LOOK_REQUIRED');
-  }
 
   /**
    * Les actions de CE dossier que CE motif-la retient.

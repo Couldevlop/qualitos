@@ -269,21 +269,23 @@
               </ng-template>
             </ng-container>
 
-            <!-- LE SECOND REGARD, désigné. Clore, c'est valider que la
-                 résolution tient, et personne ne valide son propre travail.
-                 Sans désignation, ce regard revient aux rôles de pilotage — ce
-                 qui suffit quand l'organisation en compte plusieurs. Une petite
-                 structure n'a qu'un responsable qualité : c'est lui qui résout,
-                 et il serait le seul à pouvoir clore ce qu'il vient de
-                 résoudre. Facultatif, comme tout le reste de cet écran. -->
+            <!-- LE SECOND REGARD, DÉSIGNÉ ET FACULTATIF (ADR 0145). Clore,
+                 c'est valider que la résolution tient, et une organisation qui
+                 en a les moyens confie ce geste à quelqu'un d'autre : la
+                 personne nommée ici pourra clore même sans rôle qualité, et
+                 renvoyer le traitement si la résolution ne tient pas. Mais
+                 l'organisation qui n'a qu'un responsable qualité n'est plus
+                 arrêtée pour autant — qui a résolu peut clore. Le registre
+                 garde les deux mains et leurs dates ; c'est l'organisation qui
+                 juge, plus le logiciel. -->
             <div class="valideur"
-                 *ngIf="!isTerminal(n.status) && !jeSuisLeResolveur(n); else valideurLecture">
+                 *ngIf="!isTerminal(n.status); else valideurLecture">
               <qos-user-picker [formControl]="valideurControl"
                                (userSelected)="valideurChoisi($event)"
                                i18n-label="@@nc.8d.validator"
                                label="Valideur de la clôture (second regard)"
                                i18n-hint="@@nc.8d.validator-hint"
-                               hint="Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même."
+                               hint="Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité."
                                data-test="valideur"></qos-user-picker>
               <div class="form-foot" *ngIf="valideurModifie">
                 <button mat-flat-button color="primary" type="button"
@@ -298,18 +300,6 @@
               <p class="valideur-lecture" *ngIf="n.validatorName" data-test="valideur-lecture">
                 <span class="info-label" i18n="@@nc.8d.validator">Valideur de la clôture (second regard)</span>
                 <span class="info-value">{{ n.validatorName }}</span>
-              </p>
-              <!-- LE CHAMP ÉTAIT OFFERT À QUI NE POUVAIT PAS S'EN SERVIR. La
-                   personne qui a résolu l'écart ne choisit pas qui la relit :
-                   elle y nommerait un complaisant, et le second regard
-                   deviendrait un tampon qu'elle aurait choisi elle-même. Le
-                   serveur le refusait déjà -- mais après le clic, et par un
-                   message générique qui conseillait de recharger la page. -->
-              <p class="valideur-interdit" *ngIf="jeSuisLeResolveur(n)"
-                 data-test="valideur-interdit" i18n="@@nc.8d.validator-own-work">
-                Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit
-                votre travail. Un autre détenteur du droit de clôture désignera
-                le valideur.
               </p>
             </ng-template>
           </section>

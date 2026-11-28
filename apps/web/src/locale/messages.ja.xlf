@@ -23949,17 +23949,13 @@ historique 12 mois</source>
         <source>Le constat ne peut pas rester vide.</source>
         <target state="translated">所見を空欄のままにはできません。</target>
       </trans-unit>
-      <trans-unit id="nc.8d.validator-own-work" datatype="html">
-        <source>Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre travail. Un autre détenteur du droit de clôture désignera le valideur.</source>
-        <target state="translated">この不適合を解決したのはあなたです。自分の作業を誰が検証するかを選ぶことはできません。完了権限を持つ他の人が承認者を指名します。</target>
-      </trans-unit>
       <trans-unit id="nc.8d.validator" datatype="html">
         <source>Valideur de la clôture (second regard)</source>
         <target state="translated">完了の承認者（second pair of eyes）</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator-hint" datatype="html">
-        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité — et jamais s’il l’a résolu elle-même.</source>
-        <target state="translated">任意。この人は品質の役割がなくてもこの不適合を完了できます。ただし自分で解決した場合はできません。</target>
+        <source>Facultatif. Cette personne pourra clôturer cet écart même sans rôle qualité.</source>
+        <target state="translated">任意。この人は品質の役割がなくてもこの不適合を完了できます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.validator-saved" datatype="html">
         <source>Valideur enregistré.</source>
@@ -23972,10 +23968,6 @@ historique 12 mois</source>
       <trans-unit id="nc.8d.closed-by" datatype="html">
         <source>Clôturé par</source>
         <target state="translated">完了者</target>
-      </trans-unit>
-      <trans-unit id="nc.blocker.second-look" datatype="html">
-        <source>Vous avez résolu cet écart : sa clôture demande un second regard. Un responsable qualité, ou le valideur désigné, doit la porter.</source>
-        <target state="translated">この不適合はあなたが解決しました。完了には別の人の確認が必要です。品質責任者または指名された承認者が行ってください。</target>
       </trans-unit>
       <trans-unit id="nav.nlq-explore" datatype="html">
         <source>Exploration NLQ</source>

@@ -302,7 +302,6 @@ export type NcBlockerCode =
    * résolu cet écart ne peut pas le clôturer. Le même écart n'en porte
    * aucun pour quelqu'un d'autre.
    */
-  | 'SECOND_LOOK_REQUIRED'
   /**
    * L'ecart a ete declare impactant le PFMEA du produit, et aucune revision du
    * PFMEA n'a encore ete actee pour lui.

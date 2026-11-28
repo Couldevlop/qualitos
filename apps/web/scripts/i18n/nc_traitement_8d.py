@@ -425,21 +425,6 @@ TRANSLATIONS = {
         'لا يمكن ترك الملاحظة فارغة.',
         '所見を空欄のままにはできません。',
         '发现内容不能为空。'),
-    'nc.8d.validator-own-work': (
-        "Vous avez résolu cet écart : vous ne pouvez pas choisir qui relit votre"
-        " travail. Un autre détenteur du droit de clôture désignera le valideur.",
-        'You resolved this non-conformity: you cannot choose who reviews your'
-        ' own work. Another holder of the closing right will designate the'
-        ' validator.',
-        'Usted resolvió esta no conformidad: no puede elegir quién revisa su'
-        ' propio trabajo. Otro titular del derecho de cierre designará al'
-        ' validador.',
-        'أنت من حلّ عدم المطابقة هذا، لذا لا يمكنك اختيار من يراجع عملك.'
-        ' سيعيّن المصادقَ شخصٌ آخر يملك حقّ الإغلاق.',
-        'この不適合を解決したのはあなたです。自分の作業を誰が検証するかを選ぶことはできません。'
-        '完了権限を持つ他の人が承認者を指名します。',
-        '这个偏差是您解决的：您不能选择谁来复核自己的工作。'
-        '由其他拥有关闭权限的人指定审核人。'),
     'nc.8d.validator': (
         "Valideur de la clôture (second regard)",
         'Closure validator (second pair of eyes)',
@@ -449,14 +434,13 @@ TRANSLATIONS = {
         '关闭审核人（第二双眼睛）'),
     'nc.8d.validator-hint': (
         "Facultatif. Cette personne pourra clôturer cet écart même sans rôle"
-        " qualité — et jamais s’il l’a résolu elle-même.",
+        " qualité.",
         'Optional. This person can close this non-conformity even without a'
-        ' quality role — and never if they resolved it themselves.',
+        ' quality role.',
         'Opcional. Esta persona podrá cerrar esta no conformidad incluso sin rol'
-        ' de calidad, y nunca si la resolvió ella misma.',
-        'اختياري. يمكن لهذا الشخص إغلاق عدم المطابقة هذا حتى بدون دور في الجودة —'
-        ' ولا يمكنه ذلك أبدًا إن كان هو من حلّه.',
-        '任意。この人は品質の役割がなくてもこの不適合を完了できます。ただし自分で解決した場合はできません。',
+        ' de calidad.',
+        'اختياري. يمكن لهذا الشخص إغلاق عدم المطابقة هذا حتى بدون دور في الجودة.',
+        '任意。この人は品質の役割がなくてもこの不適合を完了できます。',
         '可选。此人即使没有质量角色也可关闭该不合格项；若由其本人解决，则不可。'),
     'nc.8d.validator-saved': (
         "Valideur enregistré.",
@@ -474,15 +458,4 @@ TRANSLATIONS = {
         '审核人未能保存。'),
     'nc.8d.closed-by': (
         "Clôturé par", 'Closed by', 'Cerrada por', 'أغلقه', '完了者', '关闭人'),
-    'nc.blocker.second-look': (
-        "Vous avez résolu cet écart : sa clôture demande un second regard. Un"
-        " responsable qualité, ou le valideur désigné, doit la porter.",
-        'You resolved this non-conformity: closing it calls for a second pair of'
-        ' eyes. A quality manager, or the designated validator, has to do it.',
-        'Usted resolvió esta no conformidad: su cierre exige una segunda mirada.'
-        ' Debe hacerlo un responsable de calidad o el validador designado.',
-        'أنت من حلّ عدم المطابقة هذا: إغلاقه يتطلب مراجعة ثانية. يجب أن يتولاها'
-        ' مسؤول جودة أو المُصادِق المُعيَّن.',
-        'この不適合はあなたが解決しました。完了には別の人の確認が必要です。品質責任者または指名された承認者が行ってください。',
-        '该不合格项由您解决：关闭需要第二双眼睛。应由质量负责人或指定审核人完成。'),
 }

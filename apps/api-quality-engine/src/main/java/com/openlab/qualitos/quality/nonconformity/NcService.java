@@ -446,7 +446,7 @@ public class NcService {
      */
     public NcDto.Response close(UUID id, NcDto.CloseRequest request) {
         NonConformity nc = load(id);
-        exigerUnSecondRegard(nc);
+        exigerLeDroitDeClore(nc);
         if (nc.getStatus() != NcStatus.RESOLVED) {
             throw new NcStateException("Only RESOLVED non-conformities can be closed");
         }
@@ -525,9 +525,8 @@ public class NcService {
      * </ol>
      *
      * <p>Se désigner soi-même n'est PAS refusé : qui a {@code nc.close} détient
-     * déjà ce droit sur tous les écarts, et la séparation de
-     * {@link #exigerUnSecondRegard} l'arrête de toute façon s'il a résolu
-     * celui-ci. Le refuser interdirait un geste sans effet.
+     * déjà ce droit sur tous les écarts, et la désignation ne lui ajoute rien.
+     * Le refuser interdirait un geste sans effet.
      *
      * @param nc l'écart visé, ou {@code null} à la déclaration — il n'a pas
      *           encore d'histoire, seule la première règle s'applique.
@@ -535,15 +534,6 @@ public class NcService {
     private void exigerLeDroitDeDesigner(NonConformity nc) {
         if (!authz.has(Permission.NC_CLOSE)) {
             throw new AccessDeniedException("Access denied");
-        }
-        if (nc == null || nc.getResolvedById() == null) {
-            return;
-        }
-        if (nc.getResolvedById().equals(CurrentUser.userId().orElse(null))) {
-            throw new NcStateException(
-                    "You resolved this non-conformity: you cannot choose who reviews"
-                    + " your own work. Another holder of the closing right can"
-                    + " designate a validator.");
         }
     }
 
@@ -562,33 +552,27 @@ public class NcService {
      * refus est un 403 muet : on n'explique pas le modèle de droits à qui n'en
      * a pas.
      *
-     * <p><b>La séparation ensuite.</b> Personne ne valide son propre travail,
-     * quel que soit son rôle. La personne qui a écrit la résolution ne peut pas
-     * la clôturer : le registre déclarerait l'écart traité ET vérifié sans
-     * qu'aucun contrôle indépendant n'ait eu lieu (ISO 9001 §10.2). Ce refus,
-     * lui, s'explique — la personne sait très bien qu'elle a résolu l'écart, et
-     * ce qu'elle doit savoir c'est que quelqu'un d'autre doit prendre le relais.
+     * <p><b>UN SECOND REGARD N'EST PLUS EXIGÉ</b> (ADR 0145). La personne qui a
+     * écrit la résolution peut clore l'écart elle-même. La règle d'avant
+     * — personne ne valide son propre travail — arrêtait les organisations où
+     * la même personne constate, traite et clôt, et laissait des écarts
+     * entièrement résolus bloqués faute d'un second utilisateur disponible.
      *
-     * <p><b>Les écarts d'avant la règle</b> n'ont pas de {@code resolvedById} :
-     * ils se closent sans obstacle. L'alternative — les bloquer tous faute de
-     * trace — punirait l'organisation pour une donnée que le logiciel ne
-     * collectait pas encore.
+     * <p>Ce qui disparaît est le BLOCAGE, pas la TRACE : {@code resolvedById} et
+     * {@code closedById} restent écrits et datés. Un auditeur qui veut savoir si
+     * les deux gestes sont d'une même main lit les deux champs, et c'est à
+     * l'organisation de décider si cela lui convient — ce que le logiciel ne
+     * décide plus à sa place.
      *
      * <p>Vérifié ICI et non au point d'entrée : la désignation est portée par
      * l'écart, et l'intercepteur de permissions tranche avant de savoir lequel
      * est visé.
      */
-    private void exigerUnSecondRegard(NonConformity nc) {
+    private void exigerLeDroitDeClore(NonConformity nc) {
         UUID moi = CurrentUser.userId().orElse(null);
         boolean designe = nc.getValidatorId() != null && nc.getValidatorId().equals(moi);
         if (!designe && !authz.has(Permission.NC_CLOSE)) {
             throw new AccessDeniedException("Access denied");
-        }
-        if (moi != null && moi.equals(nc.getResolvedById())) {
-            throw new NcStateException(
-                    "A second pair of eyes is required: the person who resolved this"
-                    + " non-conformity cannot close it. Ask a quality manager, or the"
-                    + " designated validator, to review the resolution.");
         }
     }
 
@@ -602,10 +586,9 @@ public class NcService {
      * personne ne clôturait, sans qu'aucune fiche ne porte la raison de cette
      * attente.
      *
-     * <p>MÊME PORTE QUE LA CLÔTURE : {@link #exigerUnSecondRegard} d'abord, et
+     * <p>MÊME PORTE QUE LA CLÔTURE : {@link #exigerLeDroitDeClore} d'abord, et
      * le même refus. Clore et renvoyer sont les deux réponses d'un seul acte —
-     * qui peut dire oui doit pouvoir dire non, et qui a résolu l'écart ne juge
-     * pas plus son propre travail dans un sens que dans l'autre.
+     * qui peut dire oui doit pouvoir dire non.
      *
      * <p>RETOUR À {@link NcStatus#ACTION_DEFINED}, et non à {@code OPEN} : le
      * renvoi dit que le traitement n'est pas encore bon, pas que l'instruction
@@ -623,7 +606,7 @@ public class NcService {
      */
     public NcDto.Response sendBack(UUID id, NcDto.SendBackRequest request) {
         NonConformity nc = load(id);
-        exigerUnSecondRegard(nc);
+        exigerLeDroitDeClore(nc);
         if (nc.getStatus() != NcStatus.RESOLVED) {
             throw new NcStateException(
                     "Only a RESOLVED non-conformity can be sent back for modification:"
@@ -1022,14 +1005,6 @@ public class NcService {
                     nc.getCapaCaseId(), nc.getReference()).size();
             if (enTravail > 0) {
                 motifs.add(new NcDto.Blocker(NcBlockerCode.CAPA_CASES_UNSETTLED, enTravail));
-            }
-            // Le SEUL motif qui dépende de qui lit la fiche : l'écart est
-            // clôturable, mais pas par la personne qui l'a résolu. Dit ici, le
-            // bouton s'éteint avec son explication ; dit seulement au clic, on
-            // découvrait le refus en croyant en avoir fini.
-            UUID moi = CurrentUser.userId().orElse(null);
-            if (moi != null && moi.equals(nc.getResolvedById())) {
-                motifs.add(new NcDto.Blocker(NcBlockerCode.SECOND_LOOK_REQUIRED, 1));
             }
             motifs.addAll(blocagesDeRisque(nc));
             return List.copyOf(motifs);

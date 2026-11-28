@@ -119,25 +119,31 @@ class NcSecondRegardTest {
         assertThat(n.getClosedByName()).isEqualTo("Ali Benali");
     }
 
-    // ---------- la séparation ----------
+    // ---------- le second regard est OFFERT, non EXIGÉ (ADR 0145) ----------
 
-    /** Le cœur de la règle : on ne valide pas son propre travail. */
+    /**
+     * Le cœur de la règle d'aujourd'hui : qui a résolu peut clore.
+     *
+     * <p>Exiger une seconde personne arrêtait les organisations où la même
+     * personne constate, traite et clôt, et laissait des écarts entièrement
+     * résolus bloqués faute d'un second utilisateur disponible.
+     */
     @Test
-    void close_parLaPersonneQuiAResolu_refuse() {
+    void close_parLaPersonneQuiAResolu_passe() {
         NonConformity n = ecart(NcStatus.RESOLVED);
         n.setResolvedById(MARIE);
         enregistre(n);
         jePuisClore();
         connecte(MARIE, "Marie Durand");
 
-        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
-                .isInstanceOf(NcStateException.class)
-                // Le refus DIT quoi faire. « Accès refusé » laisserait croire à
-                // un défaut de droits, alors que l'écart est parfaitement
-                // clôturable -- par quelqu'un d'autre.
-                .hasMessageContaining("second pair of eyes")
-                .hasMessageContaining("cannot close it");
-        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+        service.close(n.getId(), SANS_IMPACT);
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
+        // CE QUI DISPARAÎT EST LE BLOCAGE, PAS LA TRACE : les deux gestes
+        // restent attribués, et c'est à l'organisation de juger s'il lui
+        // convient qu'ils soient d'une même main.
+        assertThat(n.getResolvedById()).isEqualTo(MARIE);
+        assertThat(n.getClosedById()).isEqualTo(MARIE);
     }
 
     /** Et la même clôture passe dès qu'une autre personne la porte. */
@@ -155,24 +161,23 @@ class NcSecondRegardTest {
     }
 
     /**
-     * La DÉSIGNATION n'exempte pas de la séparation.
+     * Le valideur désigné qui a lui-même résolu clôt sans obstacle.
      *
-     * <p>Le cas se présentera : on désigne le valideur à l'ouverture, et c'est
-     * lui qui finit par mener le traitement. Si la désignation l'autorisait à
-     * clore ce qu'il a résolu, elle offrirait le moyen exact de contourner la
-     * règle qu'elle sert.
+     * <p>Le cas se présente : on désigne le valideur à l'ouverture, et c'est lui
+     * qui finit par mener le traitement. Il porte alors les deux gestes, et le
+     * registre le dit.
      */
     @Test
-    void close_parLeValideurDesigneQuiAResolu_refuseQuandMeme() {
+    void close_parLeValideurDesigneQuiAResolu_passe() {
         NonConformity n = ecart(NcStatus.RESOLVED);
         n.setResolvedById(MARIE);
         n.setValidatorId(MARIE);
         enregistre(n);
         connecte(MARIE, "Marie Durand");
 
-        assertThatThrownBy(() -> service.close(n.getId(), SANS_IMPACT))
-                .isInstanceOf(NcStateException.class)
-                .hasMessageContaining("second pair of eyes");
+        service.close(n.getId(), SANS_IMPACT);
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.CLOSED);
     }
 
     /**
@@ -253,7 +258,7 @@ class NcSecondRegardTest {
      * refus à qui croyait en avoir fini.
      */
     @Test
-    void laFiche_porteLeMotifPourLaPersonneQuiAResolu() {
+    void laFiche_nePorteAucunMotifALaPersonneQuiAResolu() {
         NonConformity n = ecart(NcStatus.RESOLVED);
         n.setResolvedById(MARIE);
         enregistre(n);
@@ -263,16 +268,12 @@ class NcSecondRegardTest {
 
         NcDto.Response fiche = service.findById(n.getId());
 
-        assertThat(fiche.blockers())
-                .extracting(NcDto.Blocker::code)
-                .containsExactly(NcBlockerCode.SECOND_LOOK_REQUIRED);
+        // Plus aucun motif ne dépend de QUI LIT la fiche : le bouton de
+        // clôture est allumé pour tout le monde (ADR 0145).
+        assertThat(fiche.blockers()).isEmpty();
     }
 
-    /**
-     * Et le MÊME écart n'en porte aucun pour quelqu'un d'autre : c'est le seul
-     * motif qui dépende de qui lit la fiche, parce que l'écart, lui, est
-     * clôturable.
-     */
+    /** Et le MÊME écart n'en porte aucun non plus pour quelqu'un d'autre. */
     @Test
     void laFiche_nePorteAucunMotifPourQuelquUnDAutre() {
         NonConformity n = ecart(NcStatus.RESOLVED);
@@ -352,21 +353,22 @@ class NcSecondRegardTest {
     /**
      * ON NE CHOISIT PAS CELUI QUI NOUS RELIT.
      *
-     * <p>Apres la resolution, celui qui l'a ecrite y nommerait un complaisant,
-     * et le second regard deviendrait un tampon qu'il aurait choisi lui-meme.
+     * <p>Le second regard n'etant plus exige (ADR 0145), lui interdire de
+     * nommer qui pourrait le porter n'empecherait plus rien : il clot deja
+     * lui-meme. Seul le DROIT de designer reste verifie.
      */
     @Test
-    void update_parLAuteurDeLaResolution_refuseDeChangerLaDesignation() {
+    void update_parLAuteurDeLaResolution_designeQuandMeme() {
         NonConformity n = ecart(NcStatus.RESOLVED);
         n.setResolvedById(MARIE);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        lenient().when(repo.save(n)).thenReturn(n);
         jePuisClore();
         connecte(MARIE, "Marie Durand");
 
-        assertThatThrownBy(() -> service.update(n.getId(), modificationValideur(ALI, "Ali Benali")))
-                .isInstanceOf(NcStateException.class)
-                .hasMessageContaining("cannot choose who reviews");
-        assertThat(n.getValidatorId()).isNull();
+        service.update(n.getId(), modificationValideur(ALI, "Ali Benali"));
+
+        assertThat(n.getValidatorId()).isEqualTo(ALI);
     }
 
     /**
@@ -477,19 +479,18 @@ class NcSecondRegardTest {
         assertThat(n.getSentBackReason()).isNull();
     }
 
-    /** La MEME porte que la cloture : on ne renvoie pas son propre travail. */
+    /** La MEME porte que la cloture : qui a resolu peut aussi renvoyer. */
     @Test
-    void sendBack_parLaPersonneQuiAResolu_refuse() {
+    void sendBack_parLaPersonneQuiAResolu_passe() {
         NonConformity n = ecart(NcStatus.RESOLVED);
         n.setResolvedById(MARIE);
         enregistre(n);
         jePuisClore();
         connecte(MARIE, "Marie Durand");
 
-        assertThatThrownBy(() -> service.sendBack(n.getId(), new NcDto.SendBackRequest(null)))
-                .isInstanceOf(NcStateException.class)
-                .hasMessageContaining("second pair of eyes");
-        assertThat(n.getStatus()).isEqualTo(NcStatus.RESOLVED);
+        service.sendBack(n.getId(), new NcDto.SendBackRequest(null));
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.ACTION_DEFINED);
     }
 
     /** Sans role ni designation : 403 muet, comme la cloture. */

@@ -219,22 +219,17 @@ describe('NcDetailComponent — ce qui se corrige sur la fiche', () => {
   // ---------- D1 : qui peut désigner le second regard ----------
 
   /**
-   * `SECOND_LOOK_REQUIRED` est le seul motif qui dépende de QUI LIT la fiche :
-   * le serveur ne le pose que pour la personne qui a résolu l'écart. L'écran
-   * le lit plutôt que de refaire la comparaison d'identifiants -- deux
-   * lectures de la même règle finiraient par diverger.
+   * LE SECOND REGARD EXISTE, IL N'EST PLUS EXIGE (ADR 0145). Le valideur se
+   * designe sur un ecart resolu comme sur un autre : qui a resolu peut clore
+   * lui-meme, donc lui interdire de nommer qui pourrait le faire a sa place
+   * n'empecherait plus rien.
    */
-  it('n’offre pas le valideur à qui a résolu l’écart, et dit pourquoi', async () => {
+  it('offre le valideur sur un écart résolu', async () => {
     await monter();
-    setup(ecart({
-      status: 'RESOLVED',
-      blockers: [{ code: 'SECOND_LOOK_REQUIRED', count: 1 }]
-    }));
+    setup(ecart({ status: 'RESOLVED' }));
 
-    expect(un('valideur')).toBeNull();
-    expect(un('valideur-interdit')).not.toBeNull();
-    expect(un('valideur-interdit')!.textContent)
-      .toContain('vous ne pouvez pas choisir qui relit');
+    expect(un('valideur')).not.toBeNull();
+    expect(un('valideur-interdit')).toBeNull();
   });
 
   it('laisse désigner le valideur à qui n’a pas résolu l’écart', async () => {

@@ -209,17 +209,6 @@ describe('NcDetailComponent — le bandeau de ce qui manque', () => {
       .toBe(aFaire);
   });
 
-  // Le second regard ne se lève pas en ouvrant un dossier : aucun lien n'y mène.
-  it('ne met aucun lien sur le motif du second regard', async () => {
-    await monter();
-    afficher(ecart('RESOLVED', [{ code: 'SECOND_LOOK_REQUIRED', count: 1 }], [
-      { id: 'capa-1', title: 'Un dossier', status: 'IN_PROGRESS' }
-    ]));
-
-    expect(un('nc-blocker-SECOND_LOOK_REQUIRED')).not.toBeNull();
-    expect(un('nc-blocker-lien-capa-1')).toBeNull();
-  });
-
   /**
    * Le DÉCOMPTE compte tous les dossiers, les liens ne nomment que ceux qu'on
    * voit : un lecteur restreint à ses propres dossiers (ADR 0081) lit « 3 » et
