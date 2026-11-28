@@ -147,16 +147,14 @@
                  c'est ici qu'on la solde, sur la ligne meme ou l'on vient de
                  terminer l'action. Un ecran separe se visiterait si l'on y
                  pensait, et le dossier attendrait indefiniment (ADR 0132). -->
-            <ng-container *qosCan="'capa.verify'">
-              <button mat-stroked-button color="primary" type="button"
-                      *ngIf="attendVerification(a) && !verrouillee(a) && !lectureSeule"
-                      [disabled]="(acting$ | async) ?? false"
-                      (click)="verifier(a); $event.stopPropagation()"
-                      data-test="capa-action-verifier">
-                <mat-icon aria-hidden="true">fact_check</mat-icon>
-                <span i18n="@@capa.actions.verify">Vérifier l'efficacité</span>
-              </button>
-            </ng-container>
+            <button mat-stroked-button color="primary" type="button"
+                    *ngIf="attendVerification(a) && peutJuger(a) && !verrouillee(a) && !lectureSeule"
+                    [disabled]="(acting$ | async) ?? false"
+                    (click)="verifier(a); $event.stopPropagation()"
+                    data-test="capa-action-verifier">
+              <mat-icon aria-hidden="true">fact_check</mat-icon>
+              <span i18n="@@capa.actions.verify">Vérifier l'efficacité</span>
+            </button>
             <!-- L'efficacite CONSTATEE : qui a juge et quand, en infobulle --
                  un jugement sans auteur ne vaut rien devant un auditeur. -->
             <span class="action-panel__verifiee" *ngIf="efficaciteConstatee(a)"

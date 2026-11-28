@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Observable, of, throwError } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { AuthzService } from '../../../../core/authz/authz.service';
 import { DirectoryService } from '../../../../core/directory/directory.service';
 import { CapaActionPanelModule } from '../../capa-action-panel.module';
@@ -126,6 +127,8 @@ describe('CapaActionPanelComponent', () => {
     opts: {
       dossier?: CapaCaseResponse; droits?: boolean; panne?: boolean;
       preuves?: CapaEvidence[];
+      /** Qui est connecte : le `sub` de son jeton (ADR 0143). */
+      moi?: string;
     } = {}
   ): Promise<void> {
     TestBed.resetTestingModule();
@@ -161,7 +164,11 @@ describe('CapaActionPanelComponent', () => {
         { provide: MatSnackBar, useValue: snack },
         { provide: DirectoryService, useValue: annuaire },
         // Tous les droits par défaut : ce banc teste le panneau, pas la matrice (ADR 0078).
-        { provide: AuthzService, useValue: { can: () => of(opts.droits ?? true) } }
+        { provide: AuthzService, useValue: { can: () => of(opts.droits ?? true) } },
+        {
+          provide: AuthService,
+          useValue: { snapshot: () => ({ userId: opts.moi ?? 'u-connecte' }) }
+        }
       ]
     }).compileComponents();
 
@@ -1066,6 +1073,44 @@ describe('CapaActionPanelComponent', () => {
       expect(panneau().attendVerification(partielle)).toBeTrue();
       expect(panneau().efficaciteConstatee(partielle)).toBeFalse();
       expect(un('capa-action-verifier')).not.toBeNull();
+    });
+
+    /**
+     * LA PERSONNE DESIGNEE JUGE (ADR 0143). Le bouton ne tenait qu'au droit
+     * « verifier une efficacite », livre au seul pilotage : on confiait la
+     * verification a quelqu'un, et l'ecran ne lui offrait nulle part de la
+     * rendre.
+     */
+    it('propose de verifier a la personne designee sur l’action, sans le droit', async () => {
+      await setup({
+        droits: false,
+        moi: 'u-vera',
+        dossier: dossier({ actions: [promise({ verificationAssigneeId: 'u-vera' })] })
+      });
+
+      expect(un('capa-action-verifier')).not.toBeNull();
+    });
+
+    /** A defaut, celle que le DOSSIER designe : la promesse y a ete posee. */
+    it('propose de verifier a la personne designee sur le dossier', async () => {
+      await setup({
+        droits: false,
+        moi: 'u-vera',
+        dossier: dossier({ verificationAssigneeId: 'u-vera', actions: [promise()] })
+      });
+
+      expect(un('capa-action-verifier')).not.toBeNull();
+    });
+
+    /** Et a personne d'autre : le chemin ne s'ouvre pas a tout le monde. */
+    it('ne le propose pas a qui n’est ni designe ni habilite', async () => {
+      await setup({
+        droits: false,
+        moi: 'u-passant',
+        dossier: dossier({ actions: [promise({ verificationAssigneeId: 'u-vera' })] })
+      });
+
+      expect(un('capa-action-verifier')).toBeNull();
     });
 
     it('affiche l’efficacite constatee, avec qui a juge et quand', async () => {

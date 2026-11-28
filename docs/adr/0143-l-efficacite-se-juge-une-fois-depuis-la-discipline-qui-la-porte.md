@@ -3,11 +3,11 @@
 - **Statut** : Accepté
 - **Date** : 2026-11-27
 - **Owners** : @Couldevlop
-- **Portée** : api-quality-engine (`capa` : `CapaService.verifyActionEffectiveness`,
-  `CapaController`, `CapaScope`, `CapaCaseRepository` ; `capa.effectiveness` :
-  domaine `CaseSettlement` ; `nonconformity.eightd` :
-  `EightDSnapshotAssembler`), écrans `/capa/efficacite` et la fiche d'un écart
-  (ses huit disciplines)
+- **Portée** : api-quality-engine (`capa` : `CapaService.verifyActionEffectiveness`
+  et `verifyEffectiveness`, `CapaController`, `CapaScope`, `CapaCaseRepository` ;
+  `capa.effectiveness` : domaine `CaseSettlement` ; `nonconformity.eightd` :
+  `EightDSnapshotAssembler`, `EightDSourceAdapter`), écrans `/capa/efficacite`,
+  le panneau d'actions CAPA et la fiche d'un écart (ses huit disciplines)
 - **Amende** : ADR 0131 (le verdict du dossier n'est plus seul à clore),
   ADR 0132 §4 (la garde du droit passe de l'intercepteur au service)
 - **S'appuie sur** : ADR 0135 (une CAPA porte une action et une seule),
@@ -101,6 +101,13 @@ vérificateur aurait sinon offert à cette personne l'écran, la ligne à juger,
 formulaire — puis un refus à l'envoi. La **clôture directe**, elle, garde son
 `@RequiresPermission` : un dossier qui n'a promis aucune vérification ne désigne
 personne, et il n'y a donc personne à qui ce chemin devrait s'ouvrir.
+
+**Et le bouton suit la règle du serveur.** « Vérifier l'efficacité » — le seul
+chemin vers la fenêtre de jugement, sur la ligne de l'action, dans la fiche CAPA
+comme dans le D5 et le D7 du traitement 8D — ne tenait qu'au droit `capa.verify` :
+la personne désignée ne le voyait pas. Il paraît désormais à qui porte le droit
+**ou** à qui la vérification a été confiée, et le serveur tranche. Un écran qui
+cache le geste qu'une API autorise vaut le refus qu'il évite.
 
 La portée du registre CAPA (ADR 0081) compte désormais le vérificateur d'une
 **action** parmi ceux qu'un dossier concerne : `CapaScope.concerns` et les trois

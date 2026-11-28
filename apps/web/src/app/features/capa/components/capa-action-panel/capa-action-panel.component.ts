@@ -4,6 +4,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import {
   ConfirmDialogComponent, ConfirmDialogData
@@ -218,12 +220,27 @@ export class CapaActionPanelComponent implements OnChanges {
    */
   private actionVisee: string | null = null;
 
+  /**
+   * Vrai quand l'utilisateur porte l'action « vérifier une efficacité ».
+   *
+   * <p>Lu une fois, et non à chaque passe de détection : le droit ne change pas
+   * pendant qu'on regarde un tableau.
+   */
+  private droitDeJuger = false;
+
   constructor(
     private readonly capaService: CapaService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
-    private readonly cdr: ChangeDetectorRef
-  ) {}
+    private readonly cdr: ChangeDetectorRef,
+    private readonly authz: AuthzService,
+    private readonly auth: AuthService
+  ) {
+    this.authz.can('capa.verify').subscribe(ok => {
+      this.droitDeJuger = ok;
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnChanges(): void {
     this.reload();
@@ -699,6 +716,25 @@ export class CapaActionPanelComponent implements OnChanges {
     return Boolean(action.verificationRequired)
       && action.status === 'DONE'
       && action.verificationVerdict !== 'EFFECTIVE';
+  }
+
+  /**
+   * QUI PEUT JUGER CETTE LIGNE (ADR 0143).
+   *
+   * <p>Celui qui porte l'action « vérifier une efficacité », comme avant — et
+   * la PERSONNE DÉSIGNÉE sur l'action, à défaut celle du dossier, qui ne la
+   * porte pas. Le bouton lui était caché : on lui confiait la vérification, et
+   * l'écran ne lui offrait nulle part de la rendre. Le serveur applique la même
+   * règle, et c'est lui qui tranche.
+   */
+  peutJuger(action: CapaActionResponse): boolean {
+    if (this.droitDeJuger) {
+      return true;
+    }
+    const moi = this.auth.snapshot()?.userId;
+    const designe = action.verificationAssigneeId
+      ?? this.dossierDe(action)?.verificationAssigneeId;
+    return Boolean(moi) && moi === designe;
   }
 
   /** Vrai quand l'effet de cette action a ete constate, et juge suffisant. */
