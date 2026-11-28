@@ -225,6 +225,12 @@ public class CustomLdapStorageProvider
             return client.findByAttribute(attrName, attrValue)
                     .map(e -> Stream.of(toUserModel(realm, e)))
                     .orElseGet(Stream::empty);
+        } catch (IllegalArgumentException e) {
+            // Le nom d'attribut vient de l'appelant du SPI, pas de la configuration :
+            // il peut ne pas être un nom d'attribut LDAP. Une recherche sans résultat
+            // est la réponse attendue par Keycloak ; une exception remonterait en 500.
+            LOG.warnf("Recherche par attribut refusée : %s", e.getMessage());
+            return Stream.empty();
         } catch (LdapUnavailableException e) {
             LOG.warnf("Fallback transparent — recherche par attribut impossible (LDAP injoignable) : %s",
                     e.getMessage());

@@ -169,12 +169,16 @@ public final class LdapConfig {
      * Si un filtre personnalisé est fourni, il est combiné en AND avec la clause
      * d'égalité (le filtre custom restreint le périmètre, p.ex. {@code (memberOf=...)}).
      *
-     * @param attribute nom de l'attribut LDAP (déjà résolu : usernameAttribute, etc.)
+     * @param attribute nom de l'attribut LDAP (validé : refusé s'il n'est pas un
+     *                  nom d'attribut, car un nom ne s'échappe pas)
      * @param value     valeur recherchée (sera échappée)
+     * @throws IllegalArgumentException si {@code attribute} n'est pas un nom
+     *         d'attribut LDAP
      */
     public String buildFilter(String attribute, String value) {
+        String attr = LdapEscaper.requireAttributeDescription(attribute);
         String escaped = LdapEscaper.escapeFilterValue(value);
-        String base = "(" + attribute + "=" + escaped + ")";
+        String base = "(" + attr + "=" + escaped + ")";
         if (customSearchFilter == null) {
             return base;
         }
